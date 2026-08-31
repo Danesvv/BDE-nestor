@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.550">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Bases de Datos Espaciales - Apéndice A — Quarto: orquestación y configuración</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/83-docker.html" rel="next">
+<link href="../chapters/proyectos/tema_02_apache_sedona/02-rubrica_proyecto_apache_sedona.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/82-quarto.html">Apéndices</a></li><li class="breadcrumb-item"><a href="../chapters/82-quarto.html"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Quarto: orquestación y configuración</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Bases de Datos Espaciales</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bienvenida</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/00-prefacio.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-syllabus.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Syllabus: bases de datos espaciales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Instalación y entornos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-guia_instalacion_vscode_docker.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación: VS Code y contenedores Docker</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-instalacion_postgresql_18_windows.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Instalación y aprovisionamiento de PostgreSQL 18 y PostGIS 3.6</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13-infraestructura_docker_y_base_datos_espacial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Despliegue docker y verificación de la base de datos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14-respaldo_y_recuperacion_bd.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Respaldo y recuperación de la base de datos sig_db_unal</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Proyectos aplicados</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/proyectos/00-guia_proyecto_final.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Guía metodológica para el proyecto final</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/proyectos/01-temas_proyecto_final.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Temas de proyecto final en bases de datos espaciales</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/proyectos/tema_02_apache_sedona/02-proyecto_apache_sedona.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ficha de propuesta de tema de investigación</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/proyectos/tema_02_apache_sedona/02-rubrica_proyecto_apache_sedona.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Rúbrica de evaluación para el reporte en QMD y el código</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Apéndices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/82-quarto.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Quarto: orquestación y configuración</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/83-docker.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Docker: gestión de contenedores e imágenes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/84-git_github.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Git y GitHub: Sincronización Local-Remota</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/85-vscode.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Visual Studio Code (VScode): Extensiones e Interfaz</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/86-windows.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Temas técnicos sobre Windows</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/87-linux_ubuntu.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Temas Técnicos sobre Linux</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/93-postgresql.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">PostgreSQL</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/98-errata.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Errata</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/99-referencias.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Referencias Bibliográficas</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de Contenidos</h2>
+   
+  <ul>
+  <li><a href="#sec-opciones-yaml" id="toc-sec-opciones-yaml" class="nav-link active" data-scroll-target="#sec-opciones-yaml"><span class="header-section-number">A.1</span> Opciones del encabezado YAML</a></li>
+  <li><a href="#sec-resumen-comandos" id="toc-sec-resumen-comandos" class="nav-link" data-scroll-target="#sec-resumen-comandos"><span class="header-section-number">A.2</span> Resumen de comandos Quarto</a></li>
+  <li><a href="#sec-gestion-renderizado" id="toc-sec-gestion-renderizado" class="nav-link" data-scroll-target="#sec-gestion-renderizado"><span class="header-section-number">A.3</span> Gestión eficiente de renderizado en Quarto</a>
+  <ul class="collapse">
+  <li><a href="#sec-hoja-referencia-comandos" id="toc-sec-hoja-referencia-comandos" class="nav-link" data-scroll-target="#sec-hoja-referencia-comandos">Hoja de referencia: comandos de renderizado</a></li>
+  <li><a href="#sec-estrategias-edicion" id="toc-sec-estrategias-edicion" class="nav-link" data-scroll-target="#sec-estrategias-edicion">Estrategias adicionales para el flujo de edición</a></li>
+  </ul></li>
+  <li><a href="#sec-opciones-chunks" id="toc-sec-opciones-chunks" class="nav-link" data-scroll-target="#sec-opciones-chunks"><span class="header-section-number">A.4</span> Control de ejecución en Quarto: opciones de bloques</a>
+  <ul class="collapse">
+  <li><a href="#detalle-funcional-y-aplicación-técnica-de-las-directivas" id="toc-detalle-funcional-y-aplicación-técnica-de-las-directivas" class="nav-link" data-scroll-target="#detalle-funcional-y-aplicación-técnica-de-las-directivas">Detalle funcional y aplicación técnica de las directivas</a></li>
+  <li><a href="#sec-sintaxis-directivas" id="toc-sec-sintaxis-directivas" class="nav-link" data-scroll-target="#sec-sintaxis-directivas">Sintaxis de directivas según el motor de ejecución</a></li>
+  <li><a href="#sec-recomendaciones-contexto" id="toc-sec-recomendaciones-contexto" class="nav-link" data-scroll-target="#sec-recomendaciones-contexto">Recomendaciones de uso según el contexto</a></li>
+  </ul></li>
+  <li><a href="#sec-instalacion-extensiones" id="toc-sec-instalacion-extensiones" class="nav-link" data-scroll-target="#sec-instalacion-extensiones"><span class="header-section-number">A.5</span> Instalación de extensiones de Quarto</a>
+  <ul class="collapse">
+  <li><a href="#sec-proceso-instalacion" id="toc-sec-proceso-instalacion" class="nav-link" data-scroll-target="#sec-proceso-instalacion">Proceso de instalación</a></li>
+  <li><a href="#sec-gestion-archivos" id="toc-sec-gestion-archivos" class="nav-link" data-scroll-target="#sec-gestion-archivos">Gestión de archivos del proyecto</a></li>
+  <li><a href="#sec-aplicacion-documento" id="toc-sec-aplicacion-documento" class="nav-link" data-scroll-target="#sec-aplicacion-documento">Aplicación en el documento</a></li>
+  </ul></li>
+  <li><a href="#sec-compilacion" id="toc-sec-compilacion" class="nav-link" data-scroll-target="#sec-compilacion"><span class="header-section-number">A.6</span> Compilación de la guía del curso</a>
+  <ul class="collapse">
+  <li><a href="#sec-compilacion-completa" id="toc-sec-compilacion-completa" class="nav-link" data-scroll-target="#sec-compilacion-completa">Compilación del proyecto completo</a></li>
+  <li><a href="#sec-compilacion-individual" id="toc-sec-compilacion-individual" class="nav-link" data-scroll-target="#sec-compilacion-individual">Compilación de archivos individuales</a></li>
+  <li><a href="#sec-notas-estudio" id="toc-sec-notas-estudio" class="nav-link" data-scroll-target="#sec-notas-estudio">Notas de estudio y personalización</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/82-quarto.html">Apéndices</a></li><li class="breadcrumb-item"><a href="../chapters/82-quarto.html"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Quarto: orquestación y configuración</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-anexo-quarto" class="quarto-section-identifier">Apéndice A — Quarto: orquestación y configuración</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Quarto se basa en un archivo de configuración centralizado donde se definen los parámetros de renderizado, bibliografía y estilos.</p>
+<section id="sec-opciones-yaml" class="level2" data-number="A.1">
+<h2 data-number="A.1" class="anchored" data-anchor-id="sec-opciones-yaml"><span class="header-section-number">A.1</span> Opciones del encabezado YAML</h2>
+<p><strong>Ejemplo 1</strong>: Solo HTML</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-yaml-html</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">"Título de la Práctica"</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">author</span><span class="kw">:</span><span class="at"> </span><span class="st">"Nombre del Estudiante"</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span><span class="kw">:</span><span class="at"> last-modified</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">format</span><span class="kw">:</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">html</span><span class="kw">:</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">toc</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">toc-depth</span><span class="kw">:</span><span class="at"> </span><span class="dv">3</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">toc-location</span><span class="kw">:</span><span class="at"> left</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">number-sections</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">theme</span><span class="kw">:</span><span class="at"> lux</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Ejemplo 2</strong>: HTML y PDF</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-yaml-html-pdf</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">"Informe Técnico: Análisis Geoespacial"</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">author</span><span class="kw">:</span><span class="at"> </span><span class="st">"ID Correo UNAL"</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span><span class="kw">:</span><span class="at"> today</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">format</span><span class="kw">:</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">html</span><span class="kw">:</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">toc</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">number-sections</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">theme</span><span class="kw">:</span><span class="at"> cosmo</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">pdf</span><span class="kw">:</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">toc</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">toc-title</span><span class="kw">:</span><span class="at"> </span><span class="st">"Contenido"</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">number-sections</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">documentclass</span><span class="kw">:</span><span class="at"> scrreprt</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">geometry</span><span class="kw">:</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> top=25mm</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> left=25mm</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> right=25mm</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> bottom=25mm</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="sec-resumen-comandos" class="level2" data-number="A.2">
+<h2 data-number="A.2" class="anchored" data-anchor-id="sec-resumen-comandos"><span class="header-section-number">A.2</span> Resumen de comandos Quarto</h2>
+<p>Renderizar todos los formatos definidos en el encabezado <code>yml</code>:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-render-all</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render archivo.qmd <span class="at">--to</span> all</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Renderizar a HTML:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-render-html</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render archivo.qmd <span class="at">--to</span> html</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Renderizar a PDF:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-render-pdf</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render archivo.qmd <span class="at">--to</span> pdf</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Renderizar a PDF, mostrando todos los detalles en la consola:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-render-pdf-debug</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render archivo.qmd <span class="at">--to</span> pdf <span class="at">--trace</span> <span class="at">--verbose</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="va">QUARTO_LOG_LEVEL</span><span class="op">=</span>debug <span class="ex">quarto</span> render archivo.qmd <span class="at">--to</span> pdf</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Chequear el estado de la instalación de Quarto:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-quarto-check</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> check</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="sec-gestion-renderizado" class="level2" data-number="A.3">
+<h2 data-number="A.3" class="anchored" data-anchor-id="sec-gestion-renderizado"><span class="header-section-number">A.3</span> Gestión eficiente de renderizado en Quarto</h2>
+<p>A continuación, se presenta la hoja de ruta para optimizar los tiempos de compilación del documento principal, especialmente cuando se integra procesamiento intensivo con motores de Julia y R.</p>
+<section id="sec-hoja-referencia-comandos" class="level3">
+<h3 class="anchored" data-anchor-id="sec-hoja-referencia-comandos">Hoja de referencia: comandos de renderizado</h3>
+<p>La ejecución de estos comandos depende de la existencia del archivo <code>_quarto.yml</code> en el directorio de trabajo. Si se requiere trabajar con archivos individuales, es posible alterar temporalmente el nombre de este archivo a <code>_quarto.yml.back</code>.</p>
+<div id="tbl-quarto-comandos" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-quarto-comandos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;A.1: Comandos esenciales para la gestión de flujos en Quarto
+</figcaption>
+<div aria-describedby="tbl-quarto-comandos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<colgroup>
+<col style="width: 40%">
+<col style="width: 60%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Acción</th>
+<th>Comando</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Trabajar en vivo</strong> (Previsualización dinámica)</td>
+<td><code>quarto preview</code></td>
+</tr>
+<tr class="even">
+<td><strong>Renderizar solo el capítulo actual</strong></td>
+<td><code>quarto render archivo.qmd</code></td>
+</tr>
+<tr class="odd">
+<td><strong>Generar el libro completo</strong> (Ensamblaje final)</td>
+<td><code>quarto render</code></td>
+</tr>
+<tr class="even">
+<td><strong>Forzar ejecución total</strong> (Ignorar el <code>freeze</code>)</td>
+<td><code>quarto render --execute</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="sec-estrategias-edicion" class="level3">
+<h3 class="anchored" data-anchor-id="sec-estrategias-edicion">Estrategias adicionales para el flujo de edición</h3>
+<p>Para evitar esperas innecesarias y optimizar la eficiencia, se recomienda aplicar las siguientes estrategias de previsualización y almacenamiento de resultados computacionales:</p>
+<section id="sec-edicion-vivo" class="level4">
+<h4 class="anchored" data-anchor-id="sec-edicion-vivo">1. Flujo de edición en vivo (quarto preview)</h4>
+<p>En lugar de renderizar el documento manualmente tras cada modificación, se recomienda inicializar una sesión de previsualización desde la terminal integrada en la raíz del proyecto.</p>
+<p>Al ejecutar este proceso, se levanta un servidor local. Cada vez que se registre un cambio en el archivo <code>.qmd</code> y se guarde el progreso, Quarto detectará la modificación y refrescará exclusivamente el capítulo activo en el navegador. Esta metodología mantiene las sesiones de procesamiento en memoria, permitiendo visualizar modificaciones en mapas y ecuaciones de forma inmediata.</p>
+</section>
+<section id="sec-uso-cache" class="level4">
+<h4 class="anchored" data-anchor-id="sec-uso-cache">2. Uso de caché para procesos analíticos pesados</h4>
+<p>Si un bloque de código ejecuta tareas de alto coste computacional (conexiones a bases de datos espaciales o análisis ráster masivo), es imperativo prevenir su re-ejecución automática. Para ello, se emplea la opción de caché a nivel de celda:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-analisis-costoso</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#| cache: true</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: asis</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Este código se ejecuta únicamente si se modifica el contenido interno del bloque.</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Quarto guarda los resultados en el directorio '_cache' para su reutilización.</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="fu">j_eval</span>(<span class="st">" ... proceso de Julia que tarda varios minutos ... "</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<blockquote class="blockquote">
+<p><strong>Nota técnica:</strong> Mientras que el parámetro global <code>freeze: auto</code> (definido en <code>_quarto.yml</code>) protege los capítulos finalizados para evitar su re-ejecución durante la compilación general, la directiva <code>#| cache: true</code> blinda el flujo de trabajo individual dentro del capítulo en edición activa.</p>
+</blockquote>
+</section>
+</section>
+</section>
+<section id="sec-opciones-chunks" class="level2" data-number="A.4">
+<h2 data-number="A.4" class="anchored" data-anchor-id="sec-opciones-chunks"><span class="header-section-number">A.4</span> Control de ejecución en Quarto: opciones de bloques</h2>
+<p>Para asegurar la formalidad, reproducibilidad y claridad de los reportes técnicos, es indispensable controlar con precisión la visibilidad del código fuente, la captura de resultados y la gestión de excepciones durante el renderizado. Quarto administra este comportamiento mediante directivas declaradas al inicio de cada bloque mediante sintaxis YAML (<code>#|</code> en Bash, R y Python, o <code>--|</code> en SQL, ver <a href="#tbl-sintaxis-directivas" class="quarto-xref">Tabla&nbsp;<span>A.3</span></a>).</p>
+<div id="tbl-opciones-bloques" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-opciones-bloques-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;A.2: Matriz de opciones de visibilidad, ejecución y captura de errores para bloques de código
+</figcaption>
+<div aria-describedby="tbl-opciones-bloques-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<colgroup>
+<col style="width: 28%">
+<col style="width: 14%">
+<col style="width: 28%">
+<col style="width: 28%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Opción de bloque</th>
+<th>¿Se ejecuta?</th>
+<th>¿Muestra código?</th>
+<th>¿Muestra salidas/errores?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong><code># | echo: false</code></strong></td>
+<td>✅ SÍ</td>
+<td>❌ NO</td>
+<td>✅ SÍ</td>
+</tr>
+<tr class="even">
+<td><strong><code># | include: false</code></strong></td>
+<td>✅ SÍ</td>
+<td>❌ NO</td>
+<td>❌ NO</td>
+</tr>
+<tr class="odd">
+<td><strong><code># | code-fold: true</code></strong></td>
+<td>✅ SÍ</td>
+<td>📂 Plegado</td>
+<td>✅ SÍ</td>
+</tr>
+<tr class="even">
+<td><strong><code># | eval: false</code></strong></td>
+<td>❌ NO</td>
+<td>✅ SÍ</td>
+<td>❌ NO</td>
+</tr>
+<tr class="odd">
+<td><strong><code># | output: false</code></strong></td>
+<td>✅ SÍ</td>
+<td>✅ SÍ</td>
+<td>❌ NO</td>
+</tr>
+<tr class="even">
+<td><strong><code># | warning: false</code></strong></td>
+<td>✅ SÍ</td>
+<td>—</td>
+<td>❌ NO</td>
+</tr>
+<tr class="odd">
+<td><strong><code># | message: false</code></strong></td>
+<td>✅ SÍ</td>
+<td>—</td>
+<td>❌ NO</td>
+</tr>
+<tr class="even">
+<td><strong><code># | error: true</code></strong></td>
+<td>✅ SÍ</td>
+<td>✅ SÍ</td>
+<td>⚠️ Captura error</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<section id="detalle-funcional-y-aplicación-técnica-de-las-directivas" class="level3">
+<h3 class="anchored" data-anchor-id="detalle-funcional-y-aplicación-técnica-de-las-directivas">Detalle funcional y aplicación técnica de las directivas</h3>
+<ul>
+<li><strong><code>#| echo</code> (Visibilidad del código fuente):</strong> Controla si el código fuente del bloque se imprime en el documento final. Con <code>echo: false</code>, el bloque se evalúa y computa con normalidad, pero la sintaxis queda oculta al lector, mostrando exclusivamente las tablas, figuras o salidas generadas. Resulta ideal en secciones orientadas a resultados ejecutivos.</li>
+<li><strong><code>#| include</code> (Inclusión integral del bloque):</strong> Representa un modificador global que suprime tanto el código como sus salidas. Con <code>include: false</code>, el código se ejecuta en el proceso subyacente (registrando variables, cargando paquetes o modificando el entorno), pero no genera ningún rastro visible en el documento compilado. Se emplea típicamente en bloques de inicialización (<code>setup-</code>).</li>
+<li><strong><code>#| code-fold</code> (Plegado interactivo de código):</strong> Habilita un mecanismo interactivo de colapso disponible en salidas HTML. El bloque oculta el código bajo una pestaña desplegable (<em>widget</em>), permitiendo al usuario inspeccionar la sintaxis bajo demanda sin saturar visualmente el texto principal.</li>
+<li><strong><code>#| eval</code> (Evaluación de código):</strong> Define si el motor de ejecución (Knitr, Jupyter o subshells de terminal) debe procesar el contenido del bloque. Con <code>eval: false</code>, el código se renderiza únicamente como texto formateado con resaltado de sintaxis, sin enviarse al intérprete. Es mandatorio para documentar comandos interactivos de terminal o metacomandos de cliente (como <code>\c</code> o <code>\q</code> en <code>psql</code>).</li>
+<li><strong><code>#| output</code> (Control de salidas estándar):</strong> Determina la inclusión del flujo de salida estándar (<code>stdout</code>). Al configurarse como <code>output: false</code>, el código se muestra y se ejecuta, pero se descartan las salidas textuales generadas por el intérprete (por ejemplo, salidas intermedias de sentencias SQL o confirmaciones de asignación de variables).</li>
+<li><strong><code>#| warning</code> (Gestión de advertencias):</strong> Regula la visualización de mensajes de advertencia (<em>warnings</em>) emitidos por librerías, controladores o funciones de cálculo espacial. Con <code>warning: false</code>, las alertas no detienen la ejecución ni se imprimen en el documento final, evitando ruidos visuales por funciones en proceso de depreciación.</li>
+<li><strong><code>#| message</code> (Gestión de mensajes informativos):</strong> Controla los flujos de mensajes complementarios emitidos durante la carga de módulos, paquetes o diagnósticos de conexión. Al fijarse en <code>message: false</code>, estos textos informativos se descartan del documento final.</li>
+<li><strong><code>#| error</code> (Captura de excepciones y códigos de retorno):</strong> Define el comportamiento del motor ante excepciones no controladas o códigos de salida distintos de cero (<code>status != 0</code>) en comandos de terminal. Por defecto (<code>error: false</code>), cualquier fallo aborta inmediatamente la compilación (<code>Execution halted</code>). Al declarar <code>error: true</code>, Quarto intercepta el error, lo formatea dentro del documento como una alerta técnica y permite continuar el renderizado de los capítulos posteriores sin interrumpir el flujo del libro.</li>
+</ul>
+</section>
+<section id="sec-sintaxis-directivas" class="level3">
+<h3 class="anchored" data-anchor-id="sec-sintaxis-directivas">Sintaxis de directivas según el motor de ejecución</h3>
+<p>La siguiente tabla resume los delimitadores requeridos para declarar metadatos y opciones de ejecución en los principales motores soportados por Quarto:</p>
+<div id="tbl-sintaxis-directivas" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-sintaxis-directivas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;A.3: Sintaxis de directivas según el motor de ejecución
+</figcaption>
+<div aria-describedby="tbl-sintaxis-directivas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<colgroup>
+<col style="width: 42%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 28%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Motor / Lenguaje</th>
+<th>Motor de bloque</th>
+<th>Delimitador YAML</th>
+<th>Ejemplo de declaración</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Bash / Shell</strong></td>
+<td><code>{bash}</code></td>
+<td><code>#|</code></td>
+<td><code>#| echo: false</code></td>
+</tr>
+<tr class="even">
+<td><strong>Python</strong></td>
+<td><code>{python}</code></td>
+<td><code>#|</code></td>
+<td><code>#| echo: false</code></td>
+</tr>
+<tr class="odd">
+<td><strong>R</strong></td>
+<td><code>{r}</code></td>
+<td><code>#|</code></td>
+<td><code>#| echo: false</code></td>
+</tr>
+<tr class="even">
+<td><strong>Julia</strong></td>
+<td><code>{julia}</code></td>
+<td><code>#|</code></td>
+<td><code>#| echo: false</code></td>
+</tr>
+<tr class="odd">
+<td><strong>SQL</strong></td>
+<td><code>{sql}</code></td>
+<td><code>--|</code></td>
+<td><code>--| connection: db</code></td>
+</tr>
+<tr class="even">
+<td><strong>Graphviz (DOT)</strong></td>
+<td><code>{dot}</code></td>
+<td><code>//|</code></td>
+<td><code>//| fig-cap: "..."</code></td>
+</tr>
+<tr class="odd">
+<td><strong>Mermaid</strong></td>
+<td><code>{mermaid}</code></td>
+<td><code>%%|</code></td>
+<td><code>%%| fig-cap: "..."</code></td>
+</tr>
+<tr class="even">
+<td><strong>C / C++</strong></td>
+<td><code>{cpp}</code> / <code>{c}</code></td>
+<td><code>//|</code></td>
+<td><code>//| eval: false</code></td>
+</tr>
+<tr class="odd">
+<td><strong>Observable JS (D3)</strong></td>
+<td><code>{ojs}</code></td>
+<td><code>//|</code></td>
+<td><code>//| echo: false</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="sec-recomendaciones-contexto" class="level3">
+<h3 class="anchored" data-anchor-id="sec-recomendaciones-contexto">Recomendaciones de uso según el contexto</h3>
+<p>Dependiendo de la sección del script activo, las siguientes configuraciones garantizan un documento estructurado:</p>
+<div id="tbl-estrategias-bloques" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-estrategias-bloques-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;A.4: Estrategias recomendadas de etiquetado por etapa analítica
+</figcaption>
+<div aria-describedby="tbl-estrategias-bloques-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 60%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tipo de bloque</th>
+<th>Opción recomendada</th>
+<th>Propósito técnico</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Configuración inicial</strong></td>
+<td><code>#| include: false</code></td>
+<td>Ejecuta la carga de librerías y parámetros globales sin mostrar código ni resultados, evitando ruido visual al inicio del documento.</td>
+</tr>
+<tr class="even">
+<td><strong>Limpieza de memoria</strong></td>
+<td><code>#| include: false</code></td>
+<td>Ejecuta operaciones de liberación de recursos (p.&nbsp;ej. <code>rm()</code>, <code>gc()</code>) de forma silenciosa, ya que no aportan valor interpretativo al lector final.</td>
+</tr>
+<tr class="odd">
+<td><strong>Procesamiento espacial</strong></td>
+<td><code>#| code-fold: true</code></td>
+<td>Mantiene visible el código (relevante para la reproducibilidad metodológica) pero colapsado por defecto, permitiendo al lector expandirlo solo si necesita revisar la lógica de procesamiento.</td>
+</tr>
+<tr class="even">
+<td><strong>Resultados analíticos</strong></td>
+<td><code>#| echo: false</code></td>
+<td>Oculta el código fuente y muestra únicamente la salida (tablas, gráficos, estadísticas), priorizando la lectura de resultados sobre la implementación.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Sintaxis correcta de opciones
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Las opciones deben declararse obligatoriamente al inicio del bloque, precediendo cualquier otra instrucción del lenguaje:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-ejemplo-opciones</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Código analítico...</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-instalacion-extensiones" class="level2" data-number="A.5">
+<h2 data-number="A.5" class="anchored" data-anchor-id="sec-instalacion-extensiones"><span class="header-section-number">A.5</span> Instalación de extensiones de Quarto</h2>
+<p>Las extensiones amplían las funcionalidades nativas de Quarto, integrando nuevos formatos de salida, filtros o componentes visuales. Para asegurar la descarga desde los repositorios remotos, es imperativo contar con conexión y privilegios de escritura en el directorio de trabajo.</p>
+<section id="sec-proceso-instalacion" class="level3">
+<h3 class="anchored" data-anchor-id="sec-proceso-instalacion">Proceso de instalación</h3>
+<p>Quarto utiliza el subcomando <code>add</code> seguido de la ruta del repositorio. Esta directiva descarga los recursos en el directorio local <code>_extensions/</code>. Para instalar soporte de iconos vectoriales, se debe ejecutar la siguiente orden en la terminal integrada:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-instalar-extension</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> add quarto-ext/fontawesome</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Confirmación de seguridad
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Durante la ejecución, la consola solicitará confirmación de confianza hacia los desarrolladores de la extensión. Es necesario introducir <code>Y</code> para autorizar la modificación del directorio.</p>
+</div>
+</div>
+</section>
+<section id="sec-gestion-archivos" class="level3">
+<h3 class="anchored" data-anchor-id="sec-gestion-archivos">Gestión de archivos del proyecto</h3>
+<p>Una vez confirmada la instalación, el árbol de directorios reflejará la siguiente estructura:</p>
+<pre class="text"><code>#| label: setup-arbol-directorios
+#| eval: false
+directorio-proyecto/
+├── _extensions/
+│   └── quarto-ext/
+│       └── fontawesome/
+└── documento-principal.qmd
+</code></pre>
+<p>El contenido de la carpeta <code>_extensions</code> <strong>no debe modificarse manualmente</strong>, dado que el compilador de Quarto lo requiere estrictamente para inyectar las dependencias durante el renderizado.</p>
+</section>
+<section id="sec-aplicacion-documento" class="level3">
+<h3 class="anchored" data-anchor-id="sec-aplicacion-documento">Aplicación en el documento</h3>
+<p>Tras la integración exitosa, los componentes se invocan mediante sintaxis de código corto (<em>shortcodes</em>):</p>
+<pre class="quarto"><code>#| label: setup-ejemplo-iconos
+#| eval: false
+Para el análisis espacial se requerirán los siguientes insumos:
+
+* {{&lt; fa satellite &gt;}} Datos de teledetección.
+* {{&lt; fa location-dot "red" &gt;}} Puntos de control terrestre.
+</code></pre>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Actualización de dependencias
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Para actualizar una extensión existente a su última compilación, se debe reejecutar el comando de instalación. El motor detectará el conflicto de versiones y solicitará autorización para sobrescribir los archivos locales.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-compilacion" class="level2" data-number="A.6">
+<h2 data-number="A.6" class="anchored" data-anchor-id="sec-compilacion"><span class="header-section-number">A.6</span> Compilación de la guía del curso</h2>
+<p>El material general del curso se orquesta a través del archivo <code>_quarto.yml</code>, el cual establece las referencias explícitas hacia todos los documentos (<code>.qmd</code>) de capítulos, talleres y anexos.</p>
+<section id="sec-compilacion-completa" class="level3">
+<h3 class="anchored" data-anchor-id="sec-compilacion-completa">Compilación del proyecto completo</h3>
+<p>Para compilar la totalidad del libro y generar todos los formatos de salida definidos, se debe ejecutar el comando base en el directorio que contiene el orquestador YAML:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-render-proyecto</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="sec-compilacion-individual" class="level3">
+<h3 class="anchored" data-anchor-id="sec-compilacion-individual">Compilación de archivos individuales</h3>
+<p>Para procesar un único documento aislándolo de las políticas de numeración e indexación del proyecto global, se debe aplicar el siguiente protocolo:</p>
+<ol type="1">
+<li>Modificar temporalmente el nombre del orquestador de <code>_quarto.yml</code> a <code>_quarto.yml.back</code>.</li>
+<li>Lanzar la instrucción de compilación apuntando al recurso específico:</li>
+</ol>
+<ul>
+<li>Generación concurrente (HTML y PDF):</li>
+</ul>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-render-ind-all</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render archivo.qmd <span class="at">--to</span> all</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>Generación de HTML:</li>
+</ul>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-render-ind-html</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render archivo.qmd <span class="at">--to</span> html</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>Generación de PDF:</li>
+</ul>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-render-ind-pdf</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render archivo.qmd <span class="at">--to</span> pdf</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="sec-notas-estudio" class="level3">
+<h3 class="anchored" data-anchor-id="sec-notas-estudio">Notas de estudio y personalización</h3>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Personalización del material
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Quarto permite la inserción de bloques de notas personalizados mediante la sintaxis de llamadas (<em>callouts</em>). La estructura general para integrar bloques de observación es la siguiente:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>#| label: setup-ejemplo-callout</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>#| eval: false</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="true" title="Bloque de notas"}</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>Espacio reservado para observaciones, recordatorios y apuntes técnicos.</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>:::</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/proyectos/tema_02_apache_sedona/02-rubrica_proyecto_apache_sedona.html" class="pagination-link" aria-label="Rúbrica de evaluación para el reporte en QMD y el código">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Rúbrica de evaluación para el reporte en QMD y el código</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/83-docker.html" class="pagination-link" aria-label="Docker: gestión de contenedores e imágenes">
+        <span class="nav-page-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Docker: gestión de contenedores e imágenes</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

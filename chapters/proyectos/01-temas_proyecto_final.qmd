@@ -1,0 +1,78 @@
+# Temas de proyecto final en bases de datos espaciales
+
+| Código | Tema de investigación | Paradigma tecnológico | Enfoque experimental del taller |
+| :--- | :--- | :--- | :--- |
+| **Tema 01** | DuckDB espacial y GeoParquet | OLAP embebido en memoria / Formatos Cloud-Native | Consultas analíticas vectoriales sobre almacenamiento en la nube |
+| **Tema 02** | Apache Sedona y PySpark | Cómputo espacial distribuido (*Big Data*) | *Spatial Join* masivo con evaluación de particionamiento |
+| **Tema 03** | Mallas globales H3 y S2 (DGGS) | Indexación espacial jerárquica discreta | Agregación de eventos y reclasificación multi-resolución |
+| **Tema 04** | Neo4j Spatial vs. pgRouting | Grafos de propiedades vs. Relacional topológico | Ruteo dinámico y cálculo de isócronas en redes viales |
+| **Tema 05** | Elasticsearch vs. MongoDB espacial | NoSQL orientado a documentos / Telemetría IoT | Ingestión continua y consultas de *geo-fencing* concurrentes |
+| **Tema 06** | Lógica procedural y extensiones nativas | Procesamiento en servidor (PL/pgSQL, Rust) | Benchmark de serialización WKB y pipelines de análisis local |
+| **Tema 07** | Ecosistemas analíticos desacoplados y flujos con GeoLibre | Arquitectura analítica abierta / *Modern Spatial Data Stack* | Pipelines reproducibles sin servidor sobre GeoParquet y PMTiles |
+
+: Matriz de asignación de temas para grupos de posgrado {#tbl-matriz-temas-posgrado}
+
+
+## Tema 01: Procesamiento analítico columnar y formatos nativos de nube (DuckDB espacial y GeoParquet)
+
+* **Identificador de carpeta:** `proyectos_finales/tema_01_duckdb_geoparquet/`
+* **Fundamento tecnológico:** DuckDB implementa un motor OLAP vectorial ejecutado en el espacio de memoria del cliente, eliminando la sobrecarga de la arquitectura cliente-servidor clásica de PostgreSQL/PostGIS. Permite la ejecución de consultas *Spatial SQL* directamente sobre archivos GeoParquet remotos o locales sin necesidad de ingestión previa a tablas relacionales.
+* **Diseño experimental:** Comparación de tiempos de consulta, lectura de E/S y huella de memoria al procesar millones de geometrías (ej. polígonos catastrales o huellas de edificios) almacenadas en GeoParquet versus tablas indexadas en PostGIS.
+* **Preguntas de investigación:**
+  * ¿En qué magnitud reduce la compresión y el *predicate pushdown* de GeoParquet los tiempos de filtrado espacial frente a un escaneo indexado en PostGIS?
+  * ¿Cuál es el límite de volumen de geometrías complejas que DuckDB puede procesar en memoria antes de experimentar degradación por paginación en disco?
+* **Nota metodológica (ajuste a seis grupos):** En caso de consolidar la cohorte en seis equipos de trabajo, este proyecto integrará la plataforma **GeoLibre** como caso de estudio práctico y capa de aplicación en el taller guiado, utilizándola para demostrar la interoperabilidad de DuckDB y el consumo directo de capas GeoParquet y PMTiles desde una interfaz analítica abierta sin servidor.
+
+## Tema 02: Escalabilidad y procesamiento masivo distribuido (Apache Sedona y PySpark)
+
+* **Identificador de carpeta:** `proyectos_finales/tema_02_apache_sedona/`
+* **Fundamento tecnológico:** Transición del procesamiento espacial monolítico hacia arquitecturas distribuidas en clúster utilizando Apache Sedona. El foco radica en la distribución de estructuras geométricas, el particionamiento espacial (*Quad-Tree* / *KDB-Tree*) y la optimización de cruces espaciales (*Spatial Joins*) masivos en memoria distribuida.
+* **Diseño experimental:** Ejecución de una prueba de carga cruzando capas de telemetría masiva (> 5 millones de registros) con polígonos de zonificación urbana/ambiental. Medición de tiempos de ejecución y análisis del grafo acíclico dirigido (*DAG*) en PySpark frente al límite de procesamiento de un único nodo en PostGIS.
+* **Preguntas de investigación:**
+  * ¿Cómo afecta la elección del árbol de particionamiento espacial a la minimización del *data shuffling* entre ejecutores Spark durante un *Spatial Join*?
+  * ¿Cuál es el umbral de registros en el que la sobrecarga de coordinación de un clúster distribuido se justifica frente a un servidor relacional dedicado?
+
+## Tema 03: Sistemas de mallas espaciales discretas globales (DGGS: Uber H3 y Google S2)
+
+* **Identificador de carpeta:** `proyectos_finales/tema_03_dggs_h3_s2/`
+* **Fundamento tecnológico:** Reemplazo de los índices espaciales continuos basados en geometrías vectoriales clásicas (R-Tree / GiST) por sistemas de teselación jerárquica discreta (hexágonos H3 o celdas cuadrangulares S2). Este enfoque transforma costosas operaciones topológicas en operaciones enteras indexadas de alta velocidad.
+* **Diseño experimental:** Agregación espacial de grandes volúmenes de eventos puntuales espacio-temporales y cálculo de densidad/vecindad mediante indexación H3 directa en base de datos frente a operaciones vectoriales tradicionales `ST_Intersects` y `ST_ClusterKMeans` en PostGIS.
+* **Preguntas de investigación:**
+  * ¿Qué balance existe entre la distorsión geométrica/área inherente a la resolución de H3/S2 y la ganancia en rendimiento computacional en consultas de agregación?
+  * ¿Cómo impacta la conversión de geometrías continuas a identificadores discretos de 64 bits en el tamaño de almacenamiento e indexación en disco?
+
+## Tema 04: Bases de datos espaciales orientadas a grafos y análisis de redes (Neo4j Spatial vs. pgRouting)
+
+* **Identificador de carpeta:** `proyectos_finales/tema_04_grafos_pgrouting_neo4j/`
+* **Fundamento tecnológico:** Modelado de topologías de transporte, redes de servicios públicos y conectividad ecológica. Se contrasta el modelo relacional espacial extendido para grafos (pgRouting sobre tablas de aristas y nodos en PostgreSQL) contra un motor de grafos nativo de propiedades (Neo4j con procedimientos espaciales Cypher).
+* **Diseño experimental:** Construcción de una red vial de escala regional para la ejecución de algoritmos de caminos mínimos (Dijkstra, A*, Contraction Hierarchies) e isócronas bajo diferentes condiciones de concurrencia y pesos dinámicos.
+* **Preguntas de investigación:**
+  * ¿Cómo escala la traversabilidad en profundidad y el análisis de caminos mínimos en grafos nativos frente al uso de consultas relacionales recursivas e índices GiST?
+  * ¿Qué limitaciones de integridad referencial y precisión métrica presentan los modelos de propiedades de grafos frente a los estándares OGC implementados en SGBD relacionales?
+
+## Tema 05: Indexación geoespacial en motores NoSQL para telemetría y flujos en tiempo real (Elasticsearch / OpenSearch vs. MongoDB)
+
+* **Identificador de carpeta:** `proyectos_finales/tema_05_nosql_streaming_geo/`
+* **Fundamento tecnológico:** Gestión de datos geoespaciales no estructurados y de alta velocidad de ingestión (IoT, sensores remotos, seguimiento de flotas). Estos motores emplean estructuras de búsqueda especializadas como árboles BKD (*Block KD-Tree*) y *Geo-Hashes* optimizados para filtrado por proximidad (*k-NN*) y *geo-fencing*.
+* **Diseño experimental:** Simulación de una carga de ingestión masiva en tiempo real con consultas simultáneas de contención (`geo_shape`) y proximidad (`geo_distance`). Comparación de latencia de escritura, uso de memoria e intervalos de refresco entre Elasticsearch y colecciones con índices `2dsphere` en MongoDB.
+* **Preguntas de investigación:**
+  * ¿Qué diferencias de rendimiento y consumo de recursos existen entre los índices BKD de Lucene y las mallas jerárquicas 2D de MongoDB ante operaciones concurrentes de lectura/escritura?
+  * ¿Cómo se gestionan los cálculos geodésicos en geometrías que cruzan el antimeridiano o abarcan grandes extensiones territoriales en estos motores NoSQL?
+
+## Tema 06: Programación procedural espacial en servidor y extensiones nativas (PL/pgSQL avanzado, PL/Python y Rust/PGRX)
+
+* **Identificador de carpeta:** `proyectos_finales/tema_06_procedimientos_plpgsql_rust/`
+* **Fundamento tecnológico:** Ejecución de lógica analítica espacial avanzada directamente dentro del motor de base de datos para eliminar el cuello de botella de transferencia de datos (*serialization overhead* en formatos WKB/GeoJSON) entre el servidor y clientes analíticos externos como Python/GeoPandas.
+* **Diseño experimental:** Implementación de un pipeline de limpieza topológica, simplificación y cálculo de métricas espaciales complejas mediante tres enfoques: 1) script cliente en GeoPandas, 2) función procedural interna en PL/pgSQL, y 3) extensión compilada en lenguaje de bajo nivel (Rust vía PGRX o C en PostgreSQL).
+* **Preguntas de investigación:**
+  * ¿Qué proporción del tiempo total de procesamiento en flujos espaciales complejos corresponde a la serialización/deserialización de geometrías entre cliente y servidor?
+  * ¿Cuál es la ganancia en uso de CPU y vectorización al migrar algoritmos geométricos iterativos desde PL/pgSQL hacia extensiones compiladas nativas?
+
+## Tema 07: Ecosistemas analíticos desacoplados y flujos geoespaciales con GeoLibre
+
+* **Identificador de carpeta:** `proyectos_finales/tema_07_geolibre_stack/`
+* **Fundamento tecnológico:** Transición desde los sistemas de información geográfica monolíticos y los SGBD relacionales tradicionales hacia el *Modern Spatial Data Stack*. GeoLibre articula motores OLAP embebidos (DuckDB Spatial) con formatos *Cloud-Native Geospatial* (GeoParquet, PMTiles, FlatGeobuf) y entornos de ejecución en navegador/cliente, posibilitando pipelines de geoprocesamiento analítico y visualización interactiva sin desplegar infraestructura de servidor dedicada.
+* **Diseño experimental:** Construcción y evaluación de un flujo analítico reproducible (extracción, transformación espacial, cálculo de métricas e indexación de teselas) comparando tres esquemas: 1) SGBD relacional clásico (PostgreSQL/PostGIS), 2) flujo cliente tradicional basado en scripts de geoprocesamiento monolíticos, y 3) arquitectura desacoplada y ligera implementada sobre el ecosistema GeoLibre con DuckDB y almacenamiento en objetos.
+* **Preguntas de investigación:**
+  * ¿En qué magnitud reduce la arquitectura desacoplada de GeoLibre los costos de infraestructura, la latencia de despliegue y el consumo de recursos frente a un SGBD relacional cliente-servidor?
+  * ¿Cuál es la eficiencia en la interoperabilidad entre formatos vectoriales columnares (GeoParquet) y formatos de teselas piramidales (PMTiles) al ejecutar consultas espaciales analíticas y renderizado dinámico en memoria?

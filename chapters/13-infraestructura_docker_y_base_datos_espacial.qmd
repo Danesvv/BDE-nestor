@@ -1,0 +1,612 @@
+# Despliegue docker y verificación de la base de datos {#sec-infraestructura-docker}
+
+```{r}
+#| label: setup-variables-sistema-r
+#| include: false
+
+# 1. Registro de variables en el proceso padre para persistencia y herencia en Knitr
+# Nota para el estudiante: En LOCAL_PGPASSWORD reemplace 'geomatica2025' por la clave configurada en su entorno.
+Sys.setenv(
+  # Parámetros para la instancia física en el sistema anfitrión (acceso vía host virtual)
+  LOCAL_PGHOST = "host.docker.internal",
+  LOCAL_PGPORT = "5432",
+  LOCAL_PGUSER = "postgres",
+  LOCAL_PGPASSWORD = "geomatica2025",
+  LOCAL_PGDATABASE = "postgres",
+  
+  # Parámetros para el clúster dockerizado (resolución DNS interna en la red de contenedores)
+  DOCKER_PGHOST = "db-postgis",
+  DOCKER_PGPORT = "5432",
+  DOCKER_PGUSER = "profe_unal",
+  DOCKER_PGPASSWORD = "geomatica2025",
+  DOCKER_PGDATABASE = "sig_db_unal",
+  
+  # Parámetros por defecto para el cliente interactivo libpq
+  PGHOST = "db-postgis",
+  PGPORT = "5432",
+  PGUSER = "profe_unal",
+  PGPASSWORD = "geomatica2025",
+  PGDATABASE = "sig_db_unal"
+)
+
+```
+
+## Introducción
+
+Antes de continuar con este capítulo, se debe contar con las siguientes herramientas instaladas y operativas en el equipo local:
+
+* Motor de contenedores: ver @sec-guia-a
+* Visual Studio Code: ver @sec-guia-a
+* PostgreSQL y PostGIS en el contenedor: ver @sec-anexo-docker
+
+En esta sección se configura el entorno de contenedores para acceder a la base de datos espacial pedagógica (`sig_db_unal`), la cual contiene PostgreSQL 18 y PostGIS 3.6 preconfigurados con la cartografía de estudio. Adicionalmente, se presenta el procedimiento para replicar, cargar y auditar este catálogo en la instalación nativa del equipo local.
+
+## Orquestación y verificación del motor de contenedores
+
+Previo a la configuración de parámetros de red y ejecución de consultas, es indispensable validar que el servicio de contenedores se encuentra en ejecución y que las imágenes base residen en el catálogo local.
+
+### Verificación del servicio y catálogo de imágenes
+
+Para comprobar el estado operativo del motor desde la consola de comandos del equipo local:
+
+```{bash}
+#| label: docker-verificacion-servicio
+#| eval: false
+#| echo: true
+# Comprobación de versión y estado operativo del servicio
+docker --version
+docker info
+
+```
+
+Tras ejecutar el aprovisionamiento descrito en el @sec-guia-a, verifique la presencia de las imágenes requeridas:
+
+```{bash}
+#| label: docker-listado-imagenes
+#| eval: false
+#| echo: true
+docker images
+
+```
+
+El catálogo debe listar las siguientes imágenes:
+
+* `postgis_unal:v1.12`
+* `image_sig_unal:v1.11_produccion_final`
+
+### Despliegue de servicios mediante Docker Compose
+
+Una vez validadas las imágenes, se inicia la infraestructura en segundo plano desde el directorio raíz del proyecto en el sistema anfitrión:
+
+```{bash}
+#| label: docker-despliegue-servicios
+#| eval: false
+#| echo: true
+# Despliegue de los contenedores y creación de volúmenes persistentes
+docker compose up -d
+
+# Verificación del estado de ejecución de los servicios
+docker compose ps
+
+```
+
+Durante el primer despliegue, el servicio `db-postgis` (`contenedor_postgis_unal`) detecta que el volumen persistente `postgis_data_unal` se encuentra vacío y ejecuta automáticamente la rutina de auto-inicialización declarativa:
+
+* Inicializa el clúster de base de datos PostgreSQL 18.
+* Habilita las extensiones espaciales requeridas (`postgis`, `postgis_topology`, `postgis_raster`).
+* Ejecuta el script SQL embebido en la imagen, aprovisionando de forma automática los esquemas temáticos `base750` y `divpol` con su cartografía vectorial dentro de la base de datos `sig_db_unal`.
+
+En la @fig-arquitectura-inicializacion se esquematiza el mecanismo de auto-inicialización condicional y la persistencia de datos administrada por el motor de contenedores.
+
+```{mermaid}
+%%| label: fig-arquitectura-inicializacion
+%%| fig-cap: "Ciclo de vida y auto-inicialización declarativa del clúster espacial con volumen persistente"
+%%| fig-width: 3
+%%| fig-align: center
+
+
+graph TD
+
+    classDef inicio fill:#e8f4f8,stroke:#0dcaf0,stroke-width:2px,color:#000
+    classDef decision fill:#fff3cd,stroke:#e6b800,stroke-width:2px,color:#000
+    classDef proceso fill:#d4edda,stroke:#28a745,stroke-width:2px,color:#000
+    classDef persistente fill:#e2e3e5,stroke:#343a40,stroke-width:2px,color:#000
+    classDef final fill:#333,stroke:#666,stroke-width:2px,color:#fff
+
+    A["Ejecución:<br/>docker compose up -d"]:::inicio
+
+    B{"¿Volumen<br/>postgis_data_unal<br/>vacío?"}:::decision
+
+    C["Inicialización del clúster<br/>PostgreSQL 18"]:::proceso
+    D["Habilitación de<br/>extensiones espaciales"]:::proceso
+    E["Inyección del script SQL:<br/>esquemas base750 y divpol"]:::proceso
+
+    F[("Volumen persistente<br/>postgis_data_unal")]:::persistente
+
+    G["Enlace directo a<br/>datos persistidos"]:::proceso
+
+    H["Disponibilidad inmediata del<br/>catálogo sig_db_unal"]:::final
+
+    A --> B
+
+    B -->|"Sí: primer despliegue"| C
+    C --> D
+    D --> E
+    E --> F
+    F --> H
+
+    B -->|"No: despliegues posteriores"| G
+    G --> H
+```
+
+
+
+Este proceso de carga se realiza una única vez; en ejecuciones posteriores, el motor se enlaza directamente a los datos persistidos en el volumen, reduciendo el tiempo de arranque a pocos segundos. Para el desarrollo y compilación del material, se recomienda ejecutar el flujo de trabajo directamente desde la terminal integrada de Visual Studio Code con el contenedor configurado (ver @sec-cargar-contenedores-vscode).
+
+## Configuración del entorno de trabajo y variables de conexión
+
+El flujo de trabajo contempla la coexistencia de dos instancias independientes del motor de bases de datos:
+
+1. **Instancia en el equipo local:** Instalada directamente sobre el sistema anfitrión (*host*). Las credenciales de acceso (usuario, contraseña, puerto) corresponden a las establecidas durante su aprovisionamiento local.
+2. **Instancia en el contenedor (`db-postgis`):** Aprovisionada de forma estandarizada dentro de la imagen `postgis_unal:v1.12`. Las credenciales son homogéneas para fines pedagógicos.
+
+### Coexistencia de clústeres y topología de puertos según el contexto de ejecución
+
+Para profundizar en la matriz de puertos, el enrutamiento y la resolución de red según el entorno de ejecución, ver @sec-puertos-conectividad (o consultar la @tbl-enrutamiento-puertos).
+
+La @fig-topologia-enrutamiento-red detalla el aislamiento de red entre el sistema anfitrión y los contenedores, delimitando los puntos de acceso y redireccionamiento de puertos para cada servicio.
+
+```{mermaid}
+%%| label: fig-topologia-enrutamiento-red
+%%| fig-cap: "Matriz de resolución de red y mapeo de puertos según el contexto de ejecución"
+%%| fig-width: 6.5
+%%| fig-align: center
+
+graph LR
+
+    classDef host fill:#e8f4f8,stroke:#0dcaf0,stroke-width:2px,color:#000
+    classDef contenedor fill:#d4edda,stroke:#28a745,stroke-width:2px,color:#000
+
+    subgraph Host["Sistema anfitrión (host)"]
+        LocalPG["PostgreSQL físico local<br/>Puerto: 5432"]:::host
+        VSCodeHost["Consola de comandos"]:::host
+    end
+
+    subgraph DockerNet["Red virtual de contenedores (bridge)"]
+        DevCont["Contenedor analítico: contenedor_sig_unal<br/>Terminal integrada de Visual Studio Code"]:::contenedor
+        PostGISCont["Contenedor espacial: contenedor_postgis_unal<br/>Servicio: db-postgis<br/>Puerto nativo: 5432"]:::contenedor
+    end
+
+    VSCodeHost -->|"localhost:5432"| LocalPG
+    VSCodeHost -->|"127.0.0.1:5434 (port forwarding)"| PostGISCont
+    DevCont -->|"host.docker.internal:5432"| LocalPG
+    DevCont -->|"db-postgis:5432 (DNS interno)"| PostGISCont
+```
+
+
+### Mecanismo de autenticación libpq y gestión de credenciales
+
+El cliente interactivo `psql` y las herramientas espaciales utilizan la biblioteca `libpq`, la cual inspecciona la variable de entorno `PGPASSWORD` para autenticar conexiones de manera automática.
+
+Para gestionar la alternancia entre ambos clústeres sin requerir el ingreso interactivo de credenciales en cada consulta, se definen variables de almacenamiento (`LOCAL_PGPASSWORD` y `DOCKER_PGPASSWORD`). Antes de ejecutar una consulta hacia una instancia determinada, se transfiere el valor correspondiente a la variable activa `PGPASSWORD`.
+
+| Parámetro técnico | Instancia local física | Instancia en contenedor (`db-postgis`) | Función técnica |
+| --- | --- | --- | --- |
+| **Host / Interfaz** | `host.docker.internal` | `db-postgis` | Enrutamiento desde el entorno analítico |
+| **Puerto de red** | `5432` (estándar) | `5432` (interno) | Puerto TCP nativo del servicio |
+| **Usuario / Rol** | `postgres` | `profe_unal` | Rol con privilegios administrativos DDL/DML |
+| **Contraseña** | Asignada localmente | `geomatica2025` | Credencial de autenticación del clúster |
+| **Base de datos** | `postgres` / `sig_db_unal` | `sig_db_unal` | Catálogo relacional con extensión PostGIS |
+
+: Especificaciones de conexión para clústeres local y dockerizado {#tbl-parametros-conexion}
+
+### Parámetros de línea de comandos en herramientas PostgreSQL
+
+Las utilidades cliente de PostgreSQL (`psql`, `pg_dump`, `pg_restore`) y los cargadores espaciales de PostGIS (`shp2pgsql`, `raster2pgsql`) comparten un conjunto estandarizado de modificadores de línea de comandos gestionados por la biblioteca `libpq`.
+
+Para consultar el desglose detallado de modificadores, su equivalencia con variables de entorno y las utilidades compatibles, ver @sec-anexo-parametros-cli (o consultar la @tbl-banderas-cli).
+
+### Asignación de variables en la terminal integrada
+
+El protocolo de conexión de PostgreSQL opera sobre la biblioteca cliente `libpq`, la cual implementa un mecanismo de resolución de parámetros en cascada. Cuando una utilidad cliente (`psql`, `pg_dump`, `pg_restore`) o una librería geoespacial vinculada a controladores nativos (como GDAL/OGR o `sf`) se invoca sin modificadores explícitos de línea de comandos (`-h`, `-p`, `-U`, `-d`), el motor recurre automáticamente a las variables de entorno estándar identificadas con el prefijo `PG*`.
+
+La jerarquía de precedencia opera bajo el siguiente orden:
+
+* **Modificadores explícitos de consola:** Tienen máxima prioridad y sobrescriben cualquier configuración de sesión (ej. `-h db-postgis -p 5432`).
+* **Variables estándar de entorno (`PG*`):** Si se omiten las banderas, el cliente consume directamente los valores de `PGHOST`, `PGPORT`, `PGUSER`, `PGPASSWORD` y `PGDATABASE`.
+* **Valores predeterminados del compilador:** En ausencia de banderas y variables de entorno, se asumen los sockets locales del sistema, el puerto `5432` y el usuario del sistema anfitrión.
+
+Para facilitar la ejecución desatendida de consultas sin requerir la especificación manual y redundante de parámetros en cada instrucción, se declaran variables dedicadas para cada instancia (`LOCAL_*` y `DOCKER_*`), y simultáneamente se definen las variables estándar `PG*` apuntando por defecto al clúster activo.
+
+Como se ilustra en la @fig-jerarquia-resolucion-libpq, el cliente interactivo evalúa los parámetros bajo un esquema jerárquico que prioriza los modificadores directos sobre las variables de entorno activas.
+
+```{mermaid}
+%%| label: fig-jerarquia-resolucion-libpq
+%%| fig-cap: "Jerarquía de resolución en cascada de parámetros de conexión en la biblioteca libpq"
+%%| fig-width: 6.5
+%%| fig-align: center
+%%{init: {'flowchart': {'diagramPadding': 30, 'nodeSpacing': 30, 'rankSpacing': 40}}}%%
+graph TD
+
+    classDef inicio fill:#e8f4f8,stroke:#0dcaf0,stroke-width:2px,color:#000
+    classDef decision fill:#fff3cd,stroke:#e6b800,stroke-width:2px,color:#000
+    classDef proceso fill:#d4edda,stroke:#28a745,stroke-width:2px,color:#000
+    classDef final fill:#333,stroke:#666,stroke-width:2px,color:#fff
+
+    A["Invocación de cliente:<br>psql<br>pg_dump<br>pg_restore"]:::inicio --> B{"¿Banderas CLI explícitas?<br>-h, -p, -U, -d"}:::decision
+    B -->|"Sí"| C["Máxima prioridad:<br>Parámetros directos de consola"]:::proceso
+    B -->|"No"| D{"¿Variables de entorno declaradas?<br>PGHOST<br>PGPORT<br>PGUSER<br>PGDATABASE"}:::decision
+    D -->|"Sí"| E["Prioridad intermedia:<br>Consumo automático de variables PG*"]:::proceso
+    D -->|"No"| F["Valores predeterminados del compilador:<br>Socket local<br>puerto 5432<br>usuario del sistema"]:::proceso
+    C --> G["Establecimiento de sesión contra el catálogo"]:::final
+    E --> G
+    F --> G
+```
+
+
+```{bash}
+#| label: setup-variables-conexion-bash
+#| eval: true
+#| echo: true
+# ==============================================================================
+# 1. Parámetros de conexión: Instancia física en el equipo local (desde contenedor)
+# ==============================================================================
+export LOCAL_PGHOST="host.docker.internal"
+export LOCAL_PGPORT="5432"
+export LOCAL_PGUSER="postgres"
+
+# Nota para el estudiante: Reemplace 'geomatica2025' por la contraseña de su instalación local.
+# Se emplean comillas simples para evitar la expansión de caracteres especiales en la consola.
+export LOCAL_PGPASSWORD='geomatica2025'
+export LOCAL_PGDATABASE="postgres"
+
+# ==============================================================================
+# 2. Parámetros de conexión: Clúster espacial en el contenedor (db-postgis)
+# ==============================================================================
+export DOCKER_PGHOST="db-postgis"
+export DOCKER_PGPORT="5432"
+export DOCKER_PGUSER="profe_unal"
+export DOCKER_PGPASSWORD='geomatica2025'
+export DOCKER_PGDATABASE="sig_db_unal"
+
+# ==============================================================================
+# 3. Variables estándar activas para libpq (consumo automático por defecto)
+# ==============================================================================
+export PGHOST="${DOCKER_PGHOST}"
+export PGPORT="${DOCKER_PGPORT}"
+export PGUSER="${DOCKER_PGUSER}"
+export PGPASSWORD="${DOCKER_PGPASSWORD}"
+export PGDATABASE="${DOCKER_PGDATABASE}"
+
+# ==============================================================================
+# 4. Verificación de las variables asignadas en la sesión
+# ==============================================================================
+echo "--- Instancia local (host) ---"
+echo "Host: ${LOCAL_PGHOST}:${LOCAL_PGPORT} | Usuario: ${LOCAL_PGUSER} | BD: ${LOCAL_PGDATABASE}"
+
+echo "--- Instancia dockerizada ---"
+echo "Host: ${DOCKER_PGHOST}:${DOCKER_PGPORT} | Usuario: ${DOCKER_PGUSER} | BD: ${DOCKER_PGDATABASE}"
+
+echo "--- Variables estándar activas (libpq) ---"
+echo "Destino por defecto: ${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}"
+
+```
+
+> **Nota (persistencia):** Las variables exportadas dentro de un bloque `{bash}` durante la compilación residen exclusivamente en la memoria volátil de esa subshell efímera y se destruyen al concluir su ejecución. Dado que el procesamiento del documento es orquestado por el motor Knitr, la persistencia de estos parámetros a lo largo de todos los subprocesos se garantiza mediante su inyección en la tabla de entorno del proceso principal en el bloque `setup-variables-sistema-r`. Si se requiere disponer de estas variables para interactuar de forma manual durante la sesión de trabajo, el bloque de comandos debe copiarse y ejecutarse directamente en la terminal integrada de Visual Studio Code.
+
+> **Nota (nomenclatura de conexión: `usuario@host:puerto/base_de_datos`):** La estructura compuesta `${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}` (por ejemplo, `profe_unal@db-postgis:5432/sig_db_unal`) corresponde a la notación canónica para la identificación unívoca de un extremo de conexión (*target endpoint*), fundamentada en el estándar de URI (*Uniform Resource Identifier*) de PostgreSQL (RFC 3986) y cadenas DSN (*Data Source Name*). Este descriptor unifica los tres planos funcionales requeridos:
+> * **Identidad del rol autenticado (`profe_unal@`):** Determina las credenciales y los privilegios de ejecución DDL/DML.
+> * **Dirección y puerto del socket de red (`db-postgis:5432`):** Especifica la ruta de enrutamiento hacia la instancia.
+> * **Catálogo relacional objetivo (`/sig_db_unal`):** Define la base de datos relacional y espacial vinculada a la sesión.
+> 
+> 
+
+## Verificación de versiones y extensiones espaciales
+
+Para asegurar la correcta vinculación entre el motor relacional y las bibliotecas de cálculo geométrico y geodésico (GEOS, PROJ, GDAL), se asigna la credencial del contenedor a la variable activa `PGPASSWORD` y se ejecutan las consultas de diagnóstico contra el clúster activo:
+
+
+```{bash}
+#| label: audit-verificacion-versiones-postgis
+#| eval: true
+#| echo: true
+export PGPASSWORD="${DOCKER_PGPASSWORD}"
+
+# 1. Versión del motor relacional PostgreSQL
+psql -h ${DOCKER_PGHOST} -p${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d${DOCKER_PGDATABASE} -x -P format=wrapped -P columns=90 -c "SELECT version();"
+
+# 2. Versiones granulares de PostGIS y librerías geoespaciales
+query_versiones="
+SELECT 
+    postgis_lib_version() AS version_postgis,
+    postgis_geos_version() AS version_geos,
+    postgis_proj_version() AS version_proj,
+    postgis_gdal_version() AS version_gdal,
+    postgis_libxml_version() AS version_libxml;
+"
+
+psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -x -P format=wrapped -P columns=90 -c "${query_versiones}"
+
+
+# 3. Versión de PostGIS y dependencias geoespaciales
+psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -x -P format=wrapped -P columns=90 -c "SELECT postgis_full_version();"
+
+# 4. Alternativamente: Segmentación de la firma completa de PostGIS por componente.
+#    (partir los componentes por cada espacio: no es muy legible)
+query_full="
+SELECT regexp_split_to_table(postgis_full_version(), ' ') AS componentes_postgis;
+"
+
+psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -c "${query_full}"
+
+```
+
+## Auditoría de catálogos y bases de datos
+
+Para examinar los catálogos instanciados en el clúster dockerizado, su volumetría física en disco, propietario y codificación:
+
+```{bash}
+#| label: audit-catalogos-base-datos
+#| eval: true
+#| echo: true
+export PGPASSWORD="${DOCKER_PGPASSWORD}"
+
+query_catalogos="
+SELECT 
+    datname AS base_de_datos, 
+    pg_catalog.pg_get_userbyid(datdba) AS propietario, 
+    pg_size_pretty(pg_catalog.pg_database_size(datname)) AS tamano, 
+    pg_catalog.pg_encoding_to_char(encoding) AS codificacion, 
+    datcollate AS ordenamiento 
+FROM pg_catalog.pg_database 
+WHERE datistemplate = false 
+ORDER BY pg_catalog.pg_database_size(datname) DESC;
+"
+
+psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -c "${query_catalogos}"
+
+```
+
+## Inspección estructural de la base de datos de estudio
+
+La base de datos pedagógica `sig_db_unal` contiene los esquemas modulares preparados para los talleres prácticos del curso.
+
+La organización interna del catálogo relacional se detalla en la @fig-arquitectura-catalogo-espacial, destacando la articulación entre las librerías de cálculo espacial, las vistas de metadatos OGC y los esquemas cartográficos temáticos.
+
+```{mermaid}
+%%| label: fig-arquitectura-catalogo-espacial
+%%| fig-cap: "Estructura modular, extensiones y registro de metadatos OGC en la base de datos pedagógica"
+%%| fig-width: 6.5
+%%| fig-align: center
+
+graph TD
+
+    classDef extension fill:#e8f4f8,stroke:#0dcaf0,stroke-width:2px,color:#000
+    classDef metadato fill:#fff3cd,stroke:#e6b800,stroke-width:2px,color:#000
+    classDef tabla fill:#d4edda,stroke:#28a745,stroke-width:2px,color:#000
+    classDef indice fill:#e2e3e5,stroke:#343a40,stroke-width:2px,color:#000
+
+    subgraph DB ["Base de datos relacional: sig_db_unal (Owner: profe_unal)"]
+
+        subgraph Ext ["Extensiones espaciales habilitadas"]
+            direction LR
+            E1["postgis"]:::extension
+            E2["postgis_topology"]:::extension
+            E3["postgis_raster"]:::extension
+        end
+
+        subgraph Meta ["Catálogo estándar OGC"]
+            M1["geometry_columns<br/>(vista de metadatos)"]:::metadato
+            M2["spatial_ref_sys<br/>(Sistemas de Referencia / SRID)"]:::metadato
+        end
+
+        subgraph Base ["base750 (Cartografía base)"]
+            T1["Capas vectoriales<br/>(columnas geometry)"]:::tabla
+            I1["Índices espaciales GiST"]:::indice
+        end
+
+        subgraph Divpol ["divpol (División político-administrativa)"]
+            T2["Capas vectoriales<br/>(columnas geometry)"]:::tabla
+            I2["Índices espaciales GiST"]:::indice
+        end
+
+    end
+
+    E1 --> M1
+    E2 --> M1
+    E3 --> M1
+
+    T1 -.->|"Registro de metadatos"| M1
+    T2 -.->|"Registro de metadatos"| M1
+
+    M1 -->|"srid"| M2
+
+    T1 --> I1
+    T2 --> I2
+
+    %% Fuerza el orden vertical real: Meta encima de Base, Base encima de Divpol
+    %% (sin esto, dagre puede colocar Base y Divpol al mismo nivel, lado a lado)
+    Meta ~~~ Base
+    Base ~~~ Divpol
+```
+
+
+
+### Esquemas y tablas espaciales
+
+Se comprueba la existencia de los esquemas temáticos (`base750` y `divpol`):
+
+```{bash}
+#| label: audit-esquemas-tablas-espaciales
+#| eval: true
+#| echo: true
+export PGPASSWORD="${DOCKER_PGPASSWORD}"
+
+# Listado de esquemas activos
+psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -c "\dn"
+
+# Inventario de tablas por esquema temático
+query_tablas="
+SELECT 
+    schemaname AS esquema, 
+    tablename AS tabla 
+FROM pg_tables 
+WHERE schemaname IN ('base750', 'divpol') 
+ORDER BY schemaname, tablename;
+"
+
+psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -c "${query_tablas}"
+
+```
+
+### Registro en el catálogo de metadatos geométricos
+
+Conforme al estándar OGC *Simple Features for SQL*, toda capa vectorial espacialmente habilitada debe encontrarse registrada en la vista `geometry_columns`. Se consulta la dimensionalidad, el identificador espacial (SRID) y el tipo geométrico:
+
+```{bash}
+#| label: query-metadatos-geometry-columns
+#| eval: true
+#| echo: true
+export PGPASSWORD="${DOCKER_PGPASSWORD}"
+
+query_geom="
+SELECT 
+    f_table_schema AS esquema, 
+    f_table_name AS capa, 
+    f_geometry_column AS columna_geom, 
+    coord_dimension AS dimension, 
+    srid, 
+    type AS tipo_geometria 
+FROM geometry_columns 
+WHERE f_table_schema IN ('base750', 'divpol') 
+ORDER BY f_table_schema, f_table_name;
+"
+
+psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -c "${query_geom}"
+
+```
+
+### Verificación de índices espaciales
+
+Para garantizar eficiencia computacional en las operaciones de cruce y filtrado topológico, las capas deben disponer de índices basados en árboles de búsqueda generalizada (GiST):
+
+```{bash}
+#| label: audit-indices-gist-espaciales
+#| eval: true
+#| echo: true
+export PGPASSWORD="${DOCKER_PGPASSWORD}"
+
+query_indices="
+SELECT 
+    schemaname AS esquema, 
+    tablename AS tabla, 
+    indexname AS nombre_indice, 
+    indexdef AS definicion 
+FROM pg_indexes 
+WHERE schemaname IN ('base750', 'divpol') AND indexname LIKE '%gist%' 
+ORDER BY schemaname, tablename;
+"
+# Se desborda en el pdf:
+#psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -x -c "${query_indices}"
+
+# Se usa -x (par: valor), pero sigue habiendo desborde (menor) en el pdf
+#psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -x -c "${query_indices}"
+
+# Usamos -P para evitar el desborde
+psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -P format=wrapped -P columns=90 -c "${query_indices}"
+
+```
+
+## Replicación de la base de datos en una instalación local nativa
+
+En escenarios donde se requiera trabajar directamente sobre la instalación física local de PostgreSQL y PostGIS (puerto `5432`) sin recurrir al contenedor, es posible reconstruir la base de datos `sig_db_unal` a partir del archivo de volcado SQL `init_unal_spatialdb.sql`.
+
+### Creación del catálogo y habilitación espacial
+
+Para aprovisionar el rol docente y la base de datos en el motor local:
+
+```{bash}
+#| label: ddl-creacion-catalogo-local
+#| eval: false
+#| echo: true
+# 1. Asignar la contraseña del motor local para libpq
+# Nota para el estudiante: Reemplace 'geomatica2025' por la contraseña configurada en su equipo local.
+export PGPASSWORD='geomatica2025'
+
+# 2. Creación del rol docente en la instancia local
+query_rol="
+DO \$\$
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'profe_unal') THEN
+        CREATE ROLE profe_unal WITH SUPERUSER CREATEDB CREATEROLE LOGIN PASSWORD 'geomatica2025';
+    END IF;
+END
+\$\$;
+"
+
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d postgres -c "${query_rol}"
+
+# 3. Creación de la base de datos pedagógica asignando como propietario a profe_unal
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d postgres -c "CREATE DATABASE sig_db_unal WITH OWNER profe_unal ENCODING 'UTF8';"
+
+# 4. Habilitación de la extensión espacial PostGIS en el catálogo creado
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d sig_db_unal -c "CREATE EXTENSION IF NOT EXISTS postgis;"
+
+```
+
+### Restauración mediante inyección del script SQL
+
+Con el catálogo creado y la extensión PostGIS habilitada en el motor local, se procesa el archivo `init_unal_spatialdb.sql`:
+
+```{bash}
+#| label: dml-restauracion-script-sql
+#| eval: false
+#| echo: true
+# Inyección de estructura DDL, cartografía vectorial e índices espaciales
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d sig_db_unal -f init_unal_spatialdb.sql
+
+```
+
+### Verificación de integridad en la instancia local
+
+Para comprobar que la base de datos en el equipo local contenga la misma volumetría y estructura que el clúster dockerizado:
+
+```{bash}
+#| label: audit-integridad-instancia-local
+#| eval: true
+#| echo: true
+# Nota para el estudiante: Reemplace 'geomatica2025' por la contraseña de su instalación local.
+export PGPASSWORD='geomatica2025'
+
+# 1. Conteo de registros por tabla en la instancia física local
+query_conteo="
+SELECT 
+    schemaname AS esquema, 
+    relname AS tabla, 
+    n_live_tup AS registros_locales 
+FROM pg_stat_user_tables 
+WHERE schemaname IN ('base750', 'divpol') 
+ORDER BY schemaname, relname;
+"
+
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d sig_db_unal -c "${query_conteo}"
+
+# 2. Comprobación del catálogo formal geometry_columns en el motor local
+query_geom_local="
+SELECT 
+    f_table_schema AS esquema, 
+    f_table_name AS capa, 
+    f_geometry_column AS columna_geom, 
+    srid, 
+    type AS tipo_geometria 
+FROM geometry_columns 
+WHERE f_table_schema IN ('base750', 'divpol') 
+ORDER BY f_table_schema, f_table_name;
+"
+
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d sig_db_unal -c "${query_geom_local}"
+
+```
+
+Con este procedimiento, la base de datos queda completamente operativa y sincronizada tanto en el contenedor como en la instalación física local.
+

@@ -1,0 +1,27 @@
+# Prefacio {.unnumbered}
+
+Bienvenidas y bienvenidos al curso de **Bases de datos espaciales** en el nivel de posgrado. Este documento constituye el material de referencia técnica, metodológica y computacional diseñado para acompañar el desarrollo conceptual y práctico de la asignatura. El propósito central de esta obra es proporcionar una base rigurosa para el modelado formal, la administración, la optimización de consultas y la experimentación con sistemas de gestión de bases de datos espaciales (SGBDE) y arquitecturas analíticas de vanguardia.
+
+En el contexto contemporáneo de la geomática y la ciencia de datos espaciales, el crecimiento en volumen y complejidad de la información geográfica exige superar el almacenamiento en archivos planos y la dependencia exclusiva de interfaces gráficas de usuario. El dominio de los motores relacionales espaciales, el diseño estructurado de esquemas y el procesamiento analítico a gran escala constituyen competencias fundamentales para garantizar la integridad topológica, la concurrencia y la reproducibilidad en proyectos de investigación y aplicaciones profesionales avanzadas.
+
+## Enfoque metodológico y computacional {.unnumbered}
+
+El desarrollo del curso y la estructura del material se fundamentan en los principios de la Ciencia Abierta (*Open Science*), los estándares FAIR (*Findable, Accessible, Interoperable, Reusable*) y la reproducibilidad computacional integral:
+
+* **Modelado conceptual y estándares internacionales:** Aplicación de las especificaciones del *Open Geospatial Consortium* (OGC Simple Features for SQL), la norma ISO 19107, normalización relacional y diseño visual de esquemas asistido con pgModeler.
+* **Motores relacionales y Spatial SQL:** Administración avanzada de PostgreSQL/PostGIS, tipado geométrico y geodésico, análisis topológico mediante la matriz DE-9IM, indexación multidimensional (GiST, SP-GiST, BRIN), diagnóstico de planes de ejecución y topología vectorial persistente.
+* **Geodatabases corporativas y flujos ETL:** Arquitecturas basadas en archivos y corporativas, ingeniería guiada por modelos (ShapeChange), vistas de diseño integradas, reglas de atributos, almacenamiento ráster y construcción de flujos de extracción, transformación y carga reproducibles.
+* **Ecosistema de conexión políglota:** Interacción directa mediante la consola nativa (`psql`) y herramientas de administración gráfica (`pgAdmin 4`), combinada con controladores analíticos en Python (`psycopg`, `GeoPandas`), R (`DBI`, `sf`) y Julia (`LibPQ.jl`, `GeoDataFrames.jl`).
+* **Seminario de paradigmas emergentes:** Evaluación experimental de tecnologías de frontera como procesamiento masivo distribuido (Apache Sedona, PySpark), motores analíticos columnares y formatos nativos de nube (DuckDB, GeoParquet), mallas discretas globales (DGGS H3/S2), bases de datos de grafos (Neo4j, pgRouting), motores NoSQL y extensiones compiladas nativas en Rust.
+
+## Reproducibilidad y entorno de trabajo {.unnumbered}
+
+Todos los talleres prácticos, ejercicios y proyectos de investigación están concebidos para ejecutarse desde la terminal integrada de Visual Studio Code o Positron. La totalidad de los servicios de bases de datos, librerías y entornos de análisis se encuentra orquestada en contenedores **Docker**. Esta arquitectura garantiza un ambiente homogéneo y determinista, aislando las dependencias del sistema anfitrión (*host*) y asegurando que los experimentos y flujos de consulta sean plenamente reproducibles. Para los módulos orientados a geodatabases corporativas y herramientas propietarias complementarias como ArcGIS Pro, se requiere la instalación y licenciamiento respectivo en la estación de trabajo local.
+
+## Organización de la obra {.unnumbered}
+
+El libro está organizado de manera modular para guiar el aprendizaje teórico y la experimentación aplicada:
+
+* **Syllabus y lineamientos del curso:** En el capítulo inmediatamente posterior a este prefacio se presentan los objetivos de aprendizaje, la programación detallada de las 16 semanas, las políticas de trabajo y el sistema de evaluación.
+* **Capítulos conceptuales y talleres aplicados:** Guías metodológicas y bloques de código estructurados para el desarrollo de los laboratorios del curso.
+* **Proyectos de investigación experimental:** Capítulos dedicados a la profundización técnica y evaluación de rendimiento de los paradigmas geoespaciales emergentes. Los proyectos integran su respectiva guía metodológica de implementación, el desarrollo experimental y la rúbrica de evaluación.

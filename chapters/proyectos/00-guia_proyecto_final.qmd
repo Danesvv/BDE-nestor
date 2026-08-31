@@ -1,0 +1,64 @@
+# Guía metodológica para el proyecto final
+
+## Estructura de la sesión de dos horas
+
+El equipo expositor dispone de 2 horas (120 minutos) para presentar el proyecto de investigación y liderar la sesión práctica ante la cohorte. El tiempo se organiza en tres bloques secuenciales:
+
+* **Bloque 1: Presentación del marco conceptual y arquitectura (40 minutos):** Exposición magistral apoyada en diapositivas interactivas sobre el estado del arte, la problemática de escalabilidad o cuello de botella del SGBD relacional clásico, el funcionamiento interno de la tecnología seleccionada (ej. Apache Sedona, DuckDB espacial, DGGS H3/S2, grafos con Neo4j/pgRouting, NoSQL, extensiones nativas en Rust o el stack GeoLibre) y el diseño experimental planteado.
+
+* **Bloque 2: Taller guiado en tiempo real (65 minutos):** Desarrollo del laboratorio con la cohorte (*live coding*). La cohorte clona el repositorio o accede al entorno de contenedores y ejecuta el flujo de trabajo junto con los expositores desde la terminal integrada de Visual Studio Code o Positron. Se realizan pruebas de carga, particionamiento, construcción de índices espaciales y ejecución de consultas de *Spatial SQL* en vivo.
+
+* **Bloque 3: Debate técnico y retroalimentación (15 minutos):** Espacio de discusión crítica, evaluación de métricas de rendimiento, análisis de planes de ejecución (DAG en Spark, `EXPLAIN ANALYZE` en PostgreSQL/DuckDB) y conclusiones metodológicas.
+
+## Estructura de carpetas y paquete de entregables
+
+Cada equipo de investigación debe crear y estructurar la carpeta correspondiente a la temática asignada dentro del directorio `proyectos_finales/`, respetando estrictamente la siguiente jerarquía:
+
+```text
+proyectos_finales/
+└── tema_XX_[nombre_tema]/
+    ├── XX_proyecto_[nombre_tema].qmd
+    ├── XX_rubrica_[nombre_tema].qmd
+    ├── XX_slides_[nombre_tema].qmd
+    ├── XX_taller_[nombre_tema].qmd
+    └── references.bib
+
+```
+
+Donde `XX` representa el identificador numérico de dos dígitos asignado al tema (de `01` a `07`) y `[nombre_tema]` corresponde al identificador en `snake_case` (ej. `01_duckdb_geoparquet`, `02_apache_sedona`, `07_geolibre_stack`). La orquestación global del libro mediante `_quarto.yml` y la configuración de contenedores residen exclusivamente en la raíz del repositorio central.
+
+El paquete de entregables por equipo se compone de los siguientes artefactos:
+
+* **`XX_proyecto_[nombre_tema].qmd`:** Documento de investigación estructurado bajo formato de reporte científico. Contiene la justificación teórica, objetivos, preguntas de investigación orientadoras, diseño experimental, análisis comparativo de rendimiento (CPU, memoria, E/S de disco) y discusión técnica. Este archivo se compilará como capítulo del libro del curso.
+* **`XX_rubrica_[nombre_tema].qmd`:** Matriz de evaluación con criterios cuantitativos y cualitativos específicos para valorar el reporte analítico, la reproducibilidad del entorno y la ejecución del código.
+* **`XX_slides_[nombre_tema].qmd`:** Presentación interactiva en Quarto RevealJS (`format: revealjs`) empleada como soporte visual durante el Bloque 1.
+* **`XX_taller_[nombre_tema].qmd`:** Guía ejecutable paso a paso para el laboratorio guiado del Bloque 2, incluyendo preparación del entorno, bloques de código documentados y comandos de verificación.
+* **`references.bib`:** Archivo BibTeX con la literatura académica y técnica citada en el reporte y en la presentación.
+
+## Estándares técnicos y directivas de código en Quarto
+
+Todos los documentos `.qmd` generados por los equipos deben cumplir rigurosamente con los siguientes estándares de edición y reproducibilidad:
+
+* **Sintaxis YAML en bloques de código:** Todo bloque ejecutable o demostrativo debe utilizar la sintaxis YAML de Quarto (`#| label: ...`, `#| eval: ...`, `#| echo: ...`). Está prohibido el uso de cabeceras heredadas de Knitr (`{r, ...}`).
+* **Nomenclatura taxonómica de etiquetas:** Las etiquetas de los bloques (`label`) deben redactarse en `kebab-case` utilizando los siguientes prefijos según su función:
+* `setup-`: Inicialización de entornos, librerías, conexiones a bases de datos o variables de entorno.
+* `docker-`: Comandos de orquestación, verificación o ejecución dentro de contenedores.
+* `ddl-`: Sentencias de definición de datos (`CREATE TABLE`, `CREATE INDEX`, particionamiento).
+* `dml-`: Ingestión, inserción, actualización o transformación de datos espaciales.
+* `query-` o `sql-`: Consultas analíticas espaciales, cruces topológicos y agregaciones.
+* `audit-`: Verificación de integridad, conteo de registros o validación de geometrías.
+* `export-` o `backup-`: Extracción modular de esquemas o generación de respaldos binarios.
+
+
+* **Sintaxis estricta de línea de comandos (CLI):** En comandos de terminal (`psql`, `shp2pgsql`, `raster2pgsql`, `docker`, `docker compose`), es obligatorio incluir un espacio en blanco después de cada modificador corto (ej. `-p 5432`, `-h localhost`, `-U usuario`, `-d base_datos`, `-f script.sql`).
+* **Neutralidad de plataforma:** Las instrucciones deben formularse de manera agnóstica al sistema operativo del estudiante, haciendo referencia a "la terminal integrada de Visual Studio Code / Positron", "el equipo local" o "el sistema anfitrión (*host*)".
+* **Estilo editorial:** Redacción impersonal y técnica en *Sentence case* para todos los encabezados (`#`, `##`, `###`), manteniendo mayúsculas exclusivamente en siglas técnicas (SQL, OGC, SRID, EPSG, WKB, DAG). Se debe dejar una línea en blanco antes de iniciar cualquier lista o tabla para garantizar la correcta compilación en Quarto.
+
+## Pipeline de compilación y publicación continua
+
+La integración y compilación de los proyectos se automatiza mediante GitHub Actions a partir del archivo central `_quarto.yml`:
+
+1. **Indexación central:** El archivo `_quarto.yml` compila cada `XX_proyecto_[nombre_tema].qmd` como un capítulo secuencial del libro general de la asignatura.
+2. **Publicación web:** Cada *Pull Request* validado genera el portal web del curso con los capítulos en HTML, las diapositivas interactivas (`XX_slides_[nombre_tema].html`) y las guías de laboratorio.
+3. **Compilación PDF:** El flujo de integración compila el libro consolidado en formato PDF para impresión (vía Typst o LaTeX), unificando índices, referencias cruzadas y bibliografía centralizada.
+

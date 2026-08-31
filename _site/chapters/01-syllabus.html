@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.550">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Bases de Datos Espaciales - 1&nbsp; Syllabus: bases de datos espaciales</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/05-guia_instalacion_vscode_docker.html" rel="next">
+<link href="../chapters/00-prefacio.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/01-syllabus.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Syllabus: bases de datos espaciales</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Bases de Datos Espaciales</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bienvenida</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/00-prefacio.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-syllabus.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Syllabus: bases de datos espaciales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Instalación y entornos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-guia_instalacion_vscode_docker.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación: VS Code y contenedores Docker</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-instalacion_postgresql_18_windows.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Instalación y aprovisionamiento de PostgreSQL 18 y PostGIS 3.6</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13-infraestructura_docker_y_base_datos_espacial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Despliegue docker y verificación de la base de datos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14-respaldo_y_recuperacion_bd.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Respaldo y recuperación de la base de datos sig_db_unal</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Proyectos aplicados</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/proyectos/00-guia_proyecto_final.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Guía metodológica para el proyecto final</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/proyectos/01-temas_proyecto_final.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Temas de proyecto final en bases de datos espaciales</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/proyectos/tema_02_apache_sedona/02-proyecto_apache_sedona.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ficha de propuesta de tema de investigación</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/proyectos/tema_02_apache_sedona/02-rubrica_proyecto_apache_sedona.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Rúbrica de evaluación para el reporte en QMD y el código</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Apéndices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/82-quarto.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Quarto: orquestación y configuración</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/83-docker.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Docker: gestión de contenedores e imágenes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/84-git_github.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Git y GitHub: Sincronización Local-Remota</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/85-vscode.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Visual Studio Code (VScode): Extensiones e Interfaz</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/86-windows.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Temas técnicos sobre Windows</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/87-linux_ubuntu.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Temas Técnicos sobre Linux</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/93-postgresql.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">PostgreSQL</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/98-errata.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Errata</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/99-referencias.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Referencias Bibliográficas</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de Contenidos</h2>
+   
+  <ul>
+  <li><a href="#información-general" id="toc-información-general" class="nav-link active" data-scroll-target="#información-general"><span class="header-section-number">1.1</span> Información general</a></li>
+  <li><a href="#justificación-académica" id="toc-justificación-académica" class="nav-link" data-scroll-target="#justificación-académica"><span class="header-section-number">1.2</span> Justificación académica</a></li>
+  <li><a href="#objetivos-de-aprendizaje" id="toc-objetivos-de-aprendizaje" class="nav-link" data-scroll-target="#objetivos-de-aprendizaje"><span class="header-section-number">1.3</span> Objetivos de aprendizaje</a></li>
+  <li><a href="#estructura-curricular-articulada-en-cuatro-ejes" id="toc-estructura-curricular-articulada-en-cuatro-ejes" class="nav-link" data-scroll-target="#estructura-curricular-articulada-en-cuatro-ejes"><span class="header-section-number">1.4</span> Estructura curricular articulada en cuatro ejes</a></li>
+  <li><a href="#programación-semanal-y-contenidos-detallados-16-semanas" id="toc-programación-semanal-y-contenidos-detallados-16-semanas" class="nav-link" data-scroll-target="#programación-semanal-y-contenidos-detallados-16-semanas"><span class="header-section-number">1.5</span> Programación semanal y contenidos detallados (16 semanas)</a>
+  <ul class="collapse">
+  <li><a href="#eje-1-fundamentos-de-diseño-modelado-y-arquitecturas-de-datos-semanas-1-a-3" id="toc-eje-1-fundamentos-de-diseño-modelado-y-arquitecturas-de-datos-semanas-1-a-3" class="nav-link" data-scroll-target="#eje-1-fundamentos-de-diseño-modelado-y-arquitecturas-de-datos-semanas-1-a-3">Eje 1: fundamentos de diseño, modelado y arquitecturas de datos (semanas 1 a 3)</a></li>
+  <li><a href="#eje-2-motores-relacionales-espaciales-con-postgresql-y-postgis-semanas-4-a-7" id="toc-eje-2-motores-relacionales-espaciales-con-postgresql-y-postgis-semanas-4-a-7" class="nav-link" data-scroll-target="#eje-2-motores-relacionales-espaciales-con-postgresql-y-postgis-semanas-4-a-7">Eje 2: motores relacionales espaciales con PostgreSQL y PostGIS (semanas 4 a 7)</a></li>
+  <li><a href="#evaluación-de-medio-término-y-balance-pedagógico-semana-8" id="toc-evaluación-de-medio-término-y-balance-pedagógico-semana-8" class="nav-link" data-scroll-target="#evaluación-de-medio-término-y-balance-pedagógico-semana-8">Evaluación de medio término y balance pedagógico (semana 8)</a></li>
+  <li><a href="#eje-3-geodatabases-corporativas-diseño-y-formatos-avanzados-semanas-9-a-10" id="toc-eje-3-geodatabases-corporativas-diseño-y-formatos-avanzados-semanas-9-a-10" class="nav-link" data-scroll-target="#eje-3-geodatabases-corporativas-diseño-y-formatos-avanzados-semanas-9-a-10">Eje 3: geodatabases corporativas, diseño y formatos avanzados (semanas 9 a 10)</a></li>
+  <li><a href="#eje-4-paradigmas-emergentes-y-seminario-de-proyectos-finales-semanas-11-a-16" id="toc-eje-4-paradigmas-emergentes-y-seminario-de-proyectos-finales-semanas-11-a-16" class="nav-link" data-scroll-target="#eje-4-paradigmas-emergentes-y-seminario-de-proyectos-finales-semanas-11-a-16">Eje 4: paradigmas emergentes y seminario de proyectos finales (semanas 11 a 16)</a></li>
+  </ul></li>
+  <li><a href="#sistema-de-evaluación-y-ponderación-porcentual" id="toc-sistema-de-evaluación-y-ponderación-porcentual" class="nav-link" data-scroll-target="#sistema-de-evaluación-y-ponderación-porcentual"><span class="header-section-number">1.6</span> Sistema de evaluación y ponderación porcentual</a></li>
+  <li><a href="#estructura-de-entregables-del-proyecto-final-en-el-repositorio-quarto" id="toc-estructura-de-entregables-del-proyecto-final-en-el-repositorio-quarto" class="nav-link" data-scroll-target="#estructura-de-entregables-del-proyecto-final-en-el-repositorio-quarto"><span class="header-section-number">1.7</span> Estructura de entregables del proyecto final en el repositorio Quarto</a></li>
+  <li><a href="#políticas-del-curso-entregas-y-régimen-disciplinario" id="toc-políticas-del-curso-entregas-y-régimen-disciplinario" class="nav-link" data-scroll-target="#políticas-del-curso-entregas-y-régimen-disciplinario"><span class="header-section-number">1.8</span> Políticas del curso, entregas y régimen disciplinario</a>
+  <ul class="collapse">
+  <li><a href="#gestión-de-entregas-y-control-de-versiones-vía-github" id="toc-gestión-de-entregas-y-control-de-versiones-vía-github" class="nav-link" data-scroll-target="#gestión-de-entregas-y-control-de-versiones-vía-github">Gestión de entregas y control de versiones vía GitHub</a></li>
+  <li><a href="#régimen-de-entregas-extemporáneas-y-penalizaciones" id="toc-régimen-de-entregas-extemporáneas-y-penalizaciones" class="nav-link" data-scroll-target="#régimen-de-entregas-extemporáneas-y-penalizaciones">Régimen de entregas extemporáneas y penalizaciones</a></li>
+  <li><a href="#asistencia-puntualidad-y-justificación-de-inasistencias" id="toc-asistencia-puntualidad-y-justificación-de-inasistencias" class="nav-link" data-scroll-target="#asistencia-puntualidad-y-justificación-de-inasistencias">Asistencia, puntualidad y justificación de inasistencias</a></li>
+  <li><a href="#plan-de-compensación-y-recuperación-de-sesiones-por-días-festivos" id="toc-plan-de-compensación-y-recuperación-de-sesiones-por-días-festivos" class="nav-link" data-scroll-target="#plan-de-compensación-y-recuperación-de-sesiones-por-días-festivos">Plan de compensación y recuperación de sesiones por días festivos</a></li>
+  <li><a href="#integridad-académica-ética-en-investigación-y-código-de-conducta" id="toc-integridad-académica-ética-en-investigación-y-código-de-conducta" class="nav-link" data-scroll-target="#integridad-académica-ética-en-investigación-y-código-de-conducta">Integridad académica, ética en investigación y código de conducta</a></li>
+  </ul></li>
+  <li><a href="#referencias-bibliográficas" id="toc-referencias-bibliográficas" class="nav-link" data-scroll-target="#referencias-bibliográficas"><span class="header-section-number">1.9</span> Referencias bibliográficas</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Syllabus: bases de datos espaciales</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="información-general" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="información-general"><span class="header-section-number">1.1</span> Información general</h2>
+<ul>
+<li><strong>Nivel de formación:</strong> Posgrado (Maestría y Doctorado)</li>
+<li><strong>Docente:</strong> Alexys Rodríguez Avellaneda, Ph.D.</li>
+<li><strong>Número de sesiones:</strong> 16 semanas (sesiones presenciales / asistidas de 4 horas)</li>
+<li><strong>Marco científico y metodológico:</strong> Ciencia Abierta (<em>Open Science</em>), principios FAIR (<em>Findable, Accessible, Interoperable, Reusable</em>) y reproducibilidad computacional integral</li>
+<li><strong>Entorno computacional y artefactos reproducibles:</strong> Terminal integrada de Visual Studio Code / Positron, orquestación en contenedores Docker, control de versiones en GitHub y publicación automatizada con Quarto</li>
+<li><strong>Ecosistema de conexión políglota para bases de datos:</strong> Interfaz de línea de comandos (<code>psql</code>), administración gráfica (<code>pgAdmin 4</code>), y controladores analíticos en Python (<code>psycopg</code>, <code>GeoPandas</code>, <code>SQLAlchemy</code>), R (<code>DBI</code>, <code>sf</code>) y Julia (<code>LibPQ.jl</code>, <code>GeoDataFrames.jl</code>)</li>
+</ul>
+</section>
+<section id="justificación-académica" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="justificación-académica"><span class="header-section-number">1.2</span> Justificación académica</h2>
+<p>El incremento en la frecuencia y volumen de captura de información geográfica exige que los profesionales de posgrado dominen la arquitectura interna, el modelado conceptual y la optimización de sistemas de gestión de bases de datos espaciales (SGBDE).</p>
+<p>El programa académico se estructura alrededor de cuatro ejes fundamentales:</p>
+<ol type="1">
+<li><strong>Fundamentos de diseño, modelado y arquitecturas en general:</strong> Principios de modelado conceptual espacial, normalización relacional, diseño gráfico de esquemas y estándares de interoperabilidad del <em>Open Geospatial Consortium</em> (OGC) e ISO.</li>
+<li><strong>PostgreSQL y PostGIS:</strong> Administración del motor relacional, ingeniería directa de esquemas con pgModeler, interacción políglota (<code>psql</code>, pgAdmin, Python, R, Julia), utilidades CLI (<code>shp2pgsql</code>, <code>pgsql2shp</code>), respaldos estructurados con TOC (<code>pg_dump</code>, <code>pg_restore</code>), indexación espacial avanzada, optimización en <em>Spatial SQL</em> y topología persistente.</li>
+<li><strong>Geodatabases:</strong> Arquitecturas corporativas y basadas en archivos (<em>Enterprise</em> y <em>File Geodatabases</em>), ingeniería guiada por modelos (ShapeChange), paradigmas modernos de modelado visual integrado, reglas de atributos, topología y documentación automatizada de esquemas.</li>
+<li><strong>Temas emergentes (proyectos finales):</strong> Paradigmas de computación distribuida, motores OLAP columnares, mallas espaciales discretas globales (DGGS), bases de datos orientadas a grafos y motores NoSQL, liderados y ejecutados experimentalmente por los estudiantes.</li>
+</ol>
+</section>
+<section id="objetivos-de-aprendizaje" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="objetivos-de-aprendizaje"><span class="header-section-number">1.3</span> Objetivos de aprendizaje</h2>
+<p>Al finalizar el periodo académico, el estudiante estará en capacidad de:</p>
+<ul>
+<li>Diseñar esquemas conceptuales y lógicos de bases de datos espaciales aplicando reglas de normalización, restricciones de integridad referencial y estándares internacionales (OGC Simple Features e ISO 19107).</li>
+<li>Utilizar herramientas de diseño gráfico asistido (pgModeler) para formular modelos entidad-relación espaciales y generar scripts DDL reproducibles sobre PostgreSQL/PostGIS.</li>
+<li>Conectar, consultar y manipular bases de datos espaciales mediante clientes nativos (<code>psql</code>, pgAdmin) y flujos programáticos políglotas en Python, R y Julia.</li>
+<li>Modelar, estructurar y documentar geodatabases corporativas combinando arquitecturas guiadas por modelos (ShapeChange) y el paradigma moderno de diseño visual integrado, esquemas XML y reportes automatizados de diccionario de datos.</li>
+<li>Administrar y optimizar instancias relacionales espaciales mediante utilidades CLI, indexación avanzada (GiST, SP-GiST, BRIN), análisis de planes de ejecución y consultas analíticas complejas en <em>Spatial SQL</em>.</li>
+<li>Formular, liderar y evaluar experimentalmente proyectos de investigación aplicada sobre tecnologías geoespaciales emergentes, dirigiendo talleres prácticos en vivo (<em>live coding</em>) y documentando los resultados en reportes reproducibles bajo Quarto.</li>
+</ul>
+</section>
+<section id="estructura-curricular-articulada-en-cuatro-ejes" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="estructura-curricular-articulada-en-cuatro-ejes"><span class="header-section-number">1.4</span> Estructura curricular articulada en cuatro ejes</h2>
+<pre class="text"><code>Eje 1: Fundamentos y diseño (Sem 1-3)
+ ├── Sem 1: Arquitectura y estándares OGC
+ ├── Sem 2: Modelado conceptual y normalización
+ └── Sem 3: Álgebra relacional, DDL y modelado visual con pgModeler (Taller 1)
+Eje 2: PostgreSQL + PostGIS (Sem 4-7)
+ ├── Sem 4: Implementación física, CLI, pgAdmin y conexión políglota (psql, Python, R, Julia)
+ ├── Sem 5: Spatial SQL, DE-9IM y vistas analíticas (Taller 2)
+ ├── Sem 6: Indexación GiST, optimización y respaldos avanzados TOC
+ └── Sem 7: Topología vectorial persistente (Taller 3)
+Evaluación de medio término (Sem 8)
+ └── Examen teórico individual + Asesoría de proyectos
+Eje 3: Geodatabases, diseño y gestión de datos (Sem 9-10)
+ ├── Sem 9: Enterprise Geodatabases, ShapeChange y diseño moderno
+ └── Sem 10: Datos ráster, lógica procedural y flujos ETL (Taller 4)
+Eje 4: Temas emergentes y proyectos finales (Sem 11-16)
+ ├── Sem 11: DuckDB espacial y GeoParquet (Tema 01)
+ ├── Sem 12: Apache Sedona y PySpark (Tema 02)
+ ├── Sem 13: Mallas discretas H3 y S2 (Tema 03)
+ ├── Sem 14: Neo4j Spatial vs. pgRouting (Tema 04)
+ ├── Sem 15: Elasticsearch vs. MongoDB espacial (Tema 05)
+ └── Sem 16: Procedimientos nativos en Rust (Tema 06) + Cierre
+</code></pre>
+</section>
+<section id="programación-semanal-y-contenidos-detallados-16-semanas" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="programación-semanal-y-contenidos-detallados-16-semanas"><span class="header-section-number">1.5</span> Programación semanal y contenidos detallados (16 semanas)</h2>
+<section id="eje-1-fundamentos-de-diseño-modelado-y-arquitecturas-de-datos-semanas-1-a-3" class="level3">
+<h3 class="anchored" data-anchor-id="eje-1-fundamentos-de-diseño-modelado-y-arquitecturas-de-datos-semanas-1-a-3">Eje 1: fundamentos de diseño, modelado y arquitecturas de datos (semanas 1 a 3)</h3>
+<p><strong>Semana 1: Arquitectura de sistemas de bases de datos espaciales y estándares OGC</strong> * Comparación entre el modelo de almacenamiento en archivos planos y los sistemas de gestión de bases de datos relacionales espaciales. * Estándar OGC <em>Simple Features for SQL</em> (SFS) y norma ISO 19107 (<em>Spatial Schema</em>). * Jerarquía de tipos de datos geométricos vectoriales: <code>Point</code>, <code>LineString</code>, <code>Polygon</code>, colecciones homogéneas y <code>GeometryCollection</code>. * Configuración del entorno de desarrollo sobre la terminal integrada de Visual Studio Code y orquestación de servicios en contenedores locales.</p>
+<ul>
+<li><p><strong>Semana 2: Modelado conceptual, lógico y normalización de datos espaciales</strong></p></li>
+<li><p>Diagramas Entidad-Relación extendidos para información espacial (notaciones conceptuales geográficas).</p></li>
+<li><p>Aplicación de formas normales (1FN, 2FN y 3FN) y restricciones de integridad referencial (<code>ON UPDATE</code>, <code>ON DELETE CASCADE / SET NULL</code>).</p></li>
+<li><p>Sistemas de referencia de coordenadas espaciales (catálogo EPSG, tabla <code>spatial_ref_sys</code>, proyecciones cartográficas y transformaciones de datum).</p></li>
+<li><p>Estándares de codificación e intercambio: WKT (<em>Well-Known Text</em>), WKB (<em>Well-Known Binary</em>) y GeoJSON.</p></li>
+<li><p><strong>Semana 3: Álgebra relacional espacial, definición de esquemas DDL y modelado visual con pgModeler</strong></p></li>
+<li><p>Operaciones del álgebra relacional proyectadas al contexto espacial: selección, proyección, unión, diferencia y producto cartesiano.</p></li>
+<li><p>Diseño visual de esquemas espaciales: fundamentos del modelado gráfico relacional.</p></li>
+<li><p>Modelado asistido con <strong>pgModeler</strong>: creación gráfica de tablas, tipos espaciales PostGIS, llaves foráneas, restricciones <code>CHECK</code> e índices.</p></li>
+<li><p>Generación automatizada de scripts DDL (<em>Forward Engineering</em>) y sincronización de esquemas.</p></li>
+<li><p><strong>Evaluación práctica:</strong> <strong>Taller 1: Modelado conceptual, normalización y diseño visual de esquemas DDL con pgModeler.</strong></p></li>
+</ul>
+</section>
+<section id="eje-2-motores-relacionales-espaciales-con-postgresql-y-postgis-semanas-4-a-7" class="level3">
+<h3 class="anchored" data-anchor-id="eje-2-motores-relacionales-espaciales-con-postgresql-y-postgis-semanas-4-a-7">Eje 2: motores relacionales espaciales con PostgreSQL y PostGIS (semanas 4 a 7)</h3>
+<ul>
+<li><p><strong>Semana 4: Implementación física, administración y ecosistema cliente políglota</strong></p></li>
+<li><p>Arquitectura cliente-servidor de PostgreSQL y activación modular de PostGIS.</p></li>
+<li><p>Despliegue del esquema físico a partir de modelos generados en pgModeler e ingeniería inversa (<em>Reverse Engineering</em>).</p></li>
+<li><p>Catálogos del sistema y tablas de metadatos: <code>geometry_columns</code> y <code>spatial_ref_sys</code>.</p></li>
+<li><p>Tipo de dato <code>geometry</code> (cartesiano/plano) frente al tipo <code>geography</code> (esferoidal/geodésico).</p></li>
+<li><p>Ingestión y extracción por consola de comandos: <code>shp2pgsql</code>, <code>pgsql2shp</code> y <code>ogr2ogr</code>.</p></li>
+<li><p>Interfaces de administración y conexión políglota:</p></li>
+<li><p><em>Consola nativa:</em> Cliente interactivo <code>psql</code> (variables de sesión <code>search_path</code>, <code>client_encoding</code>, ejecución de scripts con <code>\i</code>).</p></li>
+<li><p><em>Entorno gráfico:</em> Administración visual de esquemas y servidores con <code>pgAdmin 4</code>.</p></li>
+<li><p><em>Entornos de desarrollo analítico:</em> Conexión y lectura de datos espaciales desde Python (<code>psycopg</code>, <code>GeoPandas</code>), R (<code>DBI</code>, <code>sf</code>) y Julia (<code>LibPQ.jl</code>, <code>GeoDataFrames.jl</code>).</p></li>
+<li><p><strong>Semana 5: Consultas analíticas en Spatial SQL, modelo topológico DE-9IM y vistas espaciales</strong></p></li>
+<li><p>Matriz de intersección de 9 dimensiones extendida (DE-9IM) y formulación de predicados espaciales.</p></li>
+<li><p>Predicados topológicos estándar: <code>ST_Intersects</code>, <code>ST_Contains</code>, <code>ST_Within</code>, <code>ST_Disjoint</code>, <code>ST_Touches</code>, <code>ST_Crosses</code>, <code>ST_Overlaps</code>.</p></li>
+<li><p>Funciones de análisis, construcción y agregación espacial: <code>ST_Buffer</code>, <code>ST_Intersection</code>, <code>ST_Difference</code>, <code>ST_Union</code>, <code>ST_Centroid</code>.</p></li>
+<li><p>Creación y registro de vistas espaciales agregadas (<code>CREATE VIEW</code>) con identificadores únicos para interoperabilidad con software SIG.</p></li>
+<li><p>Extracción de métricas espaciales hacia DataFrames en Python, R y Julia.</p></li>
+<li><p><strong>Evaluación práctica:</strong> <strong>Taller 2: Consultas espaciales avanzadas, uniones espaciales (Spatial Joins), vistas y agregación con PostGIS.</strong></p></li>
+<li><p><strong>Semana 6: Indexación espacial, optimización de consultas y administración avanzada de respaldos</strong></p></li>
+<li><p>Principios teóricos del árbol R (<em>R-Tree</em>) e implementación de índices GiST (<em>Generalized Search Tree</em>) y SP-GiST en PostGIS.</p></li>
+<li><p>Índices de rango de bloques (BRIN) aplicados a series de telemetría masiva ordenada.</p></li>
+<li><p>Operadores espaciales optimizados por índice: delimitador de caja envolvente (<code>&amp;&amp;</code>) y búsqueda de vecinos más cercanos (<em>k-NN</em> vía <code>&lt;-&gt;</code>).</p></li>
+<li><p>Perfilamiento y análisis de planes de ejecución mediante <code>EXPLAIN (ANALYZE, BUFFERS)</code> para diagnóstico de cuellos de botella.</p></li>
+<li><p>Estrategias de respaldo y migración: generación de dumps personalizados (<code>pg_dump -F c</code>), extracción de esquemas y restauración ordenada mediante tablas de contenido (<code>pg_restore -l</code>, <code>pg_restore -L</code>).</p></li>
+<li><p><strong>Semana 7: Topología vectorial persistente y validación de reglas</strong></p></li>
+<li><p>Fundamento del modelo de nodos, aristas (<em>edges</em>) y caras (<em>faces</em>) con la extensión <code>postgis_topology</code>.</p></li>
+<li><p>Garantía de cobertura continua, eliminación de solapes (<em>overlaps</em>) y control de polígonos espurios (<em>slivers</em>).</p></li>
+<li><p>Funciones de validación y reparación automática de geometrías (<code>ST_IsValid</code>, <code>ST_IsValidReason</code>, <code>ST_MakeValid</code>).</p></li>
+<li><p><strong>Evaluación práctica:</strong> <strong>Taller 3: Optimización con índices espaciales, respaldos con TOC, planes de ejecución y topología.</strong></p></li>
+</ul>
+</section>
+<section id="evaluación-de-medio-término-y-balance-pedagógico-semana-8" class="level3">
+<h3 class="anchored" data-anchor-id="evaluación-de-medio-término-y-balance-pedagógico-semana-8">Evaluación de medio término y balance pedagógico (semana 8)</h3>
+<ul>
+<li><strong>Semana 8: Examen teórico individual y asesoría de proyectos de investigación</strong></li>
+<li><strong>Evaluación teórica (Semana 8):</strong> Examen individual escrito sobre diseño conceptual, álgebra relacional, normalización, cálculo espacial, optimización en <em>Spatial SQL</em> y administración de esquemas.</li>
+<li>Sesión de acompañamiento y validación del diseño experimental para los seis equipos del proyecto final.</li>
+</ul>
+</section>
+<section id="eje-3-geodatabases-corporativas-diseño-y-formatos-avanzados-semanas-9-a-10" class="level3">
+<h3 class="anchored" data-anchor-id="eje-3-geodatabases-corporativas-diseño-y-formatos-avanzados-semanas-9-a-10">Eje 3: geodatabases corporativas, diseño y formatos avanzados (semanas 9 a 10)</h3>
+<ul>
+<li><p><strong>Semana 9: Arquitecturas de geodatabases, diseño guiado por modelos y paradigma moderno</strong></p></li>
+<li><p>Conceptos generales de geodatabases: almacenamiento relacional de objetos espaciales, clases de entidad (<em>feature classes</em>), conjuntos de datos (<em>feature datasets</em>) y catálogos.</p></li>
+<li><p>Comparación entre geodatabases basadas en archivos (<em>File Geodatabase</em>, <em>GeoPackage</em>) y geodatabases corporativas multiusuario (<em>Enterprise Geodatabase</em> desplegada sobre PostgreSQL).</p></li>
+<li><p>Enfoque guiado por modelos (<em>Model-Driven Architecture</em> - MDA) y estándares abiertos: transformación automatizada de modelos conceptuales UML a esquemas de geodatabase mediante <strong>ShapeChange</strong>.</p></li>
+<li><p>Paradigma moderno de diseño y gestión de geodatabases:</p></li>
+<li><p><em>Modelado visual integrado (</em>Data design views<em>):</em> Configuración directa e interactiva de campos, subtipos, dominios (rango y valores codificados), valores contingentes y reglas de atributos (<em>attribute rules</em> para cálculo, restricción y validación).</p></li>
+<li><p><em>Extracción y clonación del esquema:</em> Exportación de arquitecturas completas mediante documentos de espacio de trabajo XML (<em>Export XML Workspace Document</em> de tipo <code>SCHEMA_ONLY</code>) para versionamiento en repositorios Git.</p></li>
+<li><p><em>Documentación automática del esquema:</em> Generación del diccionario de datos estructurado en formato Markdown/HTML mediante la herramienta nativa <em>Generate Geodatabase Schema Report</em>.</p></li>
+<li><p>Reglas de topología vectorial en geodatabases: tolerancias de agrupamiento, validación y gestión de excepciones.</p></li>
+<li><p><strong>Semana 10: Almacenamiento ráster, lógica procedural en servidor y flujos ETL</strong></p></li>
+<li><p>Almacenamiento y teselado de datos ráster con la extensión <code>postgis_raster</code> y catálogos de mosaico en geodatabases.</p></li>
+<li><p>Álgebra de mapas en base de datos (<code>ST_MapAlgebra</code>) y extracción de estadísticas zonales (<code>ST_SummaryStats</code>).</p></li>
+<li><p>Funciones almacenadas en PL/pgSQL y disparadores espaciales (<em>triggers</em>) para automatización de integridad en servidor.</p></li>
+<li><p>Construcción de pipelines de extracción, transformación y carga (ETL) utilizando librerías geoespaciales (GDAL/OGR en Python).</p></li>
+<li><p><strong>Evaluación práctica:</strong> <strong>Taller 4: Diseño de geodatabases, reglas de integridad, topología, documentación y flujos ETL.</strong></p></li>
+</ul>
+</section>
+<section id="eje-4-paradigmas-emergentes-y-seminario-de-proyectos-finales-semanas-11-a-16" class="level3">
+<h3 class="anchored" data-anchor-id="eje-4-paradigmas-emergentes-y-seminario-de-proyectos-finales-semanas-11-a-16">Eje 4: paradigmas emergentes y seminario de proyectos finales (semanas 11 a 16)</h3>
+<p>Para una cohorte de 10 a 15 estudiantes, se conforman 6 equipos de trabajo (2 a 3 estudiantes por grupo). Cada semana se destina íntegramente a una temática de investigación.</p>
+<p>El equipo asignado asume la dirección del aula durante la sesión de 2 horas (120 minutos), estructurada estrictamente en tres bloques secuenciales:</p>
+<ul>
+<li><p><strong>Bloque 1 (40 minutos):</strong> Presentación del marco conceptual, arquitectura tecnológica y diseño experimental.</p></li>
+<li><p><strong>Bloque 2 (65 minutos):</strong> Taller práctico guiado en tiempo real (<em>live coding</em>) con la cohorte conectada al entorno.</p></li>
+<li><p><strong>Bloque 3 (15 minutos):</strong> Debate técnico, análisis de limitaciones y retroalimentación docente.</p></li>
+<li><p><strong>Semana 11: Proyecto final 01 — Procesamiento analítico columnar y formatos nativos de nube</strong></p></li>
+<li><p><em>Tecnología:</em> DuckDB espacial y GeoParquet.</p></li>
+<li><p><em>Enfoque del taller:</em> Consultas analíticas vectoriales directas sobre almacenamiento en la nube, evaluación de <em>predicate pushdown</em> y límites de huella de memoria.</p></li>
+<li><p><em>Directores de sesión:</em> Equipo 01.</p></li>
+<li><p><strong>Semana 12: Proyecto final 02 — Escalabilidad y procesamiento masivo distribuido</strong></p></li>
+<li><p><em>Tecnología:</em> Apache Sedona y PySpark.</p></li>
+<li><p><em>Enfoque del taller:</em> <em>Spatial Join</em> masivo sobre clúster distribuido, particionamiento espacial (<em>Quad-Tree</em> / <em>KDB-Tree</em>) y análisis del grafo acíclico dirigido (<em>DAG</em>).</p></li>
+<li><p><em>Directores de sesión:</em> Equipo 02.</p></li>
+<li><p><strong>Semana 13: Proyecto final 03 — Sistemas de mallas espaciales discretas globales (DGGS)</strong></p></li>
+<li><p><em>Tecnología:</em> Mallas jerárquicas Uber H3 y Google S2.</p></li>
+<li><p><em>Enfoque del taller:</em> Agregación espacial de series temporales masivas, reclasificación multi-resolución y evaluación de distorsión métrica frente a índices continuos.</p></li>
+<li><p><em>Directores de sesión:</em> Equipo 03.</p></li>
+<li><p><strong>Semana 14: Proyecto final 04 — Bases de datos espaciales orientadas a grafos y análisis de redes</strong></p></li>
+<li><p><em>Tecnología:</em> Neo4j Spatial frente a pgRouting.</p></li>
+<li><p><em>Enfoque del taller:</em> Construcción de topologías de transporte, ruteo dinámico con Dijkstra / A* y cálculo de isócronas bajo concurrencia.</p></li>
+<li><p><em>Directores de sesión:</em> Equipo 04.</p></li>
+<li><p><strong>Semana 15: Proyecto final 05 — Indexación geoespacial en motores NoSQL para telemetría y flujos en tiempo real</strong></p></li>
+<li><p><em>Tecnología:</em> Elasticsearch / OpenSearch frente a MongoDB espacial.</p></li>
+<li><p><em>Enfoque del taller:</em> Ingestión de eventos de alta frecuencia, consultas concurrentes de <em>geo-fencing</em> e indexación con árboles BKD y mallas <code>2dsphere</code>.</p></li>
+<li><p><em>Directores de sesión:</em> Equipo 05.</p></li>
+<li><p><strong>Semana 16: Proyecto final 06 — Programación procedural en servidor y extensiones nativas</strong></p></li>
+<li><p><em>Tecnología:</em> PL/pgSQL avanzado, PL/Python y extensiones en lenguaje compilado (Rust vía PGRX).</p></li>
+<li><p><em>Enfoque del taller:</em> Evaluación de la sobrecarga de serialización WKB entre cliente y servidor, y <em>benchmarking</em> de algoritmos geométricos en extensiones nativas.</p></li>
+<li><p><em>Directores de sesión:</em> Equipo 06.</p></li>
+<li><p><em>Cierre académico:</em> Integración automatizada del libro del curso compilado con Quarto y balance general de la asignatura.</p></li>
+</ul>
+</section>
+</section>
+<section id="sistema-de-evaluación-y-ponderación-porcentual" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="sistema-de-evaluación-y-ponderación-porcentual"><span class="header-section-number">1.6</span> Sistema de evaluación y ponderación porcentual</h2>
+<div id="tbl-sistema-evaluacion" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-sistema-evaluacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;1.1: Distribución de componentes evaluativos y ponderación porcentual
+</figcaption>
+<div aria-describedby="tbl-sistema-evaluacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Componente</th>
+<th>Instrumento y alcance</th>
+<th>Semana de entrega / aplicación</th>
+<th>Porcentaje</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Talleres prácticos guiados</strong></td>
+<td>4 talleres aplicados (7.5% cada uno)</td>
+<td>Semanas 3, 5, 7 y 10</td>
+<td>30%</td>
+</tr>
+<tr class="even">
+<td><strong>Examen teórico de medio término</strong></td>
+<td>Prueba escrita individual sobre Ejes 1 y 2</td>
+<td>Semana 8</td>
+<td>20%</td>
+</tr>
+<tr class="odd">
+<td><strong>Reporte científico del proyecto final</strong></td>
+<td>Capítulo reproducible en Quarto (<code>.qmd</code>)</td>
+<td>Semana asignada (S11 a S16)</td>
+<td>20%</td>
+</tr>
+<tr class="even">
+<td><strong>Implementación técnica y reproducibilidad</strong></td>
+<td>Repositorio GitHub con entorno Docker / Colab y datos</td>
+<td>Semana asignada (S11 a S16)</td>
+<td>15%</td>
+</tr>
+<tr class="odd">
+<td><strong>Dirección pedagógica y taller guiado</strong></td>
+<td>Liderazgo de la sesión de 2 horas (40m / 65m / 15m)</td>
+<td>Semana asignada (S11 a S16)</td>
+<td>15%</td>
+</tr>
+<tr class="even">
+<td><strong>Total</strong></td>
+<td></td>
+<td></td>
+<td><strong>100%</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="estructura-de-entregables-del-proyecto-final-en-el-repositorio-quarto" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="estructura-de-entregables-del-proyecto-final-en-el-repositorio-quarto"><span class="header-section-number">1.7</span> Estructura de entregables del proyecto final en el repositorio Quarto</h2>
+<p>Cada equipo de investigación debe crear su carpeta correspondiente en el directorio <code>proyectos_finales/</code> respetando la estructura modular estandarizada:</p>
+<pre class="text"><code>proyectos_finales/
+└── tema_XX_[nombre_tema]/
+    ├── XX_proyecto_[nombre_tema].qmd
+    ├── XX_rubrica_[nombre_tema].qmd
+    ├── XX_slides_[nombre_tema].qmd
+    ├── XX_taller_[nombre_tema].qmd
+    └── references.bib
+</code></pre>
+<p><em>(Donde <code>XX</code> corresponde al identificador de dos dígitos del tema: <code>01</code> a <code>06</code>)</em>.</p>
+<p>El paquete de entregables se compone de:</p>
+<ul>
+<li><code>XX_proyecto_[nombre_tema].qmd</code>: Reporte científico completo que se compila como capítulo en el libro del curso.</li>
+<li><code>XX_rubrica_[nombre_tema].qmd</code>: Matriz de evaluación cuantitativa y cualitativa formulada para la práctica.</li>
+<li><code>XX_slides_[nombre_tema].qmd</code>: Presentación interactiva en Quarto RevealJS para el Bloque 1.</li>
+<li><code>XX_taller_[nombre_tema].qmd</code>: Guía de laboratorio ejecutable paso a paso para el Bloque 2.</li>
+<li><code>references.bib</code>: Archivo BibTeX con la literatura técnica y científica citada.</li>
+</ul>
+</section>
+<section id="políticas-del-curso-entregas-y-régimen-disciplinario" class="level2" data-number="1.8">
+<h2 data-number="1.8" class="anchored" data-anchor-id="políticas-del-curso-entregas-y-régimen-disciplinario"><span class="header-section-number">1.8</span> Políticas del curso, entregas y régimen disciplinario</h2>
+<section id="gestión-de-entregas-y-control-de-versiones-vía-github" class="level3">
+<h3 class="anchored" data-anchor-id="gestión-de-entregas-y-control-de-versiones-vía-github">Gestión de entregas y control de versiones vía GitHub</h3>
+<p>Todas las asignaciones prácticas, talleres y reportes del curso se gestionan de manera obligatoria a través de la organización de GitHub del curso.</p>
+<ul>
+<li><strong>Enlaces de asignación:</strong> Cada taller y proyecto cuenta con un enlace individual o grupal suministrado por el docente a través del cual se genera automáticamente el repositorio privado de entrega.</li>
+<li><strong>Trazabilidad de commits:</strong> Los entregables deben reflejar un historial de versiones progresivo y verificable. No se aceptan entregas estructuradas mediante un único <em>commit</em> final masivo.</li>
+<li><strong>Estado de compilación:</strong> El código de las guías y reportes en Quarto (<code>.qmd</code>) debe compilar sin errores en las pruebas automatizadas del repositorio.</li>
+</ul>
+</section>
+<section id="régimen-de-entregas-extemporáneas-y-penalizaciones" class="level3">
+<h3 class="anchored" data-anchor-id="régimen-de-entregas-extemporáneas-y-penalizaciones">Régimen de entregas extemporáneas y penalizaciones</h3>
+<p>Las fechas y horas límites fijadas en cada asignación son de estricto cumplimiento.</p>
+<ul>
+<li><strong>Penalización por retraso:</strong> Cada semana completa o fracción de semana de retraso en la entrega de cualquier taller o reporte implica una deducción automática de <strong>5 unidades (puntos)</strong> sobre la calificación final obtenida en dicha actividad.</li>
+<li><strong>Límite de recepción extemporánea:</strong> Ningún trabajo se evalúa si la entrega supera dos semanas posteriores a la fecha original de corte.</li>
+</ul>
+</section>
+<section id="asistencia-puntualidad-y-justificación-de-inasistencias" class="level3">
+<h3 class="anchored" data-anchor-id="asistencia-puntualidad-y-justificación-de-inasistencias">Asistencia, puntualidad y justificación de inasistencias</h3>
+<p>Dada la naturaleza teórico-práctica y el nivel de posgrado de la asignatura, la presencia activa es fundamental para el desarrollo de las competencias.</p>
+<ul>
+<li><strong>Control de asistencia:</strong> Se realiza registro formal de asistencia al inicio de cada una de las sesiones de clase.</li>
+<li><strong>Asistencia obligatoria:</strong> Se exige un porcentaje mínimo de asistencia del 80% para la aprobación del curso.</li>
+<li><strong>Justificación de inasistencias:</strong> Toda ausencia debe ser soportada mediante un documento formal válido (incapacidad médica o justificación laboral/académica oficial) remitido al docente dentro de los cinco días hábiles posteriores a la inasistencia.</li>
+</ul>
+</section>
+<section id="plan-de-compensación-y-recuperación-de-sesiones-por-días-festivos" class="level3">
+<h3 class="anchored" data-anchor-id="plan-de-compensación-y-recuperación-de-sesiones-por-días-festivos">Plan de compensación y recuperación de sesiones por días festivos</h3>
+<p>Dado que el curso se programa los días lunes, el calendario académico coincide con la pérdida de al menos cuatro (4) jornadas de clase debido a días festivos.</p>
+<ul>
+<li><strong>Mecanismo de concertación:</strong> Durante la primera sesión presencial, el docente y la cohorte definirán y concertarán el cronograma de recuperación horaria.</li>
+<li><strong>Modalidad de compensación:</strong> Las sesiones equivalentes se desarrollarán mediante encuentros sincrónicos remotos y talleres prácticos virtuales estructurados en el repositorio del curso, asegurando el cumplimiento íntegro de las 64 horas de formación presencial/asistida.</li>
+</ul>
+</section>
+<section id="integridad-académica-ética-en-investigación-y-código-de-conducta" class="level3">
+<h3 class="anchored" data-anchor-id="integridad-académica-ética-en-investigación-y-código-de-conducta">Integridad académica, ética en investigación y código de conducta</h3>
+<p>La investigación y práctica en bases de datos espaciales exige honestidad científica y transparencia metodológica.</p>
+<ul>
+<li><strong>Originalidad y código abierto:</strong> El código fuente desarrollado debe ser original o citar explícitamente las librerías, repositorios y fuentes de inspiración utilizadas, respetando los términos de sus licencias.</li>
+<li><strong>Uso ético de asistentes de IA:</strong> Las herramientas de asistencia de código basadas en inteligencia artificial son bienvenidas como aceleradores de productividad, siempre que el estudiante comprenda, justifique y pueda explicar cada línea de código implementada. Queda prohibida la generación no supervisada y acrítica de reportes teóricos.</li>
+<li><strong>Plagio y fraude académico:</strong> El plagio de textos, la copia directa entre estudiantes o la falsificación de métricas de rendimiento en los experimentos analíticos se sancionará de acuerdo con los reglamentos disciplinarios de posgrado vigentes.</li>
+</ul>
+</section>
+</section>
+<section id="referencias-bibliográficas" class="level2" data-number="1.9">
+<h2 data-number="1.9" class="anchored" data-anchor-id="referencias-bibliográficas"><span class="header-section-number">1.9</span> Referencias bibliográficas</h2>
+<ul>
+<li>Güting, R. H., &amp; Schneider, M. (2005). <em>Moving objects databases</em>. Morgan Kaufmann.</li>
+<li>Li, C. C., &amp; Shan, J. (Eds.). (2015). <em>Advances in spatial and temporal databases</em>. Springer International Publishing.</li>
+<li>Marquez, A. (2015). <em>PostGIS essentials</em>. Packt Publishing Ltd.</li>
+<li>Obe, R. O., &amp; Hsu, L. S. (2021). <em>PostGIS in action</em> (3rd ed.). Manning Publications.</li>
+<li>Open Geospatial Consortium. (2011). <em>OpenGIS implementation standard for geographic information - Simple feature access - Part 1: Common architecture</em> (OGC 06-103r4).</li>
+<li>Rigaux, P., Scholl, M., &amp; Voisard, A. (2001). <em>Spatial databases: With application to GIS</em>. Morgan Kaufmann.</li>
+<li>Shekhar, S., &amp; Chawla, S. (2003). <em>Spatial databases: A tour</em>. Prentice Hall.</li>
+<li>Yeung, A. K., &amp; Hall, G. B. (2007). <em>Spatial database systems: Design, implementation and project management</em>. Springer Science &amp; Business Media.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/00-prefacio.html" class="pagination-link" aria-label="Prefacio">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Prefacio</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/05-guia_instalacion_vscode_docker.html" class="pagination-link" aria-label="Guía de instalación: VS Code y contenedores Docker">
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación: VS Code y contenedores Docker</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

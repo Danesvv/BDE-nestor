@@ -1,0 +1,68 @@
+# Ficha de propuesta de tema de investigación
+
+## Información general
+
+| Componente | Detalle |
+| :--- | :--- |
+| **Tema principal** | Arquitecturas de *Big Data* y procesadores distribuidos |
+| **Subtema** | Escalabilidad y procesamiento masivo de datos espaciales |
+| **Título del proyecto** | Evaluación del rendimiento y escalabilidad en el procesamiento vectorial masivo mediante Apache Sedona y PySpark |
+| **Nivel** | Posgrado |
+
+: Información general de la propuesta de investigación {#tbl-info-apache-sedona}
+
+## Descripción del proyecto
+
+El incremento en la frecuencia de adquisición y resolución de datos geoespaciales (telemetría IoT, registros de movilidad, fotogrametría y sensores remotos) ha expuesto las limitaciones de los sistemas de gestión de bases de datos relacionales (SGBD) tradicionales. Cuando los volúmenes de datos superan la memoria o la capacidad de cómputo de un solo nodo, las operaciones analíticas espaciales intensivas —como los *Spatial Joins*— experimentan cuellos de botella severos.
+
+Este proyecto de investigación explora la transición desde el paradigma monolítico cliente-servidor hacia arquitecturas de cómputo distribuido en memoria mediante **Apache Sedona**. Se analizará cómo las especificaciones del *Open Geospatial Consortium* (OGC) y el estándar *Spatial SQL* se adaptan a entornos de procesamiento masivo, evaluando el impacto del particionamiento espacial, la indexación distribuida y los formatos *Cloud-Native Geospatial*.
+
+## Objetivos de aprendizaje
+
+Al finalizar el proyecto, el equipo de investigación estará en capacidad de:
+
+1. **Evaluar** los límites de escalabilidad horizontal y vertical de los SGBD espaciales relacionales ante cargas de datos masivas.
+2. **Analizar** la arquitectura interna de Apache Sedona, enfocándose en la distribución de estructuras de datos geométricos y ráster en clústeres computacionales.
+3. **Formular** pipelines analíticos de *Spatial SQL* y PySpark optimizados para consultas espaciales a gran escala.
+4. **Contrastar** la eficiencia de almacenamiento y E/S de los formatos tradicionales frente a formatos nativos de nube (*GeoParquet*, *GeoTIFF*, *Delta Lake*).
+
+## Preguntas de investigación orientadoras
+
+Para estructurar el marco analítico, el proyecto de investigación debe dar respuesta a las siguientes interrogantes:
+
+* ¿En qué umbral de volumen de datos o complejidad geométrica deja de ser eficiente un SGBD relacional tradicional frente a un procesador distribuido?
+* ¿Cómo afecta la elección de la estrategia de particionamiento espacial (*Quad-Tree* frente a *KDB-Tree*) al fenómeno de *data shuffling* durante un *Spatial Join* en memoria distribuida?
+* ¿Cuál es la ganancia en rendimiento de E/S y velocidad de consulta al migrar conjuntos de datos desde formatos tradicionales (*Shapefile* / *GeoJSON*) hacia *GeoParquet* en un entorno de lago de datos (*Data Lakehouse*)?
+
+## Desarrollo práctico y metodología del taller
+
+El proyecto debe respaldarse con un diseño experimental replicable estructurado en tres fases:
+
+1. **Fase 1: Configuración de la línea base y prueba de carga (SGBD monolítico):** Determinación del cuello de botella.
+
+   * Seleccionar un conjunto de datos espaciales masivo (ej. puntos de telemetría GPS con más de cinco millones de registros y una capa poligonal de zonificación urbana o ambiental).
+   * Configurar la base de datos relacional espacial en el contenedor del curso (PostgreSQL/PostGIS).
+   * Ejecutar una consulta de cruce espacial (`ST_Intersects` o `ST_Contains`) documentando tiempos de ejecución, consumo de CPU, E/S de disco y uso de memoria RAM mediante `EXPLAIN ANALYZE`.
+
+2. **Fase 2: Implementación distribuida en Apache Sedona:** Despliegue y ejecución en PySpark.
+
+   * Desplegar el entorno de ejecución desde la terminal integrada de Visual Studio Code o Positron utilizando el contenedor Docker configurado con Apache Spark y Sedona.
+   * Ingestar los datos en formato optimizado (*GeoParquet*).
+   * Aplicar indexación espacial en memoria (*R-Tree*) y configurar el particionamiento de los DataFrames espaciales.
+   * Replicar el *Spatial Join* mediante PySpark y sentencias de *Spatial SQL*.
+
+3. **Fase 3: Análisis comparativo y perfilamiento:** Evaluación de rendimiento.
+
+   * Comparar métricas de ejecución entre ambas arquitecturas (tiempo total, velocidad de lectura, consumo de recursos).
+   * Analizar el grafo acíclico dirigido (*DAG*) en la interfaz de Spark para evaluar la eficiencia del particionamiento espacial y la reducción de transferencias de datos entre ejecutores.
+
+## Entregables esperados
+
+El equipo de investigación deberá estructurar y publicar en el repositorio central los siguientes artefactos:
+
+* **`02_proyecto_apache_sedona.qmd`:** Reporte de investigación estructurado bajo formato científico con la justificación teórica, el diseño experimental, los gráficos comparativos de rendimiento y la discusión técnica.
+* **`02_rubrica_apache_sedona.qmd`:** Matriz de evaluación del proyecto con criterios cuantitativos y cualitativos específicos.
+* **`02_slides_apache_sedona.qmd`:** Presentación interactiva en Quarto RevealJS para la exposición magistral del Bloque 1.
+* **`02_taller_apache_sedona.qmd`:** Guía ejecutable paso a paso del laboratorio guiado del Bloque 2, con celdas de código etiquetadas bajo la taxonomía estándar (`setup-`, `ddl-`, `dml-`, `query-`, `audit-`).
+* **`references.bib`:** Archivo BibTeX con las fuentes bibliográficas y referencias citadas.
+

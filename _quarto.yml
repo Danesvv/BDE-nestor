@@ -1,0 +1,274 @@
+# CONFIGURACIÓN DEL PROYECTO
+project:
+  type: book                     # Tipo: libro (genera estructura de capítulos)
+  output-dir: _site              # Carpeta de salida para archivos generados
+
+lang: es  # <--- VITAL: Esto activa el español para todo el proyecto (HTML y PDF)
+
+# CONFIGURACIÓN DEL LIBRO
+book:
+  title: "Bases de Datos Espaciales"
+  author: "Alexys H. Rodríguez-Avellaneda Ph.D."
+  date: today                    # Fecha automática
+  #language: es                   # Idioma: español
+  #language:
+  #    chapter-label-single: "Capítulo"
+  #    chapter-label-plural: "Capítulos"
+  #    appendices-title: "Apéndices"
+  #lang: es
+  language: _language.yml  # <--- Aquí apuntas al archivo
+
+  # FUSIONAMOS TODO AQUÍ (Sin repetir la palabra 'language')
+  #language:
+  #  chapter-label-single: "Capítulo"
+  #  chapter-label-plural: "Capítulos"
+  #  appendices-title: "Apéndices"
+  #  # Añadimos estas para asegurar el HTML
+  #  toc-title-document: "Tabla de contenidos"
+  #  section-title-abstract: "Resumen"
+  #  lof-title-document: "Lista de Figuras"
+  #  lot-title-document: "Lista de Tablas"
+
+  # ESTRUCTURA DEL LIBRO
+  chapters:
+    - index.qmd                  # Portada/índice
+    - chapters/00-prefacio.qmd             # Prefacio (sin numeración)
+    - chapters/01-syllabus.qmd
+    - part: "Instalación y entornos"  # Primera parte
+      chapters:                  # Capítulos de esta parte
+        - chapters/05-guia_instalacion_vscode_docker.qmd
+        - chapters/10-instalacion_postgresql_18_windows.qmd
+      #  - chapters/11_migracion_postgresql_18_1_a_18_6.qmd
+      #  - chapters/12_despliegue_docker_y_extraccion_modular_esquemas.qmd
+        - chapters/13-infraestructura_docker_y_base_datos_espacial.qmd
+        - chapters/14-respaldo_y_recuperacion_bd.qmd
+      #  - chapters/diagramas_mermaid.qmd
+      #  - chapters/diagramas_graphviz.qmd
+    #- part: "Fundamentos"        # Segunda parte
+    #  chapters:
+    #    - chapters/98-errata.qmd
+    - part: "Proyectos aplicados"
+      chapters:
+        - chapters/proyectos/00-guia_proyecto_final.qmd
+        - chapters/proyectos/01-temas_proyecto_final.qmd
+        - chapters/proyectos/tema_02_apache_sedona/02-proyecto_apache_sedona.qmd
+        - chapters/proyectos/tema_02_apache_sedona/02-rubrica_proyecto_apache_sedona.qmd
+  # APÉNDICES (aparecen después de los capítulos)
+  appendices:
+    - chapters/82-quarto.qmd              # Información Adicional Quarto
+    - chapters/83-docker.qmd              # Información sogre Docker Desktop
+    - chapters/84-git_github.qmd          # Informaión sobre Git y GitHub
+    - chapters/85-vscode.qmd              # Información sobre VSCode
+    - chapters/86-windows.qmd             # Información sobre Windows
+    - chapters/87-linux_ubuntu.qmd        # Información sobre Linux Ubuntu
+    - chapters/93-postgresql.qmd          # Información sobre PostgreSQL + PostGIS
+    - chapters/98-errata.qmd              # Erratas
+    - chapters/99-referencias.qmd         # Referencias bibliográficas
+    # IMPORTANTE: Este archivo crea la sección de referencias al final
+    # Si se quita, las referencias aparecerán sin título en cada capítulo (HTML)
+    # o no aparecerán agrupadas al final (PDF)
+
+crossref:  # <--- PERSONALIZACIÓN DE REFERENCIAS
+  fig-title: "Figura"
+  tbl-title: "Tabla"
+  sec-prefix: "Sección"
+  eq-prefix: "Ecuación"
+
+execute:
+  freeze: auto  # 'auto' re-ejecuta solo si el archivo .qmd cambió
+  
+# CONFIGURACIÓN DE BIBLIOGRAFÍA (GLOBAL)
+bibliography: referencias.bib     # Archivo BibTeX con todas las referencias
+#csl: https://www.zotero.org/styles/apa  # Estilo de citación: APA
+csl: apa.csl # Descargado de https://www.zotero.org/styles/apa
+link-citations: true             # Enlaza citas con la bibliografía
+
+# NIVEL GLOBAL (RECOMENDADO)
+number-sections: true
+
+# FORMATOS DE SALIDA
+format:
+  # FORMATO HTML (para web)
+  html:
+    theme: cosmo                 # Tema visual para HTML
+    toc: true                    # Tabla de contenidos: activada
+    toc-depth: 3                 # Profundidad del TOC: hasta nivel 3 (###)
+    #number-sections: true        # Numeración automática de secciones
+    number-depth: 2              # Numerar hasta nivel 2 (##)
+    #lof: true  # <--- Fuerza la Lista de Figuras
+    #lot: true  # <--- Fuerza la Lista de Tablas
+    # reference-location: section # NO FUNCIONA con bibliografía global
+    # Opciones: 'section' (final de sección) o 'document' (final del documento)
+    # Con bibliografía global, las referencias solo aparecen en el apéndice 93_references.qmd
+    # TÍTULO EN ESPAÑOL PARA HTML
+    toc-title: "Tabla de Contenidos"
+    lof-title: "Lista de Figuras"
+    lot-title: "Lista de Tablas"
+
+  # FORMATO PDF (para impresión)
+  pdf:
+    documentclass: book          # Clase LaTeX: libro. Puedes usar "scrreport" (usa arabigo en la numeración inicial) o "book" (usa romanos en la paginación inicial)
+    papersize: letter            # Tamaño de papel: carta
+    prefer-html: true      # <--- Lo que activamos para los mapas
+    # MOTOR PDF MEJORADO - DEL OTRO YAML (xelatex puede manejar mejor caracteres especiales)
+    # PRUEBA CON: lualatex (actual) o xelatex (alternativa)
+    pdf-engine: lualatex         # o xelatex para probar si hay problemas
+    keep-tex: true
+    cite-method: citeproc  # <-- AGREGA ESTO EXPLICITAMENTE
+
+    # CONFIGURACIÓN DIRECTA PARA TÍTULOS EN ESPAÑOL
+    # Esto va AQUÍ, NO en include-in-header
+    # lang: es-ES
+    toc-title: "Tabla de Contenidos"
+    lof-title: "Lista de Figuras"
+    lot-title: "Lista de Tablas"
+
+    geometry:                    # Márgenes de la página
+      - top=2.5cm
+      - bottom=2.5cm
+      - left=2.5cm
+      - right=2.5cm
+    
+    # Salida mermaid a PDF
+    mermaid-format: png
+    mermaid:
+      chrome-args: 
+        - "--no-sandbox"
+        - "--disable-gpu"
+        - "--disable-dev-shm-usage"
+        - "--headless"
+
+    # CONFIGURACIÓN LaTeX (se inserta en el preámbulo)
+    include-in-header:
+      text: |
+        % CENTRADO FORZADO DE TODAS LAS FIGURAS EN PDF
+        \usepackage{etoolbox}
+        \AtBeginEnvironment{figure}{\centering}
+
+        % Añade espacio entre párrafos y elimina la sangría
+        \usepackage{parskip}
+
+        % para girar a landscape \blandscape y retornar \elandscape
+        \usepackage{pdflscape}      
+        \usepackage{emptypage}   % Elimina números en páginas vacías
+        
+        % \usepackage[spanish]{babel}
+
+        %PAQUETES APRA COLOREO DE TABLAS
+        \usepackage{colortbl}
+
+        % 2. CIRUGÍA DE EMOJIS PARA LUALATEX
+        % Esto mapea los símbolos que causan error a una fuente compatible
+        \usepackage{fontspec}
+        \usepackage{newunicodechar}
+        
+        % Definición con la ruta exacta que encontró fc-list
+        \newfontfamily{\symbolsfont}{Symbola}[
+          Path=/usr/share/fonts/truetype/ancient-scripts/,
+          Extension=.ttf,
+          UprightFont=*_hint,
+          ErrorIfNotFound=false
+        ]
+        
+        % Mapeo de caracteres detectados en tu error:
+        \newunicodechar{🐍}{{\symbolsfont 🐍}}
+        \newunicodechar{✅}{{\symbolsfont ✅}}
+        \newunicodechar{❌}{{\symbolsfont ❌}}
+        \newunicodechar{⚡}{{\symbolsfont ⚡}}
+        \newunicodechar{🟣}{{\symbolsfont 🟣}}
+        \newunicodechar{🟤}{{\symbolsfont 🟤}}
+        \newunicodechar{🏁}{{\symbolsfont 🏁}}
+        \newunicodechar{🌟}{{\symbolsfont 🌟}}
+        \newunicodechar{↔}{{\symbolsfont ↔}}
+
+        % PAQUETES PARA AJUSTAR CÓDIGO
+        \usepackage{fvextra}  % Mejoras para listings
+        \usepackage{xcolor}
+        \usepackage{listings}
+        
+        % CONFIGURACIÓN GENERAL PARA TODOS LOS BLOQUES DE CÓDIGO
+        \lstset{
+          basicstyle=\ttfamily\footnotesize,
+          breaklines=true,
+          breakatwhitespace=false,  % Permite dividir EN CUALQUIER PUNTO
+          breakindent=0pt,
+          prebreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\hookrightarrow}},
+          postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}\space},
+          columns=fullflexible,
+          showstringspaces=false,
+          frame=single,
+          framerule=0.5pt,
+          framesep=5pt,
+          % CARACTERES ESPECIALES QUE PUEDEN DIVIDIRSE
+          literate={\\}{{\textbackslash}}1
+                  {~}{{\textasciitilde}}1
+                  {|}{{\textbar}}1
+                  {/}{{/}}1
+                  {=}{{=}}1
+                  {-}{{-}}1,
+        }
+
+        % CONFIGURACIÓN ESPECÍFICA PARA BASH/SHELL
+        \lstdefinestyle{bash}{
+          language=bash,
+          basicstyle=\ttfamily\footnotesize,
+          breaklines=true,
+          breakatwhitespace=false,
+          morekeywords={sudo, apt-get, curl, docker},
+          keywordstyle=\color{blue},
+          commentstyle=\color{gray},
+          stringstyle=\color{red},
+          showstringspaces=false,
+        }
+        
+        % APLICAR ESTILO BASH AUTOMÁTICAMENTE
+        \lstnewenvironment{bashcode}{\lstset{style=bash}}{}
+        
+        % SOBRESCRIBIR ENTORNOS DE QUARTO
+        \usepackage{fancyvrb}
+        \fvset{
+          fontsize=\footnotesize,
+          frame=single,
+          framesep=3mm,
+          breaklines=true,
+          breakanywhere=true,  % CLAVE: permite dividir en cualquier carácter
+          baselinestretch=0.8,
+        }
+        
+        % PARA LOS BLOQUES Shaded DE QUARTO
+        \RecustomVerbatimEnvironment{Highlighting}{Verbatim}{
+          breaklines=true,
+          breakanywhere=true,
+          commandchars=\\\{\},
+          fontsize=\footnotesize,
+        }
+
+        % NOTA: NO usar cite-method: biblatex aquí porque:
+        % 1. Causa conflicto con csl: apa
+        % 2. Genera error "Option clash for package biblatex"
+        % 3. Pandoc maneja automáticamente las citas con el CSL APA
+    
+    # reference-location: section  # NO tiene efecto con bibliografía global
+    # Las referencias aparecen solo donde está 93_references.qmd
+    
+    linestretch: 1.25            # Espaciado entre líneas
+    toc: true                    # Tabla de contenidos en PDF
+    toc-depth: 3                 # Profundidad del TOC en PDF
+    lof: true  # <--- Fuerza la Lista de Figuras
+    lot: true  # <--- Fuerza la Lista de Tablas    
+    #number-sections: true        # Numerar secciones en PDF
+    colorlinks: true             # Enlaces en color (no cajas)
+    fig-cap-location: bottom     # Ubicación de leyendas de figuras: abajo
+
+# RESUMEN DEL COMPORTAMIENTO:
+# 1. Todas las citas [@autor] en cualquier archivo se recopilan automáticamente
+# 2. Se muestran ÚNICAMENTE en 93_references.qmd (apéndice final)
+# 3. HTML: Referencias al final del libro, no por capítulo
+# 4. PDF: Referencias como apéndice final con título
+# 5. Estilo APA aplicado automáticamente
+# 6. Sin conflictos LaTeX/CSL
+
+# PARA REFERENCIAS POR CAPÍTULO (NO esta configuración):
+# 1. Quitar bibliography, csl, link-citations del YAML
+# 2. Agregar esos metadatos en cada archivo .qmd individual
+# 3. Agregar "::: {#refs} :::" al final de cada capítulo

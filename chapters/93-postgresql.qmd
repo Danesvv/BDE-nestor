@@ -1,0 +1,197 @@
+# PostgreSQL {#sec-anexo-postgresql}
+
+## Introducción al cliente interactivo y por lotes (psql) {#sec-anexo-psql}
+
+La herramienta `psql` es la interfaz de línea de comandos (CLI) nativa y oficial de PostgreSQL. Construida directamente sobre la biblioteca de bajo nivel `libpq`, proporciona un canal de comunicación directo, ligero y eficiente con el motor de base de datos, libre del consumo de recursos de memoria y la sobrecarga gráfica asociados a entornos de escritorio.
+
+En la administración avanzada y el análisis geoespacial, `psql` cumple dos funciones primordiales:
+
+* **Modo interactivo:** Permite explorar catálogos, inspeccionar esquemas, auditar tablas y ejecutar funciones espaciales directamente desde la consola de comandos.
+* **Modo por lotes (batch / scripting):** Permite ejecutar sentencias no interactivas (`-c`) o procesar archivos de transacciones DDL/DML masivas (`-f`), facilitando la automatización de flujos de trabajo reproducibles y la compilación dinámica de reportes en Quarto.
+
+
+### Anatomía de comandos: metacomandos de barra invertida frente a sentencias SQL {#sec-anexo-metacomandos}
+
+Una característica distintiva de `psql` es la separación estricta entre sentencias SQL estándar y metacomandos propios del cliente:
+
+* **Sentencias SQL:** Instrucciones que se envían directamente al analizador sintáctico del motor relacional (`SELECT`, `INSERT`, `CREATE TABLE`). Deben terminar obligatoriamente con punto y coma (`;`).
+* **Metacomandos de barra invertida (*backslash commands*):** Instrucciones interpretadas y ejecutadas internamente por `psql` en el lado del cliente para inspeccionar metadatos, gestionar parámetros de la sesión o interactuar con el sistema anfitrión sin requerir consultas directas a `information_schema` o `pg_catalog`. No requieren punto y coma al final.
+
+| Metacomando | Función en la administración y análisis de bases de datos |
+| - | --- |
+| `\c [base_datos] [usuario]` | Cambia la conexión de la sesión activa hacia otra base de datos o asume un rol de usuario diferente. |
+| `\l` o `\l+` | Lista todas las bases de datos en el clúster con detalles de tamaño, propietario y codificación. |
+| `\dn` o `\dn+` | Lista los esquemas disponibles en la base de datos conectada. |
+| `\dt [esquema].*` | Muestra el catálogo de tablas relacionales existentes en un esquema específico. |
+| `\d+ [tabla]` | Describe la estructura detallada de una tabla (columnas, tipos de datos, restricciones e índices). |
+| `\di` o `\di+` | Lista los índices de la base de datos (fundamental para auditar la creación de índices espaciales GiST). |
+| `\dv` o `\dv+` | Muestra el catálogo de vistas lógicas y vistas materializadas instanciadas en el esquema. |
+| `\df` o `\df+` | Lista las funciones disponibles (útil para auditar el catálogo algorítmico `ST_*` de PostGIS). |
+| `\dx` | Lista las extensiones instaladas en la base de datos activa (`postgis`, `postgis_raster`, etc.). |
+| `\du` o `\du+` | Muestra los roles de usuario y los privilegios de acceso definidos en el clúster. |
+| `\x` | Alterna la visualización de resultados de consola entre formato tabular y formato expandido (registro por fila). |
+| `\timing` | Activa el cronómetro de sesión para medir el tiempo de ejecución analítica (esencial en perfilamiento espacial). |
+| `\i [archivo.sql]` | Importa y ejecuta un archivo de procesamiento por lotes (*batch*) con sentencias SQL desde el sistema anfitrión. |
+| `\copy` | Ejecuta transferencias eficientes en flujos de E/S entre tablas relacionales y archivos planos locales (CSV, TXT). |
+| `\e` | Abre la última consulta ejecutada en el búfer utilizando el editor de texto predeterminado del sistema anfitrión. |
+| `\q` | Cierra la sesión activa y finaliza el proceso del cliente interactivo en la terminal integrada. |
+| `\?` | Despliega el manual de ayuda detallado del catálogo completo de metacomandos soportados por el cliente. |
+
+: Metacomandos esenciales de inspección y administración en psql {#tbl-metacomandos-psql}
+
+
+### Parámetros de invocación y modificadores de línea de comandos {#sec-anexo-parametros-cli}
+
+Al invocar utilidades cliente desde la consola de comandos o mediante scripts de automatización en la terminal integrada de Visual Studio Code, se utilizan modificadores estandarizados para controlar el destino, la autenticación y el comportamiento de la sesión.
+
+Las herramientas cliente de PostgreSQL (`psql`, `pg_dump`, `pg_restore`) y los cargadores espaciales de PostGIS (`shp2pgsql`, `raster2pgsql`) comparten este conjunto de parámetros administrados por la biblioteca `libpq`:
+
+A continuación se presenta la tabla integrada con los modificadores de control de formato y ajuste de salida para `psql` (`-x` y `-P`), manteniendo la estructura taxonómica, el espaciado estricto en banderas CLI y las convenciones de Quarto:
+
+| Bandera corta | Modificador largo | Utilidades compatibles | Variable de entorno | Descripción técnica y función operativa |
+| -- | --- | - | - | --- |
+| `-h <host>` | `--host=<host>` | `psql`, `pg_dump`, `pg_restore`, `shp2pgsql` | `PGHOST` | Nombre de host, alias DNS de red o dirección IP de la interfaz donde el motor escucha conexiones. |
+| `-p <puerto>` | `--port=<puerto>` | `psql`, `pg_dump`, `pg_restore`, `shp2pgsql` | `PGPORT` | Puerto TCP de enlace al servicio de base de datos (`5432` por defecto). |
+| `-U <usuario>` | `--username=<usuario>` | `psql`, `pg_dump`, `pg_restore`, `shp2pgsql` | `PGUSER` | Rol o cuenta de usuario con privilegios para autenticar la sesión. |
+| `-d <base_datos>` | `--dbname=<base_datos>` | `psql`, `pg_dump`, `pg_restore`, `shp2pgsql` | `PGDATABASE` | Nombre del catálogo de base de datos relacional objetivo. |
+| `-W` | `--password` | `psql`, `pg_dump`, `pg_restore` | `PGPASSWORD` | Fuerza la solicitud interactiva de la contraseña en la consola antes de abrir el socket de conexión. |
+| `-c <consulta>` | `--command=<consulta>` | `psql` | N/A | Pasa una cadena con instrucciones SQL o metacomandos para ejecución no interactiva y finaliza la sesión. |
+| `-f <archivo>` | `--file=<archivo>` | `psql`, `pg_dump`, `pg_restore` | N/A | En `psql`, lee e inyecta un script SQL; en `pg_dump`/`pg_restore`, especifica el archivo de respaldo de entrada o salida. |
+| `-x` | `--expanded` | `psql` | N/A | Activa el modo de visualización expandida vertical (pares atributo-valor por registro) para prevenir desbordes horizontales en salidas tabulares extensas. |
+| `-P <opcion=valor>` | `--pset=<opcion=valor>` | `psql` | N/A | Define parámetros de formato de impresión en la consola (por ejemplo, `-P format=wrapped` junto con `-P columns=<ancho>` para forzar el ajuste y envoltura de celdas). |
+| `-n <esquema>` | `--schema=<esquema>` | `pg_dump`, `pg_restore` | N/A | Restringe la exportación o restauración exclusivamente a los objetos pertenecientes al esquema indicado. |
+| `-F <formato>` | `--format=<formato>` | `pg_dump`, `pg_restore` | N/A | Define el formato del archivo de respaldo: `p` (SQL plano), `c` (*custom archive* comprimido), `d` (directorio) o `t` (*tar*). |
+| `-s` | `--schema-only` | `pg_dump`, `pg_restore` | N/A | Extrae o restaura únicamente las definiciones estructurales DDL sin incluir registros de datos. |
+| `-a` | `--data-only` | `pg_dump`, `pg_restore`, `shp2pgsql` | N/A | Extrae, restaura o procesa exclusivamente los registros de datos (DML) sin recrear esquemas ni tablas. |
+| `-v` | `--verbose` | `psql`, `pg_dump`, `pg_restore` | N/A | Activa la emisión detallada de mensajes de diagnóstico y progreso en el canal de salida estándar. |
+| `-s <srid>` | N/A | `shp2pgsql`, `raster2pgsql` | N/A | Asigna explícitamente el identificador espacial de referencia (SRID) a la columna geométrica o cobertura ráster. |
+| `-I` | N/A | `shp2pgsql`, `raster2pgsql` | N/A | Agrega automáticamente la instrucción DDL para la creación del índice espacial GiST sobre la capa procesada. |
+
+: Parámetros y modificadores de línea de comandos para utilidades cliente de PostgreSQL y PostGIS {#tbl-banderas-cli}
+
+
+
+### Guía de inicio rápido para la administración con psql  {#sec-anexo-inicio-psql}
+
+La interacción con el motor relacional desde la terminal integrada de Visual Studio Code se estructura en dos modalidades operativas: la ejecución de utilidades del sistema anfitrión mediante el CLI y la emisión interactiva de sentencias DDL/DML o metacomandos dentro de una sesión activa de `psql`.
+
+A continuación, se compilan las operaciones fundamentales de conexión, aprovisionamiento, ejecución de scripts y eliminación de bases de datos.
+
+#### Registro del ejecutable en el sistema anfitrión
+
+Para invocar las herramientas cliente desde cualquier ubicación en la terminal integrada de Visual Studio Code, es necesario incorporar el directorio que aloja los binarios (`<ruta_instalacion>/PostgreSQL/18/bin`) a la variable de entorno `PATH` del sistema anfitrión.
+
+Una vez configurada la variable, se valida la disponibilidad del cliente interactivo:
+
+```bash
+#| label: setup-check-psql-version
+#| eval: false
+psql --version
+
+```
+
+#### Conexión a la base de datos de plantilla global
+
+Para ejecutar tareas administrativas globales cuando aún no se ha creado una base de datos de usuario, se establece conexión con la base de datos `postgres`:
+
+```bash
+#| label: setup-connect-postgres
+#| eval: false
+psql -h localhost -p 5432 -U postgres -d postgres
+
+```
+
+#### Creación de bases de datos
+
+El aprovisionamiento de un nuevo contenedor lógico se puede efectuar de forma interactiva (SQL) o mediante el ejecutable dedicado en la consola de comandos:
+
+* **Desde una sesión interactiva de `psql` (DDL):**
+
+```sql
+#| label: ddl-create-database-quickstart
+#| eval: false
+CREATE DATABASE <nombre_bd>;
+
+```
+
+* **Desde la terminal integrada de Visual Studio Code (CLI):**
+
+```bash
+#| label: setup-createdb-cli
+#| eval: false
+createdb -h localhost -p 5432 -U postgres <nombre_bd>
+
+```
+
+#### Conexión y cambio de contexto de base de datos
+
+Para autenticarse directamente en una base de datos específica o alternar la sesión activa entre diferentes bases de datos del clúster:
+
+* **Conexión directa desde la terminal integrada:**
+
+```bash
+#| label: setup-connect-database-cli
+#| eval: false
+psql -h localhost -p 5432 -U <usuario> -d <nombre_bd>
+
+```
+
+* **Cambio de contexto dentro de una sesión activa de `psql`:**
+
+```sql
+#| label: setup-switch-database-metacommand
+#| eval: false
+\c <nombre_bd> <usuario>
+
+```
+
+#### Ejecución de archivos y scripts SQL por lotes
+
+El procesamiento de archivos estructurados (`.sql`) que contienen secuencias DDL o cargas de datos se puede realizar de forma externa o interna:
+
+* **Ejecución externa desde la terminal integrada (modo batch):**
+
+```bash
+#| label: setup-execute-script-cli
+#| eval: false
+psql -h localhost -p 5432 -U <usuario> -d <nombre_bd> -f <ruta_archivo>/<archivo.sql>
+
+```
+
+* **Ejecución interna desde la sesión interactiva de `psql`:**
+
+```sql
+#| label: setup-execute-script-metacommand
+#| eval: false
+\i <ruta_archivo>/<archivo.sql>
+
+```
+
+#### Eliminación de bases de datos
+
+La eliminación física de una base de datos y sus esquemas asociados se realiza asegurando previamente que no existan conexiones activas concurrentes hacia el contenedor:
+
+* **Desde una sesión interactiva de `psql` (DDL):**
+
+```sql
+#| label: ddl-drop-database-quickstart
+#| eval: false
+DROP DATABASE <nombre_bd>;
+
+```
+
+* **Desde la terminal integrada de Visual Studio Code (CLI):**
+
+```bash
+#| label: setup-dropdb-cli
+#| eval: false
+dropdb -h localhost -p 5432 -U <usuario> <nombre_bd>
+
+```
+
+#### Finalización de la sesión interactiva
+
+Para concluir la sesión de `psql` y regresar al intérprete de la terminal integrada de Visual Studio Code:
+
+* Ejecutar el metacomando de desconexión `\q`.
+* Utilizar la combinación de interrupción de proceso `Ctrl + C` para cancelar una consulta bloqueante o `Ctrl + D` para enviar la señal de fin de transmisión (*EOF*).

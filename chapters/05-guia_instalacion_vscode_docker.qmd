@@ -1,0 +1,55 @@
+# Guía de instalación: VS Code y contenedores Docker {#sec-guia-a}
+
+## Introducción
+
+Para garantizar una estructura preconfigurada y estándar para el curso, se utilizará la orquestación de contenedores con Docker [@docker2025]. Las imágenes a instalar contienen, de forma aislada y coordinada, un motor de procesamiento habilitado con los lenguajes Python, R y Julia, así como el servidor de datos PostgreSQL y PostGIS con una base de datos pedagógica preconfigurada.
+
+Esta guía establece un entorno de **reproducibilidad científica**. Se implementa una arquitectura híbrida: **Visual Studio Code** como editor en el equipo local [@vscode2026] y **Docker** como laboratorio de ejecución [@docker2025]. Esta aproximación garantiza la operación bajo versiones de software homologadas, eliminando discrepancias de entorno.
+
+El documento detalla el procedimiento de instalación de las herramientas mediante un método **offline**, ideal para infraestructuras con conectividad limitada.
+
+## Instalación de Visual Studio Code
+
+En el @sec-anexo-vscode se documenta el proceso de instalación y las principales extensiones requeridas en el entorno de desarrollo.
+
+## Instalación del orquestador de contenedores
+
+En el @sec-anexo-docker se expone la guía de despliegue y el proceso de configuración previo descrito en el @sec-preparacion-docker para garantizar un funcionamiento óptimo. 
+
+> Importante: Antes de proceder con la instalación, es imperativo ejecutar el procedimiento descrito en el @sec-preparacion-docker.
+
+### Limpieza del entorno
+
+Consulte la información de purga en el @sec-limpieza-entorno.
+
+
+### Descarga y preparación de archivos
+
+El código fuente, las guías de laboratorio y los archivos de configuración del curso se encuentran alojados en un repositorio privado en GitHub. El acceso a los recursos y el flujo de trabajo académico requieren la vinculación de una cuenta individual en dicha plataforma. Consulte el protocolo de autenticación, clonación y obtención de recursos en el @sec-descarga-tar-yml.
+
+::: {.callout-note}
+## Requisito de cuenta en GitHub
+
+Es indispensable disponer de una cuenta activa en GitHub. Esta cuenta es requerida para habilitar los permisos de lectura sobre el repositorio privado del curso, clonar las plantillas de trabajo y gestionar la entrega formal de los talleres asignados.
+:::
+
+
+## Instalación de las imágenes 
+
+Consulte el procedimiento de carga binaria en el @sec-cargar-docker-tar.
+
+## Inicio de contenedores 
+
+Consulte las instrucciones de arranque en el @sec-arrancar-contenedores.
+
+## Vinculación de contenedores en la terminal integrada
+
+Consulte los pasos de acoplamiento interactivo en el @sec-cargar-contenedores-vscode.
+
+## Detención de contenedores
+
+Consulte las directivas de apagado seguro en el @sec-detener-contenedores.
+
+## Catálogo de contenedores instalados
+
+Consulte el inventario de servicios aprovisionados en el @sec-contenedores-instalados.

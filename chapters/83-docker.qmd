@@ -1,0 +1,901 @@
+# Docker: gestión de contenedores e imágenes {#sec-anexo-docker}
+
+```{r}
+#| label: j_eval_j_plot
+#| code-fold: true
+#| include: false
+source("../j_eval_j_plot.r")
+```
+
+```{r}
+#| label: setup-variables-sistema-r
+#| include: false
+
+# 1. Registro de variables en el proceso padre para persistencia y herencia en Knitr
+Sys.setenv(
+  # Directorio relativo de almacenamiento de respaldos (resuelto desde chapters/)
+  PLOTS_DIR = "../plots"
+)
+
+```
+
+
+```{bash}
+#| label: setup-variables-entorno
+#| eval: true
+#| echo: true
+# ===========================================================================
+# 1. Directorio de ploteos
+# ===========================================================================
+# Resolución condicional: valida si la sesión se ubica en la raíz o en chapters/
+if [ -d "plots" ]; then
+    export PLOTS_DIR="plots"
+else
+    export BACKUP_DIR="../plots"
+fi
+
+# ===========================================================================
+# 2. Verificación de variables asignadas
+# ===========================================================================
+echo "Directorio de ploteos: ${PLOTS_DIR}"
+
+```
+
+El sistema Docker opera como un motor de virtualización [@docker2025] sobre el cual se desplegarán las máquinas virtuales basadas en Linux. Estas infraestructuras permiten la ejecución integrada de código analítico en Python, R y Julia, junto al soporte persistente de bases de datos geográficas.
+
+## Instalación del software
+
+Descargue e instale la versión oficial del orquestador desde el repositorio principal:
+
+- **URL**: <https://www.docker.com/products/docker-desktop/>
+- Descargue la versión estable correspondiente a la arquitectura de hardware del equipo local.
+- **Instalación**: Durante el proceso de instalación en el sistema anfitrión, asegúrese de autorizar la integración con los subsistemas de virtualización de bajo nivel (ej. WSL 2) si el asistente lo requiere, priorizando arquitecturas nativas sobre hipervisores emulados.
+
+
+A continuación, presento la sección reestructurada. Se ha integrado la profundidad técnica de la versión anterior (paso a paso y configuración de variables) abstrayendo las dependencias específicas de sistema operativo para cumplir estrictamente con los lineamientos de neutralidad de plataforma, manteniendo el estándar de Quarto y el rigor académico:
+
+## Preparación del orquestador {#sec-preparacion-docker}
+
+Previo a la inicialización de imágenes, es indispensable configurar los recursos del equipo local:
+
+* **Configuración de almacenamiento**: La imagen políglota y la base de datos exigen una volumetría considerable. Asegure un mínimo de **50 GB de espacio libre** en el disco de almacenamiento principal asignado a los volúmenes virtuales. El tamaño consolidado tras la expansión ronda los **45 GB**.
+* **Procedimiento para reasignación de discos virtuales**: Si el volumen de almacenamiento principal carece de capacidad, reubique el directorio de los discos virtuales. Acceda a la interfaz de configuración del cliente de orquestación, diríjase a la sección de recursos avanzados, modifique la ruta del catálogo de imágenes (*Disk image location*) hacia una unidad de mayor capacidad y reinicie el servicio.
+* **Optimización de memoria de intercambio (Swap)**: Para el procesamiento ininterrumpido de archivos ráster masivos, es imperativo ampliar el espacio de intercambio en el sistema anfitrión. Consulte la @sec-limpieza-entorno para mayores detalles sobre cómo este parámetro impacta el rendimiento analítico.
+* **Ajuste de memoria virtual en el sistema anfitrión**: Acceda a los parámetros avanzados de rendimiento del sistema base y configure manualmente la memoria virtual. Deshabilite la administración automática, seleccione una unidad de almacenamiento veloz y asigne un umbral inicial de **16384 MB** junto con un límite máximo de **32768 MB**, sujeto a la disponibilidad de espacio físico. Es obligatorio reiniciar el equipo tras aplicar los cambios.
+* **Configuración de recursos globales en arquitecturas virtualizadas**: En entornos soportados por subsistemas de virtualización (ej. arquitecturas tipo WSL2), ajuste el archivo de configuración global oculto (ej. `.wslconfig`) localizado en el directorio raíz del usuario. Este paso fuerza la asignación estricta de RAM física y orienta el archivo de intercambio de alta capacidad hacia un disco de estado sólido, previniendo el cierre de contenedores por saturación de memoria:
+
+```ini
+#| label: setup-wslconfig
+#| eval: false
+[wsl2]
+memory=12GB # RAM máxima física asignada al subsistema de virtualización
+swap=32GB   # Memoria de intercambio para evitar el cierre de contenedores
+swapfile=Ruta\Absoluta\Hacia\Disco\Secundario\swap.vhdx
+
+```
+
+::: {.callout-tip}
+
+### Auditoría de recursos
+
+Para corroborar la correcta asignación de memoria y espacio de intercambio desde el entorno de trabajo, ejecute el comando `free -h` en la terminal integrada de Visual Studio Code.
+:::
+
+
+## Descarga y preparación de archivos {#sec-descarga-tar-yml}
+
+Ejecute los siguientes pasos para consolidar el entorno base:
+
+1. **Obtención**: Descargue el archivo de recursos 
+
+* Archivo [j_eval_j_plot.r](https://drive.google.com/file/d/1syuuciiso0c-F8TOQGRvi0A0tUv4v0RD/view?usp=sharing)
+* Archivo [sig_unal_v1.12_completo_final.zip](https://drive.google.com/file/d/1PYeoMiDemTYgfc16i0A14pmNbydND2Oo/view?usp=sharing)
+    * sig_unal_v1.12_completo_final.tar
+    * docker-compose.yml
+    * init_unal_spatialdb.sql
+    * Dockerfile.postgis
+* Archivo [backups_pg18.zip](https://drive.google.com/file/d/1uSrMPfbJKRQAphjzZxF_Fx7l6XBVGfZO/view?usp=sharing)
+
+desde el siguiente link en Google Drive.
+2. **Descompresión**: Extraiga el contenido del archivo comprimido `sig_unal_v1.12_completo_final.zip`.
+3. **Estructura del directorio**:
+   * `sig_unal_v1.12_completo_final.tar`: Imagen consolidada del servidor espacial y del entorno analítico.
+   * `docker-compose.yml`: Archivo de orquestación de puertos, redes y volúmenes persistentes.
+   * `init_unal_spatialdb.sql`: Esquema base de datos espacial en texto plano.
+   * `j_eval_j_plot.r`: Funciones de intercomunicación entre R y Julia.
+
+Asegure que el directorio de trabajo local cumpla las siguientes especificaciones:
+
+- Exclusión estricta de directorios sincronizados en la nube.
+- Rutas absolutas sin espacios en blanco, tildes ni caracteres especiales.
+- Omisión de carpetas temporales del sistema anfitrión.
+
+## Carga de contenedores orquestados {#sec-cargar-docker-tar}
+
+Este procedimiento ejecuta el aprovisionamiento local de dos imágenes estructuradas y configura la red interna para garantizar la comunicación bidireccional. Desde la terminal integrada ubicada en la raíz del proyecto, ejecute:
+
+```bash
+#| label: docker-carga-imagenes
+#| eval: false
+docker load -i sig_unal_v1.12_completo_final.tar
+
+```
+
+> **Nota**: El intérprete de comandos pausará la respuesta hasta finalizar la descompresión binaria. Este proceso demanda tiempo y no debe interrumpirse bajo ninguna circunstancia.
+
+## Contenedores instalados {#sec-contenedores-instalados}
+
+Finalizada la inyección de imágenes, ejecute el siguiente comando para auditar la disponibilidad de recursos:
+
+```bash
+#| label: docker-verificacion-ps
+#| eval: false
+docker ps -a
+
+```
+
+1. Contenedor `contenedor_sig_unal` basado en la imagen `image_sig_unal:v1.11_produccion_final`, equipado con:
+* **Python**, **R** y **Julia** y librerías geoespaciales.
+* **Quarto** (Ver @sec-anexo-quarto).
+
+
+2. Contenedor `contenedor_postgis_unal` basado en la imagen `postgis_unal:v1.12`, equipado con:
+* **PostgreSQL** y **PostGIS**, integrando el catálogo de estudio `sig_db_unal`.
+
+
+
+## Puesta en marcha y detención de contenedores
+
+### Inicio de contenedores {#sec-arrancar-contenedores}
+
+El proceso de carga binaria se ejecuta por única vez. Para levantar la infraestructura orquestada, invoque el servicio desde la raíz del proyecto:
+
+```bash
+#| label: docker-arranque-servicios
+#| eval: false
+docker compose up -d
+
+```
+
+Si el clúster se encontraba en estado de suspensión técnica, reactívelo mediante:
+
+```bash
+#| label: docker-inicio-servicios
+#| eval: false
+docker compose start
+
+```
+
+### Detención de contenedores {#sec-detener-contenedores}
+
+Para interrumpir la ejecución de los motores preservando la integridad de la base de datos:
+
+```bash
+#| label: docker-parada-servicios
+#| eval: false
+docker compose stop
+
+```
+
+Para desmontar la topología de red y los contenedores (preservando los volúmenes de datos físicos):
+
+```bash
+#| label: docker-desmontaje-servicios
+#| eval: false
+docker compose down
+
+```
+
+## Localización de archivos y persistencia
+
+El directorio de trabajo local queda montado bidireccionalmente en la ruta `/home/rstudio/work` dentro de la imagen.
+
+::: {.callout-important}
+
+### Persistencia estructural
+
+La topología garantiza que la caída del sistema anfitrión no comprometa las tablas almacenadas en el catálogo PostGIS ni los scripts depositados en `/home/rstudio/work`. El volumen configurado actúa como punto de montaje asíncrono.
+:::
+
+## Vinculación de contenedores en la terminal integrada {#sec-cargar-contenedores-vscode}
+
+Para consolidar el entorno de desarrollo, acople el editor de texto directamente al núcleo del contenedor:
+
+1. Levante los servicios mediante `docker compose up -d`.
+2. Habilite la extensión *Dev Containers* en el equipo local.
+3. Desde la paleta de comandos, ejecute **Dev Containers: Attach to Running Container...** seleccionando el objetivo `contenedor_sig_unal`.
+4. Abra el directorio de montaje `/home/rstudio/work`.
+5. Instale las dependencias descritas en el @sec-anexo-vscode.
+
+## Configuración de puertos y topología de conectividad {#sec-puertos-conectividad}
+
+El diseño de red de la infraestructura basada en contenedores implementa un esquema de reenvío de puertos (*port forwarding*) estructurado para mitigar colisiones con servicios preexistentes en el equipo local y garantizar el acceso simultáneo a los entornos analíticos y al motor relacional espacial.
+
+| Servicio | Puerto anfitrión | Puerto contenedor | Propósito técnico | Dirección de enlace |
+| :-- | :-: | :-: | :--- | :---- |
+| **Jupyter Lab** | `8889` | `8888` | Computación interactiva y notebooks | `http://127.0.0.1:8889` |
+| **Visor R (httpgd)** | `8788` | `8787` | Renderizado gráfico SVG interactivo | `http://127.0.0.1:8788` |
+| **PostGIS (DB)** | `5434` | `5432` | Motor de base de datos espacial relacional | `127.0.0.1:5434` |
+
+: Mapeo de puertos para los servicios de la infraestructura dockerizada {#tbl-puertos-red}
+
+### Coexistencia de clústeres y resolución de red según el contexto de ejecución
+
+La resolución de nombres de red y los puertos de conexión varían sustancialmente según la ubicación del proceso emisor:
+
+* **Peticiones originadas desde el sistema anfitrión (*host*):**
+  * **Motor PostgreSQL físico local:** Se canaliza a través de la dirección de bucle local `localhost` (`127.0.0.1`) en el puerto TCP estándar **`5432`**.
+  * **Motor espacial en el contenedor (`db-postgis`):** Se intercepta mediante la interfaz expuesta por Docker en `127.0.0.1` sobre el puerto **`5434`** (`5434:5432`), evitando interferencias con el servicio local predeterminado.
+
+* **Peticiones originadas desde la terminal integrada en el contenedor:**
+  * **Motor PostgreSQL físico local:** Al encontrarse aislado de la interfaz de red del anfitrión, la dirección `127.0.0.1` apunta al propio contenedor. La conexión hacia el motor físico del host requiere resolver el alias DNS especial **`host.docker.internal`** en el puerto nativo **`5432`**.
+  * **Motor espacial en el contenedor (`db-postgis`):** La comunicación entre contenedores adyacentes vinculados a la misma red virtual (*bridge*) se efectúa mediante el nombre del servicio **`db-postgis`** en su puerto nativo **`5432`** (el puerto `5434` no existe en el espacio de nombres interno de Docker).
+
+| Vector de conexión | Destino del servicio | Host / Interfaz | Puerto | Función técnica |
+| :--- | :--- | :--- | :---: | :--- |
+| **Desde el sistema anfitrión** | Instancia física local | `localhost` | `5432` | Puerto estándar del servicio local |
+| **Desde el sistema anfitrión** | Clúster en contenedor | `127.0.0.1` | `5434` | Puerto externo expuesto por Docker |
+| **Desde la terminal del contenedor** | Instancia física local | `host.docker.internal` | `5432` | Puente hacia el PostgreSQL del anfitrión |
+| **Desde la terminal del contenedor** | Clúster en contenedor | `db-postgis` | `5432` | Resolución DNS interna del clúster |
+
+: Matriz de enrutamiento y puertos según el vector de ejecución {#tbl-enrutamiento-puertos}
+
+## Credenciales de la base de datos {#sec-credenciales}
+
+Parámetros de conexión estándar para utilidades cliente (QGIS, utilidades CLI, Python, R, Julia):
+
+* **Catálogo:** `sig_db_unal`
+* **Superusuario:** `profe_unal`
+* **Autenticación:** `geomatica2025`
+* **Enlace externo:** `127.0.0.1` (Puerto `5434`)
+* **Enlace interno:** `db-postgis` (Puerto `5432`)
+
+## Lógica de arquitectura (Dockerfile y docker-compose) {#sec-arquitectura-puertos}
+
+La configuración se encuentra segmentada para garantizar aislamiento de memoria:
+
+1. **Dockerfile**: Implementa directivas `EXPOSE 8888` y `EXPOSE 8787`, declarando canales de escucha independientes para evitar colisiones entre el servidor HTTP de R y el núcleo Jupyter.
+2. **Orquestador YAML**: Ejecuta el mapeo `5434:5432` previniendo conflictos en el equipo local si existe un demonio PostgreSQL ejecutándose en el canal `5432`.
+
+## Guía de acceso: topología de red {#sec-guia-acceso}
+
+La comunicación difiere dependiendo del vector de entrada:
+
+### Conexión desde el sistema anfitrión (Exterior)
+
+Las conexiones emitidas desde clientes locales deben apuntar a los puertos de exposición definidos en el enrutador virtual: Jupyter (`8889`), Base de Datos (`5434`).
+
+### Conexión intraclúster (Interior)
+ 
+Los algoritmos ejecutados desde los cuadernos de trabajo operan bajo la red puente nativa. Por ende, deben apuntar directamente al host `db-postgis` en el puerto `5432`.
+
+## Limpieza del entorno de contenedores {#sec-limpieza-entorno}
+
+El ciclo de vida del desarrollo geoespacial genera capas de construcción, volúmenes de datos transitorios e imágenes intermedias que pueden comprometer el almacenamiento del equipo local o inducir conflictos durante la auto-inicialización declarativa de bases de datos.
+
+A continuación se formaliza el protocolo sistemático para el diagnóstico, desmantelamiento ordenado, purga exhaustiva y auditoría de almacenamiento del subsistema de contenedores desde la terminal integrada de Visual Studio Code.
+
+### Diagnóstico de consumo de almacenamiento
+
+Previo a cualquier operación de limpieza, se debe inspeccionar la volumetría física asignada a contenedores, imágenes, volúmenes locales y caché de compilación (*build cache*):
+
+```{bash}
+#| label: docker-diagnostico-almacenamiento
+#| eval: false
+#| echo: true
+# Resumen global de espacio utilizado por subsistema
+docker system df
+
+# Desglose detallado por objeto, identificador y estado de referencia
+docker system df -v
+
+```
+
+### Desmantelamiento de servicios y volúmenes vinculados
+
+Cuando un proyecto opera mediante Docker Compose, el desmantelamiento debe garantizar la remoción coordinada de contenedores, redes virtuales en puente y volúmenes de datos persistentes (`-v`):
+
+```{bash}
+#| label: docker-compose-desmantelamiento
+#| eval: false
+#| echo: true
+# Detención y remoción de servicios, redes del proyecto y volúmenes nombrados
+docker compose down -v --remove-orphans
+
+```
+
+> **Nota técnica:** La bandera `-v` asegura la eliminación de volúmenes persistentes (tales como `postgis_data_unal`), permitiendo que despliegues posteriores ejecuten scripts de inicialización DDL/DML desde un estado completamente limpio.
+
+### Purga integral de artefactos y caché de compilación
+
+> **Advertencia:** Las siguientes instrucciones eliminan de forma irreversible contenedores detenidos, redes virtuales huérfanas, volúmenes sin asociar, imágenes sin etiquetar y cachés de construcción.
+
+Para liberar el almacenamiento físico y purgar el subsistema BuildKit:
+
+```{bash}
+#| label: docker-purga-sistema-buildkit
+#| eval: false
+#| echo: true
+# 1. Purga exhaustiva de contenedores inactivos, redes, volúmenes huérfanos e imágenes no referenciadas
+docker system prune -a --volumes -f
+
+# 2. Eliminación de la memoria caché de construcción de BuildKit
+docker builder prune -a -f
+
+```
+
+En escenarios administrativos donde se requiera forzar la remoción absoluta de la totalidad de objetos presentes en el subsistema (incluyendo imágenes base activas), se pueden encadenar las utilidades de listado y remoción forzada:
+
+```{bash}
+#| label: docker-purga-destructiva-total
+#| eval: false
+#| echo: true
+# Detención forzada y eliminación de todos los contenedores registrados
+docker stop $(docker ps -a -q) 2>/dev/null || true
+docker rm -f $(docker ps -a -q) 2>/dev/null || true
+
+# Eliminación de la totalidad de imágenes locales y volúmenes huérfanos
+docker rmi -f $(docker images -a -q) 2>/dev/null || true
+docker volume rm $(docker volume ls -q) 2>/dev/null || true
+
+```
+
+### Auditoría y confirmación de estado limpio
+
+Finalizado el procedimiento de saneamiento, se valida que el subsistema de contenedores reporte una ocupación volumétrica nula (`0 B`) y que no existan entidades residuales en memoria o disco:
+
+```{bash}
+#| label: docker-audit-confirmacion-limpio
+#| eval: false
+#| echo: true
+# Verificación de volumetría del motor
+docker system df
+
+# Comprobación de inventarios vacíos por subsistema
+docker ps -a
+docker images -a
+docker volume ls
+
+```
+
+
+## Verificación de registros de instalación
+
+Para inspeccionar el flujo estándar de errores y salidas emitidas por el contenedor principal:
+
+```bash
+#| label: docker-logs-sig
+#| eval: false
+docker logs contenedor_sig_unal
+
+```
+
+## Comandos de orquestación
+
+Matriz referencial de utilidades CLI para la gestión de contenedores.
+
+| Fase | Invocación CLI | Función técnica |
+| -- | --- | ---- |
+| **Construcción** | `docker compose up --build -d` | Compilación integral y mapeo del árbol de imágenes. |
+| **Inicio** | `docker compose up -d` | Reactivación silenciosa en segundo plano. |
+| **Monitoreo** | `docker logs -f contenedor_sig_unal` | Captura continua del flujo estándar de salida. |
+| **Auditoría R** | `docker exec -i -t contenedor_sig_unal R -e "library(sf)"` | Validación de motores PROJ/GEOS acoplados al R-Engine. |
+
+: Matriz de comandos de orquestación de Docker {#tbl-comandos-docker}
+
+## Resumen de la infraestructura instalada
+
+| Componente | Especificación | Dependencia técnica |
+| - | -- | ---- |
+| **R Engine** | `4.3.3` (Angel Food Cake) | `JuliaConnectoR` acoplado al servidor `httpgd`. |
+| **Julia Stack** | `v1.10.x` | `ArchGDAL 3.12.1` resuelto vía enlaces simbólicos. |
+| **Python Stack** | `3.12.x` | GeoPandas, Shapely y conectores `psycopg2`. |
+| **Persistencia** | Volumen gestionado | Montaje bidireccional estable sobre `/home/rstudio/work`. |
+
+: Inventario de arquitectura y componentes del laboratorio {#tbl-inventario-software}
+
+## Validación del entorno Python
+
+### Ingreso al entorno interactivo {#sec-acceder-jupyterlab}
+
+Desde la terminal integrada, asegure el arranque del servidor forzando los tokens de seguridad y los parámetros de red (evitando concatenaciones en las banderas cortas):
+
+```bash
+#| label: setup-jupyter-arranque
+#| eval: false
+jupyter lab --ip 0.0.0.0 --port 8889 --no-browser --allow-root --ServerApp.token geomatica2025
+
+```
+
+Acceso web: `http://127.0.0.1:8889` (Token: `geomatica2025`).
+
+### Guía visual del entorno
+
+La carpeta `/home/rstudio/work/` opera como un espejo asíncrono hacia el almacenamiento local, garantizando inmutabilidad frente a cortes abruptos del contenedor.
+
+## Validación del entorno R
+
+### Visualización interactiva con httpgd {#sec-httpgd-config}
+
+Al tratarse de una infraestructura sin servidor X11 nativo (*headless*), se implementa `httpgd` como puente de renderizado de gráficos vectoriales para VS Code.
+
+#### Inicio del servidor gráfico
+
+Active el motor explícitamente al inicio de cada sesión interactiva:
+
+```r
+#| label: setup-httpgd-arranque
+#| eval: false
+httpgd::hgd()
+httpgd::hgd_details()
+
+```
+
+#### Resolución de conflictos
+
+Si el sistema de red omite la inyección del puerto `8787`, aplique una directiva forzada inhabilitando transitoriamente los tokens de seguridad de capa:
+
+```r
+#| label: setup-httpgd-fuerza
+#| eval: false
+httpgd::hgd(host = "0.0.0.0", port = 8787, token = FALSE)
+
+```
+
+#### Función crítica del servidor gráfico
+
+El dispositivo `httpgd` convierte el buffer en elementos interactivos de estándar SVG renderizables directamente por la API visual del editor, esquivando las restricciones naturales del despliegue en contenedores aislados.
+
+## Validación del entorno Julia
+
+### Ejecución de rutinas mediante evaluación cruzada
+
+El sistema procesa bloques Quarto mediante `knitr`. La incompatibilidad histórica de `JuliaCall` con punteros de librerías geoespaciales requirió la creación de los wrappers `j_eval` y `j_plot` soportados por `JuliaConnectoR`.
+
+Invoque las directivas de comunicación interlenguaje mediante el archivo base:
+
+```r
+#| label: setup-julia-puente
+#| code-fold: true
+#| results: asis
+source("../j_eval_j_plot.r")
+
+```
+
+## Verificación de conectividad multilenguaje
+
+::: panel-tabset
+
+### Python
+
+::: {.content-visible when-format="html"}
+::: {.callout-tip collapse="true" icon="false"}
+
+#### Código crudo de auditoría (Python)
+
+```{python}
+#| label: setup-python-auditoria-codigo
+#| eval: false
+import psycopg2
+import geopandas as gpd
+from shapely.geometry import Point
+
+try:
+    conn = psycopg2.connect(
+        host="db-postgis", 
+        dbname="sig_db_unal", 
+        user="profe_unal", 
+        password="geomatica2025"
+    )
+    print("Conexión a base de datos espacial exitosa")
+    conn.close()
+except Exception as e:
+    print(f"Error relacional: {e}")
+
+```
+
+:::
+:::
+
+```{python}
+#| label: audit-python-auditoria-ejecucion
+#| eval: true
+#| echo: true
+import psycopg2
+import geopandas as gpd
+from shapely.geometry import Point
+
+try:
+    conn = psycopg2.connect(
+        host="db-postgis", 
+        dbname="sig_db_unal", 
+        user="profe_unal", 
+        password="geomatica2025"
+    )
+    print("Conexión a base de datos espacial exitosa")
+    conn.close()
+except Exception as e:
+    print(f"Error relacional: {e}")
+
+```
+
+### R
+
+::: {.content-visible when-format="html"}
+::: {.callout-tip collapse="true" icon="false"}
+
+#### Código crudo de auditoría (R)
+
+```{r}
+#| label: setup-r-auditoria-codigo
+#| eval: false
+#| echo: true
+library(sf)
+library(terra)
+
+conf <- sf_extSoftVersion()
+cat(paste0("Motores de sistema detectados:\n",
+           " - GDAL: ", conf["GDAL"], "\n",
+           " - GEOS: ", conf["GEOS"], "\n",
+           " - PROJ: ", conf["PROJ"], "\n"))
+
+```
+
+:::
+:::
+
+```{r}
+#| label: audit-r-auditoria-ejecucion
+#| eval: true
+#| echo: true
+library(sf)
+library(terra)
+
+conf <- sf_extSoftVersion()
+cat(paste0("Motores de sistema detectados:\n",
+           " - GDAL: ", conf["GDAL"], "\n",
+           " - GEOS: ", conf["GEOS"], "\n",
+           " - PROJ: ", conf["PROJ"], "\n"))
+
+```
+
+
+### Julia
+
+::: {.content-visible when-format="html"}
+::: {.callout-tip collapse="true" icon="false"}
+
+#### Código crudo de auditoría (Julia)
+
+```{julia}
+#| label: audit-julia-auditoria-codigo
+#| fig-align: center
+#| out-width: "85%"
+#| eval: false
+
+using LibPQ
+using DataFrames
+using Plots
+
+ENV["GKSwstype"] = "100"
+gr()
+
+plots_dir = get(ENV, "PLOTS_DIR", ".")
+mkpath(plots_dir)
+
+try
+    canal = LibPQ.Connection("host=db-postgis port=5432 dbname=sig_db_unal user=profe_unal password=geomatica2025")
+    
+    query_autoridades = """
+        SELECT auth_name, count(*)::int AS total
+        FROM spatial_ref_sys
+        WHERE auth_name IS NOT NULL
+        GROUP BY auth_name
+        ORDER BY total DESC
+        LIMIT 5;
+    """
+    df_autoridades = DataFrame(execute(canal, query_autoridades))
+    
+    query_longitudes = """
+        SELECT length(coalesce(srtext, ''))::int AS longitud_wkt
+        FROM spatial_ref_sys
+        WHERE auth_name = 'EPSG' AND srtext IS NOT NULL
+        LIMIT 1000;
+    """
+    df_longitudes = DataFrame(execute(canal, query_longitudes))
+    
+    close(canal)
+    
+    p1 = bar(
+        df_autoridades.auth_name, 
+        df_autoridades.total, 
+        color = :steelblue,
+        xlabel = "Autoridad", 
+        ylabel = "Cantidad de SRID", 
+        title = "Sistemas de referencia por autoridad",
+        xrotation = 15,
+        legend = false
+    )
+    
+    p2 = histogram(
+        df_longitudes.longitud_wkt, 
+        bins = 20, 
+        color = :coral,
+        xlabel = "Longitud WKT EPSG (campo srtext)", 
+        ylabel = "Frecuencia", 
+        title = "Distribución de longitud WKT",
+        legend = false
+    )
+    
+    # Composición con márgenes explícitos en milímetros
+    p_final = plot(
+        p1, p2, 
+        layout = (1, 2), 
+        size = (900, 420),
+        left_margin = 12Plots.mm,
+        bottom_margin = 10Plots.mm,
+        top_margin = 6Plots.mm,
+        right_margin = 6Plots.mm
+    )
+    savefig(p_final, joinpath(plots_dir, "temp_grafica_julia.png"))
+    
+catch fallo_conexion
+    println("Fallo de interconexión o consulta al orquestador: ", fallo_conexion)
+end
+
+```
+
+:::
+:::
+
+```{r}
+#| label: audit-julia-auditoria-ejecucion
+#| fig-align: center
+#| out-width: "80%"
+#| results: asis
+#| code-fold: true
+
+j_eval('
+using LibPQ
+using DataFrames
+
+try
+    canal = LibPQ.Connection("host=db-postgis port=5432 dbname=sig_db_unal user=profe_unal password=geomatica2025")
+    resultado_sql = execute(canal, "SELECT PostGIS_Version();")
+    dataframe_version = DataFrame(resultado_sql)
+    println("Enlace de datos espacial establecido con éxito en Julia. Versión: ", dataframe_version[1, 1])
+    close(canal)
+catch fallo_conexion
+    println("Fallo de interconexión al orquestador: ", fallo_conexion)
+end
+')
+
+```
+
+<!-- ```{r}
+#| label: graficos_julia_ejecucion_j_eval
+#| echo: true
+#| results: asis
+#| code-fold: true
+#| fig-align: "center"
+#| out-width: "90%"
+
+# 1. Extracción de estadísticas en Julia, generación gráfica y exportación a disco
+j_eval('
+ENV["GKSwstype"] = "100" 
+using LibPQ
+using DataFrames
+using Plots
+gr()
+
+plots_dir = get(ENV, "PLOTS_DIR", ".")
+mkpath(plots_dir)
+
+try
+    canal = LibPQ.Connection("host=db-postgis port=5432 dbname=sig_db_unal user=profe_unal password=geomatica2025")
+    
+    # Extracción de frecuencias por autoridad
+    query_autoridades = "SELECT auth_name, count(*)::int AS total FROM spatial_ref_sys WHERE auth_name IS NOT NULL GROUP BY auth_name ORDER BY total DESC LIMIT 5;"
+    df_autoridades = DataFrame(execute(canal, query_autoridades))
+    
+    # Extracción de distribución de longitudes textuales
+    query_longitudes = "SELECT length(coalesce(srtext, \'\'))::int AS longitud_wkt FROM spatial_ref_sys WHERE auth_name = \'EPSG\' AND srtext IS NOT NULL LIMIT 1000;"
+    df_longitudes = DataFrame(execute(canal, query_longitudes))
+    
+    close(canal)
+    
+    local p1 = bar(
+        df_autoridades.auth_name, 
+        df_autoridades.total, 
+        color = :steelblue,
+        xlabel = "Autoridad", 
+        ylabel = "Cantidad de SRID", 
+        title = "Sistemas de referencia por autoridad",
+        xrotation = 15,
+        legend = false
+    )
+    
+    local p2 = histogram(
+        df_longitudes.longitud_wkt, 
+        bins = 20, 
+        color = :coral,
+        xlabel = "Longitud WKT EPSG (campo srtext)", 
+        ylabel = "Frecuencia", 
+        title = "Distribución de longitud WKT",
+        legend = false
+    )
+    
+    # Inclusión de márgenes para prevenir clipping en el backend GR
+    local p_final = plot(
+        p1, p2, 
+        layout = (1, 2), 
+        size = (900, 420),
+        left_margin = 12Plots.mm,
+        bottom_margin = 10Plots.mm,
+        top_margin = 6Plots.mm,
+        right_margin = 6Plots.mm
+    )
+    savefig(p_final, joinpath(plots_dir, "temp_grafica_julia.png"))
+    
+catch fallo_proceso
+    println("Error durante la extracción o graficación en Julia: ", fallo_proceso)
+end
+')
+
+# 2. Renderizado dinámico de la figura generada en el entorno Knitr
+plots_dir <- Sys.getenv("PLOTS_DIR", unset = ".")
+ruta_img <- file.path(plots_dir, "temp_grafica_julia.png")
+knitr::include_graphics(ruta_img)
+
+``` -->
+
+<!-- ```{r}
+#| label: graficos_julia_ejecucion_j_plot
+#| echo: true
+#| results: asis
+#| code-fold: true
+#| fig-align: "center"
+#| out-width: "90%"
+
+# 1. Definición de rutas y creación de directorios desde el entorno R
+plots_dir <- Sys.getenv("PLOTS_DIR", unset = ".")
+if (!dir.exists(plots_dir)) dir.create(plots_dir, recursive = TRUE)
+ruta_img <- file.path(plots_dir, "temp_grafica_julia.png")
+
+# 2. Extracción de estadísticas en Julia, generación gráfica y renderizado
+# Advertencia: Todo el código de Julia, incluyendo plot(), debe permanecer dentro de las comillas simples
+j_plot('
+ENV["GKSwstype"] = "100" 
+using LibPQ
+using DataFrames
+using Plots
+gr()
+
+try
+    canal = LibPQ.Connection("host=db-postgis port=5432 dbname=sig_db_unal user=profe_unal password=geomatica2025")
+    
+    # Extracción de frecuencias por autoridad
+    query_autoridades = "SELECT auth_name, count(*)::int AS total FROM spatial_ref_sys WHERE auth_name IS NOT NULL GROUP BY auth_name ORDER BY total DESC LIMIT 5;"
+    df_autoridades = DataFrame(execute(canal, query_autoridades))
+    
+    # Uso estricto de una sola barra invertida para escapar comillas simples en la sintaxis de R
+    query_longitudes = "SELECT length(coalesce(srtext, \\\'\\\'))::int AS longitud_wkt FROM spatial_ref_sys WHERE auth_name = \\\'EPSG\\\' AND srtext IS NOT NULL LIMIT 1000;"
+    df_longitudes = DataFrame(execute(canal, query_longitudes))
+    
+    close(canal)
+    
+    local p1 = bar(
+        df_autoridades.auth_name, 
+        df_autoridades.total, 
+        color = :steelblue,
+        xlabel = "Autoridad", 
+        ylabel = "Cantidad de SRID", 
+        title = "Sistemas de referencia por autoridad",
+        xrotation = 15,
+        legend = false
+    )
+    
+    local p2 = histogram(
+        df_longitudes.longitud_wkt, 
+        bins = 20, 
+        color = :coral,
+        xlabel = "Longitud WKT EPSG (campo srtext)", 
+        ylabel = "Frecuencia", 
+        title = "Distribución de longitud WKT",
+        legend = false
+    )
+    
+    plot(
+        p1, p2, 
+        layout = (1, 2), 
+        size = (900, 420),
+        left_margin = 12Plots.mm,
+        bottom_margin = 10Plots.mm,
+        top_margin = 6Plots.mm,
+        right_margin = 6Plots.mm
+    )
+    
+catch fallo_proceso
+    println("Error durante la extracción o graficación en Julia: ", fallo_proceso)
+end
+', n = ruta_img, w = 900, h = 420)
+```
+ -->
+
+```{r}
+#| label: graficos_julia_ejecucion_j_plot
+#| echo: true
+#| results: asis
+#| code-fold: true
+#| fig-align: "center"
+#| out-width: "90%"
+
+plots_dir <- Sys.getenv("PLOTS_DIR", unset = ".")
+if (!dir.exists(plots_dir)) dir.create(plots_dir, recursive = TRUE)
+ruta_img <- file.path(plots_dir, "temp_grafica_julia.png")
+
+j_plot('
+ENV["GKSwstype"] = "100" 
+using LibPQ
+using DataFrames
+using Plots
+gr()
+
+try
+    canal = LibPQ.Connection("host=db-postgis port=5432 dbname=sig_db_unal user=profe_unal password=geomatica2025")
+    
+    query_autoridades = "SELECT auth_name, count(*)::int AS total FROM spatial_ref_sys WHERE auth_name IS NOT NULL GROUP BY auth_name ORDER BY total DESC LIMIT 5;"
+    df_autoridades = DataFrame(execute(canal, query_autoridades))
+    
+    query_longitudes = "SELECT length(coalesce(srtext, \\\'\\\'))::int AS longitud_wkt FROM spatial_ref_sys WHERE auth_name = \\\'EPSG\\\' AND srtext IS NOT NULL LIMIT 1000;"
+    df_longitudes = DataFrame(execute(canal, query_longitudes))
+    
+    close(canal)
+    
+    local p1 = bar(
+        df_autoridades.auth_name, 
+        df_autoridades.total, 
+        color = :steelblue,
+        xlabel = "Autoridad", 
+        ylabel = "Cantidad de SRID", 
+        title = "Sistemas de referencia por autoridad",
+        xrotation = 15,
+        legend = false
+    )
+    
+    local p2 = histogram(
+        df_longitudes.longitud_wkt, 
+        bins = 20, 
+        color = :coral,
+        xlabel = "Longitud WKT EPSG (campo srtext)", 
+        ylabel = "Frecuencia", 
+        title = "Distribución de longitud WKT",
+        legend = false
+    )
+    
+    plot(
+        p1, p2, 
+        layout = (1, 2), 
+        size = (900, 420),
+        left_margin = 12Plots.mm,
+        bottom_margin = 10Plots.mm,
+        top_margin = 6Plots.mm,
+        right_margin = 6Plots.mm
+    )
+    
+catch fallo_proceso
+    println("Error durante la extracción o graficación en Julia: ", fallo_proceso)
+    
+    # Gráfico de contingencia para evitar el colapso del compilador
+    plot(
+        title = "Fallo en ejecución de bloque espacial",
+        framestyle = :none,
+        annotations = (0.5, 0.5, text("Error: " * string(fallo_proceso), 10, :red, :center)),
+        legend = false,
+        size = (900, 420)
+    )
+end
+', n = ruta_img, w = 900, h = 420)
+```
+
+:::

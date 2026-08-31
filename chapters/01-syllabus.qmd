@@ -1,0 +1,292 @@
+# Syllabus: bases de datos espaciales
+
+## Información general
+
+* **Nivel de formación:** Posgrado (Maestría y Doctorado)
+* **Docente:** Alexys Rodríguez Avellaneda, Ph.D.
+* **Número de sesiones:** 16 semanas (sesiones presenciales / asistidas de 4 horas)
+* **Marco científico y metodológico:** Ciencia Abierta (*Open Science*), principios FAIR (*Findable, Accessible, Interoperable, Reusable*) y reproducibilidad computacional integral
+* **Entorno computacional y artefactos reproducibles:** Terminal integrada de Visual Studio Code / Positron, orquestación en contenedores Docker, control de versiones en GitHub y publicación automatizada con Quarto
+* **Ecosistema de conexión políglota para bases de datos:** Interfaz de línea de comandos (`psql`), administración gráfica (`pgAdmin 4`), y controladores analíticos en Python (`psycopg`, `GeoPandas`, `SQLAlchemy`), R (`DBI`, `sf`) y Julia (`LibPQ.jl`, `GeoDataFrames.jl`)
+
+## Justificación académica
+
+El incremento en la frecuencia y volumen de captura de información geográfica exige que los profesionales de posgrado dominen la arquitectura interna, el modelado conceptual y la optimización de sistemas de gestión de bases de datos espaciales (SGBDE).
+
+El programa académico se estructura alrededor de cuatro ejes fundamentales:
+
+1. **Fundamentos de diseño, modelado y arquitecturas en general:** Principios de modelado conceptual espacial, normalización relacional, diseño gráfico de esquemas y estándares de interoperabilidad del *Open Geospatial Consortium* (OGC) e ISO.
+2. **PostgreSQL y PostGIS:** Administración del motor relacional, ingeniería directa de esquemas con pgModeler, interacción políglota (`psql`, pgAdmin, Python, R, Julia), utilidades CLI (`shp2pgsql`, `pgsql2shp`), respaldos estructurados con TOC (`pg_dump`, `pg_restore`), indexación espacial avanzada, optimización en *Spatial SQL* y topología persistente.
+3. **Geodatabases:** Arquitecturas corporativas y basadas en archivos (*Enterprise* y *File Geodatabases*), ingeniería guiada por modelos (ShapeChange), paradigmas modernos de modelado visual integrado, reglas de atributos, topología y documentación automatizada de esquemas.
+4. **Temas emergentes (proyectos finales):** Paradigmas de computación distribuida, motores OLAP columnares, mallas espaciales discretas globales (DGGS), bases de datos orientadas a grafos y motores NoSQL, liderados y ejecutados experimentalmente por los estudiantes.
+
+## Objetivos de aprendizaje
+
+Al finalizar el periodo académico, el estudiante estará en capacidad de:
+
+* Diseñar esquemas conceptuales y lógicos de bases de datos espaciales aplicando reglas de normalización, restricciones de integridad referencial y estándares internacionales (OGC Simple Features e ISO 19107).
+* Utilizar herramientas de diseño gráfico asistido (pgModeler) para formular modelos entidad-relación espaciales y generar scripts DDL reproducibles sobre PostgreSQL/PostGIS.
+* Conectar, consultar y manipular bases de datos espaciales mediante clientes nativos (`psql`, pgAdmin) y flujos programáticos políglotas en Python, R y Julia.
+* Modelar, estructurar y documentar geodatabases corporativas combinando arquitecturas guiadas por modelos (ShapeChange) y el paradigma moderno de diseño visual integrado, esquemas XML y reportes automatizados de diccionario de datos.
+* Administrar y optimizar instancias relacionales espaciales mediante utilidades CLI, indexación avanzada (GiST, SP-GiST, BRIN), análisis de planes de ejecución y consultas analíticas complejas en *Spatial SQL*.
+* Formular, liderar y evaluar experimentalmente proyectos de investigación aplicada sobre tecnologías geoespaciales emergentes, dirigiendo talleres prácticos en vivo (*live coding*) y documentando los resultados en reportes reproducibles bajo Quarto.
+
+## Estructura curricular articulada en cuatro ejes
+
+```text
+Eje 1: Fundamentos y diseño (Sem 1-3)
+ ├── Sem 1: Arquitectura y estándares OGC
+ ├── Sem 2: Modelado conceptual y normalización
+ └── Sem 3: Álgebra relacional, DDL y modelado visual con pgModeler (Taller 1)
+Eje 2: PostgreSQL + PostGIS (Sem 4-7)
+ ├── Sem 4: Implementación física, CLI, pgAdmin y conexión políglota (psql, Python, R, Julia)
+ ├── Sem 5: Spatial SQL, DE-9IM y vistas analíticas (Taller 2)
+ ├── Sem 6: Indexación GiST, optimización y respaldos avanzados TOC
+ └── Sem 7: Topología vectorial persistente (Taller 3)
+Evaluación de medio término (Sem 8)
+ └── Examen teórico individual + Asesoría de proyectos
+Eje 3: Geodatabases, diseño y gestión de datos (Sem 9-10)
+ ├── Sem 9: Enterprise Geodatabases, ShapeChange y diseño moderno
+ └── Sem 10: Datos ráster, lógica procedural y flujos ETL (Taller 4)
+Eje 4: Temas emergentes y proyectos finales (Sem 11-16)
+ ├── Sem 11: DuckDB espacial y GeoParquet (Tema 01)
+ ├── Sem 12: Apache Sedona y PySpark (Tema 02)
+ ├── Sem 13: Mallas discretas H3 y S2 (Tema 03)
+ ├── Sem 14: Neo4j Spatial vs. pgRouting (Tema 04)
+ ├── Sem 15: Elasticsearch vs. MongoDB espacial (Tema 05)
+ └── Sem 16: Procedimientos nativos en Rust (Tema 06) + Cierre
+
+```
+
+## Programación semanal y contenidos detallados (16 semanas)
+
+### Eje 1: fundamentos de diseño, modelado y arquitecturas de datos (semanas 1 a 3)
+
+**Semana 1: Arquitectura de sistemas de bases de datos espaciales y estándares OGC**
+* Comparación entre el modelo de almacenamiento en archivos planos y los sistemas de gestión de bases de datos relacionales espaciales.
+* Estándar OGC *Simple Features for SQL* (SFS) y norma ISO 19107 (*Spatial Schema*).
+* Jerarquía de tipos de datos geométricos vectoriales: `Point`, `LineString`, `Polygon`, colecciones homogéneas y `GeometryCollection`.
+* Configuración del entorno de desarrollo sobre la terminal integrada de Visual Studio Code y orquestación de servicios en contenedores locales.
+
+
+* **Semana 2: Modelado conceptual, lógico y normalización de datos espaciales**
+* Diagramas Entidad-Relación extendidos para información espacial (notaciones conceptuales geográficas).
+* Aplicación de formas normales (1FN, 2FN y 3FN) y restricciones de integridad referencial (`ON UPDATE`, `ON DELETE CASCADE / SET NULL`).
+* Sistemas de referencia de coordenadas espaciales (catálogo EPSG, tabla `spatial_ref_sys`, proyecciones cartográficas y transformaciones de datum).
+* Estándares de codificación e intercambio: WKT (*Well-Known Text*), WKB (*Well-Known Binary*) y GeoJSON.
+
+
+* **Semana 3: Álgebra relacional espacial, definición de esquemas DDL y modelado visual con pgModeler**
+* Operaciones del álgebra relacional proyectadas al contexto espacial: selección, proyección, unión, diferencia y producto cartesiano.
+* Diseño visual de esquemas espaciales: fundamentos del modelado gráfico relacional.
+* Modelado asistido con **pgModeler**: creación gráfica de tablas, tipos espaciales PostGIS, llaves foráneas, restricciones `CHECK` e índices.
+* Generación automatizada de scripts DDL (*Forward Engineering*) y sincronización de esquemas.
+* **Evaluación práctica:** **Taller 1: Modelado conceptual, normalización y diseño visual de esquemas DDL con pgModeler.**
+
+
+
+### Eje 2: motores relacionales espaciales con PostgreSQL y PostGIS (semanas 4 a 7)
+
+* **Semana 4: Implementación física, administración y ecosistema cliente políglota**
+* Arquitectura cliente-servidor de PostgreSQL y activación modular de PostGIS.
+* Despliegue del esquema físico a partir de modelos generados en pgModeler e ingeniería inversa (*Reverse Engineering*).
+* Catálogos del sistema y tablas de metadatos: `geometry_columns` y `spatial_ref_sys`.
+* Tipo de dato `geometry` (cartesiano/plano) frente al tipo `geography` (esferoidal/geodésico).
+* Ingestión y extracción por consola de comandos: `shp2pgsql`, `pgsql2shp` y `ogr2ogr`.
+* Interfaces de administración y conexión políglota:
+* *Consola nativa:* Cliente interactivo `psql` (variables de sesión `search_path`, `client_encoding`, ejecución de scripts con `\i`).
+* *Entorno gráfico:* Administración visual de esquemas y servidores con `pgAdmin 4`.
+* *Entornos de desarrollo analítico:* Conexión y lectura de datos espaciales desde Python (`psycopg`, `GeoPandas`), R (`DBI`, `sf`) y Julia (`LibPQ.jl`, `GeoDataFrames.jl`).
+
+
+
+
+* **Semana 5: Consultas analíticas en Spatial SQL, modelo topológico DE-9IM y vistas espaciales**
+* Matriz de intersección de 9 dimensiones extendida (DE-9IM) y formulación de predicados espaciales.
+* Predicados topológicos estándar: `ST_Intersects`, `ST_Contains`, `ST_Within`, `ST_Disjoint`, `ST_Touches`, `ST_Crosses`, `ST_Overlaps`.
+* Funciones de análisis, construcción y agregación espacial: `ST_Buffer`, `ST_Intersection`, `ST_Difference`, `ST_Union`, `ST_Centroid`.
+* Creación y registro de vistas espaciales agregadas (`CREATE VIEW`) con identificadores únicos para interoperabilidad con software SIG.
+* Extracción de métricas espaciales hacia DataFrames en Python, R y Julia.
+* **Evaluación práctica:** **Taller 2: Consultas espaciales avanzadas, uniones espaciales (Spatial Joins), vistas y agregación con PostGIS.**
+
+
+* **Semana 6: Indexación espacial, optimización de consultas y administración avanzada de respaldos**
+* Principios teóricos del árbol R (*R-Tree*) e implementación de índices GiST (*Generalized Search Tree*) y SP-GiST en PostGIS.
+* Índices de rango de bloques (BRIN) aplicados a series de telemetría masiva ordenada.
+* Operadores espaciales optimizados por índice: delimitador de caja envolvente (`&&`) y búsqueda de vecinos más cercanos (*k-NN* vía `<->`).
+* Perfilamiento y análisis de planes de ejecución mediante `EXPLAIN (ANALYZE, BUFFERS)` para diagnóstico de cuellos de botella.
+* Estrategias de respaldo y migración: generación de dumps personalizados (`pg_dump -F c`), extracción de esquemas y restauración ordenada mediante tablas de contenido (`pg_restore -l`, `pg_restore -L`).
+
+
+* **Semana 7: Topología vectorial persistente y validación de reglas**
+* Fundamento del modelo de nodos, aristas (*edges*) y caras (*faces*) con la extensión `postgis_topology`.
+* Garantía de cobertura continua, eliminación de solapes (*overlaps*) y control de polígonos espurios (*slivers*).
+* Funciones de validación y reparación automática de geometrías (`ST_IsValid`, `ST_IsValidReason`, `ST_MakeValid`).
+* **Evaluación práctica:** **Taller 3: Optimización con índices espaciales, respaldos con TOC, planes de ejecución y topología.**
+
+
+
+### Evaluación de medio término y balance pedagógico (semana 8)
+
+* **Semana 8: Examen teórico individual y asesoría de proyectos de investigación**
+* **Evaluación teórica (Semana 8):** Examen individual escrito sobre diseño conceptual, álgebra relacional, normalización, cálculo espacial, optimización en *Spatial SQL* y administración de esquemas.
+* Sesión de acompañamiento y validación del diseño experimental para los seis equipos del proyecto final.
+
+
+
+### Eje 3: geodatabases corporativas, diseño y formatos avanzados (semanas 9 a 10)
+
+* **Semana 9: Arquitecturas de geodatabases, diseño guiado por modelos y paradigma moderno**
+* Conceptos generales de geodatabases: almacenamiento relacional de objetos espaciales, clases de entidad (*feature classes*), conjuntos de datos (*feature datasets*) y catálogos.
+* Comparación entre geodatabases basadas en archivos (*File Geodatabase*, *GeoPackage*) y geodatabases corporativas multiusuario (*Enterprise Geodatabase* desplegada sobre PostgreSQL).
+* Enfoque guiado por modelos (*Model-Driven Architecture* - MDA) y estándares abiertos: transformación automatizada de modelos conceptuales UML a esquemas de geodatabase mediante **ShapeChange**.
+* Paradigma moderno de diseño y gestión de geodatabases:
+* *Modelado visual integrado (*Data design views*):* Configuración directa e interactiva de campos, subtipos, dominios (rango y valores codificados), valores contingentes y reglas de atributos (*attribute rules* para cálculo, restricción y validación).
+* *Extracción y clonación del esquema:* Exportación de arquitecturas completas mediante documentos de espacio de trabajo XML (*Export XML Workspace Document* de tipo `SCHEMA_ONLY`) para versionamiento en repositorios Git.
+* *Documentación automática del esquema:* Generación del diccionario de datos estructurado en formato Markdown/HTML mediante la herramienta nativa *Generate Geodatabase Schema Report*.
+* Reglas de topología vectorial en geodatabases: tolerancias de agrupamiento, validación y gestión de excepciones.
+
+
+* **Semana 10: Almacenamiento ráster, lógica procedural en servidor y flujos ETL**
+* Almacenamiento y teselado de datos ráster con la extensión `postgis_raster` y catálogos de mosaico en geodatabases.
+* Álgebra de mapas en base de datos (`ST_MapAlgebra`) y extracción de estadísticas zonales (`ST_SummaryStats`).
+* Funciones almacenadas en PL/pgSQL y disparadores espaciales (*triggers*) para automatización de integridad en servidor.
+* Construcción de pipelines de extracción, transformación y carga (ETL) utilizando librerías geoespaciales (GDAL/OGR en Python).
+* **Evaluación práctica:** **Taller 4: Diseño de geodatabases, reglas de integridad, topología, documentación y flujos ETL.**
+
+
+
+### Eje 4: paradigmas emergentes y seminario de proyectos finales (semanas 11 a 16)
+
+Para una cohorte de 10 a 15 estudiantes, se conforman 6 equipos de trabajo (2 a 3 estudiantes por grupo). Cada semana se destina íntegramente a una temática de investigación. 
+
+El equipo asignado asume la dirección del aula durante la sesión de 2 horas (120 minutos), estructurada estrictamente en tres bloques secuenciales:
+
+* **Bloque 1 (40 minutos):** Presentación del marco conceptual, arquitectura tecnológica y diseño experimental.
+* **Bloque 2 (65 minutos):** Taller práctico guiado en tiempo real (*live coding*) con la cohorte conectada al entorno.
+* **Bloque 3 (15 minutos):** Debate técnico, análisis de limitaciones y retroalimentación docente.
+
+
+* **Semana 11: Proyecto final 01 — Procesamiento analítico columnar y formatos nativos de nube**
+* *Tecnología:* DuckDB espacial y GeoParquet.
+* *Enfoque del taller:* Consultas analíticas vectoriales directas sobre almacenamiento en la nube, evaluación de *predicate pushdown* y límites de huella de memoria.
+* *Directores de sesión:* Equipo 01.
+
+* **Semana 12: Proyecto final 02 — Escalabilidad y procesamiento masivo distribuido**
+* *Tecnología:* Apache Sedona y PySpark.
+* *Enfoque del taller:* *Spatial Join* masivo sobre clúster distribuido, particionamiento espacial (*Quad-Tree* / *KDB-Tree*) y análisis del grafo acíclico dirigido (*DAG*).
+* *Directores de sesión:* Equipo 02.
+
+* **Semana 13: Proyecto final 03 — Sistemas de mallas espaciales discretas globales (DGGS)**
+* *Tecnología:* Mallas jerárquicas Uber H3 y Google S2.
+* *Enfoque del taller:* Agregación espacial de series temporales masivas, reclasificación multi-resolución y evaluación de distorsión métrica frente a índices continuos.
+* *Directores de sesión:* Equipo 03.
+
+* **Semana 14: Proyecto final 04 — Bases de datos espaciales orientadas a grafos y análisis de redes**
+* *Tecnología:* Neo4j Spatial frente a pgRouting.
+* *Enfoque del taller:* Construcción de topologías de transporte, ruteo dinámico con Dijkstra / A* y cálculo de isócronas bajo concurrencia.
+* *Directores de sesión:* Equipo 04.
+
+
+* **Semana 15: Proyecto final 05 — Indexación geoespacial en motores NoSQL para telemetría y flujos en tiempo real**
+* *Tecnología:* Elasticsearch / OpenSearch frente a MongoDB espacial.
+* *Enfoque del taller:* Ingestión de eventos de alta frecuencia, consultas concurrentes de *geo-fencing* e indexación con árboles BKD y mallas `2dsphere`.
+* *Directores de sesión:* Equipo 05.
+
+* **Semana 16: Proyecto final 06 — Programación procedural en servidor y extensiones nativas**
+* *Tecnología:* PL/pgSQL avanzado, PL/Python y extensiones en lenguaje compilado (Rust vía PGRX).
+* *Enfoque del taller:* Evaluación de la sobrecarga de serialización WKB entre cliente y servidor, y *benchmarking* de algoritmos geométricos en extensiones nativas.
+* *Directores de sesión:* Equipo 06.
+* *Cierre académico:* Integración automatizada del libro del curso compilado con Quarto y balance general de la asignatura.
+
+## Sistema de evaluación y ponderación porcentual
+
+| Componente | Instrumento y alcance | Semana de entrega / aplicación | Porcentaje |
+|---|---|---|---|
+| **Talleres prácticos guiados** | 4 talleres aplicados (7.5% cada uno) | Semanas 3, 5, 7 y 10 | 30% |
+| **Examen teórico de medio término** | Prueba escrita individual sobre Ejes 1 y 2 | Semana 8 | 20% |
+| **Reporte científico del proyecto final** | Capítulo reproducible en Quarto (`.qmd`) | Semana asignada (S11 a S16) | 20% |
+| **Implementación técnica y reproducibilidad** | Repositorio GitHub con entorno Docker / Colab y datos | Semana asignada (S11 a S16) | 15% |
+| **Dirección pedagógica y taller guiado** | Liderazgo de la sesión de 2 horas (40m / 65m / 15m) | Semana asignada (S11 a S16) | 15% |
+| **Total** | | | **100%** |
+
+: Distribución de componentes evaluativos y ponderación porcentual {#tbl-sistema-evaluacion}
+
+
+## Estructura de entregables del proyecto final en el repositorio Quarto
+
+Cada equipo de investigación debe crear su carpeta correspondiente en el directorio `proyectos_finales/` respetando la estructura modular estandarizada:
+
+```text
+proyectos_finales/
+└── tema_XX_[nombre_tema]/
+    ├── XX_proyecto_[nombre_tema].qmd
+    ├── XX_rubrica_[nombre_tema].qmd
+    ├── XX_slides_[nombre_tema].qmd
+    ├── XX_taller_[nombre_tema].qmd
+    └── references.bib
+
+```
+
+*(Donde `XX` corresponde al identificador de dos dígitos del tema: `01` a `06`)*.
+
+El paquete de entregables se compone de:
+
+* `XX_proyecto_[nombre_tema].qmd`: Reporte científico completo que se compila como capítulo en el libro del curso.
+* `XX_rubrica_[nombre_tema].qmd`: Matriz de evaluación cuantitativa y cualitativa formulada para la práctica.
+* `XX_slides_[nombre_tema].qmd`: Presentación interactiva en Quarto RevealJS para el Bloque 1.
+* `XX_taller_[nombre_tema].qmd`: Guía de laboratorio ejecutable paso a paso para el Bloque 2.
+* `references.bib`: Archivo BibTeX con la literatura técnica y científica citada.
+
+
+
+## Políticas del curso, entregas y régimen disciplinario
+
+### Gestión de entregas y control de versiones vía GitHub
+
+Todas las asignaciones prácticas, talleres y reportes del curso se gestionan de manera obligatoria a través de la organización de GitHub del curso.
+
+* **Enlaces de asignación:** Cada taller y proyecto cuenta con un enlace individual o grupal suministrado por el docente a través del cual se genera automáticamente el repositorio privado de entrega.
+* **Trazabilidad de commits:** Los entregables deben reflejar un historial de versiones progresivo y verificable. No se aceptan entregas estructuradas mediante un único *commit* final masivo.
+* **Estado de compilación:** El código de las guías y reportes en Quarto (`.qmd`) debe compilar sin errores en las pruebas automatizadas del repositorio.
+
+### Régimen de entregas extemporáneas y penalizaciones
+
+Las fechas y horas límites fijadas en cada asignación son de estricto cumplimiento.
+
+* **Penalización por retraso:** Cada semana completa o fracción de semana de retraso en la entrega de cualquier taller o reporte implica una deducción automática de **5 unidades (puntos)** sobre la calificación final obtenida en dicha actividad.
+* **Límite de recepción extemporánea:** Ningún trabajo se evalúa si la entrega supera dos semanas posteriores a la fecha original de corte.
+
+### Asistencia, puntualidad y justificación de inasistencias
+
+Dada la naturaleza teórico-práctica y el nivel de posgrado de la asignatura, la presencia activa es fundamental para el desarrollo de las competencias.
+
+* **Control de asistencia:** Se realiza registro formal de asistencia al inicio de cada una de las sesiones de clase.
+* **Asistencia obligatoria:** Se exige un porcentaje mínimo de asistencia del 80% para la aprobación del curso.
+* **Justificación de inasistencias:** Toda ausencia debe ser soportada mediante un documento formal válido (incapacidad médica o justificación laboral/académica oficial) remitido al docente dentro de los cinco días hábiles posteriores a la inasistencia.
+
+### Plan de compensación y recuperación de sesiones por días festivos
+
+Dado que el curso se programa los días lunes, el calendario académico coincide con la pérdida de al menos cuatro (4) jornadas de clase debido a días festivos.
+
+* **Mecanismo de concertación:** Durante la primera sesión presencial, el docente y la cohorte definirán y concertarán el cronograma de recuperación horaria.
+* **Modalidad de compensación:** Las sesiones equivalentes se desarrollarán mediante encuentros sincrónicos remotos y talleres prácticos virtuales estructurados en el repositorio del curso, asegurando el cumplimiento íntegro de las 64 horas de formación presencial/asistida.
+
+### Integridad académica, ética en investigación y código de conducta
+
+La investigación y práctica en bases de datos espaciales exige honestidad científica y transparencia metodológica.
+
+* **Originalidad y código abierto:** El código fuente desarrollado debe ser original o citar explícitamente las librerías, repositorios y fuentes de inspiración utilizadas, respetando los términos de sus licencias.
+* **Uso ético de asistentes de IA:** Las herramientas de asistencia de código basadas en inteligencia artificial son bienvenidas como aceleradores de productividad, siempre que el estudiante comprenda, justifique y pueda explicar cada línea de código implementada. Queda prohibida la generación no supervisada y acrítica de reportes teóricos.
+* **Plagio y fraude académico:** El plagio de textos, la copia directa entre estudiantes o la falsificación de métricas de rendimiento en los experimentos analíticos se sancionará de acuerdo con los reglamentos disciplinarios de posgrado vigentes.
+
+## Referencias bibliográficas
+
+* Güting, R. H., & Schneider, M. (2005). *Moving objects databases*. Morgan Kaufmann.
+* Li, C. C., & Shan, J. (Eds.). (2015). *Advances in spatial and temporal databases*. Springer International Publishing.
+* Marquez, A. (2015). *PostGIS essentials*. Packt Publishing Ltd.
+* Obe, R. O., & Hsu, L. S. (2021). *PostGIS in action* (3rd ed.). Manning Publications.
+* Open Geospatial Consortium. (2011). *OpenGIS implementation standard for geographic information - Simple feature access - Part 1: Common architecture* (OGC 06-103r4).
+* Rigaux, P., Scholl, M., & Voisard, A. (2001). *Spatial databases: With application to GIS*. Morgan Kaufmann.
+* Shekhar, S., & Chawla, S. (2003). *Spatial databases: A tour*. Prentice Hall.
+* Yeung, A. K., & Hall, G. B. (2007). *Spatial database systems: Design, implementation and project management*. Springer Science & Business Media.

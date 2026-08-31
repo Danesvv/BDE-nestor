@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.550">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Bases de Datos Espaciales - 5&nbsp; Respaldo y recuperación de la base de datos sig_db_unal</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/proyectos/00-guia_proyecto_final.html" rel="next">
+<link href="../chapters/13-infraestructura_docker_y_base_datos_espacial.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/05-guia_instalacion_vscode_docker.html">Instalación y entornos</a></li><li class="breadcrumb-item"><a href="../chapters/14-respaldo_y_recuperacion_bd.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Respaldo y recuperación de la base de datos sig_db_unal</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Bases de Datos Espaciales</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bienvenida</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/00-prefacio.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-syllabus.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Syllabus: bases de datos espaciales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Instalación y entornos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-guia_instalacion_vscode_docker.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación: VS Code y contenedores Docker</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-instalacion_postgresql_18_windows.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Instalación y aprovisionamiento de PostgreSQL 18 y PostGIS 3.6</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13-infraestructura_docker_y_base_datos_espacial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Despliegue docker y verificación de la base de datos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14-respaldo_y_recuperacion_bd.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Respaldo y recuperación de la base de datos sig_db_unal</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Proyectos aplicados</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/proyectos/00-guia_proyecto_final.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Guía metodológica para el proyecto final</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/proyectos/01-temas_proyecto_final.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Temas de proyecto final en bases de datos espaciales</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/proyectos/tema_02_apache_sedona/02-proyecto_apache_sedona.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ficha de propuesta de tema de investigación</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/proyectos/tema_02_apache_sedona/02-rubrica_proyecto_apache_sedona.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Rúbrica de evaluación para el reporte en QMD y el código</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Apéndices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/82-quarto.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Quarto: orquestación y configuración</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/83-docker.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Docker: gestión de contenedores e imágenes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/84-git_github.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Git y GitHub: Sincronización Local-Remota</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/85-vscode.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Visual Studio Code (VScode): Extensiones e Interfaz</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/86-windows.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Temas técnicos sobre Windows</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/87-linux_ubuntu.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Temas Técnicos sobre Linux</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/93-postgresql.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">PostgreSQL</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/98-errata.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Errata</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/99-referencias.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Referencias Bibliográficas</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de Contenidos</h2>
+   
+  <ul>
+  <li><a href="#persistencia-de-variables-y-configuración-de-entorno" id="toc-persistencia-de-variables-y-configuración-de-entorno" class="nav-link active" data-scroll-target="#persistencia-de-variables-y-configuración-de-entorno"><span class="header-section-number">5.1</span> Persistencia de variables y configuración de entorno</a></li>
+  <li><a href="#estrategias-de-extracción-de-respaldos-lógicos" id="toc-estrategias-de-extracción-de-respaldos-lógicos" class="nav-link" data-scroll-target="#estrategias-de-extracción-de-respaldos-lógicos"><span class="header-section-number">5.2</span> Estrategias de extracción de respaldos lógicos</a>
+  <ul class="collapse">
+  <li><a href="#respaldo-desde-el-clúster-dockerizado" id="toc-respaldo-desde-el-clúster-dockerizado" class="nav-link" data-scroll-target="#respaldo-desde-el-clúster-dockerizado">Respaldo desde el clúster dockerizado</a></li>
+  <li><a href="#respaldo-desde-la-instancia-en-el-sistema-anfitrión" id="toc-respaldo-desde-la-instancia-en-el-sistema-anfitrión" class="nav-link" data-scroll-target="#respaldo-desde-la-instancia-en-el-sistema-anfitrión">Respaldo desde la instancia en el sistema anfitrión</a></li>
+  </ul></li>
+  <li><a href="#procedimientos-de-recuperación-y-restauración-sistema-anfitrión" id="toc-procedimientos-de-recuperación-y-restauración-sistema-anfitrión" class="nav-link" data-scroll-target="#procedimientos-de-recuperación-y-restauración-sistema-anfitrión"><span class="header-section-number">5.3</span> Procedimientos de recuperación y restauración (<strong>sistema anfitrión</strong>)</a>
+  <ul class="collapse">
+  <li><a href="#escenario-1-restauración-total-desde-backup-completo" id="toc-escenario-1-restauración-total-desde-backup-completo" class="nav-link" data-scroll-target="#escenario-1-restauración-total-desde-backup-completo">Escenario 1: restauración total desde backup completo</a></li>
+  <li><a href="#escenario-2-restauración-por-componentes-estructura-y-datos" id="toc-escenario-2-restauración-por-componentes-estructura-y-datos" class="nav-link" data-scroll-target="#escenario-2-restauración-por-componentes-estructura-y-datos">Escenario 2: restauración por componentes (estructura y datos)</a></li>
+  </ul></li>
+  <li><a href="#auditoría-de-integridad-posterior-a-la-restauración" id="toc-auditoría-de-integridad-posterior-a-la-restauración" class="nav-link" data-scroll-target="#auditoría-de-integridad-posterior-a-la-restauración"><span class="header-section-number">5.4</span> Auditoría de integridad posterior a la restauración</a>
+  <ul class="collapse">
+  <li><a href="#auditoría-automatizada-desatendida-mediante-cli" id="toc-auditoría-automatizada-desatendida-mediante-cli" class="nav-link" data-scroll-target="#auditoría-automatizada-desatendida-mediante-cli">Auditoría automatizada desatendida mediante CLI</a></li>
+  <li><a href="#auditoría-interactiva-en-cliente-psql" id="toc-auditoría-interactiva-en-cliente-psql" class="nav-link" data-scroll-target="#auditoría-interactiva-en-cliente-psql">Auditoría interactiva en cliente psql</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/05-guia_instalacion_vscode_docker.html">Instalación y entornos</a></li><li class="breadcrumb-item"><a href="../chapters/14-respaldo_y_recuperacion_bd.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Respaldo y recuperación de la base de datos sig_db_unal</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Respaldo y recuperación de la base de datos sig_db_unal</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>La gestión y preservación de infraestructuras de datos espaciales exige la implementación de protocolos sistemáticos de respaldo (<em>backup</em>) y recuperación ante desastres (<em>disaster recovery</em>). En entornos analíticos basados en PostgreSQL 18 y PostGIS 3.6, la persistencia de geometrías vectoriales conformes al estándar OGC SFS (<em>Simple Feature Access</em>) y de catálogos topológicos demanda el uso de utilidades nativas de extracción lógica optimizadas.</p>
+<p>A continuación, se formalizan los métodos estándar para la generación de copias de seguridad de la base de datos pedagógica <code>sig_db_unal</code> y su posterior reconstrucción, considerando tanto el clúster dockerizado de desarrollo como la instancia relacional nativa alojada en el sistema anfitrión (host).</p>
+<section id="persistencia-de-variables-y-configuración-de-entorno" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="persistencia-de-variables-y-configuración-de-entorno"><span class="header-section-number">5.1</span> Persistencia de variables y configuración de entorno</h2>
+<p>El protocolo de conexión de las herramientas cliente de PostgreSQL (<code>pg_dump</code>, <code>pg_restore</code>, <code>psql</code>) opera sobre la biblioteca <code>libpq</code>, la cual resuelve parámetros de conexión en cascada evaluando las variables de entorno del sistema.</p>
+<p>Para operar desde la terminal integrada de Visual Studio Code dentro del contenedor analítico y direccionar peticiones hacia cualquiera de las dos instancias sin solicitar contraseñas de forma interactiva, se declaran los parámetros de red, credenciales administrativas y la resolución dinámica del directorio de almacenamiento:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Directorio de persistencia para copias de respaldo</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Resolución condicional: valida si la sesión se ubica en la raíz o en chapters/</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">-d</span> <span class="st">"backups_pg18"</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">export</span> <span class="va">BACKUP_DIR</span><span class="op">=</span><span class="st">"backups_pg18"</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">export</span> <span class="va">BACKUP_DIR</span><span class="op">=</span><span class="st">"../backups_pg18"</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Parámetros de conexión: Clúster espacial en contenedor (db-postgis)</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">DOCKER_PGHOST</span><span class="op">=</span><span class="st">"db-postgis"</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">DOCKER_PGPORT</span><span class="op">=</span><span class="st">"5432"</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">DOCKER_PGUSER</span><span class="op">=</span><span class="st">"profe_unal"</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">DOCKER_PGPASSWORD</span><span class="op">=</span><span class="st">'geomatica2025'</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">DOCKER_PGDATABASE</span><span class="op">=</span><span class="st">"sig_db_unal"</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Parámetros de conexión: Instancia física en el sistema anfitrión (host)</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LOCAL_PGHOST</span><span class="op">=</span><span class="st">"host.docker.internal"</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LOCAL_PGPORT</span><span class="op">=</span><span class="st">"5432"</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LOCAL_PGUSER</span><span class="op">=</span><span class="st">"postgres"</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LOCAL_PGPASSWORD</span><span class="op">=</span><span class="st">'geomatica2025'</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LOCAL_PGDATABASE</span><span class="op">=</span><span class="st">"sig_db_unal"</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Variables estándar libpq por defecto (apuntando al contenedor activo)</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGHOST</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGHOST}</span><span class="st">"</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPORT</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGPORT}</span><span class="st">"</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGUSER</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGUSER}</span><span class="st">"</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGPASSWORD}</span><span class="st">"</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGDATABASE</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGDATABASE}</span><span class="st">"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="estrategias-de-extracción-de-respaldos-lógicos" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="estrategias-de-extracción-de-respaldos-lógicos"><span class="header-section-number">5.2</span> Estrategias de extracción de respaldos lógicos</h2>
+<p>La utilidad <code>pg_dump</code> extrae definiciones de esquemas, extensiones espaciales y registros tabulares en dos formatos principales:</p>
+<table class="table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Formato</th>
+<th>Modificador</th>
+<th>Extensión sugerida</th>
+<th>Características técnicas</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Texto plano (SQL)</strong></td>
+<td><code>-F p</code></td>
+<td><code>.sql</code></td>
+<td>Archivo de texto estructurado con sentencias DDL/DML legibles por el analizador sintáctico del motor.</td>
+</tr>
+<tr class="even">
+<td><strong>Personalizado (<em>Custom</em>)</strong></td>
+<td><code>-F c</code></td>
+<td><code>.backup</code> / <code>.dump</code></td>
+<td>Formato binario comprimido de alta eficiencia que permite restauración paralela y selectiva.</td>
+</tr>
+</tbody>
+</table>
+<section id="respaldo-desde-el-clúster-dockerizado" class="level3">
+<h3 class="anchored" data-anchor-id="respaldo-desde-el-clúster-dockerizado">Respaldo desde el clúster dockerizado</h3>
+<p>Para generar copias de respaldo de la base de datos <code>sig_db_unal</code> instanciada en el servicio <code>db-postgis</code>, se aplican las credenciales del rol docente (<code>profe_unal</code>).</p>
+<section id="respaldo-exclusivo-de-estructura-schema-only" class="level4">
+<h4 class="anchored" data-anchor-id="respaldo-exclusivo-de-estructura-schema-only">Respaldo exclusivo de estructura (schema only)</h4>
+<p>Archivo ligero que contiene únicamente las definiciones de tablas, vistas, funciones, índices espaciales GiST, disparadores y extensiones, omitiendo los datos. Es la opción ideal para crear entornos de desarrollo, pruebas o versionar esquemas limpios.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGPASSWORD}</span><span class="st">"</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pg_dump</span> <span class="at">-h</span> <span class="va">${DOCKER_PGHOST}</span> <span class="at">-p</span> <span class="va">${DOCKER_PGPORT}</span> <span class="at">-U</span> <span class="va">${DOCKER_PGUSER}</span> <span class="at">-d</span> <span class="va">${DOCKER_PGDATABASE}</span> <span class="at">-s</span> <span class="at">-F</span> p <span class="at">-f</span> <span class="st">"</span><span class="va">${BACKUP_DIR}</span><span class="st">/sig_db_unal_docker_estructura.sql"</span> <span class="at">-P</span> format=wrapped <span class="at">-P</span> columns=90</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Parámetros implementados:</p>
+<ul>
+<li><code>-s</code>: Extrae exclusivamente el esquema (definición DDL de objetos sin datos).</li>
+<li><code>-F p</code>: Formato texto plano (SQL legible).</li>
+<li><code>-f</code>: Ruta y nombre del archivo de salida.</li>
+</ul>
+</section>
+<section id="respaldo-exclusivo-de-datos-data-only" class="level4">
+<h4 class="anchored" data-anchor-id="respaldo-exclusivo-de-datos-data-only">Respaldo exclusivo de datos (data only)</h4>
+<p>Archivo comprimido que contiene exclusivamente los registros de la base de datos y las geometrías vectoriales, sin sentencias DDL de creación de objetos.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGPASSWORD}</span><span class="st">"</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pg_dump</span> <span class="at">-h</span> <span class="va">${DOCKER_PGHOST}</span> <span class="at">-p</span> <span class="va">${DOCKER_PGPORT}</span> <span class="at">-U</span> <span class="va">${DOCKER_PGUSER}</span> <span class="at">-d</span> <span class="va">${DOCKER_PGDATABASE}</span> <span class="at">-a</span> <span class="at">-F</span> c <span class="at">-f</span> <span class="st">"</span><span class="va">${BACKUP_DIR}</span><span class="st">/sig_db_unal_docker_datos.dump"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Parámetros implementados:</p>
+<ul>
+<li><code>-a</code>: Extrae exclusivamente los datos (DML).</li>
+<li><code>-F c</code>: Formato <em>Custom</em> (binario comprimido que permite restauración selectiva).</li>
+</ul>
+</section>
+<section id="respaldo-maestro-integral-master---recomendado" class="level4">
+<h4 class="anchored" data-anchor-id="respaldo-maestro-integral-master---recomendado">Respaldo maestro integral (master) - Recomendado</h4>
+<p>Copia maestra que incluye tanto la estructura como los datos. Constituye el archivo principal para planes de contingencia, portabilidad completa y recuperación ante desastres (<em>disaster recovery</em>).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGPASSWORD}</span><span class="st">"</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pg_dump</span> <span class="at">-h</span> <span class="va">${DOCKER_PGHOST}</span> <span class="at">-p</span> <span class="va">${DOCKER_PGPORT}</span> <span class="at">-U</span> <span class="va">${DOCKER_PGUSER}</span> <span class="at">-d</span> <span class="va">${DOCKER_PGDATABASE}</span> <span class="at">-N</span> cron <span class="at">-F</span> c <span class="at">-f</span> <span class="st">"</span><span class="va">${BACKUP_DIR}</span><span class="st">/sig_db_unal_docker_completo.backup"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Parámetros implementados:</p>
+<ul>
+<li><code>-F c</code>: Formato <em>Custom</em> (binario estructurado y comprimido, estándar para bases de datos geoespaciales modernas).</li>
+<li><code>-N cron</code>: Excluye el esquema <code>cron</code> durante la extracción. El contenedor tiene instalada y habilitada la extensión <code>pg_cron</code> (planificador de tareas en segundo plano), mientras que la instancia del motor relacional en el sistema anfitrión (host) no cuenta con dicha librería compilada ni registrada en sus parámetros de servidor.</li>
+</ul>
+</section>
+</section>
+<section id="respaldo-desde-la-instancia-en-el-sistema-anfitrión" class="level3">
+<h3 class="anchored" data-anchor-id="respaldo-desde-la-instancia-en-el-sistema-anfitrión">Respaldo desde la instancia en el sistema anfitrión</h3>
+<p>Cuando la base de datos <code>sig_db_unal</code> ha sido replicada o modificada directamente en la instancia física del sistema anfitrión, la extracción desde la terminal integrada de Visual Studio Code se ejecuta redirigiendo el host hacia <code>host.docker.internal</code> y utilizando el rol administrativo <code>postgres</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGPASSWORD}</span><span class="st">"</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pg_dump</span> <span class="at">-h</span> <span class="va">${LOCAL_PGHOST}</span> <span class="at">-p</span> <span class="va">${LOCAL_PGPORT}</span> <span class="at">-U</span> <span class="va">${LOCAL_PGUSER}</span> <span class="at">-d</span> <span class="va">${LOCAL_PGDATABASE}</span> <span class="at">-F</span> c <span class="at">-f</span> <span class="st">"</span><span class="va">${BACKUP_DIR}</span><span class="st">/sig_db_unal_local_completo.backup"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="procedimientos-de-recuperación-y-restauración-sistema-anfitrión" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="procedimientos-de-recuperación-y-restauración-sistema-anfitrión"><span class="header-section-number">5.3</span> Procedimientos de recuperación y restauración (<strong>sistema anfitrión</strong>)</h2>
+<p>La reconstrucción del catálogo espacial a partir de los respaldos generados se efectúa mediante dos escenarios operacionales estándar.</p>
+<section id="escenario-1-restauración-total-desde-backup-completo" class="level3">
+<h3 class="anchored" data-anchor-id="escenario-1-restauración-total-desde-backup-completo">Escenario 1: restauración total desde backup completo</h3>
+<p>Es el método más rápido y seguro ante incidentes de pérdida de datos o migración hacia una nueva instancia.</p>
+<ol type="1">
+<li>Eliminación preventiva de la base de datos destino si ya existe:</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGPASSWORD}</span><span class="st">"</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${LOCAL_PGHOST}</span> <span class="at">-p</span> <span class="va">${LOCAL_PGPORT}</span> <span class="at">-U</span> <span class="va">${LOCAL_PGUSER}</span> <span class="at">-d</span> postgres <span class="at">-c</span> <span class="st">"DROP DATABASE IF EXISTS sig_db_unal_restaurada WITH (FORCE);"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>DROP DATABASE</code></pre>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>Nota: La cláusula <code>WITH (FORCE)</code> asegura la terminación previa de cualquier sesión o conexión residual que haya quedado abierta contra <code>sig_db_unal_restaurada</code> durante la ejecución anterior, permitiendo la eliminación inmediata del catálogo.</p>
+</blockquote>
+<ol start="2" type="1">
+<li>Creación de la base de datos destino (vacía) en el clúster anfitrión:</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGPASSWORD}</span><span class="st">"</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${LOCAL_PGHOST}</span> <span class="at">-p</span> <span class="va">${LOCAL_PGPORT}</span> <span class="at">-U</span> <span class="va">${LOCAL_PGUSER}</span> <span class="at">-d</span> postgres <span class="at">-c</span> <span class="st">"CREATE DATABASE sig_db_unal_restaurada;"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CREATE DATABASE</code></pre>
+</div>
+</div>
+<ol start="3" type="1">
+<li>Ejecución de la restauración integral con la utilidad binaria <code>pg_restore</code>:</li>
+</ol>
+<p>Debido a que la extensión <code>pg_cron</code> no se encuentra instalada en el sistema anfitrión (host), <code>pg_restore</code> emite advertencias no bloqueantes y finaliza con un código de retorno <code>1</code>. Por defecto, el motor de ejecución de Quarto/Knitr interpreta cualquier salida distinta de cero (<code>status != 0</code>) en un bloque <code>{bash}</code> como un fallo crítico, deteniendo la compilación del documento (<code>Execution halted</code>).</p>
+<p>Para volcar la traza detallada en el reporte final sin interrumpir el renderizado ni desbordar los márgenes de página, se incorporan los siguientes mecanismos de control:</p>
+<ul>
+<li><strong>Directiva YAML <code>#| error: true</code>:</strong> Instruye al motor Knitr para capturar las advertencias y flujos de error en el documento compilado sin suspender la ejecución del capítulo (ver <a href="82-quarto.html#sec-opciones-chunks" class="quarto-xref"><span>Sección A.4</span></a>).</li>
+<li><strong>Operador condicional <code>|| true</code>:</strong> Fuerza a la subshell a retornar un código de salida <code>0</code> tras finalizar el comando, garantizando la continuidad del proceso de compilación.</li>
+<li><strong>Redirección y partición de línea (<code>2&gt;&amp;1 | fold -s -w 82</code>):</strong> Redirige el flujo de error estándar (<em>stderr</em>, descriptor 2) hacia la salida estándar (<em>stdout</em>, descriptor 1) mediante <code>2&gt;&amp;1</code> para canalizar toda la traza hacia la utilidad <code>fold</code>. El modificador <code>-w 82</code> restringe el ancho a 82 caracteres y <code>-s</code> asegura que la división ocurra en los espacios entre palabras, evitando cortes arbitrarios de texto y desbordamientos horizontales en la caja tipográfica del PDF.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGPASSWORD}</span><span class="st">"</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pg_restore</span> <span class="at">-h</span> <span class="va">${LOCAL_PGHOST}</span> <span class="at">-p</span> <span class="va">${LOCAL_PGPORT}</span> <span class="at">-U</span> <span class="va">${LOCAL_PGUSER}</span> <span class="at">-d</span> sig_db_unal_restaurada <span class="at">-v</span> <span class="st">"</span><span class="va">${BACKUP_DIR}</span><span class="st">/sig_db_unal_docker_completo.backup"</span> <span class="dv">2</span><span class="op">&gt;&amp;</span><span class="dv">1</span> <span class="kw">|</span> <span class="fu">fold</span> <span class="at">-s</span> <span class="at">-w</span> 82 <span class="kw">||</span> <span class="fu">true</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>pg_restore: connecting to database for restore
+pg_restore: executing SELECT pg_catalog.set_config('search_path', '', false);
+pg_restore: creating SCHEMA "base750"
+pg_restore: creating EXTENSION "pg_cron"
+pg_restore: while PROCESSING TOC:
+pg_restore: from TOC entry 2; 3079 16387 EXTENSION pg_cron (no owner)
+pg_restore: error: could not execute query: ERROR:  extension "pg_cron" is not 
+available
+HINT:  The extension must first be installed on the system where PostgreSQL is 
+running.
+Command was: CREATE EXTENSION IF NOT EXISTS pg_cron WITH SCHEMA pg_catalog;
+
+
+pg_restore: creating COMMENT "EXTENSION pg_cron"
+pg_restore: from TOC entry 6600; 0 0 COMMENT EXTENSION pg_cron 
+pg_restore: error: could not execute query: ERROR:  extension "pg_cron" does not 
+exist
+Command was: COMMENT ON EXTENSION pg_cron IS 'Job scheduler for PostgreSQL';
+
+
+pg_restore: creating SCHEMA "divpol"
+pg_restore: creating SCHEMA "topology"
+pg_restore: creating COMMENT "SCHEMA topology"
+pg_restore: creating EXTENSION "hstore"
+pg_restore: creating COMMENT "EXTENSION hstore"
+pg_restore: creating EXTENSION "postgis"
+pg_restore: creating COMMENT "EXTENSION postgis"
+pg_restore: creating EXTENSION "pgrouting"
+pg_restore: creating COMMENT "EXTENSION pgrouting"
+pg_restore: creating EXTENSION "postgis_raster"
+pg_restore: creating COMMENT "EXTENSION postgis_raster"
+pg_restore: creating EXTENSION "postgis_topology"
+pg_restore: creating COMMENT "EXTENSION postgis_topology"
+pg_restore: creating FUNCTION "public.asbinary(public.geometry)"
+pg_restore: creating FUNCTION "public.asbinary(public.geometry, text)"
+pg_restore: creating FUNCTION "public.astext(public.geometry)"
+pg_restore: creating FUNCTION "public.estimated_extent(text, text)"
+pg_restore: creating FUNCTION "public.estimated_extent(text, text, text)"
+pg_restore: creating FUNCTION "public.geomfromtext(text)"
+pg_restore: creating FUNCTION "public.geomfromtext(text, integer)"
+pg_restore: creating FUNCTION "public.ndims(public.geometry)"
+pg_restore: creating FUNCTION "public.setsrid(public.geometry, integer)"
+pg_restore: creating FUNCTION "public.srid(public.geometry)"
+pg_restore: creating FUNCTION "public.st_asbinary(text)"
+pg_restore: creating FUNCTION "public.st_astext(bytea)"
+pg_restore: creating OPERATOR FAMILY "public.gist_geometry_ops"
+pg_restore: creating OPERATOR CLASS "public.gist_geometry_ops"
+pg_restore: creating TABLE "base750.hidro_lineas"
+pg_restore: creating SEQUENCE "base750.hidro_lineas_gid_seq"
+pg_restore: creating SEQUENCE OWNED BY "base750.hidro_lineas_gid_seq"
+pg_restore: creating TABLE "base750.vias_lineas"
+pg_restore: creating SEQUENCE "base750.vias_lineas_gid_seq"
+pg_restore: creating SEQUENCE OWNED BY "base750.vias_lineas_gid_seq"
+pg_restore: creating TABLE "base750.vias_puntos"
+pg_restore: creating SEQUENCE "base750.vias_puntos_gid_seq"
+pg_restore: creating SEQUENCE OWNED BY "base750.vias_puntos_gid_seq"
+pg_restore: creating TABLE "base750.vias_texto"
+pg_restore: creating SEQUENCE "base750.vias_texto_gid_seq"
+pg_restore: creating SEQUENCE OWNED BY "base750.vias_texto_gid_seq"
+pg_restore: creating TABLE "divpol.departamentos"
+pg_restore: creating VIEW "divpol.capa_departamentos"
+pg_restore: creating TABLE "divpol.municipios"
+pg_restore: creating VIEW "divpol.capa_municipios"
+pg_restore: creating SEQUENCE "divpol.departamentos_gid_seq"
+pg_restore: creating SEQUENCE OWNED BY "divpol.departamentos_gid_seq"
+pg_restore: creating SEQUENCE "divpol.municipios_gid_seq"
+pg_restore: creating SEQUENCE OWNED BY "divpol.municipios_gid_seq"
+pg_restore: creating TABLE "divpol.nacion"
+pg_restore: creating SEQUENCE "divpol.nacion_gid_seq"
+pg_restore: creating SEQUENCE OWNED BY "divpol.nacion_gid_seq"
+pg_restore: creating DEFAULT "base750.hidro_lineas gid"
+pg_restore: creating DEFAULT "base750.vias_lineas gid"
+pg_restore: creating DEFAULT "base750.vias_puntos gid"
+pg_restore: creating DEFAULT "base750.vias_texto gid"
+pg_restore: creating DEFAULT "divpol.departamentos gid"
+pg_restore: creating DEFAULT "divpol.municipios gid"
+pg_restore: creating DEFAULT "divpol.nacion gid"
+pg_restore: processing data for table "base750.hidro_lineas"
+pg_restore: processing data for table "base750.vias_lineas"
+pg_restore: processing data for table "base750.vias_puntos"
+pg_restore: processing data for table "base750.vias_texto"
+pg_restore: processing data for table "divpol.departamentos"
+pg_restore: processing data for table "divpol.municipios"
+pg_restore: processing data for table "divpol.nacion"
+pg_restore: processing data for table "public.spatial_ref_sys"
+pg_restore: processing data for table "topology.topology"
+pg_restore: processing data for table "topology.layer"
+pg_restore: executing SEQUENCE SET hidro_lineas_gid_seq
+pg_restore: executing SEQUENCE SET vias_lineas_gid_seq
+pg_restore: executing SEQUENCE SET vias_puntos_gid_seq
+pg_restore: executing SEQUENCE SET vias_texto_gid_seq
+pg_restore: executing SEQUENCE SET departamentos_gid_seq
+pg_restore: executing SEQUENCE SET municipios_gid_seq
+pg_restore: executing SEQUENCE SET nacion_gid_seq
+pg_restore: executing SEQUENCE SET topology_id_seq
+pg_restore: creating CONSTRAINT "base750.hidro_lineas hidro_lineas_pkey"
+pg_restore: creating CONSTRAINT "base750.vias_lineas vias_lineas_pkey"
+pg_restore: creating CONSTRAINT "base750.vias_puntos vias_puntos_pkey"
+pg_restore: creating CONSTRAINT "base750.vias_texto vias_texto_pkey"
+pg_restore: creating CONSTRAINT "divpol.departamentos departamentos_gid_key"
+pg_restore: creating CONSTRAINT "divpol.departamentos departamentos_pkey"
+pg_restore: creating CONSTRAINT "divpol.municipios municipios_gid_key"
+pg_restore: creating CONSTRAINT "divpol.municipios municipios_pkey"
+pg_restore: creating CONSTRAINT "divpol.nacion nacion_nac_nombre_key"
+pg_restore: creating CONSTRAINT "divpol.nacion nacion_pkey"
+pg_restore: creating INDEX "base750.hidro_lineas_the_geom_gist"
+pg_restore: creating INDEX "base750.vias_lineas_the_geom_gist"
+pg_restore: creating INDEX "base750.vias_puntos_the_geom_gist"
+pg_restore: creating INDEX "base750.vias_texto_the_geom_gist"
+pg_restore: creating INDEX "divpol.departamentos_the_geom_gist"
+pg_restore: creating INDEX "divpol.municipios_the_geom_gist"
+pg_restore: warning: errors ignored on restore: 2</code></pre>
+</div>
+</div>
+<p>Parámetros implementados:</p>
+<ul>
+<li><code>-v</code>: Modo detallado (<em>verbose</em>) para monitorear el progreso de la reconstrucción de índices y tablas.</li>
+</ul>
+<blockquote class="blockquote">
+<p><strong>Nota técnica sobre advertencias en la restauración (<code>errors ignored on restore: 2</code>):</strong> Durante la ejecución de la restauración, la consola puede reportar dos advertencias específicas asociadas a la extensión <code>pg_cron</code>: 1. <code>ERROR: extension "pg_cron" is not available</code> (al intentar ejecutar <code>CREATE EXTENSION IF NOT EXISTS pg_cron</code>). 2. <code>ERROR: extension "pg_cron" does not exist</code> (al intentar asociar el comentario DDL de la extensión).</p>
+<p><strong>Origen técnico:</strong> El clúster dockerizado de origen cuenta con la librería compilada de la extensión <code>pg_cron</code> (utilizada para la programación de tareas en segundo plano), la cual no se encuentra instalada por defecto en el motor relacional del sistema anfitrión (host). <strong>Criterio de validación:</strong> Estas advertencias son <strong>no bloqueantes</strong> y pueden ignorarse con total seguridad. Su alcance se limita de forma exclusiva a las funciones del planificador de tareas. La totalidad de los esquemas cartográficos (<code>base750</code>, <code>divpol</code>), las extensiones espaciales (<code>postgis</code>, <code>postgis_raster</code>, <code>postgis_topology</code>), los registros tabulares, los catálogos OGC (<code>geometry_columns</code>, <code>spatial_ref_sys</code>) y los índices espaciales GiST se restauran de manera íntegra y funcional.</p>
+</blockquote>
+</section>
+<section id="escenario-2-restauración-por-componentes-estructura-y-datos" class="level3">
+<h3 class="anchored" data-anchor-id="escenario-2-restauración-por-componentes-estructura-y-datos">Escenario 2: restauración por componentes (estructura y datos)</h3>
+<p>Este método se utiliza si se requiere auditar o modificar la estructura DDL antes de cargar los datos o si se están integrando datos en un esquema ya existente.</p>
+<ol type="1">
+<li>Eliminación preventiva de la base de datos destino si ya existe en el clúster:</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGPASSWORD}</span><span class="st">"</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Cierre forzado de conexiones residuales y remoción del catálogo</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${LOCAL_PGHOST}</span> <span class="at">-p</span> <span class="va">${LOCAL_PGPORT}</span> <span class="at">-U</span> <span class="va">${LOCAL_PGUSER}</span> <span class="at">-d</span> postgres <span class="at">-c</span> <span class="st">"DROP DATABASE IF EXISTS sig_db_unal_restaurada WITH (FORCE);"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>DROP DATABASE</code></pre>
+</div>
+</div>
+<ol start="2" type="1">
+<li>Creación de la base de datos destino (vacía) en el clúster anfitrión:</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGPASSWORD}</span><span class="st">"</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Aprovisionamiento del contenedor relacional receptor</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${LOCAL_PGHOST}</span> <span class="at">-p</span> <span class="va">${LOCAL_PGPORT}</span> <span class="at">-U</span> <span class="va">${LOCAL_PGUSER}</span> <span class="at">-d</span> postgres <span class="at">-c</span> <span class="st">"CREATE DATABASE sig_db_unal_restaurada;"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CREATE DATABASE</code></pre>
+</div>
+</div>
+<ol start="3" type="1">
+<li>Cargar la estructura DDL:</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGPASSWORD}</span><span class="st">"</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Inyección de directivas DDL: esquemas, extensiones, tablas, vistas e índices espaciales</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${LOCAL_PGHOST}</span> <span class="at">-p</span> <span class="va">${LOCAL_PGPORT}</span> <span class="at">-U</span> <span class="va">${LOCAL_PGUSER}</span> <span class="at">-d</span> sig_db_unal_restaurada <span class="at">-f</span> <span class="st">"</span><span class="va">${BACKUP_DIR}</span><span class="st">/sig_db_unal_docker_estructura.sql"</span> <span class="dv">2</span><span class="op">&gt;&amp;</span><span class="dv">1</span> <span class="kw">|</span> <span class="fu">fold</span> <span class="at">-s</span> <span class="at">-w</span> 82 <span class="kw">||</span> <span class="fu">true</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>SET
+SET
+SET
+SET
+SET
+SET
+ set_config 
+------------
+ 
+(1 row)
+
+SET
+SET
+SET
+SET
+CREATE SCHEMA
+ALTER SCHEMA
+psql:../backups_pg18/sig_db_unal_docker_estructura.sql:35: ERROR:  extension 
+"pg_cron" is not available
+HINT:  The extension must first be installed on the system where PostgreSQL is 
+running.
+psql:../backups_pg18/sig_db_unal_docker_estructura.sql:42: ERROR:  extension 
+"pg_cron" does not exist
+CREATE SCHEMA
+ALTER SCHEMA
+CREATE SCHEMA
+ALTER SCHEMA
+COMMENT
+CREATE EXTENSION
+COMMENT
+CREATE EXTENSION
+COMMENT
+CREATE EXTENSION
+COMMENT
+CREATE EXTENSION
+COMMENT
+CREATE EXTENSION
+COMMENT
+CREATE FUNCTION
+ALTER FUNCTION
+CREATE FUNCTION
+ALTER FUNCTION
+CREATE FUNCTION
+ALTER FUNCTION
+CREATE FUNCTION
+ALTER FUNCTION
+CREATE FUNCTION
+ALTER FUNCTION
+CREATE FUNCTION
+ALTER FUNCTION
+CREATE FUNCTION
+ALTER FUNCTION
+CREATE FUNCTION
+ALTER FUNCTION
+CREATE FUNCTION
+ALTER FUNCTION
+CREATE FUNCTION
+ALTER FUNCTION
+CREATE FUNCTION
+ALTER FUNCTION
+CREATE FUNCTION
+ALTER FUNCTION
+CREATE OPERATOR FAMILY
+ALTER OPERATOR FAMILY
+ALTER OPERATOR FAMILY
+CREATE OPERATOR CLASS
+ALTER OPERATOR CLASS
+SET
+SET
+CREATE TABLE
+ALTER TABLE
+CREATE SEQUENCE
+ALTER SEQUENCE
+ALTER SEQUENCE
+CREATE TABLE
+ALTER TABLE
+CREATE SEQUENCE
+ALTER SEQUENCE
+ALTER SEQUENCE
+CREATE TABLE
+ALTER TABLE
+CREATE SEQUENCE
+ALTER SEQUENCE
+ALTER SEQUENCE
+CREATE TABLE
+ALTER TABLE
+CREATE SEQUENCE
+ALTER SEQUENCE
+ALTER SEQUENCE
+CREATE TABLE
+ALTER TABLE
+CREATE VIEW
+ALTER VIEW
+CREATE TABLE
+ALTER TABLE
+CREATE VIEW
+ALTER VIEW
+CREATE SEQUENCE
+ALTER SEQUENCE
+ALTER SEQUENCE
+CREATE SEQUENCE
+ALTER SEQUENCE
+ALTER SEQUENCE
+CREATE TABLE
+ALTER TABLE
+CREATE SEQUENCE
+ALTER SEQUENCE
+ALTER SEQUENCE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX</code></pre>
+</div>
+</div>
+<ol start="4" type="1">
+<li>Cargar los datos desactivando temporalmente disparadores y restricciones:</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGPASSWORD}</span><span class="st">"</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Inserción masiva de tuplas con suspensión de llaves foráneas y disparadores</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="ex">pg_restore</span> <span class="at">-h</span> <span class="va">${LOCAL_PGHOST}</span> <span class="at">-p</span> <span class="va">${LOCAL_PGPORT}</span> <span class="at">-U</span> <span class="va">${LOCAL_PGUSER}</span> <span class="at">-d</span> sig_db_unal_restaurada <span class="at">-a</span> <span class="at">-v</span> <span class="at">--disable-triggers</span> <span class="st">"</span><span class="va">${BACKUP_DIR}</span><span class="st">/sig_db_unal_docker_datos.dump"</span> <span class="dv">2</span><span class="op">&gt;&amp;</span><span class="dv">1</span> <span class="kw">|</span> <span class="fu">fold</span> <span class="at">-s</span> <span class="at">-w</span> 82 <span class="kw">||</span> <span class="fu">true</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>pg_restore: connecting to database for restore
+pg_restore: executing SELECT pg_catalog.set_config('search_path', '', false);
+pg_restore: disabling triggers for hidro_lineas
+pg_restore: processing data for table "base750.hidro_lineas"
+pg_restore: enabling triggers for hidro_lineas
+pg_restore: disabling triggers for vias_lineas
+pg_restore: processing data for table "base750.vias_lineas"
+pg_restore: enabling triggers for vias_lineas
+pg_restore: disabling triggers for vias_puntos
+pg_restore: processing data for table "base750.vias_puntos"
+pg_restore: enabling triggers for vias_puntos
+pg_restore: disabling triggers for vias_texto
+pg_restore: processing data for table "base750.vias_texto"
+pg_restore: enabling triggers for vias_texto
+pg_restore: disabling triggers for job
+pg_restore: while PROCESSING TOC:
+pg_restore: from TOC entry 6359; 0 16390 TABLE DATA job profe_unal
+pg_restore: error: could not execute query: ERROR:  schema "cron" does not exist
+Command was: ALTER TABLE cron.job DISABLE TRIGGER ALL;
+
+pg_restore: processing data for table "cron.job"
+pg_restore: error: could not execute query: ERROR:  schema "cron" does not exist
+Command was: COPY cron.job (jobid, schedule, command, nodename, nodeport, 
+database, username, active, jobname) FROM stdin;
+pg_restore: enabling triggers for job
+pg_restore: error: could not execute query: ERROR:  schema "cron" does not exist
+Command was: ALTER TABLE cron.job ENABLE TRIGGER ALL;
+
+pg_restore: disabling triggers for job_run_details
+pg_restore: from TOC entry 6361; 0 16417 TABLE DATA job_run_details profe_unal
+pg_restore: error: could not execute query: ERROR:  schema "cron" does not exist
+Command was: ALTER TABLE cron.job_run_details DISABLE TRIGGER ALL;
+
+pg_restore: processing data for table "cron.job_run_details"
+pg_restore: error: could not execute query: ERROR:  schema "cron" does not exist
+Command was: COPY cron.job_run_details (jobid, runid, job_pid, database, 
+username, command, status, return_message, start_time, end_time) FROM stdin;
+pg_restore: enabling triggers for job_run_details
+pg_restore: error: could not execute query: ERROR:  schema "cron" does not exist
+Command was: ALTER TABLE cron.job_run_details ENABLE TRIGGER ALL;
+
+pg_restore: disabling triggers for departamentos
+pg_restore: processing data for table "divpol.departamentos"
+pg_restore: enabling triggers for departamentos
+pg_restore: disabling triggers for municipios
+pg_restore: processing data for table "divpol.municipios"
+pg_restore: enabling triggers for municipios
+pg_restore: disabling triggers for nacion
+pg_restore: processing data for table "divpol.nacion"
+pg_restore: enabling triggers for nacion
+pg_restore: disabling triggers for spatial_ref_sys
+pg_restore: processing data for table "public.spatial_ref_sys"
+pg_restore: enabling triggers for spatial_ref_sys
+pg_restore: disabling triggers for topology
+pg_restore: processing data for table "topology.topology"
+pg_restore: enabling triggers for topology
+pg_restore: disabling triggers for layer
+pg_restore: processing data for table "topology.layer"
+pg_restore: enabling triggers for layer
+pg_restore: executing SEQUENCE SET hidro_lineas_gid_seq
+pg_restore: executing SEQUENCE SET vias_lineas_gid_seq
+pg_restore: executing SEQUENCE SET vias_puntos_gid_seq
+pg_restore: executing SEQUENCE SET vias_texto_gid_seq
+pg_restore: executing SEQUENCE SET jobid_seq
+pg_restore: from TOC entry 6590; 0 0 SEQUENCE SET jobid_seq profe_unal
+pg_restore: error: could not execute query: ERROR:  relation "cron.jobid_seq" 
+does not exist
+LINE 1: SELECT pg_catalog.setval('cron.jobid_seq', 1, false);
+                                 ^
+Command was: SELECT pg_catalog.setval('cron.jobid_seq', 1, false);
+
+
+pg_restore: executing SEQUENCE SET runid_seq
+pg_restore: from TOC entry 6591; 0 0 SEQUENCE SET runid_seq profe_unal
+pg_restore: error: could not execute query: ERROR:  relation "cron.runid_seq" 
+does not exist
+LINE 1: SELECT pg_catalog.setval('cron.runid_seq', 1, false);
+                                 ^
+Command was: SELECT pg_catalog.setval('cron.runid_seq', 1, false);
+
+
+pg_restore: executing SEQUENCE SET departamentos_gid_seq
+pg_restore: executing SEQUENCE SET municipios_gid_seq
+pg_restore: executing SEQUENCE SET nacion_gid_seq
+pg_restore: executing SEQUENCE SET topology_id_seq
+pg_restore: warning: errors ignored on restore: 8</code></pre>
+</div>
+</div>
+<p>Parámetros implementados:</p>
+<ul>
+<li><code>-a</code>: Restringe la operación exclusivamente a la inserción de registros (DML).</li>
+<li><code>-v</code>: Activa la salida detallada en consola para auditar el progreso tabla por tabla.</li>
+<li><code>--disable-triggers</code>: Optimiza la velocidad de inserción y suspende temporalmente las restricciones de integridad referencial (<em>foreign keys</em>).</li>
+</ul>
+<blockquote class="blockquote">
+<p><strong>Nota técnica sobre advertencias en la restauración desacoplada (<code>errors ignored on restore: 8</code>):</strong> Durante la ejecución del paso DDL (paso 3), la consola reporta que la extensión <code>pg_cron</code> no se encuentra instalada en el motor del sistema anfitrión. En consecuencia, el paso DML (paso 4) genera 8 advertencias no bloqueantes asociadas de forma exclusiva a la imposibilidad de deshabilitar disparadores, copiar datos y calibrar secuencias sobre las tablas <code>cron.job</code> y <code>cron.job_run_details</code>. Estas advertencias pueden ignorarse con total seguridad: la totalidad de las capas geográficas (<code>base750</code>, <code>divpol</code>), las extensiones PostGIS, las geometrías vectoriales y los índices espaciales GiST quedan restaurados de forma completa y funcional.</p>
+</blockquote>
+<ol start="5" type="1">
+<li>Sincronización de secuencias e identificadores autonuméricos:</li>
+</ol>
+<p>Aunque el archivo binario incluye las directivas <code>setval</code> para las tablas respaldadas, en procedimientos de restauración desacoplada se debe ejecutar la siguiente rutina procedural en PL/pgSQL para recalibrar los generadores numéricos de todas las tablas registradas y prevenir fallos de clave duplicada (<code>duplicate key value</code>) en transacciones posteriores:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>DO $$</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">DECLARE</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    seq_record <span class="dt">RECORD</span>;</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    max_id BIGINT;</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="cf">BEGIN</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">FOR</span> seq_record <span class="kw">IN</span> </span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">SELECT</span> s.relname <span class="kw">AS</span> seq_name, n.nspname <span class="kw">AS</span> schema_name, t.relname <span class="kw">AS</span> table_name, a.attname <span class="kw">AS</span> column_name</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">FROM</span> pg_class s</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">JOIN</span> pg_namespace n <span class="kw">ON</span> n.<span class="kw">oid</span> <span class="op">=</span> s.relnamespace</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">JOIN</span> pg_depend d <span class="kw">ON</span> d.objid <span class="op">=</span> s.<span class="kw">oid</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">JOIN</span> pg_class t <span class="kw">ON</span> d.refobjid <span class="op">=</span> t.<span class="kw">oid</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>        <span class="kw">JOIN</span> pg_attribute a <span class="kw">ON</span> (d.refobjid, d.refobjsubid) <span class="op">=</span> (a.attrelid, a.attnum)</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>        <span class="kw">WHERE</span> s.relkind <span class="op">=</span> <span class="st">'S'</span> </span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">LOOP</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>        <span class="kw">EXECUTE</span> format(<span class="st">'SELECT MAX(%I) FROM %I.%I'</span>, seq_record.column_name, seq_record.schema_name, seq_record.table_name) <span class="kw">INTO</span> max_id;</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">IF</span> max_id <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="cf">THEN</span></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>            <span class="kw">EXECUTE</span> format(<span class="st">'SELECT setval(</span><span class="ch">''</span><span class="st">%I.%I</span><span class="ch">''</span><span class="st">, %L)'</span>, seq_record.schema_name, seq_record.seq_name, max_id <span class="op">+</span> <span class="dv">1</span>);</span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">END</span> <span class="cf">IF</span>;</span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">END</span> <span class="cf">LOOP</span>;</span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a><span class="cf">END</span> $$;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="auditoría-de-integridad-posterior-a-la-restauración" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="auditoría-de-integridad-posterior-a-la-restauración"><span class="header-section-number">5.4</span> Auditoría de integridad posterior a la restauración</h2>
+<p>Finalizada la reconstrucción del catálogo, se procede a validar la operatividad de las extensiones espaciales, la correcta inscripción de capas en los metadatos de la Open Geospatial Consortium (OGC) y la consistencia volumétrica de las tablas en la base de datos restaurada.</p>
+<p>Para facilitar el flujo de trabajo según el contexto pedagógico, los procedimientos se organizan en dos modalidades secuenciales independientes:</p>
+<ul>
+<li><strong>Modalidad 1: Auditoría automatizada mediante CLI (<code>#| eval: true</code>):</strong> Bloques de ejecución secuencial desatendida desde la terminal integrada de Visual Studio Code, permitiendo la evaluación y renderizado directo de los resultados durante la compilación del documento.</li>
+<li><strong>Modalidad 2: Auditoría interactiva en sesión de <code>psql</code> (<code>#| eval: false</code>):</strong> Flujo de trabajo continuo dentro de una única sesión interactiva del cliente de terminal, permitiendo autenticarse al inicio y ejecutar todas las sentencias SQL sin alternar contextos de conexión.</li>
+</ul>
+<section id="auditoría-automatizada-desatendida-mediante-cli" class="level3">
+<h3 class="anchored" data-anchor-id="auditoría-automatizada-desatendida-mediante-cli">Auditoría automatizada desatendida mediante CLI</h3>
+<p>Esta secuencia ejecuta consultas directas mediante el modificador <code>-c</code>, evaluando el estado del socket, los controladores de PostGIS, el catálogo OGC y las métricas de almacenamiento.</p>
+<ol type="1">
+<li>Verificación del socket relacional y diagnóstico de conexión:</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGPASSWORD}</span><span class="st">"</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${LOCAL_PGHOST}</span> <span class="at">-p</span> <span class="va">${LOCAL_PGPORT}</span> <span class="at">-U</span> <span class="va">${LOCAL_PGUSER}</span> <span class="at">-d</span> sig_db_unal_restaurada <span class="at">-c</span> <span class="st">"\conninfo"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            Connection Information
+      Parameter       |         Value          
+----------------------+------------------------
+ Database             | sig_db_unal_restaurada
+ Client User          | postgres
+ Host                 | host.docker.internal
+ Host Address         | 192.168.65.254
+ Server Port          | 5432
+ Options              | 
+ Protocol Version     | 3.0
+ Password Used        | true
+ GSSAPI Authenticated | false
+ Backend PID          | 38264
+ SSL Connection       | false
+ Superuser            | on
+ Hot Standby          | off
+(13 rows)</code></pre>
+</div>
+</div>
+<ol start="2" type="1">
+<li>Comprobación del núcleo PostGIS y enlace de librerías geoespaciales:</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGPASSWORD}</span><span class="st">"</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${LOCAL_PGHOST}</span> <span class="at">-p</span> <span class="va">${LOCAL_PGPORT}</span> <span class="at">-U</span> <span class="va">${LOCAL_PGUSER}</span> <span class="at">-d</span> sig_db_unal_restaurada <span class="at">-x</span> <span class="at">-P</span> format=wrapped <span class="at">-P</span> columns=90 <span class="at">-c</span> <span class="st">"SELECT postgis_full_version();"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>-[ RECORD 1 ]--------+-------------------------------------------------------------------
+postgis_full_version | POSTGIS="3.6.2 3.6.2" [EXTENSION] PGSQL="180" GEOS="3.14.1dev-CAPI.
+                     |.-1.20.4" PROJ="8.2.1 NETWORK_ENABLED=OFF URL_ENDPOINT=https://cdn..
+                     |.proj.org USER_WRITABLE_DIRECTORY=C:\WINDOWS\ServiceProfiles\Networ.
+                     |.kService\AppData\Local/proj DATABASE_PATH=D:\Programs\PostgreSQL\1.
+                     |.8\share\contrib\postgis-3.6\proj\proj.db" (compiled against PROJ 8.
+                     |..2.1) GDAL="GDAL 3.9.2, released 2024/08/13" LIBXML="2.12.5" LIBJS.
+                     |.ON="0.12" LIBPROTOBUF="1.2.1" WAGYU="0.5.0 (Internal)" TOPOLOGY RA.
+                     |.STER</code></pre>
+</div>
+</div>
+<ol start="3" type="1">
+<li>Inspección del catálogo formal de capas geométricas OGC:</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGPASSWORD}</span><span class="st">"</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="va">query_geom</span><span class="op">=</span><span class="st">"</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT </span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="st">    f_table_schema AS esquema, </span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="st">    f_table_name AS capa, </span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="st">    f_geometry_column AS columna_geom, </span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="st">    coord_dimension AS dimension, </span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="st">    srid, </span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="st">    type AS tipo_geometria </span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="st">FROM geometry_columns </span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="st">WHERE f_table_schema IN ('base750', 'divpol') </span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="st">ORDER BY f_table_schema, f_table_name;</span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${LOCAL_PGHOST}</span> <span class="at">-p</span> <span class="va">${LOCAL_PGPORT}</span> <span class="at">-U</span> <span class="va">${LOCAL_PGUSER}</span> <span class="at">-d</span> sig_db_unal_restaurada <span class="at">-x</span> <span class="at">-P</span> format=wrapped <span class="at">-P</span> columns=90 <span class="at">-c</span> <span class="st">"</span><span class="va">${query_geom}</span><span class="st">"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>-[ RECORD 1 ]--+-------------------
+esquema        | base750
+capa           | hidro_lineas
+columna_geom   | the_geom
+dimension      | 2
+srid           | 21892
+tipo_geometria | GEOMETRY
+-[ RECORD 2 ]--+-------------------
+esquema        | base750
+capa           | vias_lineas
+columna_geom   | the_geom
+dimension      | 2
+srid           | 21892
+tipo_geometria | GEOMETRY
+-[ RECORD 3 ]--+-------------------
+esquema        | base750
+capa           | vias_puntos
+columna_geom   | the_geom
+dimension      | 2
+srid           | 21892
+tipo_geometria | ST_Point
+-[ RECORD 4 ]--+-------------------
+esquema        | base750
+capa           | vias_texto
+columna_geom   | the_geom
+dimension      | 2
+srid           | 21892
+tipo_geometria | ST_Point
+-[ RECORD 5 ]--+-------------------
+esquema        | divpol
+capa           | capa_departamentos
+columna_geom   | the_geom
+dimension      | 2
+srid           | 0
+tipo_geometria | GEOMETRY
+-[ RECORD 6 ]--+-------------------
+esquema        | divpol
+capa           | capa_municipios
+columna_geom   | the_geom
+dimension      | 2
+srid           | 0
+tipo_geometria | GEOMETRY
+-[ RECORD 7 ]--+-------------------
+esquema        | divpol
+capa           | departamentos
+columna_geom   | the_geom
+dimension      | 2
+srid           | 21892
+tipo_geometria | GEOMETRY
+-[ RECORD 8 ]--+-------------------
+esquema        | divpol
+capa           | municipios
+columna_geom   | the_geom
+dimension      | 2
+srid           | 21892
+tipo_geometria | GEOMETRY</code></pre>
+</div>
+</div>
+<ol start="4" type="1">
+<li>Auditoría de volumetría y conteo de registros en tablas de usuario:</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGPASSWORD}</span><span class="st">"</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="va">query_conteo</span><span class="op">=</span><span class="st">"</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT </span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="st">    schemaname AS esquema, </span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="st">    relname AS tabla, </span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="st">    n_live_tup AS registros </span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="st">FROM pg_stat_user_tables </span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="st">WHERE schemaname IN ('base750', 'divpol') </span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="st">ORDER BY schemaname, relname;</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${LOCAL_PGHOST}</span> <span class="at">-p</span> <span class="va">${LOCAL_PGPORT}</span> <span class="at">-U</span> <span class="va">${LOCAL_PGUSER}</span> <span class="at">-d</span> sig_db_unal_restaurada <span class="at">-x</span> <span class="at">-P</span> format=wrapped <span class="at">-P</span> columns=90 <span class="at">-c</span> <span class="st">"</span><span class="va">${query_conteo}</span><span class="st">"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>-[ RECORD 1 ]------------
+esquema   | base750
+tabla     | hidro_lineas
+registros | 124068
+-[ RECORD 2 ]------------
+esquema   | base750
+tabla     | vias_lineas
+registros | 13399
+-[ RECORD 3 ]------------
+esquema   | base750
+tabla     | vias_puntos
+registros | 6819
+-[ RECORD 4 ]------------
+esquema   | base750
+tabla     | vias_texto
+registros | 6645
+-[ RECORD 5 ]------------
+esquema   | divpol
+tabla     | departamentos
+registros | 32
+-[ RECORD 6 ]------------
+esquema   | divpol
+tabla     | municipios
+registros | 1121
+-[ RECORD 7 ]------------
+esquema   | divpol
+tabla     | nacion
+registros | 1</code></pre>
+</div>
+</div>
+</section>
+<section id="auditoría-interactiva-en-cliente-psql" class="level3">
+<h3 class="anchored" data-anchor-id="auditoría-interactiva-en-cliente-psql">Auditoría interactiva en cliente psql</h3>
+<p>Esta modalidad permite abrir una única sesión en el motor relacional y ejecutar de manera consecutiva las directivas de inspección y consultas analíticas.</p>
+<ol type="1">
+<li>Apertura de la sesión interactiva en la base de datos restaurada:</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGPASSWORD}</span><span class="st">"</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${LOCAL_PGHOST}</span> <span class="at">-p</span> <span class="va">${LOCAL_PGPORT}</span> <span class="at">-U</span> <span class="va">${LOCAL_PGUSER}</span> <span class="at">-d</span> sig_db_unal_restaurada</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Si ya se dispone de una sesión activa de <code>psql</code> en otra base de datos del clúster, se ejecuta el cambio de contexto con el metacomando de conexión:</p>
+<pre class="text"><code>\c sig_db_unal_restaurada
+</code></pre>
+<ol start="2" type="1">
+<li>Comprobación del estado y enlace de librerías de PostGIS:</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> postgis_full_version();</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol start="3" type="1">
+<li>Inspección del catálogo formal de geometrías OGC:</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    f_table_schema <span class="kw">AS</span> esquema, </span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    f_table_name <span class="kw">AS</span> capa, </span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    f_geometry_column <span class="kw">AS</span> columna_geom, </span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    coord_dimension <span class="kw">AS</span> <span class="kw">dimension</span>, </span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    srid, </span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">type</span> <span class="kw">AS</span> tipo_geometria </span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> geometry_columns </span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> f_table_schema <span class="kw">IN</span> (<span class="st">'base750'</span>, <span class="st">'divpol'</span>) </span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> f_table_schema, f_table_name;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol start="4" type="1">
+<li>Auditoría de volumetría y conteo de registros por tabla:</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    schemaname <span class="kw">AS</span> esquema, </span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    relname <span class="kw">AS</span> tabla, </span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    n_live_tup <span class="kw">AS</span> registros </span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> pg_stat_user_tables </span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> schemaname <span class="kw">IN</span> (<span class="st">'base750'</span>, <span class="st">'divpol'</span>) </span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> schemaname, relname;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol start="5" type="1">
+<li>Cierre de la sesión interactiva:</li>
+</ol>
+<p>Para finalizar la interacción y retornar al intérprete de la terminal integrada de Visual Studio Code:</p>
+<pre class="text"><code>\q
+</code></pre>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/13-infraestructura_docker_y_base_datos_espacial.html" class="pagination-link" aria-label="Despliegue docker y verificación de la base de datos">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Despliegue docker y verificación de la base de datos</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/proyectos/00-guia_proyecto_final.html" class="pagination-link" aria-label="Guía metodológica para el proyecto final">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Guía metodológica para el proyecto final</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

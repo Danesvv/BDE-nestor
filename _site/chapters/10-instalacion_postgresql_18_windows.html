@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.550">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Bases de Datos Espaciales - 3&nbsp; Instalación y aprovisionamiento de PostgreSQL 18 y PostGIS 3.6</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/13-infraestructura_docker_y_base_datos_espacial.html" rel="next">
+<link href="../chapters/05-guia_instalacion_vscode_docker.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/05-guia_instalacion_vscode_docker.html">Instalación y entornos</a></li><li class="breadcrumb-item"><a href="../chapters/10-instalacion_postgresql_18_windows.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Instalación y aprovisionamiento de PostgreSQL 18 y PostGIS 3.6</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Bases de Datos Espaciales</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bienvenida</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/00-prefacio.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-syllabus.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Syllabus: bases de datos espaciales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Instalación y entornos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-guia_instalacion_vscode_docker.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación: VS Code y contenedores Docker</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-instalacion_postgresql_18_windows.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Instalación y aprovisionamiento de PostgreSQL 18 y PostGIS 3.6</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13-infraestructura_docker_y_base_datos_espacial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Despliegue docker y verificación de la base de datos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14-respaldo_y_recuperacion_bd.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Respaldo y recuperación de la base de datos sig_db_unal</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Proyectos aplicados</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/proyectos/00-guia_proyecto_final.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Guía metodológica para el proyecto final</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/proyectos/01-temas_proyecto_final.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Temas de proyecto final en bases de datos espaciales</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/proyectos/tema_02_apache_sedona/02-proyecto_apache_sedona.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ficha de propuesta de tema de investigación</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/proyectos/tema_02_apache_sedona/02-rubrica_proyecto_apache_sedona.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Rúbrica de evaluación para el reporte en QMD y el código</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Apéndices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/82-quarto.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Quarto: orquestación y configuración</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/83-docker.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Docker: gestión de contenedores e imágenes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/84-git_github.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Git y GitHub: Sincronización Local-Remota</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/85-vscode.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Visual Studio Code (VScode): Extensiones e Interfaz</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/86-windows.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Temas técnicos sobre Windows</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/87-linux_ubuntu.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Temas Técnicos sobre Linux</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/93-postgresql.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">PostgreSQL</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/98-errata.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Errata</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/99-referencias.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Referencias Bibliográficas</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de Contenidos</h2>
+   
+  <ul>
+  <li><a href="#arquitectura-de-directorios-y-parámetros-del-sistema-anfitrión" id="toc-arquitectura-de-directorios-y-parámetros-del-sistema-anfitrión" class="nav-link active" data-scroll-target="#arquitectura-de-directorios-y-parámetros-del-sistema-anfitrión"><span class="header-section-number">3.1</span> Arquitectura de directorios y parámetros del sistema anfitrión</a></li>
+  <li><a href="#descripción-y-funcionalidad-de-herramientas-del-ecosistema" id="toc-descripción-y-funcionalidad-de-herramientas-del-ecosistema" class="nav-link" data-scroll-target="#descripción-y-funcionalidad-de-herramientas-del-ecosistema"><span class="header-section-number">3.2</span> Descripción y funcionalidad de herramientas del ecosistema</a></li>
+  <li><a href="#despliegue-del-motor-relacional-postgresql" id="toc-despliegue-del-motor-relacional-postgresql" class="nav-link" data-scroll-target="#despliegue-del-motor-relacional-postgresql"><span class="header-section-number">3.3</span> Despliegue del motor relacional PostgreSQL</a></li>
+  <li><a href="#integración-de-la-extensión-espacial-con-stackbuilder" id="toc-integración-de-la-extensión-espacial-con-stackbuilder" class="nav-link" data-scroll-target="#integración-de-la-extensión-espacial-con-stackbuilder"><span class="header-section-number">3.4</span> Integración de la extensión espacial con StackBuilder</a></li>
+  <li><a href="#configuración-de-variables-de-entorno-y-terminal-integrada" id="toc-configuración-de-variables-de-entorno-y-terminal-integrada" class="nav-link" data-scroll-target="#configuración-de-variables-de-entorno-y-terminal-integrada"><span class="header-section-number">3.5</span> Configuración de variables de entorno y terminal integrada</a></li>
+  <li><a href="#inicialización-manual-de-la-base-de-datos-espacial" id="toc-inicialización-manual-de-la-base-de-datos-espacial" class="nav-link" data-scroll-target="#inicialización-manual-de-la-base-de-datos-espacial"><span class="header-section-number">3.6</span> Inicialización manual de la base de datos espacial</a>
+  <ul class="collapse">
+  <li><a href="#conexión-administrativa-al-clúster" id="toc-conexión-administrativa-al-clúster" class="nav-link" data-scroll-target="#conexión-administrativa-al-clúster">Conexión administrativa al clúster</a></li>
+  <li><a href="#creación-de-la-base-de-datos" id="toc-creación-de-la-base-de-datos" class="nav-link" data-scroll-target="#creación-de-la-base-de-datos">Creación de la base de datos</a></li>
+  <li><a href="#habilitación-de-extensiones-espaciales" id="toc-habilitación-de-extensiones-espaciales" class="nav-link" data-scroll-target="#habilitación-de-extensiones-espaciales">Habilitación de extensiones espaciales</a></li>
+  <li><a href="#auditoría-de-versiones-y-enlaces-de-librerías" id="toc-auditoría-de-versiones-y-enlaces-de-librerías" class="nav-link" data-scroll-target="#auditoría-de-versiones-y-enlaces-de-librerías">Auditoría de versiones y enlaces de librerías</a></li>
+  </ul></li>
+  <li><a href="#verificación-analítica-del-módulo-espacial" id="toc-verificación-analítica-del-módulo-espacial" class="nav-link" data-scroll-target="#verificación-analítica-del-módulo-espacial"><span class="header-section-number">3.7</span> Verificación analítica del módulo espacial</a></li>
+  <li><a href="#resumen-de-la-estructura-desplegada" id="toc-resumen-de-la-estructura-desplegada" class="nav-link" data-scroll-target="#resumen-de-la-estructura-desplegada"><span class="header-section-number">3.8</span> Resumen de la estructura desplegada</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/05-guia_instalacion_vscode_docker.html">Instalación y entornos</a></li><li class="breadcrumb-item"><a href="../chapters/10-instalacion_postgresql_18_windows.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Instalación y aprovisionamiento de PostgreSQL 18 y PostGIS 3.6</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-instalacion-aprovisionamiento-postgresql-postgis" class="quarto-section-identifier"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Instalación y aprovisionamiento de PostgreSQL 18 y PostGIS 3.6</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>El despliegue de un sistema de gestión de bases de datos relacionales espaciales (RDBMS) de alto rendimiento requiere la articulación precisa entre el motor relacional PostgreSQL y la suite de extensiones PostGIS. Esta integración dota al motor de tipos de datos geométricos y geográficos alineados con los estándares de la Open Geospatial Consortium (OGC), funciones analíticas vectoriales, soporte ráster y motores topológicos.</p>
+<p>A continuación, se detalla el procedimiento de instalación, configuración de parámetros del sistema anfitrión, aprovisionamiento de variables de entorno y validación funcional del clúster espacial.</p>
+<section id="arquitectura-de-directorios-y-parámetros-del-sistema-anfitrión" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="arquitectura-de-directorios-y-parámetros-del-sistema-anfitrión"><span class="header-section-number">3.1</span> Arquitectura de directorios y parámetros del sistema anfitrión</h2>
+<p>La instalación debe realizarse a partir del paquete binario oficial de 64 bits (<code>postgresql-18.x-x64</code>), el cuál se puede descargar de <a href="https://www.postgresql.org/download/">https://www.postgresql.org/download/</a>. Durante la ejecución del asistente, se deben definir las rutas base del software, el directorio segregado de almacenamiento de datos (<code>data</code>) y las credenciales maestras de administración.</p>
+<p>La siguiente tabla resume los parámetros nominales de configuración aplicados en el despliegue del clúster:</p>
+<table class="table">
+<colgroup>
+<col style="width: 22%">
+<col style="width: 33%">
+<col style="width: 44%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Componente</th>
+<th style="text-align: left;">Parámetro / Ruta sugerida</th>
+<th style="text-align: left;">Descripción técnica</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Installation directory</strong></td>
+<td style="text-align: left;"><code>&lt;ruta_instalacion&gt;/</code> <code>PostgreSQL/18</code></td>
+<td style="text-align: left;">Directorio raíz para binarios, librerías compartidas y encabezados.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Data directory</strong></td>
+<td style="text-align: left;"><code>&lt;ruta_instalacion&gt;/</code> <code>PostgreSQL/18/data</code></td>
+<td style="text-align: left;">Espacio físico exclusivo donde residen las tablas, índices y catálogos.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Database port</strong></td>
+<td style="text-align: left;"><code>5432</code></td>
+<td style="text-align: left;">Puerto TCP estándar de escucha del servicio relacional.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Superuser</strong></td>
+<td style="text-align: left;"><code>postgres</code></td>
+<td style="text-align: left;">Rol principal de administración de base de datos con privilegios absolutos.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Contraseña superusuario</strong></td>
+<td style="text-align: left;"><code>geomatica2025</code></td>
+<td style="text-align: left;">Clave de acceso asignada al rol administrativo <code>postgres</code>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Service account</strong></td>
+<td style="text-align: left;">Cuenta de servicio de red estándar</td>
+<td style="text-align: left;">Identidad del sistema anfitrión que administra el servicio del motor.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Database service</strong></td>
+<td style="text-align: left;"><code>postgresql-x64-18</code></td>
+<td style="text-align: left;">Nombre del servicio registrado para gestión de arranque en segundo plano.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Command-line tools</strong></td>
+<td style="text-align: left;"><code>&lt;ruta_instalacion&gt;/</code> <code>PostgreSQL/18/bin</code></td>
+<td style="text-align: left;">Ubicación de ejecutables y utilidades de terminal (<code>psql</code>, <code>pg_dump</code>, etc.).</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>pgAdmin 4</strong></td>
+<td style="text-align: left;"><code>&lt;ruta_instalacion&gt;/</code> <code>PostgreSQL/18/pgAdmin 4</code></td>
+<td style="text-align: left;">Interfaz gráfica desacoplada para gestión, monitoreo y consultas.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>StackBuilder</strong></td>
+<td style="text-align: left;"><code>&lt;ruta_instalacion&gt;/</code> <code>PostgreSQL/18</code></td>
+<td style="text-align: left;">Gestor modular para descarga de extensiones y drivers complementarios.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Installation log</strong></td>
+<td style="text-align: left;"><code>&lt;ruta_temporal&gt;/</code> <code>install-postgresql.log</code></td>
+<td style="text-align: left;">Registro detallado de eventos de compilación, copia y registro de llaves.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="descripción-y-funcionalidad-de-herramientas-del-ecosistema" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="descripción-y-funcionalidad-de-herramientas-del-ecosistema"><span class="header-section-number">3.2</span> Descripción y funcionalidad de herramientas del ecosistema</h2>
+<p>El paquete distribuido integra herramientas administrativas de interfaz gráfica, clientes de línea de comandos, cargadores de datos espaciales y motores de cálculo geométrico esenciales para el análisis geoespacial avanzado.</p>
+<p>La tabla a continuación describe la utilidad técnica de cada herramienta instalada:</p>
+<table class="table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Herramienta / Componente</th>
+<th style="text-align: left;">Tipo</th>
+<th style="text-align: left;">Funcionalidad principal en el flujo espacial</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong><code>psql</code></strong></td>
+<td style="text-align: left;">CLI (Terminal)</td>
+<td style="text-align: left;">Cliente interactivo de línea de comandos para ejecución de DDL, DML y administración del motor.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong><code>pgAdmin 4</code></strong></td>
+<td style="text-align: left;">GUI (Gráfica)</td>
+<td style="text-align: left;">Entorno visual para administración de esquemas, optimización de consultas, inspección y visualización de registros.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong><code>StackBuilder</code></strong></td>
+<td style="text-align: left;">Gestor de paquetes</td>
+<td style="text-align: left;">Aplicación para la selección, descarga y vinculación de librerías complementarias y controladores al clúster.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong><code>pg_dump</code> / <code>pg_restore</code></strong></td>
+<td style="text-align: left;">CLI (Terminal)</td>
+<td style="text-align: left;">Utilidades de extracción y restauración de respaldos lógicos (texto plano, formato tar o binario personalizado).</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong><code>shp2pgsql</code></strong></td>
+<td style="text-align: left;">CLI (Cargador)</td>
+<td style="text-align: left;">Conversor de formatos vectoriales Shapefile a sentencias de inserción SQL estructuradas para PostGIS.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong><code>raster2pgsql</code></strong></td>
+<td style="text-align: left;">CLI (Cargador)</td>
+<td style="text-align: left;">Herramienta para particionar, piramidar y cargar coberturas ráster multiespectrales en tablas relacionales.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>GEOS</strong></td>
+<td style="text-align: left;">Motor algorítmico</td>
+<td style="text-align: left;">Librería computacional encargada de operaciones topológicas 2D (<code>ST_Intersects</code>, <code>ST_Buffer</code>, <code>ST_Intersection</code>).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>PROJ</strong></td>
+<td style="text-align: left;">Motor geodésico</td>
+<td style="text-align: left;">Librería para transformaciones de coordenadas, proyección cartográfica y conversión de datum/SRID.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>GDAL</strong></td>
+<td style="text-align: left;">Motor de traducción</td>
+<td style="text-align: left;">Capa de abstracción para lectura/escritura de formatos geoespaciales raster y vectoriales integrados al motor.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="despliegue-del-motor-relacional-postgresql" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="despliegue-del-motor-relacional-postgresql"><span class="header-section-number">3.3</span> Despliegue del motor relacional PostgreSQL</h2>
+<p>El procedimiento de instalación se realiza mediante el ejecutable interactivo siguiendo una secuencia ordenada:</p>
+<ol type="1">
+<li>Ejecutar el instalador con privilegios de administración en el sistema anfitrión.</li>
+<li>Indicar el directorio de instalación deseado (por ejemplo, <code>D:\Programs\PostgreSQL\18</code> o <code>&lt;ruta_instalacion&gt;/PostgreSQL/18</code>).</li>
+<li>Definir el directorio de datos (<code>data</code>), garantizando que se localice en un volumen con espacio suficiente para las capas geográficas del curso.</li>
+<li>Establecer la contraseña obligatoria del superusuario <code>postgres</code> como <code>geomatica2025</code>.</li>
+<li>Conservar el puerto de conexión estándar <code>5432</code> y la configuración regional por defecto del clúster (<em>Locale</em> por defecto).</li>
+<li>Confirmar el resumen de instalación y proceder con la copia de componentes.</li>
+<li>Al finalizar la transferencia, mantener marcada la casilla para inicializar <strong>StackBuilder</strong> antes de cerrar el instalador.</li>
+</ol>
+</section>
+<section id="integración-de-la-extensión-espacial-con-stackbuilder" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="integración-de-la-extensión-espacial-con-stackbuilder"><span class="header-section-number">3.4</span> Integración de la extensión espacial con StackBuilder</h2>
+<p>PostGIS debe incorporarse como una extensión binaria compatible con la versión mayor del motor:</p>
+<ol type="1">
+<li><p>En la ventana inicial de StackBuilder, seleccionar la instancia activa del clúster (puerto <code>5432</code>).</p></li>
+<li><p>Desplegar la categoría <strong>Spatial Extensions</strong>.</p></li>
+<li><p>Marcar la opción correspondiente al paquete espacial:</p>
+<pre class="text"><code>PostGIS 3.6 Bundle for PostgreSQL 18 (64 bit) v3.6.1</code></pre></li>
+<li><p>Definir un directorio de descarga temporal en el almacenamiento local.</p></li>
+<li><p>Durante la instalación de los componentes espaciales, <strong>no activar</strong> la casilla orientada a crear automáticamente una base de datos espacial genérica (<em>Create spatial database</em>). La creación y configuración de la base de datos se ejecutará manualmente para controlar la parametrización de esquemas y extensiones.</p></li>
+<li><p>Aceptar la integración de las librerías dependientes (GEOS, PROJ, GDAL y controladores ráster asociados) hasta completar el asistente.</p></li>
+</ol>
+</section>
+<section id="configuración-de-variables-de-entorno-y-terminal-integrada" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="configuración-de-variables-de-entorno-y-terminal-integrada"><span class="header-section-number">3.5</span> Configuración de variables de entorno y terminal integrada</h2>
+<p>Para ejecutar los binarios del gestor desde la terminal integrada de Visual Studio Code sin declarar la ruta absoluta, es indispensable registrar la carpeta <code>bin</code> en la variable de entorno <code>PATH</code> del sistema anfitrión.</p>
+<ol type="1">
+<li>Abrir la configuración avanzada del sistema en el panel de control del sistema anfitrión y acceder a <strong>Variables de entorno</strong>.</li>
+<li>En la sección <strong>Variables del sistema</strong>, seleccionar la variable <code>Path</code> y presionar <strong>Editar</strong>.</li>
+<li>Agregar una nueva entrada con la ruta absoluta hacia los ejecutables:</li>
+</ol>
+<pre class="text"><code>&lt;ruta_instalacion&gt;/PostgreSQL/18/bin
+</code></pre>
+<ol start="4" type="1">
+<li>Guardar los cambios aplicados.</li>
+<li>Iniciar una nueva sesión de la terminal integrada de Visual Studio Code y verificar el reconocimiento del binario principal <code>psql</code>:</li>
+</ol>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-verify-psql</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">--version</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Mas información sobre psql en @#sec-anexo-psql:</p>
+<ul>
+<li>Metacomandos de barra invertida frente a sentencias SQL <a href="93-postgresql.html#sec-anexo-metacomandos" class="quarto-xref"><span>Sección G.1.1</span></a> (o en <a href="93-postgresql.html#tbl-metacomandos-psql" class="quarto-xref">Tabla&nbsp;<span>G.1</span></a>)</li>
+<li>Parámetros de invocación y modificadores de línea de comandos <a href="93-postgresql.html#sec-anexo-parametros-cli" class="quarto-xref"><span>Sección G.1.2</span></a> (o en <a href="93-postgresql.html#tbl-banderas-cli" class="quarto-xref">Tabla&nbsp;<span>G.2</span></a>)</li>
+<li>Guía de inicio rápido para la administración con psql <a href="93-postgresql.html#sec-anexo-inicio-psql" class="quarto-xref"><span>Sección G.1.3</span></a></li>
+</ul>
+</section>
+<section id="inicialización-manual-de-la-base-de-datos-espacial" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="inicialización-manual-de-la-base-de-datos-espacial"><span class="header-section-number">3.6</span> Inicialización manual de la base de datos espacial</h2>
+<p>El aprovisionamiento manual permite aislar los catálogos y registrar únicamente las extensiones requeridas por la infraestructura de datos espaciales.</p>
+<section id="conexión-administrativa-al-clúster" class="level3">
+<h3 class="anchored" data-anchor-id="conexión-administrativa-al-clúster">Conexión administrativa al clúster</h3>
+<p>Abrir la terminal integrada de Visual Studio Code y conectarse a la instancia local utilizando el usuario administrativo:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-connect-psql</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-U</span> postgres</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>El sistema solicitará la contraseña configurada (<code>geomatica2025</code>).</p>
+</section>
+<section id="creación-de-la-base-de-datos" class="level3">
+<h3 class="anchored" data-anchor-id="creación-de-la-base-de-datos">Creación de la base de datos</h3>
+<p>Crear el contenedor lógico destinado a las prácticas analíticas del curso:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>#| <span class="kw">label</span>: <span class="kw">ddl</span><span class="op">-</span><span class="kw">create</span><span class="op">-</span>spatialdb</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>#| eval: <span class="kw">false</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">DATABASE</span> spatialdb;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Conectarse a la base de datos recién creada:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>#| <span class="kw">label</span>: setup<span class="op">-</span><span class="kw">switch</span><span class="op">-</span><span class="kw">database</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>#| eval: <span class="kw">false</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>\c spatialdb</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="habilitación-de-extensiones-espaciales" class="level3">
+<h3 class="anchored" data-anchor-id="habilitación-de-extensiones-espaciales">Habilitación de extensiones espaciales</h3>
+<p>Ejecutar las directivas DDL para activar el núcleo vectorial, el soporte ráster y el módulo topológico:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>#| <span class="kw">label</span>: <span class="kw">ddl</span><span class="op">-</span><span class="kw">enable</span><span class="op">-</span>postgis<span class="op">-</span>extensions</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>#| eval: <span class="kw">false</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> EXTENSION postgis;</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> EXTENSION postgis_raster;</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> EXTENSION postgis_topology;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="auditoría-de-versiones-y-enlaces-de-librerías" class="level3">
+<h3 class="anchored" data-anchor-id="auditoría-de-versiones-y-enlaces-de-librerías">Auditoría de versiones y enlaces de librerías</h3>
+<p>Comprobar que PostGIS se encuentre vinculado correctamente con GEOS, PROJ y los componentes de estadísticas espaciales:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>#| <span class="kw">label</span>: <span class="kw">audit</span><span class="op">-</span>postgis<span class="op">-</span>version</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>#| eval: <span class="kw">false</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> postgis_version();</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Resultado esperado en consola:</p>
+<pre class="text"><code>3.6 USE_GEOS=1 USE_PROJ=1 USE_STATS=1
+</code></pre>
+</section>
+</section>
+<section id="verificación-analítica-del-módulo-espacial" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="verificación-analítica-del-módulo-espacial"><span class="header-section-number">3.7</span> Verificación analítica del módulo espacial</h2>
+<p>Para confirmar la operatividad de los constructores geométricos basados en el estándar OGC SFS (<em>Simple Feature Access</em>), se ejecuta una consulta de prueba instanciando una geometría de tipo punto en dos dimensiones:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>#| <span class="kw">label</span>: <span class="kw">query</span><span class="op">-</span>test<span class="op">-</span>point<span class="op">-</span>geometry</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>#| eval: <span class="kw">false</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> ST_AsText(ST_Point(<span class="dv">10</span>, <span class="dv">20</span>));</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Respuesta esperada:</p>
+<pre class="text"><code>POINT(10 20)
+</code></pre>
+</section>
+<section id="resumen-de-la-estructura-desplegada" class="level2" data-number="3.8">
+<h2 data-number="3.8" class="anchored" data-anchor-id="resumen-de-la-estructura-desplegada"><span class="header-section-number">3.8</span> Resumen de la estructura desplegada</h2>
+<p>Al culminar el procedimiento, el árbol de directorios en el sistema anfitrión presentará la siguiente jerarquía funcional:</p>
+<pre class="text"><code>&lt;ruta_instalacion&gt;/PostgreSQL/18/
+│
+├── bin/            &lt;- Ejecutables del motor, clientes CLI y cargadores espaciales
+├── data/           &lt;- Almacenamiento físico de tablas, índices y catálogos
+├── include/        &lt;- Encabezados de desarrollo en C/C++ para extensiones
+├── lib/            &lt;- Librerías dinámicas del motor y módulos compilados de PostGIS
+├── pgAdmin 4/      &lt;- Aplicación de administración y monitoreo visual
+├── share/          &lt;- Scripts SQL de extensión, plantillas y archivos de soporte
+└── StackBuilder/   &lt;- Utilidad de mantenimiento y actualización de componentes
+</code></pre>
+<p>El clúster PostgreSQL 18 con PostGIS 3.6 queda completamente operativo, validado y disponible para la ingesta y manipulación de datos geográficos a través de la terminal integrada de Visual Studio Code.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/05-guia_instalacion_vscode_docker.html" class="pagination-link" aria-label="Guía de instalación: VS Code y contenedores Docker">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación: VS Code y contenedores Docker</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/13-infraestructura_docker_y_base_datos_espacial.html" class="pagination-link" aria-label="Despliegue docker y verificación de la base de datos">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Despliegue docker y verificación de la base de datos</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

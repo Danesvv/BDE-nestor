@@ -1,0 +1,517 @@
+# Respaldo y recuperación de la base de datos sig_db_unal
+
+```{r}
+#| label: setup-variables-sistema-r
+#| include: false
+
+# 1. Registro de variables en el proceso padre para persistencia y herencia en Knitr
+# Nota para el estudiante: En LOCAL_PGPASSWORD reemplace 'geomatica2025' por la clave configurada en el entorno.
+Sys.setenv(
+  # Directorio relativo de almacenamiento de respaldos (resuelto desde chapters/)
+  BACKUP_DIR = "../backups_pg18",
+
+  # Parámetros para la instancia física en el sistema anfitrión (acceso vía host virtual)
+  LOCAL_PGHOST = "host.docker.internal",
+  LOCAL_PGPORT = "5432",
+  LOCAL_PGUSER = "postgres",
+  LOCAL_PGPASSWORD = "geomatica2025",
+  LOCAL_PGDATABASE = "postgres",
+  
+  # Parámetros para el clúster dockerizado (resolución DNS interna en la red de contenedores)
+  DOCKER_PGHOST = "db-postgis",
+  DOCKER_PGPORT = "5432",
+  DOCKER_PGUSER = "profe_unal",
+  DOCKER_PGPASSWORD = "geomatica2025",
+  DOCKER_PGDATABASE = "sig_db_unal",
+  
+  # Parámetros por defecto para el cliente interactivo libpq
+  PGHOST = "db-postgis",
+  PGPORT = "5432",
+  PGUSER = "profe_unal",
+  PGPASSWORD = "geomatica2025",
+  PGDATABASE = "sig_db_unal"
+)
+
+```
+
+La gestión y preservación de infraestructuras de datos espaciales exige la implementación de protocolos sistemáticos de respaldo (*backup*) y recuperación ante desastres (*disaster recovery*). En entornos analíticos basados en PostgreSQL 18 y PostGIS 3.6, la persistencia de geometrías vectoriales conformes al estándar OGC SFS (*Simple Feature Access*) y de catálogos topológicos demanda el uso de utilidades nativas de extracción lógica optimizadas.
+
+A continuación, se formalizan los métodos estándar para la generación de copias de seguridad de la base de datos pedagógica `sig_db_unal` y su posterior reconstrucción, considerando tanto el clúster dockerizado de desarrollo como la instancia relacional nativa alojada en el sistema anfitrión (host).
+
+## Persistencia de variables y configuración de entorno
+
+El protocolo de conexión de las herramientas cliente de PostgreSQL (`pg_dump`, `pg_restore`, `psql`) opera sobre la biblioteca `libpq`, la cual resuelve parámetros de conexión en cascada evaluando las variables de entorno del sistema.
+
+Para operar desde la terminal integrada de Visual Studio Code dentro del contenedor analítico y direccionar peticiones hacia cualquiera de las dos instancias sin solicitar contraseñas de forma interactiva, se declaran los parámetros de red, credenciales administrativas y la resolución dinámica del directorio de almacenamiento:
+
+```{bash}
+#| label: setup-variables-respaldo
+#| eval: true
+#| echo: true
+# ==============================================================================
+# 1. Directorio de persistencia para copias de respaldo
+# ==============================================================================
+# Resolución condicional: valida si la sesión se ubica en la raíz o en chapters/
+if [ -d "backups_pg18" ]; then
+    export BACKUP_DIR="backups_pg18"
+else
+    export BACKUP_DIR="../backups_pg18"
+fi
+
+# ==============================================================================
+# 2. Parámetros de conexión: Clúster espacial en contenedor (db-postgis)
+# ==============================================================================
+export DOCKER_PGHOST="db-postgis"
+export DOCKER_PGPORT="5432"
+export DOCKER_PGUSER="profe_unal"
+export DOCKER_PGPASSWORD='geomatica2025'
+export DOCKER_PGDATABASE="sig_db_unal"
+
+# ==============================================================================
+# 3. Parámetros de conexión: Instancia física en el sistema anfitrión (host)
+# ==============================================================================
+export LOCAL_PGHOST="host.docker.internal"
+export LOCAL_PGPORT="5432"
+export LOCAL_PGUSER="postgres"
+export LOCAL_PGPASSWORD='geomatica2025'
+export LOCAL_PGDATABASE="sig_db_unal"
+
+# ==============================================================================
+# 4. Variables estándar libpq por defecto (apuntando al contenedor activo)
+# ==============================================================================
+export PGHOST="${DOCKER_PGHOST}"
+export PGPORT="${DOCKER_PGPORT}"
+export PGUSER="${DOCKER_PGUSER}"
+export PGPASSWORD="${DOCKER_PGPASSWORD}"
+export PGDATABASE="${DOCKER_PGDATABASE}"
+
+```
+
+## Estrategias de extracción de respaldos lógicos
+
+La utilidad `pg_dump` extrae definiciones de esquemas, extensiones espaciales y registros tabulares en dos formatos principales:
+
+| Formato | Modificador | Extensión sugerida | Características técnicas |
+| -- | - | - | ---- |
+| **Texto plano (SQL)** | `-F p` | `.sql` | Archivo de texto estructurado con sentencias DDL/DML legibles por el analizador sintáctico del motor. |
+| **Personalizado (*Custom*)** | `-F c` | `.backup` / `.dump` | Formato binario comprimido de alta eficiencia que permite restauración paralela y selectiva. |
+
+### Respaldo desde el clúster dockerizado
+
+Para generar copias de respaldo de la base de datos `sig_db_unal` instanciada en el servicio `db-postgis`, se aplican las credenciales del rol docente (`profe_unal`).
+
+#### Respaldo exclusivo de estructura (schema only)
+
+Archivo ligero que contiene únicamente las definiciones de tablas, vistas, funciones, índices espaciales GiST, disparadores y extensiones, omitiendo los datos. Es la opción ideal para crear entornos de desarrollo, pruebas o versionar esquemas limpios.
+
+```{bash}
+#| label: backup-docker-schema
+#| eval: false
+#| echo: true
+export PGPASSWORD="${DOCKER_PGPASSWORD}"
+
+pg_dump -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -s -F p -f "${BACKUP_DIR}/sig_db_unal_docker_estructura.sql" -P format=wrapped -P columns=90
+
+```
+
+Parámetros implementados:
+
+* `-s`: Extrae exclusivamente el esquema (definición DDL de objetos sin datos).
+* `-F p`: Formato texto plano (SQL legible).
+* `-f`: Ruta y nombre del archivo de salida.
+
+
+
+#### Respaldo exclusivo de datos (data only)
+
+Archivo comprimido que contiene exclusivamente los registros de la base de datos y las geometrías vectoriales, sin sentencias DDL de creación de objetos.
+
+```{bash}
+#| label: backup-docker-data
+#| eval: false
+#| echo: true
+export PGPASSWORD="${DOCKER_PGPASSWORD}"
+pg_dump -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -a -F c -f "${BACKUP_DIR}/sig_db_unal_docker_datos.dump"
+
+```
+
+Parámetros implementados:
+
+* `-a`: Extrae exclusivamente los datos (DML).
+* `-F c`: Formato *Custom* (binario comprimido que permite restauración selectiva).
+
+
+
+#### Respaldo maestro integral (master) - Recomendado
+
+Copia maestra que incluye tanto la estructura como los datos. Constituye el archivo principal para planes de contingencia, portabilidad completa y recuperación ante desastres (*disaster recovery*).
+
+```{bash}
+#| label: backup-docker-master
+#| eval: false
+#| echo: true
+export PGPASSWORD="${DOCKER_PGPASSWORD}"
+
+pg_dump -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -N cron -F c -f "${BACKUP_DIR}/sig_db_unal_docker_completo.backup"
+
+```
+
+Parámetros implementados:
+
+* `-F c`: Formato *Custom* (binario estructurado y comprimido, estándar para bases de datos geoespaciales modernas).
+* `-N cron`: Excluye el esquema `cron` durante la extracción. El contenedor tiene instalada y habilitada la extensión `pg_cron` (planificador de tareas en segundo plano), mientras que la instancia del motor relacional en el sistema anfitrión (host) no cuenta con dicha librería compilada ni registrada en sus parámetros de servidor.
+
+### Respaldo desde la instancia en el sistema anfitrión
+
+Cuando la base de datos `sig_db_unal` ha sido replicada o modificada directamente en la instancia física del sistema anfitrión, la extracción desde la terminal integrada de Visual Studio Code se ejecuta redirigiendo el host hacia `host.docker.internal` y utilizando el rol administrativo `postgres`:
+
+```{bash}
+#| label: backup-local-master
+#| eval: false
+#| echo: true
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+pg_dump -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATABASE} -F c -f "${BACKUP_DIR}/sig_db_unal_local_completo.backup"
+
+```
+
+## Procedimientos de recuperación y restauración (**sistema anfitrión**)
+
+La reconstrucción del catálogo espacial a partir de los respaldos generados se efectúa mediante dos escenarios operacionales estándar.
+
+
+### Escenario 1: restauración total desde backup completo 
+
+Es el método más rápido y seguro ante incidentes de pérdida de datos o migración hacia una nueva instancia.
+
+1. Eliminación preventiva de la base de datos destino si ya existe:
+
+```{bash}
+#| label: ddl-drop-target-database-1
+#| eval: true
+#| echo: true
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d postgres -c "DROP DATABASE IF EXISTS sig_db_unal_restaurada WITH (FORCE);"
+
+```
+
+> Nota: La cláusula `WITH (FORCE)` asegura la terminación previa de cualquier sesión o conexión residual que haya quedado abierta contra `sig_db_unal_restaurada` durante la ejecución anterior, permitiendo la eliminación inmediata del catálogo.
+
+2. Creación de la base de datos destino (vacía) en el clúster anfitrión:
+
+
+
+```{bash}
+#| label: ddl-create-target-restore-db-1
+#| eval: true
+#| echo: true
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d postgres -c "CREATE DATABASE sig_db_unal_restaurada;"
+
+```
+
+3. Ejecución de la restauración integral con la utilidad binaria `pg_restore`:
+
+Debido a que la extensión `pg_cron` no se encuentra instalada en el sistema anfitrión (host), `pg_restore` emite advertencias no bloqueantes y finaliza con un código de retorno `1`. Por defecto, el motor de ejecución de Quarto/Knitr interpreta cualquier salida distinta de cero (`status != 0`) en un bloque `{bash}` como un fallo crítico, deteniendo la compilación del documento (`Execution halted`).
+
+Para volcar la traza detallada en el reporte final sin interrumpir el renderizado ni desbordar los márgenes de página, se incorporan los siguientes mecanismos de control:
+
+
+* **Directiva YAML `#| error: true`:** Instruye al motor Knitr para capturar las advertencias y flujos de error en el documento compilado sin suspender la ejecución del capítulo (ver @sec-opciones-chunks).
+* **Operador condicional `|| true`:** Fuerza a la subshell a retornar un código de salida `0` tras finalizar el comando, garantizando la continuidad del proceso de compilación.
+* **Redirección y partición de línea (`2>&1 | fold -s -w 82`):** Redirige el flujo de error estándar (*stderr*, descriptor 2) hacia la salida estándar (*stdout*, descriptor 1) mediante `2>&1` para canalizar toda la traza hacia la utilidad `fold`. El modificador `-w 82` restringe el ancho a 82 caracteres y `-s` asegura que la división ocurra en los espacios entre palabras, evitando cortes arbitrarios de texto y desbordamientos horizontales en la caja tipográfica del PDF.
+
+
+```{bash}
+#| label: dml-restore-master-dump
+#| eval: true
+#| echo: true
+#| error: true
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+pg_restore -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d sig_db_unal_restaurada -v "${BACKUP_DIR}/sig_db_unal_docker_completo.backup" 2>&1 | fold -s -w 82 || true
+
+```
+
+Parámetros implementados:
+
+* `-v`: Modo detallado (*verbose*) para monitorear el progreso de la reconstrucción de índices y tablas.
+
+
+> **Nota técnica sobre advertencias en la restauración (`errors ignored on restore: 2`):**
+> Durante la ejecución de la restauración, la consola puede reportar dos advertencias específicas asociadas a la extensión `pg_cron`:
+> 1. `ERROR: extension "pg_cron" is not available` (al intentar ejecutar `CREATE EXTENSION IF NOT EXISTS pg_cron`).
+> 2. `ERROR: extension "pg_cron" does not exist` (al intentar asociar el comentario DDL de la extensión).
+> 
+> 
+> **Origen técnico:** El clúster dockerizado de origen cuenta con la librería compilada de la extensión `pg_cron` (utilizada para la programación de tareas en segundo plano), la cual no se encuentra instalada por defecto en el motor relacional del sistema anfitrión (host).
+> **Criterio de validación:** Estas advertencias son **no bloqueantes** y pueden ignorarse con total seguridad. Su alcance se limita de forma exclusiva a las funciones del planificador de tareas. La totalidad de los esquemas cartográficos (`base750`, `divpol`), las extensiones espaciales (`postgis`, `postgis_raster`, `postgis_topology`), los registros tabulares, los catálogos OGC (`geometry_columns`, `spatial_ref_sys`) y los índices espaciales GiST se restauran de manera íntegra y funcional.
+
+### Escenario 2: restauración por componentes (estructura y datos)
+
+Este método se utiliza si se requiere auditar o modificar la estructura DDL antes de cargar los datos o si se están integrando datos en un esquema ya existente.
+
+1. Eliminación preventiva de la base de datos destino si ya existe en el clúster:
+
+```{bash}
+#| label: ddl-drop-target-database-2
+#| eval: true
+#| echo: true
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+# Cierre forzado de conexiones residuales y remoción del catálogo
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d postgres -c "DROP DATABASE IF EXISTS sig_db_unal_restaurada WITH (FORCE);"
+
+```
+
+2. Creación de la base de datos destino (vacía) en el clúster anfitrión:
+
+
+
+```{bash}
+#| label: ddl-create-target-restore-db-2
+#| eval: true
+#| echo: true
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+# Aprovisionamiento del contenedor relacional receptor
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d postgres -c "CREATE DATABASE sig_db_unal_restaurada;"
+
+```
+
+3. Cargar la estructura DDL:
+
+
+
+```{bash}
+#| label: ddl-restore-schema-sql
+#| eval: true
+#| echo: true
+#| error: true
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+# Inyección de directivas DDL: esquemas, extensiones, tablas, vistas e índices espaciales
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d sig_db_unal_restaurada -f "${BACKUP_DIR}/sig_db_unal_docker_estructura.sql" 2>&1 | fold -s -w 82 || true
+
+```
+
+4. Cargar los datos desactivando temporalmente disparadores y restricciones:
+
+
+
+```{bash}
+#| label: dml-restore-data-custom
+#| eval: true
+#| echo: true
+#| error: true
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+# Inserción masiva de tuplas con suspensión de llaves foráneas y disparadores
+pg_restore -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d sig_db_unal_restaurada -a -v --disable-triggers "${BACKUP_DIR}/sig_db_unal_docker_datos.dump" 2>&1 | fold -s -w 82 || true
+
+```
+
+Parámetros implementados:
+
+* `-a`: Restringe la operación exclusivamente a la inserción de registros (DML).
+* `-v`: Activa la salida detallada en consola para auditar el progreso tabla por tabla.
+* `--disable-triggers`: Optimiza la velocidad de inserción y suspende temporalmente las restricciones de integridad referencial (*foreign keys*).
+
+
+> **Nota técnica sobre advertencias en la restauración desacoplada (`errors ignored on restore: 8`):**
+> Durante la ejecución del paso DDL (paso 3), la consola reporta que la extensión `pg_cron` no se encuentra instalada en el motor del sistema anfitrión. En consecuencia, el paso DML (paso 4) genera 8 advertencias no bloqueantes asociadas de forma exclusiva a la imposibilidad de deshabilitar disparadores, copiar datos y calibrar secuencias sobre las tablas `cron.job` y `cron.job_run_details`.
+> Estas advertencias pueden ignorarse con total seguridad: la totalidad de las capas geográficas (`base750`, `divpol`), las extensiones PostGIS, las geometrías vectoriales y los índices espaciales GiST quedan restaurados de forma completa y funcional.
+
+5. Sincronización de secuencias e identificadores autonuméricos:
+
+Aunque el archivo binario incluye las directivas `setval` para las tablas respaldadas, en procedimientos de restauración desacoplada se debe ejecutar la siguiente rutina procedural en PL/pgSQL para recalibrar los generadores numéricos de todas las tablas registradas y prevenir fallos de clave duplicada (`duplicate key value`) en transacciones posteriores:
+
+```{sql}
+--| label: ddl-sync-database-sequences
+--| eval: false
+--| echo: true
+DO $$
+DECLARE
+    seq_record RECORD;
+    max_id BIGINT;
+BEGIN
+    FOR seq_record IN 
+        SELECT s.relname AS seq_name, n.nspname AS schema_name, t.relname AS table_name, a.attname AS column_name
+        FROM pg_class s
+        JOIN pg_namespace n ON n.oid = s.relnamespace
+        JOIN pg_depend d ON d.objid = s.oid
+        JOIN pg_class t ON d.refobjid = t.oid
+        JOIN pg_attribute a ON (d.refobjid, d.refobjsubid) = (a.attrelid, a.attnum)
+        WHERE s.relkind = 'S' 
+    LOOP
+        EXECUTE format('SELECT MAX(%I) FROM %I.%I', seq_record.column_name, seq_record.schema_name, seq_record.table_name) INTO max_id;
+        IF max_id IS NOT NULL THEN
+            EXECUTE format('SELECT setval(''%I.%I'', %L)', seq_record.schema_name, seq_record.seq_name, max_id + 1);
+        END IF;
+    END LOOP;
+END $$;
+
+```
+
+## Auditoría de integridad posterior a la restauración
+
+Finalizada la reconstrucción del catálogo, se procede a validar la operatividad de las extensiones espaciales, la correcta inscripción de capas en los metadatos de la Open Geospatial Consortium (OGC) y la consistencia volumétrica de las tablas en la base de datos restaurada.
+
+Para facilitar el flujo de trabajo según el contexto pedagógico, los procedimientos se organizan en dos modalidades secuenciales independientes:
+
+* **Modalidad 1: Auditoría automatizada mediante CLI (`#| eval: true`):** Bloques de ejecución secuencial desatendida desde la terminal integrada de Visual Studio Code, permitiendo la evaluación y renderizado directo de los resultados durante la compilación del documento.
+* **Modalidad 2: Auditoría interactiva en sesión de `psql` (`#| eval: false`):** Flujo de trabajo continuo dentro de una única sesión interactiva del cliente de terminal, permitiendo autenticarse al inicio y ejecutar todas las sentencias SQL sin alternar contextos de conexión.
+
+### Auditoría automatizada desatendida mediante CLI
+
+Esta secuencia ejecuta consultas directas mediante el modificador `-c`, evaluando el estado del socket, los controladores de PostGIS, el catálogo OGC y las métricas de almacenamiento.
+
+1. Verificación del socket relacional y diagnóstico de conexión:
+
+```{bash}
+#| label: audit-connect-restored-db-cli
+#| eval: true
+#| echo: true
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d sig_db_unal_restaurada -c "\conninfo"
+
+```
+
+2. Comprobación del núcleo PostGIS y enlace de librerías geoespaciales:
+
+```{bash}
+#| label: audit-postgis-version-cli
+#| eval: true
+#| echo: true
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d sig_db_unal_restaurada -x -P format=wrapped -P columns=90 -c "SELECT postgis_full_version();"
+
+```
+
+3. Inspección del catálogo formal de capas geométricas OGC:
+
+```{bash}
+#| label: audit-geometry-columns-cli
+#| eval: true
+#| echo: true
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+query_geom="
+SELECT 
+    f_table_schema AS esquema, 
+    f_table_name AS capa, 
+    f_geometry_column AS columna_geom, 
+    coord_dimension AS dimension, 
+    srid, 
+    type AS tipo_geometria 
+FROM geometry_columns 
+WHERE f_table_schema IN ('base750', 'divpol') 
+ORDER BY f_table_schema, f_table_name;
+"
+
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d sig_db_unal_restaurada -x -P format=wrapped -P columns=90 -c "${query_geom}"
+
+```
+
+4. Auditoría de volumetría y conteo de registros en tablas de usuario:
+
+```{bash}
+#| label: audit-record-counts-cli
+#| eval: true
+#| echo: true
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+query_conteo="
+SELECT 
+    schemaname AS esquema, 
+    relname AS tabla, 
+    n_live_tup AS registros 
+FROM pg_stat_user_tables 
+WHERE schemaname IN ('base750', 'divpol') 
+ORDER BY schemaname, relname;
+"
+
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d sig_db_unal_restaurada -x -P format=wrapped -P columns=90 -c "${query_conteo}"
+
+```
+
+### Auditoría interactiva en cliente psql
+
+Esta modalidad permite abrir una única sesión en el motor relacional y ejecutar de manera consecutiva las directivas de inspección y consultas analíticas.
+
+1. Apertura de la sesión interactiva en la base de datos restaurada:
+
+```{bash}
+#| label: setup-connect-restored-db-interactive
+#| eval: false
+#| echo: true
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d sig_db_unal_restaurada
+
+```
+
+Si ya se dispone de una sesión activa de `psql` en otra base de datos del clúster, se ejecuta el cambio de contexto con el metacomando de conexión:
+
+```text
+\c sig_db_unal_restaurada
+
+```
+
+2. Comprobación del estado y enlace de librerías de PostGIS:
+
+```{sql}
+--| label: sql-audit-postgis-version
+--| eval: false
+--| echo: true
+SELECT postgis_full_version();
+
+```
+
+3. Inspección del catálogo formal de geometrías OGC:
+
+```{sql}
+--| label: sql-audit-geometry-columns
+--| eval: false
+--| echo: true
+SELECT 
+    f_table_schema AS esquema, 
+    f_table_name AS capa, 
+    f_geometry_column AS columna_geom, 
+    coord_dimension AS dimension, 
+    srid, 
+    type AS tipo_geometria 
+FROM geometry_columns 
+WHERE f_table_schema IN ('base750', 'divpol') 
+ORDER BY f_table_schema, f_table_name;
+
+```
+
+4. Auditoría de volumetría y conteo de registros por tabla:
+
+```{sql}
+--| label: sql-audit-record-counts
+--| eval: false
+--| echo: true
+SELECT 
+    schemaname AS esquema, 
+    relname AS tabla, 
+    n_live_tup AS registros 
+FROM pg_stat_user_tables 
+WHERE schemaname IN ('base750', 'divpol') 
+ORDER BY schemaname, relname;
+
+```
+
+5. Cierre de la sesión interactiva:
+
+Para finalizar la interacción y retornar al intérprete de la terminal integrada de Visual Studio Code:
+
+```text
+\q
+
+```

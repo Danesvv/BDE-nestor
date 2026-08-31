@@ -1,0 +1,206 @@
+# Instalación y aprovisionamiento de PostgreSQL 18 y PostGIS 3.6 {#sec-instalacion-aprovisionamiento-postgresql-postgis}
+
+El despliegue de un sistema de gestión de bases de datos relacionales espaciales (RDBMS) de alto rendimiento requiere la articulación precisa entre el motor relacional PostgreSQL y la suite de extensiones PostGIS. Esta integración dota al motor de tipos de datos geométricos y geográficos alineados con los estándares de la Open Geospatial Consortium (OGC), funciones analíticas vectoriales, soporte ráster y motores topológicos.
+
+A continuación, se detalla el procedimiento de instalación, configuración de parámetros del sistema anfitrión, aprovisionamiento de variables de entorno y validación funcional del clúster espacial.
+
+## Arquitectura de directorios y parámetros del sistema anfitrión
+
+La instalación debe realizarse a partir del paquete binario oficial de 64 bits (`postgresql-18.x-x64`), el cuál se puede descargar de [https://www.postgresql.org/download/](https://www.postgresql.org/download/). Durante la ejecución del asistente, se deben definir las rutas base del software, el directorio segregado de almacenamiento de datos (`data`) y las credenciales maestras de administración.
+
+La siguiente tabla resume los parámetros nominales de configuración aplicados en el despliegue del clúster:
+
+| Componente | Parámetro / Ruta sugerida | Descripción técnica |
+| :- | :-- | :--- |
+| **Installation directory** | `<ruta_instalacion>/` `PostgreSQL/18` | Directorio raíz para binarios, librerías compartidas y encabezados. |
+| **Data directory** | `<ruta_instalacion>/` `PostgreSQL/18/data` | Espacio físico exclusivo donde residen las tablas, índices y catálogos. |
+| **Database port** | `5432` | Puerto TCP estándar de escucha del servicio relacional. |
+| **Superuser** | `postgres` | Rol principal de administración de base de datos con privilegios absolutos. |
+| **Contraseña superusuario** | `geomatica2025` | Clave de acceso asignada al rol administrativo `postgres`. |
+| **Service account** | Cuenta de servicio de red estándar | Identidad del sistema anfitrión que administra el servicio del motor. |
+| **Database service** | `postgresql-x64-18` | Nombre del servicio registrado para gestión de arranque en segundo plano. |
+| **Command-line tools** | `<ruta_instalacion>/` `PostgreSQL/18/bin` | Ubicación de ejecutables y utilidades de terminal (`psql`, `pg_dump`, etc.). |
+| **pgAdmin 4** | `<ruta_instalacion>/` `PostgreSQL/18/pgAdmin 4` | Interfaz gráfica desacoplada para gestión, monitoreo y consultas. |
+| **StackBuilder** | `<ruta_instalacion>/` `PostgreSQL/18` | Gestor modular para descarga de extensiones y drivers complementarios. |
+| **Installation log** | `<ruta_temporal>/` `install-postgresql.log` | Registro detallado de eventos de compilación, copia y registro de llaves. |
+
+## Descripción y funcionalidad de herramientas del ecosistema
+
+El paquete distribuido integra herramientas administrativas de interfaz gráfica, clientes de línea de comandos, cargadores de datos espaciales y motores de cálculo geométrico esenciales para el análisis geoespacial avanzado.
+
+La tabla a continuación describe la utilidad técnica de cada herramienta instalada:
+
+| Herramienta / Componente | Tipo | Funcionalidad principal en el flujo espacial |
+| :- | :- | :--- |
+| **`psql`** | CLI (Terminal) | Cliente interactivo de línea de comandos para ejecución de DDL, DML y administración del motor. |
+| **`pgAdmin 4`** | GUI (Gráfica) | Entorno visual para administración de esquemas, optimización de consultas, inspección y visualización de registros. |
+| **`StackBuilder`** | Gestor de paquetes | Aplicación para la selección, descarga y vinculación de librerías complementarias y controladores al clúster. |
+| **`pg_dump` / `pg_restore`** | CLI (Terminal) | Utilidades de extracción y restauración de respaldos lógicos (texto plano, formato tar o binario personalizado). |
+| **`shp2pgsql`** | CLI (Cargador) | Conversor de formatos vectoriales Shapefile a sentencias de inserción SQL estructuradas para PostGIS. |
+| **`raster2pgsql`** | CLI (Cargador) | Herramienta para particionar, piramidar y cargar coberturas ráster multiespectrales en tablas relacionales. |
+| **GEOS** | Motor algorítmico | Librería computacional encargada de operaciones topológicas 2D (`ST_Intersects`, `ST_Buffer`, `ST_Intersection`). |
+| **PROJ** | Motor geodésico | Librería para transformaciones de coordenadas, proyección cartográfica y conversión de datum/SRID. |
+| **GDAL** | Motor de traducción | Capa de abstracción para lectura/escritura de formatos geoespaciales raster y vectoriales integrados al motor. |
+
+## Despliegue del motor relacional PostgreSQL
+
+El procedimiento de instalación se realiza mediante el ejecutable interactivo siguiendo una secuencia ordenada:
+
+1. Ejecutar el instalador con privilegios de administración en el sistema anfitrión.
+2. Indicar el directorio de instalación deseado (por ejemplo, `D:\Programs\PostgreSQL\18` o `<ruta_instalacion>/PostgreSQL/18`).
+3. Definir el directorio de datos (`data`), garantizando que se localice en un volumen con espacio suficiente para las capas geográficas del curso.
+4. Establecer la contraseña obligatoria del superusuario `postgres` como `geomatica2025`.
+5. Conservar el puerto de conexión estándar `5432` y la configuración regional por defecto del clúster (*Locale* por defecto).
+6. Confirmar el resumen de instalación y proceder con la copia de componentes.
+7. Al finalizar la transferencia, mantener marcada la casilla para inicializar **StackBuilder** antes de cerrar el instalador.
+
+## Integración de la extensión espacial con StackBuilder
+
+PostGIS debe incorporarse como una extensión binaria compatible con la versión mayor del motor:
+
+1. En la ventana inicial de StackBuilder, seleccionar la instancia activa del clúster (puerto `5432`).
+2. Desplegar la categoría **Spatial Extensions**.
+3. Marcar la opción correspondiente al paquete espacial:
+   
+   ```text
+   PostGIS 3.6 Bundle for PostgreSQL 18 (64 bit) v3.6.1
+   ```
+
+4. Definir un directorio de descarga temporal en el almacenamiento local.
+5. Durante la instalación de los componentes espaciales, **no activar** la casilla orientada a crear automáticamente una base de datos espacial genérica (*Create spatial database*). La creación y configuración de la base de datos se ejecutará manualmente para controlar la parametrización de esquemas y extensiones.
+6. Aceptar la integración de las librerías dependientes (GEOS, PROJ, GDAL y controladores ráster asociados) hasta completar el asistente.
+
+## Configuración de variables de entorno y terminal integrada
+
+Para ejecutar los binarios del gestor desde la terminal integrada de Visual Studio Code sin declarar la ruta absoluta, es indispensable registrar la carpeta `bin` en la variable de entorno `PATH` del sistema anfitrión.
+
+1. Abrir la configuración avanzada del sistema en el panel de control del sistema anfitrión y acceder a **Variables de entorno**.
+2. En la sección **Variables del sistema**, seleccionar la variable `Path` y presionar **Editar**.
+3. Agregar una nueva entrada con la ruta absoluta hacia los ejecutables:
+```text
+<ruta_instalacion>/PostgreSQL/18/bin
+
+```
+
+
+4. Guardar los cambios aplicados.
+5. Iniciar una nueva sesión de la terminal integrada de Visual Studio Code y verificar el reconocimiento del binario principal `psql`:
+
+```bash
+#| label: setup-verify-psql
+#| eval: false
+psql --version
+
+```
+
+Mas información sobre psql en @#sec-anexo-psql:
+
+* Metacomandos de barra invertida frente a sentencias SQL @sec-anexo-metacomandos (o en @tbl-metacomandos-psql)
+* Parámetros de invocación y modificadores de línea de comandos @sec-anexo-parametros-cli (o en @tbl-banderas-cli)
+* Guía de inicio rápido para la administración con psql  @sec-anexo-inicio-psql
+
+## Inicialización manual de la base de datos espacial
+
+El aprovisionamiento manual permite aislar los catálogos y registrar únicamente las extensiones requeridas por la infraestructura de datos espaciales.
+
+### Conexión administrativa al clúster
+
+Abrir la terminal integrada de Visual Studio Code y conectarse a la instancia local utilizando el usuario administrativo:
+
+```bash
+#| label: setup-connect-psql
+#| eval: false
+psql -U postgres
+
+```
+
+El sistema solicitará la contraseña configurada (`geomatica2025`).
+
+### Creación de la base de datos
+
+Crear el contenedor lógico destinado a las prácticas analíticas del curso:
+
+```sql
+#| label: ddl-create-spatialdb
+#| eval: false
+CREATE DATABASE spatialdb;
+
+```
+
+Conectarse a la base de datos recién creada:
+
+```sql
+#| label: setup-switch-database
+#| eval: false
+\c spatialdb
+
+```
+
+### Habilitación de extensiones espaciales
+
+Ejecutar las directivas DDL para activar el núcleo vectorial, el soporte ráster y el módulo topológico:
+
+```sql
+#| label: ddl-enable-postgis-extensions
+#| eval: false
+CREATE EXTENSION postgis;
+CREATE EXTENSION postgis_raster;
+CREATE EXTENSION postgis_topology;
+
+```
+
+### Auditoría de versiones y enlaces de librerías
+
+Comprobar que PostGIS se encuentre vinculado correctamente con GEOS, PROJ y los componentes de estadísticas espaciales:
+
+```sql
+#| label: audit-postgis-version
+#| eval: false
+SELECT postgis_version();
+
+```
+
+Resultado esperado en consola:
+
+```text
+3.6 USE_GEOS=1 USE_PROJ=1 USE_STATS=1
+
+```
+
+## Verificación analítica del módulo espacial
+
+Para confirmar la operatividad de los constructores geométricos basados en el estándar OGC SFS (*Simple Feature Access*), se ejecuta una consulta de prueba instanciando una geometría de tipo punto en dos dimensiones:
+
+```sql
+#| label: query-test-point-geometry
+#| eval: false
+SELECT ST_AsText(ST_Point(10, 20));
+
+```
+
+Respuesta esperada:
+
+```text
+POINT(10 20)
+
+```
+
+## Resumen de la estructura desplegada
+
+Al culminar el procedimiento, el árbol de directorios en el sistema anfitrión presentará la siguiente jerarquía funcional:
+
+```text
+<ruta_instalacion>/PostgreSQL/18/
+│
+├── bin/            <- Ejecutables del motor, clientes CLI y cargadores espaciales
+├── data/           <- Almacenamiento físico de tablas, índices y catálogos
+├── include/        <- Encabezados de desarrollo en C/C++ para extensiones
+├── lib/            <- Librerías dinámicas del motor y módulos compilados de PostGIS
+├── pgAdmin 4/      <- Aplicación de administración y monitoreo visual
+├── share/          <- Scripts SQL de extensión, plantillas y archivos de soporte
+└── StackBuilder/   <- Utilidad de mantenimiento y actualización de componentes
+
+```
+
+El clúster PostgreSQL 18 con PostGIS 3.6 queda completamente operativo, validado y disponible para la ingesta y manipulación de datos geográficos a través de la terminal integrada de Visual Studio Code.
+

@@ -1,0 +1,354 @@
+# Quarto: orquestación y configuración {#sec-anexo-quarto}
+
+Quarto se basa en un archivo de configuración centralizado donde se definen los parámetros de renderizado, bibliografía y estilos.
+
+## Opciones del encabezado YAML {#sec-opciones-yaml}
+
+**Ejemplo 1**: Solo HTML
+
+```yaml
+#| label: setup-yaml-html
+#| eval: false
+---
+title: "Título de la Práctica"
+author: "Nombre del Estudiante"
+date: last-modified
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    toc-location: left
+    number-sections: true
+    theme: lux
+---
+
+```
+
+**Ejemplo 2**: HTML y PDF
+
+```yaml
+#| label: setup-yaml-html-pdf
+#| eval: false
+---
+title: "Informe Técnico: Análisis Geoespacial"
+author: "ID Correo UNAL"
+date: today
+format:
+  html:
+    toc: true
+    number-sections: true
+    theme: cosmo
+  pdf:
+    toc: true
+    toc-title: "Contenido"
+    number-sections: true
+    documentclass: scrreprt
+    geometry:
+      - top=25mm
+      - left=25mm
+      - right=25mm
+      - bottom=25mm
+---
+
+```
+
+## Resumen de comandos Quarto {#sec-resumen-comandos}
+
+Renderizar todos los formatos definidos en el encabezado `yml`:
+
+```bash
+#| label: setup-render-all
+#| eval: false
+quarto render archivo.qmd --to all
+
+```
+
+Renderizar a HTML:
+
+```bash
+#| label: setup-render-html
+#| eval: false
+quarto render archivo.qmd --to html
+
+```
+
+Renderizar a PDF:
+
+```bash
+#| label: setup-render-pdf
+#| eval: false
+quarto render archivo.qmd --to pdf
+
+```
+
+Renderizar a PDF, mostrando todos los detalles en la consola:
+
+```bash
+#| label: setup-render-pdf-debug
+#| eval: false
+quarto render archivo.qmd --to pdf --trace --verbose
+QUARTO_LOG_LEVEL=debug quarto render archivo.qmd --to pdf
+
+```
+
+Chequear el estado de la instalación de Quarto:
+
+```bash
+#| label: setup-quarto-check
+#| eval: false
+quarto check
+
+```
+
+## Gestión eficiente de renderizado en Quarto {#sec-gestion-renderizado}
+
+A continuación, se presenta la hoja de ruta para optimizar los tiempos de compilación del documento principal, especialmente cuando se integra procesamiento intensivo con motores de Julia y R.
+
+### Hoja de referencia: comandos de renderizado {#sec-hoja-referencia-comandos}
+
+La ejecución de estos comandos depende de la existencia del archivo `_quarto.yml` en el directorio de trabajo. Si se requiere trabajar con archivos individuales, es posible alterar temporalmente el nombre de este archivo a `_quarto.yml.back`.
+
+| Acción | Comando |
+| ----- | - |
+| **Trabajar en vivo** (Previsualización dinámica) | `quarto preview` |
+| **Renderizar solo el capítulo actual** | `quarto render archivo.qmd` |
+| **Generar el libro completo** (Ensamblaje final) | `quarto render` |
+| **Forzar ejecución total** (Ignorar el `freeze`) | `quarto render --execute` |
+
+: Comandos esenciales para la gestión de flujos en Quarto {#tbl-quarto-comandos tbl-colwidths="[40,60]"}
+
+### Estrategias adicionales para el flujo de edición {#sec-estrategias-edicion}
+
+Para evitar esperas innecesarias y optimizar la eficiencia, se recomienda aplicar las siguientes estrategias de previsualización y almacenamiento de resultados computacionales:
+
+#### 1. Flujo de edición en vivo (quarto preview) {#sec-edicion-vivo}
+
+En lugar de renderizar el documento manualmente tras cada modificación, se recomienda inicializar una sesión de previsualización desde la terminal integrada en la raíz del proyecto.
+
+Al ejecutar este proceso, se levanta un servidor local. Cada vez que se registre un cambio en el archivo `.qmd` y se guarde el progreso, Quarto detectará la modificación y refrescará exclusivamente el capítulo activo en el navegador. Esta metodología mantiene las sesiones de procesamiento en memoria, permitiendo visualizar modificaciones en mapas y ecuaciones de forma inmediata.
+
+#### 2. Uso de caché para procesos analíticos pesados {#sec-uso-cache}
+
+Si un bloque de código ejecuta tareas de alto coste computacional (conexiones a bases de datos espaciales o análisis ráster masivo), es imperativo prevenir su re-ejecución automática. Para ello, se emplea la opción de caché a nivel de celda:
+
+```r
+#| label: setup-analisis-costoso
+#| eval: false
+#| cache: true
+#| results: asis
+
+# Este código se ejecuta únicamente si se modifica el contenido interno del bloque.
+# Quarto guarda los resultados en el directorio '_cache' para su reutilización.
+j_eval(" ... proceso de Julia que tarda varios minutos ... ")
+
+```
+
+> **Nota técnica:** Mientras que el parámetro global `freeze: auto` (definido en `_quarto.yml`) protege los capítulos finalizados para evitar su re-ejecución durante la compilación general, la directiva `#| cache: true` blinda el flujo de trabajo individual dentro del capítulo en edición activa.
+
+## Control de ejecución en Quarto: opciones de bloques {#sec-opciones-chunks}
+
+Para asegurar la formalidad, reproducibilidad y claridad de los reportes técnicos, es indispensable controlar con precisión la visibilidad del código fuente, la captura de resultados y la gestión de excepciones durante el renderizado. Quarto administra este comportamiento mediante directivas declaradas al inicio de cada bloque mediante sintaxis YAML (`#| ` en Bash, R y Python, o `--| ` en SQL, ver @tbl-sintaxis-directivas).
+
+| Opción de bloque | ¿Se ejecuta? | ¿Muestra código? | ¿Muestra salidas/errores? |
+| -- | - | -- | -- |
+| **`# | echo: false`** | ✅ SÍ | ❌ NO | ✅ SÍ |
+| **`# | include: false`** | ✅ SÍ | ❌ NO | ❌ NO |
+| **`# | code-fold: true`** | ✅ SÍ | 📂 Plegado | ✅ SÍ |
+| **`# | eval: false`** | ❌ NO | ✅ SÍ | ❌ NO |
+| **`# | output: false`** | ✅ SÍ | ✅ SÍ | ❌ NO |
+| **`# | warning: false`** | ✅ SÍ | — | ❌ NO |
+| **`# | message: false`** | ✅ SÍ | — | ❌ NO |
+| **`# | error: true`** | ✅ SÍ | ✅ SÍ | ⚠️ Captura error |
+
+: Matriz de opciones de visibilidad, ejecución y captura de errores para bloques de código {#tbl-opciones-bloques}
+
+### Detalle funcional y aplicación técnica de las directivas
+
+* **`#| echo` (Visibilidad del código fuente):** Controla si el código fuente del bloque se imprime en el documento final. Con `echo: false`, el bloque se evalúa y computa con normalidad, pero la sintaxis queda oculta al lector, mostrando exclusivamente las tablas, figuras o salidas generadas. Resulta ideal en secciones orientadas a resultados ejecutivos.
+* **`#| include` (Inclusión integral del bloque):** Representa un modificador global que suprime tanto el código como sus salidas. Con `include: false`, el código se ejecuta en el proceso subyacente (registrando variables, cargando paquetes o modificando el entorno), pero no genera ningún rastro visible en el documento compilado. Se emplea típicamente en bloques de inicialización (`setup-`).
+* **`#| code-fold` (Plegado interactivo de código):** Habilita un mecanismo interactivo de colapso disponible en salidas HTML. El bloque oculta el código bajo una pestaña desplegable (*widget*), permitiendo al usuario inspeccionar la sintaxis bajo demanda sin saturar visualmente el texto principal.
+* **`#| eval` (Evaluación de código):** Define si el motor de ejecución (Knitr, Jupyter o subshells de terminal) debe procesar el contenido del bloque. Con `eval: false`, el código se renderiza únicamente como texto formateado con resaltado de sintaxis, sin enviarse al intérprete. Es mandatorio para documentar comandos interactivos de terminal o metacomandos de cliente (como `\c` o `\q` en `psql`).
+* **`#| output` (Control de salidas estándar):** Determina la inclusión del flujo de salida estándar (`stdout`). Al configurarse como `output: false`, el código se muestra y se ejecuta, pero se descartan las salidas textuales generadas por el intérprete (por ejemplo, salidas intermedias de sentencias SQL o confirmaciones de asignación de variables).
+* **`#| warning` (Gestión de advertencias):** Regula la visualización de mensajes de advertencia (*warnings*) emitidos por librerías, controladores o funciones de cálculo espacial. Con `warning: false`, las alertas no detienen la ejecución ni se imprimen en el documento final, evitando ruidos visuales por funciones en proceso de depreciación.
+* **`#| message` (Gestión de mensajes informativos):** Controla los flujos de mensajes complementarios emitidos durante la carga de módulos, paquetes o diagnósticos de conexión. Al fijarse en `message: false`, estos textos informativos se descartan del documento final.
+* **`#| error` (Captura de excepciones y códigos de retorno):** Define el comportamiento del motor ante excepciones no controladas o códigos de salida distintos de cero (`status != 0`) en comandos de terminal. Por defecto (`error: false`), cualquier fallo aborta inmediatamente la compilación (`Execution halted`). Al declarar `error: true`, Quarto intercepta el error, lo formatea dentro del documento como una alerta técnica y permite continuar el renderizado de los capítulos posteriores sin interrumpir el flujo del libro.
+
+
+### Sintaxis de directivas según el motor de ejecución {#sec-sintaxis-directivas}
+
+La siguiente tabla resume los delimitadores requeridos para declarar metadatos y opciones de ejecución en los principales motores soportados por Quarto:
+
+| Motor / Lenguaje | Motor de bloque | Delimitador YAML | Ejemplo de declaración |
+| --- | - | - | -- |
+| **Bash / Shell** | `{bash}` | `#| ` | `#| echo: false` |
+| **Python** | `{python}` | `#| ` | `#| echo: false` |
+| **R** | `{r}` | `#| ` | `#| echo: false` |
+| **Julia** | `{julia}` | `#| ` | `#| echo: false` |
+| **SQL** | `{sql}` | `--| ` | `--| connection: db` |
+| **Graphviz (DOT)** | `{dot}` | `//| ` | `//| fig-cap: "..."` |
+| **Mermaid** | `{mermaid}` | `%%| ` | `%%| fig-cap: "..."` |
+| **C / C++** | `{cpp}` / `{c}` | `//| ` | `//| eval: false` |
+| **Observable JS (D3)** | `{ojs}` | `//| ` | `//| echo: false` |
+
+: Sintaxis de directivas según el motor de ejecución {#tbl-sintaxis-directivas}
+
+
+### Recomendaciones de uso según el contexto {#sec-recomendaciones-contexto}
+
+Dependiendo de la sección del script activo, las siguientes configuraciones garantizan un documento estructurado:
+
+| Tipo de bloque | Opción recomendada | Propósito técnico |
+| - | - | --- |
+| **Configuración inicial** | `#| include: false` | Ejecuta la carga de librerías y parámetros globales sin mostrar código ni resultados, evitando ruido visual al inicio del documento. |
+| **Limpieza de memoria** | `#| include: false` | Ejecuta operaciones de liberación de recursos (p. ej. `rm()`, `gc()`) de forma silenciosa, ya que no aportan valor interpretativo al lector final. |
+| **Procesamiento espacial** | `#| code-fold: true` | Mantiene visible el código (relevante para la reproducibilidad metodológica) pero colapsado por defecto, permitiendo al lector expandirlo solo si necesita revisar la lógica de procesamiento. |
+| **Resultados analíticos** | `#| echo: false` | Oculta el código fuente y muestra únicamente la salida (tablas, gráficos, estadísticas), priorizando la lectura de resultados sobre la implementación. |
+
+: Estrategias recomendadas de etiquetado por etapa analítica {#tbl-estrategias-bloques}
+
+::: {.callout-tip}
+
+#### Sintaxis correcta de opciones
+
+Las opciones deben declararse obligatoriamente al inicio del bloque, precediendo cualquier otra instrucción del lenguaje:
+
+```r
+#| label: setup-ejemplo-opciones
+#| eval: false
+#| echo: false
+#| warning: false
+library(terra)
+# Código analítico...
+
+```
+
+:::
+
+## Instalación de extensiones de Quarto {#sec-instalacion-extensiones}
+
+Las extensiones amplían las funcionalidades nativas de Quarto, integrando nuevos formatos de salida, filtros o componentes visuales. Para asegurar la descarga desde los repositorios remotos, es imperativo contar con conexión y privilegios de escritura en el directorio de trabajo.
+
+### Proceso de instalación {#sec-proceso-instalacion}
+
+Quarto utiliza el subcomando `add` seguido de la ruta del repositorio. Esta directiva descarga los recursos en el directorio local `_extensions/`. Para instalar soporte de iconos vectoriales, se debe ejecutar la siguiente orden en la terminal integrada:
+
+```bash
+#| label: setup-instalar-extension
+#| eval: false
+quarto add quarto-ext/fontawesome
+
+```
+
+::: {.callout-note}
+
+#### Confirmación de seguridad
+
+Durante la ejecución, la consola solicitará confirmación de confianza hacia los desarrolladores de la extensión. Es necesario introducir `Y` para autorizar la modificación del directorio.
+:::
+
+### Gestión de archivos del proyecto {#sec-gestion-archivos}
+
+Una vez confirmada la instalación, el árbol de directorios reflejará la siguiente estructura:
+
+```text
+#| label: setup-arbol-directorios
+#| eval: false
+directorio-proyecto/
+├── _extensions/
+│   └── quarto-ext/
+│       └── fontawesome/
+└── documento-principal.qmd
+
+```
+
+El contenido de la carpeta `_extensions` **no debe modificarse manualmente**, dado que el compilador de Quarto lo requiere estrictamente para inyectar las dependencias durante el renderizado.
+
+### Aplicación en el documento {#sec-aplicacion-documento}
+
+Tras la integración exitosa, los componentes se invocan mediante sintaxis de código corto (*shortcodes*):
+
+```quarto
+#| label: setup-ejemplo-iconos
+#| eval: false
+Para el análisis espacial se requerirán los siguientes insumos:
+
+* {{< fa satellite >}} Datos de teledetección.
+* {{< fa location-dot color="red" >}} Puntos de control terrestre.
+
+```
+
+::: {.callout-tip}
+
+#### Actualización de dependencias
+
+Para actualizar una extensión existente a su última compilación, se debe reejecutar el comando de instalación. El motor detectará el conflicto de versiones y solicitará autorización para sobrescribir los archivos locales.
+:::
+
+## Compilación de la guía del curso {#sec-compilacion}
+
+El material general del curso se orquesta a través del archivo `_quarto.yml`, el cual establece las referencias explícitas hacia todos los documentos (`.qmd`) de capítulos, talleres y anexos.
+
+### Compilación del proyecto completo {#sec-compilacion-completa}
+
+Para compilar la totalidad del libro y generar todos los formatos de salida definidos, se debe ejecutar el comando base en el directorio que contiene el orquestador YAML:
+
+```bash
+#| label: setup-render-proyecto
+#| eval: false
+quarto render
+
+```
+
+### Compilación de archivos individuales {#sec-compilacion-individual}
+
+Para procesar un único documento aislándolo de las políticas de numeración e indexación del proyecto global, se debe aplicar el siguiente protocolo:
+
+1. Modificar temporalmente el nombre del orquestador de `_quarto.yml` a `_quarto.yml.back`.
+2. Lanzar la instrucción de compilación apuntando al recurso específico:
+
+* Generación concurrente (HTML y PDF):
+
+```bash
+#| label: setup-render-ind-all
+#| eval: false
+quarto render archivo.qmd --to all
+
+```
+
+* Generación de HTML:
+
+```bash
+#| label: setup-render-ind-html
+#| eval: false
+quarto render archivo.qmd --to html
+
+```
+
+* Generación de PDF:
+
+```bash
+#| label: setup-render-ind-pdf
+#| eval: false
+quarto render archivo.qmd --to pdf
+
+```
+
+### Notas de estudio y personalización {#sec-notas-estudio}
+
+::: {.callout-tip icon="true"}
+
+#### Personalización del material
+
+Quarto permite la inserción de bloques de notas personalizados mediante la sintaxis de llamadas (*callouts*). La estructura general para integrar bloques de observación es la siguiente:
+
+```markdown
+#| label: setup-ejemplo-callout
+#| eval: false
+::: {.callout-tip icon="true" title="Bloque de notas"}
+Espacio reservado para observaciones, recordatorios y apuntes técnicos.
+:::
+
+```
+
+:::
+

@@ -1,0 +1,7 @@
+| Tema 01 | DuckDB|
+| Tema 02 | Apache Sedona y PySpark |
+| Tema 03 | Mallas globales H3 y S2 (DGGS) |
+| Tema 04 | Neo4j Spatial vs. pgRouting | 
+| Tema 05 | Elasticsearch vs. MongoDB espacial | 
+| Tema 06 | Lógica procedural y extensiones nativas PL/pgSQL | 
+| Tema 07 | Ecosistemas analíticos desacoplados y flujos con GeoLibre |
