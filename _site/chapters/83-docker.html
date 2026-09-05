@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Bases de Datos Espaciales - Apéndice B — Docker: gestión de contenedores e imágenes</title>
+<title>Bases de datos espaciales - Apéndice B — Docker: gestión de contenedores e imágenes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -96,11 +96,11 @@ div.csl-indent {
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
-  "location": "sidebar",
+  "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
-  "panel-placement": "start",
-  "type": "textbox",
+  "panel-placement": "end",
+  "type": "overlay",
   "limit": 50,
   "keyboard-shortcut": [
     "f",
@@ -126,10 +126,38 @@ div.csl-indent {
 
 </head>
 
-<body class="nav-sidebar floating">
+<body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Bases de datos espaciales</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../slides/index.html"> 
+<span class="menu-text">Diapositivas</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/alexyshr/bde2026"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
@@ -138,26 +166,13 @@ div.csl-indent {
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/82-quarto.html">Apéndices</a></li><li class="breadcrumb-item"><a href="../chapters/83-docker.html"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Docker: gestión de contenedores e imágenes</span></a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
     </div>
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
-    <div class="sidebar-title mb-0 py-0">
-      <a href="../">Bases de Datos Espaciales</a> 
-    </div>
-      </div>
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Buscar"></div>
-        </div>
-        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -180,7 +195,7 @@ div.csl-indent {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a href="../chapters/04-introduccion_instalacion_entornos.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Instalación y entornos</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -190,7 +205,7 @@ div.csl-indent {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/05-guia_instalacion_vscode_docker.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación: VS Code y contenedores Docker</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -320,18 +335,22 @@ div.csl-indent {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Tabla de Contenidos</h2>
+    <h2 id="toc-title">Tabla de contenidos</h2>
    
   <ul>
   <li><a href="#instalación-del-software" id="toc-instalación-del-software" class="nav-link active" data-scroll-target="#instalación-del-software"><span class="header-section-number">B.1</span> Instalación del software</a></li>
-  <li><a href="#sec-preparacion-docker" id="toc-sec-preparacion-docker" class="nav-link" data-scroll-target="#sec-preparacion-docker"><span class="header-section-number">B.2</span> Preparación del orquestador</a></li>
+  <li><a href="#sec-preparacion-docker" id="toc-sec-preparacion-docker" class="nav-link" data-scroll-target="#sec-preparacion-docker"><span class="header-section-number">B.2</span> Preparación del orquestador</a>
+  <ul class="collapse">
+  <li><a href="#reasignación-del-almacenamiento-de-imágenes-virtuales" id="toc-reasignación-del-almacenamiento-de-imágenes-virtuales" class="nav-link" data-scroll-target="#reasignación-del-almacenamiento-de-imágenes-virtuales">Reasignación del almacenamiento de imágenes virtuales</a></li>
+  <li><a href="#optimización-de-la-memoria-de-intercambio-swap" id="toc-optimización-de-la-memoria-de-intercambio-swap" class="nav-link" data-scroll-target="#optimización-de-la-memoria-de-intercambio-swap">Optimización de la memoria de intercambio (swap)</a></li>
+  </ul></li>
   <li><a href="#sec-descarga-tar-yml" id="toc-sec-descarga-tar-yml" class="nav-link" data-scroll-target="#sec-descarga-tar-yml"><span class="header-section-number">B.3</span> Descarga y preparación de archivos</a></li>
   <li><a href="#sec-cargar-docker-tar" id="toc-sec-cargar-docker-tar" class="nav-link" data-scroll-target="#sec-cargar-docker-tar"><span class="header-section-number">B.4</span> Carga de contenedores orquestados</a></li>
   <li><a href="#sec-contenedores-instalados" id="toc-sec-contenedores-instalados" class="nav-link" data-scroll-target="#sec-contenedores-instalados"><span class="header-section-number">B.5</span> Contenedores instalados</a></li>
   <li><a href="#puesta-en-marcha-y-detención-de-contenedores" id="toc-puesta-en-marcha-y-detención-de-contenedores" class="nav-link" data-scroll-target="#puesta-en-marcha-y-detención-de-contenedores"><span class="header-section-number">B.6</span> Puesta en marcha y detención de contenedores</a>
   <ul class="collapse">
-  <li><a href="#sec-arrancar-contenedores" id="toc-sec-arrancar-contenedores" class="nav-link" data-scroll-target="#sec-arrancar-contenedores">Inicio de contenedores</a></li>
-  <li><a href="#sec-detener-contenedores" id="toc-sec-detener-contenedores" class="nav-link" data-scroll-target="#sec-detener-contenedores">Detención de contenedores</a></li>
+  <li><a href="#sec-arrancar-contenedores" id="toc-sec-arrancar-contenedores" class="nav-link" data-scroll-target="#sec-arrancar-contenedores">Inicio y reanudación de servicios</a></li>
+  <li><a href="#sec-detener-contenedores" id="toc-sec-detener-contenedores" class="nav-link" data-scroll-target="#sec-detener-contenedores">Detención y desmontaje de servicios</a></li>
   </ul></li>
   <li><a href="#localización-de-archivos-y-persistencia" id="toc-localización-de-archivos-y-persistencia" class="nav-link" data-scroll-target="#localización-de-archivos-y-persistencia"><span class="header-section-number">B.7</span> Localización de archivos y persistencia</a></li>
   <li><a href="#sec-cargar-contenedores-vscode" id="toc-sec-cargar-contenedores-vscode" class="nav-link" data-scroll-target="#sec-cargar-contenedores-vscode"><span class="header-section-number">B.8</span> Vinculación de contenedores en la terminal integrada</a></li>
@@ -417,43 +436,162 @@ div.csl-indent {
 <p>El sistema Docker opera como un motor de virtualización <span class="citation" data-cites="docker2025">(<a href="99-referencias.html#ref-docker2025" role="doc-biblioref">Inc., 2025</a>)</span> sobre el cual se desplegarán las máquinas virtuales basadas en Linux. Estas infraestructuras permiten la ejecución integrada de código analítico en Python, R y Julia, junto al soporte persistente de bases de datos geográficas.</p>
 <section id="instalación-del-software" class="level2" data-number="B.1">
 <h2 data-number="B.1" class="anchored" data-anchor-id="instalación-del-software"><span class="header-section-number">B.1</span> Instalación del software</h2>
-<p>Descargue e instale la versión oficial del orquestador desde el repositorio principal:</p>
+<p>Descargue la versión oficial del orquestador desde el repositorio principal:</p>
 <ul>
-<li><strong>URL</strong>: <a href="https://www.docker.com/products/docker-desktop/" class="uri">https://www.docker.com/products/docker-desktop/</a></li>
-<li>Descargue la versión estable correspondiente a la arquitectura de hardware del equipo local.</li>
-<li><strong>Instalación</strong>: Durante el proceso de instalación en el sistema anfitrión, asegúrese de autorizar la integración con los subsistemas de virtualización de bajo nivel (ej. WSL 2) si el asistente lo requiere, priorizando arquitecturas nativas sobre hipervisores emulados.</li>
+<li><strong>URL oficial</strong>: <a href="https://www.docker.com/products/docker-desktop/" class="uri">https://www.docker.com/products/docker-desktop/</a></li>
+<li>Descargue el paquete instalador correspondiente a la arquitectura de hardware del equipo local.</li>
 </ul>
-<p>A continuación, presento la sección reestructurada. Se ha integrado la profundidad técnica de la versión anterior (paso a paso y configuración de variables) abstrayendo las dependencias específicas de sistema operativo para cumplir estrictamente con los lineamientos de neutralidad de plataforma, manteniendo el estándar de Quarto y el rigor académico:</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">Sistema anfitrión (Windows)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Procedimiento general (agnóstico)</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<p>Para garantizar un rendimiento óptimo en Windows, el motor debe ejecutarse sobre la arquitectura nativa de virtualización de WSL 2 en lugar del hipervisor emulado Hyper-V.</p>
+<ol type="1">
+<li>Abra una terminal de PowerShell con privilegios de administrador y actualice los componentes del subsistema:</li>
+</ol>
+<div class="sourceCode" id="cb3"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-wsl-update</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>wsl <span class="op">--</span>update</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ol start="2" type="1">
+<li>Ejecute el instalador descargado. Durante el asistente de configuración:</li>
+</ol>
+<ul>
+<li>Asegúrese de marcar la casilla <strong>“Use WSL 2 instead of Hyper-V”</strong>.</li>
+<li>Si el asistente solicita reiniciar el sistema al finalizar la descompresión de binarios, reinicie el equipo para inicializar el controlador de virtualización.</li>
+</ul>
+<ol start="3" type="1">
+<li><strong>Instalación en una unidad secundaria (opcional)</strong>: Si la unidad principal del sistema no dispone de espacio suficiente para la instalación de los binarios base, es posible forzar una ruta de instalación personalizada desde PowerShell como administrador:</li>
+</ol>
+<div class="sourceCode" id="cb4"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-install-docker-dir</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">Start-Process</span> <span class="st">"Docker Desktop Installer.exe"</span> <span class="op">-</span>ArgumentList <span class="st">"install"</span><span class="op">,</span> <span class="st">"--installation-dir=&lt;unidad&gt;:\Docker"</span> <span class="op">-</span>Wait</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p>En sistemas operativos tipo POSIX o arquitecturas alternativas:</p>
+<ol type="1">
+<li>Instale el paquete siguiendo los estándares del sistema anfitrión (gestores de paquetes <code>apt</code>, <code>brew</code> o asistentes nativos).</li>
+<li>Asegúrese de que el demonio de Docker (<code>dockerd</code>) cuente con permisos de ejecución y esté habilitado para iniciar con el sistema.</li>
+<li>Integre el usuario local dentro del grupo de seguridad <code>docker</code> para permitir la interacción sin necesidad de elevar privilegios (<code>sudo</code>).</li>
+</ol>
+</div>
+</div>
+</div>
 </section>
 <section id="sec-preparacion-docker" class="level2" data-number="B.2">
 <h2 data-number="B.2" class="anchored" data-anchor-id="sec-preparacion-docker"><span class="header-section-number">B.2</span> Preparación del orquestador</h2>
-<p>Previo a la inicialización de imágenes, es indispensable configurar los recursos del equipo local:</p>
+<p>Previo a la inicialización de las imágenes del curso, es indispensable dimensionar los recursos de almacenamiento y memoria del equipo local. Las imágenes políglotas y los motores espaciales del entorno consolidan un volumen de datos considerable:</p>
 <ul>
-<li><strong>Configuración de almacenamiento</strong>: La imagen políglota y la base de datos exigen una volumetría considerable. Asegure un mínimo de <strong>50 GB de espacio libre</strong> en el disco de almacenamiento principal asignado a los volúmenes virtuales. El tamaño consolidado tras la expansión ronda los <strong>45 GB</strong>.</li>
-<li><strong>Procedimiento para reasignación de discos virtuales</strong>: Si el volumen de almacenamiento principal carece de capacidad, reubique el directorio de los discos virtuales. Acceda a la interfaz de configuración del cliente de orquestación, diríjase a la sección de recursos avanzados, modifique la ruta del catálogo de imágenes (<em>Disk image location</em>) hacia una unidad de mayor capacidad y reinicie el servicio.</li>
-<li><strong>Optimización de memoria de intercambio (Swap)</strong>: Para el procesamiento ininterrumpido de archivos ráster masivos, es imperativo ampliar el espacio de intercambio en el sistema anfitrión. Consulte la <a href="#sec-limpieza-entorno" class="quarto-xref"><span>Sección B.13</span></a> para mayores detalles sobre cómo este parámetro impacta el rendimiento analítico.</li>
-<li><strong>Ajuste de memoria virtual en el sistema anfitrión</strong>: Acceda a los parámetros avanzados de rendimiento del sistema base y configure manualmente la memoria virtual. Deshabilite la administración automática, seleccione una unidad de almacenamiento veloz y asigne un umbral inicial de <strong>16384 MB</strong> junto con un límite máximo de <strong>32768 MB</strong>, sujeto a la disponibilidad de espacio físico. Es obligatorio reiniciar el equipo tras aplicar los cambios.</li>
-<li><strong>Configuración de recursos globales en arquitecturas virtualizadas</strong>: En entornos soportados por subsistemas de virtualización (ej. arquitecturas tipo WSL2), ajuste el archivo de configuración global oculto (ej. <code>.wslconfig</code>) localizado en el directorio raíz del usuario. Este paso fuerza la asignación estricta de RAM física y orienta el archivo de intercambio de alta capacidad hacia un disco de estado sólido, previniendo el cierre de contenedores por saturación de memoria:</li>
+<li>Se requiere un mínimo de <strong>50 GB de espacio libre</strong> en la unidad asignada a los discos virtuales.</li>
+<li>El despliegue integral de las dos imágenes base del curso genera un consumo acumulado de aproximadamente <strong>45 GB</strong>.</li>
 </ul>
-<div class="sourceCode" id="cb3"><pre class="sourceCode ini code-with-copy"><code class="sourceCode ini"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-wslconfig</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">[wsl2]</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="dt">memory</span><span class="ot">=</span><span class="st">12GB # RAM máxima física asignada al subsistema de virtualización</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="dt">swap</span><span class="ot">=</span><span class="st">32GB   # Memoria de intercambio para evitar el cierre de contenedores</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="dt">swapfile</span><span class="ot">=</span><span class="st">Ruta\Absoluta\Hacia\Disco\Secundario\swap.vhdx</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="reasignación-del-almacenamiento-de-imágenes-virtuales" class="level3">
+<h3 class="anchored" data-anchor-id="reasignación-del-almacenamiento-de-imágenes-virtuales">Reasignación del almacenamiento de imágenes virtuales</h3>
+<p>Si la unidad de almacenamiento principal carece del espacio libre requerido, se debe reubicar el catálogo donde el orquestador almacena los discos virtuales (archivos con extensión <code>.vhdx</code>).</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Sistema anfitrión (Windows)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Procedimiento general (agnóstico)</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<p>Para mover la ubicación física del disco virtual de Docker Desktop a una unidad secundaria:</p>
+<ol type="1">
+<li>Abra la interfaz de <strong>Docker Desktop</strong>.</li>
+<li>Haga clic en el ícono de engranaje en la barra superior para acceder a <strong>Settings</strong>.</li>
+<li>En el panel lateral izquierdo, diríjase a <strong>Resources</strong> y seleccione la sección <strong>Advanced</strong>.</li>
+<li>Localice el parámetro <strong>Disk image location</strong>.</li>
+<li>Haga clic en el botón <code>Browse</code> y seleccione una carpeta en una unidad con suficiente capacidad de almacenamiento.</li>
+<li>Haga clic en <strong>Apply &amp; restart</strong> para que el servicio migre los datos y reinicie el motor.</li>
+</ol>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<p>En configuraciones donde no se emplea Docker Desktop o se interactúa directamente con el demonio de Docker en el host:</p>
+<ol type="1">
+<li>Detenga el servicio <code>docker</code>.</li>
+<li>Modifique el archivo <code>/etc/docker/daemon.json</code> agregando la directiva con la nueva ruta:</li>
+</ol>
+<div class="sourceCode" id="cb5"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="er">#|</span> <span class="er">label:</span> <span class="er">setup-docker-daemon-dir</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="er">#|</span> <span class="er">eval:</span> <span class="er">false</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"data-root"</span><span class="fu">:</span> <span class="st">"/&lt;ruta_al_disco_secundario&gt;/docker-data"</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ol start="3" type="1">
+<li>Mueva los archivos existentes e inicialice nuevamente el servicio.</li>
+</ol>
+</div>
+</div>
+</div>
+</section>
+<section id="optimización-de-la-memoria-de-intercambio-swap" class="level3">
+<h3 class="anchored" data-anchor-id="optimización-de-la-memoria-de-intercambio-swap">Optimización de la memoria de intercambio (swap)</h3>
+<p>Para procesar conjuntos de datos ráster y vectoriales masivos sin interrupciones en R, Python o Julia, es imperativo configurar una partición de intercambio de alta capacidad. Esto evita la terminación forzada de contenedores por saturación de memoria RAM (<em>Out of Memory Killer</em>). Puede consultar más detalles técnicos en la <a href="#sec-limpieza-entorno" class="quarto-xref"><span>Sección B.13</span></a>.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">Sistema anfitrión (Windows)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Procedimiento general (agnóstico)</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<p>El ajuste del espacio de intercambio en Windows requiere configurar la memoria virtual del sistema operativo y los parámetros del subsistema WSL 2.</p>
+<p><strong>Paso 1: Ajustar la memoria virtual en el sistema anfitrión</strong></p>
+<ol type="1">
+<li>En la barra de búsqueda de Windows, escriba y seleccione <strong>“Ver la configuración avanzada del sistema”</strong>.</li>
+<li>En la pestaña <strong>Opciones avanzadas</strong>, ubique la sección <strong>Rendimiento</strong> y haga clic en el botón <code>Configuración</code>.</li>
+<li>Diríjase a la pestaña <strong>Opciones avanzadas</strong>, vaya al bloque <strong>Memoria virtual</strong> y presione el botón <code>Cambiar</code>.</li>
+<li>Desmarque la casilla “Administrar automáticamente el tamaño del archivo de paginación para todas las unidades”.</li>
+<li>Seleccione la unidad de almacenamiento principal o más veloz (SSD/NVMe), elija la opción <strong>Tamaño personalizado</strong> y defina los siguientes valores sugeridos (sujetos a la capacidad real del disco):</li>
+</ol>
+<ul>
+<li><strong>Tamaño inicial</strong>: <code>16384</code> MB (16 GB).</li>
+<li><strong>Tamaño máximo</strong>: <code>32768</code> MB (32 GB).</li>
+</ul>
+<ol start="6" type="1">
+<li>Presione el botón <code>Establecer</code>, luego <code>Aceptar</code> y reinicie el equipo.</li>
+</ol>
+<p><strong>Paso 2: Configurar los recursos globales de WSL 2 (.wslconfig)</strong></p>
+<p>Docker Desktop delega la gestión de RAM y swap en el archivo de configuración global del hipervisor:</p>
+<ol type="1">
+<li>Abra el explorador de archivos, ingrese <code>%USERPROFILE%</code> en la barra de direcciones y presione <code>Enter</code> para situarse en la raíz del usuario local.</li>
+<li>Cree un archivo de texto con el nombre exacto <code>.wslconfig</code> (verifique que no conserve la extensión oculta <code>.txt</code>).</li>
+<li>Incorpore la siguiente configuración para forzar el límite de RAM y dirigir el archivo de intercambio hacia un disco de alta velocidad:</li>
+</ol>
+<div class="sourceCode" id="cb6"><pre class="sourceCode ini code-with-copy"><code class="sourceCode ini"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-wslconfig</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">[wsl2]</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="dt">memory</span><span class="ot">=</span><span class="st">12GB # RAM física asignada al subsistema de virtualización</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="dt">swap</span><span class="ot">=</span><span class="st">32GB   # Memoria de intercambio para contingencia analítica</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="dt">swapfile</span><span class="ot">=</span><span class="st">&lt;unidad&gt;:\\&lt;ruta_al_directorio_con_espacio&gt;\\swap.vhdx</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ol start="4" type="1">
+<li>Reinicie el subsistema desde la terminal de comandos ejecutando <code>wsl --shutdown</code>.</li>
+</ol>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<p>En entornos basados directamente en Linux, el espacio de intercambio se dimensiona en el host mediante la creación de un archivo de paginación estructurado:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-create-swapfile</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Crear un archivo reservado de 32 GB</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> fallocate <span class="at">-l</span> 32G /swapfile</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Asignar permisos estrictos de lectura y escritura</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> chmod 600 /swapfile</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Formatear y activar el espacio de intercambio</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mkswap /swapfile</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> swapon /swapfile</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Auditoría de recursos
+Auditoría de recursos asignados
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Para corroborar la correcta asignación de memoria y espacio de intercambio desde el entorno de trabajo, ejecute el comando <code>free -h</code> en la terminal integrada de Visual Studio Code.</p>
+<p>Para comprobar si la memoria RAM y el espacio de intercambio se encuentran disponibles dentro del contenedor o en la terminal integrada de Visual Studio Code, ejecute:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: audit-memory-resources</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">free</span> <span class="at">-h</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
+</section>
 </section>
 <section id="sec-descarga-tar-yml" class="level2" data-number="B.3">
 <h2 data-number="B.3" class="anchored" data-anchor-id="sec-descarga-tar-yml"><span class="header-section-number">B.3</span> Descarga y preparación de archivos</h2>
@@ -472,7 +610,13 @@ Auditoría de recursos
 </ul></li>
 <li>Archivo <a href="https://drive.google.com/file/d/1uSrMPfbJKRQAphjzZxF_Fx7l6XBVGfZO/view?usp=sharing">backups_pg18.zip</a></li>
 </ul>
-<p>desde el siguiente link en Google Drive. 2. <strong>Descompresión</strong>: Extraiga el contenido del archivo comprimido <code>sig_unal_v1.12_completo_final.zip</code>. 3. <strong>Estructura del directorio</strong>: * <code>sig_unal_v1.12_completo_final.tar</code>: Imagen consolidada del servidor espacial y del entorno analítico. * <code>docker-compose.yml</code>: Archivo de orquestación de puertos, redes y volúmenes persistentes. * <code>init_unal_spatialdb.sql</code>: Esquema base de datos espacial en texto plano. * <code>j_eval_j_plot.r</code>: Funciones de intercomunicación entre R y Julia.</p>
+<p>desde el siguiente link en Google Drive. 2. <strong>Descompresión</strong>: Extraiga el contenido del archivo comprimido <code>sig_unal_v1.12_completo_final.zip</code>. 3. <strong>Estructura del directorio</strong>:</p>
+<ul>
+<li><code>sig_unal_v1.12_completo_final.tar</code>: Imagen consolidada del servidor espacial y del entorno analítico.</li>
+<li><code>docker-compose.yml</code>: Archivo de orquestación de puertos, redes y volúmenes persistentes.</li>
+<li><code>init_unal_spatialdb.sql</code>: Esquema base de datos espacial en texto plano.</li>
+<li><code>j_eval_j_plot.r</code>: Funciones de intercomunicación entre R y Julia.</li>
+</ul>
 <p>Asegure que el directorio de trabajo local cumpla las siguientes especificaciones:</p>
 <ul>
 <li>Exclusión estricta de directorios sincronizados en la nube.</li>
@@ -483,9 +627,9 @@ Auditoría de recursos
 <section id="sec-cargar-docker-tar" class="level2" data-number="B.4">
 <h2 data-number="B.4" class="anchored" data-anchor-id="sec-cargar-docker-tar"><span class="header-section-number">B.4</span> Carga de contenedores orquestados</h2>
 <p>Este procedimiento ejecuta el aprovisionamiento local de dos imágenes estructuradas y configura la red interna para garantizar la comunicación bidireccional. Desde la terminal integrada ubicada en la raíz del proyecto, ejecute:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: docker-carga-imagenes</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> load <span class="at">-i</span> sig_unal_v1.12_completo_final.tar</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: docker-carga-imagenes</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> load <span class="at">-i</span> sig_unal_v1.12_completo_final.tar</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <blockquote class="blockquote">
 <p><strong>Nota</strong>: El intérprete de comandos pausará la respuesta hasta finalizar la descompresión binaria. Este proceso demanda tiempo y no debe interrumpirse bajo ninguna circunstancia.</p>
 </blockquote>
@@ -493,46 +637,48 @@ Auditoría de recursos
 <section id="sec-contenedores-instalados" class="level2" data-number="B.5">
 <h2 data-number="B.5" class="anchored" data-anchor-id="sec-contenedores-instalados"><span class="header-section-number">B.5</span> Contenedores instalados</h2>
 <p>Finalizada la inyección de imágenes, ejecute el siguiente comando para auditar la disponibilidad de recursos:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: docker-verificacion-ps</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> ps <span class="at">-a</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: docker-verificacion-ps</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> ps <span class="at">-a</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ol type="1">
-<li>Contenedor <code>contenedor_sig_unal</code> basado en la imagen <code>image_sig_unal:v1.11_produccion_final</code>, equipado con:</li>
-</ol>
+<li><p>Contenedor <code>contenedor_sig_unal</code> basado en la imagen <code>image_sig_unal:v1.11_produccion_final</code>, equipado con:</p>
 <ul>
 <li><strong>Python</strong>, <strong>R</strong> y <strong>Julia</strong> y librerías geoespaciales.</li>
 <li><strong>Quarto</strong> (Ver <a href="82-quarto.html" class="quarto-xref"><span>Apéndice A</span></a>).</li>
-</ul>
-<ol start="2" type="1">
-<li>Contenedor <code>contenedor_postgis_unal</code> basado en la imagen <code>postgis_unal:v1.12</code>, equipado con:</li>
-</ol>
+</ul></li>
+<li><p>Contenedor <code>contenedor_postgis_unal</code> basado en la imagen <code>postgis_unal:v1.12</code>, equipado con:</p>
 <ul>
 <li><strong>PostgreSQL</strong> y <strong>PostGIS</strong>, integrando el catálogo de estudio <code>sig_db_unal</code>.</li>
-</ul>
+</ul></li>
+</ol>
 </section>
 <section id="puesta-en-marcha-y-detención-de-contenedores" class="level2" data-number="B.6">
 <h2 data-number="B.6" class="anchored" data-anchor-id="puesta-en-marcha-y-detención-de-contenedores"><span class="header-section-number">B.6</span> Puesta en marcha y detención de contenedores</h2>
 <section id="sec-arrancar-contenedores" class="level3">
-<h3 class="anchored" data-anchor-id="sec-arrancar-contenedores">Inicio de contenedores</h3>
-<p>El proceso de carga binaria se ejecuta por única vez. Para levantar la infraestructura orquestada, invoque el servicio desde la raíz del proyecto:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: docker-arranque-servicios</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose up <span class="at">-d</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Si el clúster se encontraba en estado de suspensión técnica, reactívelo mediante:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: docker-inicio-servicios</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose start</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<h3 class="anchored" data-anchor-id="sec-arrancar-contenedores">Inicio y reanudación de servicios</h3>
+<p>Para la provisión inicial del entorno, creación de redes virtuales y construcción de los contenedores a partir de la configuración declarativa:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: docker-up-servicios</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose up <span class="at">-d</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Este comando valida la configuración, crea los contenedores definidos si no existen y levanta los servicios en segundo plano.</p>
+<p>Si los contenedores ya fueron creados previamente y únicamente se encuentran en estado suspendido, se reactivan sus procesos sin recrear las redes ni alterar su capa mutable mediante:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: docker-start-servicios</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose start</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Una vez reactivada la instancia, abra Visual Studio Code en el sistema anfitrión, presione <code>Ctrl + Shift + P</code>, seleccione <strong>Dev Containers: Attach to Running Container…</strong> y elija <code>/contenedor_sig_unal</code> para retomar el espacio de trabajo con todas sus extensiones previas intactas.</p>
 </section>
 <section id="sec-detener-contenedores" class="level3">
-<h3 class="anchored" data-anchor-id="sec-detener-contenedores">Detención de contenedores</h3>
-<p>Para interrumpir la ejecución de los motores preservando la integridad de la base de datos:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: docker-parada-servicios</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose stop</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Para desmontar la topología de red y los contenedores (preservando los volúmenes de datos físicos):</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: docker-desmontaje-servicios</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose down</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<h3 class="anchored" data-anchor-id="sec-detener-contenedores">Detención y desmontaje de servicios</h3>
+<p>Al finalizar la sesión ordinaria, se debe suspender la ejecución de los servicios enviando una señal de apagado controlado (<code>SIGTERM</code>):</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: docker-stop-servicios</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose stop</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Esta operación detiene los procesos del motor relacional preservando intacta la capa de lectura y escritura del contenedor, lo cual asegura que las extensiones instaladas y la configuración del entorno <strong>persistan</strong> para la siguiente sesión.</p>
+<p>Por el contrario, si se requiere reiniciar la infraestructura a su estado base o liberar los recursos de red del sistema anfitrión, se procede con el desmontaje:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: docker-down-servicios</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose down</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Esta instrucción detiene los servicios y destruye los contenedores y las redes virtuales asociadas. Aunque los datos espaciales almacenados en los volúmenes físicos de PostgreSQL permanecen intactos, la capa de escritura del contenedor <strong>se elimina</strong>, lo que requerirá reinstalar extensiones adicionales de Visual Studio Code al momento de volver a ejecutar <code>docker compose up -d</code>.</p>
 </section>
 </section>
 <section id="localización-de-archivos-y-persistencia" class="level2" data-number="B.7">
@@ -554,13 +700,13 @@ Persistencia estructural
 </section>
 <section id="sec-cargar-contenedores-vscode" class="level2" data-number="B.8">
 <h2 data-number="B.8" class="anchored" data-anchor-id="sec-cargar-contenedores-vscode"><span class="header-section-number">B.8</span> Vinculación de contenedores en la terminal integrada</h2>
-<p>Para consolidar el entorno de desarrollo, acople el editor de texto directamente al núcleo del contenedor:</p>
+<p>Para consolidar el entorno de desarrollo, acople el editor de texto (VSCode) directamente al núcleo del contenedor:</p>
 <ol type="1">
 <li>Levante los servicios mediante <code>docker compose up -d</code>.</li>
 <li>Habilite la extensión <em>Dev Containers</em> en el equipo local.</li>
-<li>Desde la paleta de comandos, ejecute <strong>Dev Containers: Attach to Running Container…</strong> seleccionando el objetivo <code>contenedor_sig_unal</code>.</li>
-<li>Abra el directorio de montaje <code>/home/rstudio/work</code>.</li>
-<li>Instale las dependencias descritas en el <a href="85-vscode.html" class="quarto-xref"><span>Apéndice D</span></a>.</li>
+<li>Desde la paleta de comandos <code>Ctrl + Shift + P</code>, ejecute <strong>Dev Containers: Attach to Running Container…</strong> seleccionando el objetivo <code>contenedor_sig_unal</code>.</li>
+<li>Verifique el directorio de montaje <code>/home/rstudio/work</code>.</li>
+<li>Verifique las extensiones descritas en la <a href="85-vscode.html#sec-extensiones-vscode" class="quarto-xref"><span>Sección D.6</span></a>, o directamente en la <a href="85-vscode.html#tbl-extensiones" class="quarto-xref">Tabla&nbsp;<span>D.1</span></a>.</li>
 </ol>
 </section>
 <section id="sec-puertos-conectividad" class="level2" data-number="B.9">
@@ -729,19 +875,19 @@ Tabla&nbsp;B.2: Matriz de enrutamiento y puertos según el vector de ejecución
 <h3 class="anchored" data-anchor-id="diagnóstico-de-consumo-de-almacenamiento">Diagnóstico de consumo de almacenamiento</h3>
 <p>Previo a cualquier operación de limpieza, se debe inspeccionar la volumetría física asignada a contenedores, imágenes, volúmenes locales y caché de compilación (<em>build cache</em>):</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Resumen global de espacio utilizado por subsistema</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> system df</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Desglose detallado por objeto, identificador y estado de referencia</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> system df <span class="at">-v</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Resumen global de espacio utilizado por subsistema</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> system df</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Desglose detallado por objeto, identificador y estado de referencia</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> system df <span class="at">-v</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="desmantelamiento-de-servicios-y-volúmenes-vinculados" class="level3">
 <h3 class="anchored" data-anchor-id="desmantelamiento-de-servicios-y-volúmenes-vinculados">Desmantelamiento de servicios y volúmenes vinculados</h3>
 <p>Cuando un proyecto opera mediante Docker Compose, el desmantelamiento debe garantizar la remoción coordinada de contenedores, redes virtuales en puente y volúmenes de datos persistentes (<code>-v</code>):</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Detención y remoción de servicios, redes del proyecto y volúmenes nombrados</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose down <span class="at">-v</span> <span class="at">--remove-orphans</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Detención y remoción de servicios, redes del proyecto y volúmenes nombrados</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose down <span class="at">-v</span> <span class="at">--remove-orphans</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <blockquote class="blockquote">
 <p><strong>Nota técnica:</strong> La bandera <code>-v</code> asegura la eliminación de volúmenes persistentes (tales como <code>postgis_data_unal</code>), permitiendo que despliegues posteriores ejecuten scripts de inicialización DDL/DML desde un estado completamente limpio.</p>
@@ -754,43 +900,43 @@ Tabla&nbsp;B.2: Matriz de enrutamiento y puertos según el vector de ejecución
 </blockquote>
 <p>Para liberar el almacenamiento físico y purgar el subsistema BuildKit:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Purga exhaustiva de contenedores inactivos, redes, volúmenes huérfanos e imágenes no referenciadas</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> system prune <span class="at">-a</span> <span class="at">--volumes</span> <span class="at">-f</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Eliminación de la memoria caché de construcción de BuildKit</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> builder prune <span class="at">-a</span> <span class="at">-f</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Purga exhaustiva de contenedores inactivos, redes, volúmenes huérfanos e imágenes no referenciadas</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> system prune <span class="at">-a</span> <span class="at">--volumes</span> <span class="at">-f</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Eliminación de la memoria caché de construcción de BuildKit</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> builder prune <span class="at">-a</span> <span class="at">-f</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>En escenarios administrativos donde se requiera forzar la remoción absoluta de la totalidad de objetos presentes en el subsistema (incluyendo imágenes base activas), se pueden encadenar las utilidades de listado y remoción forzada:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Detención forzada y eliminación de todos los contenedores registrados</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> stop <span class="va">$(</span><span class="ex">docker</span> ps <span class="at">-a</span> <span class="at">-q</span><span class="va">)</span> <span class="dv">2</span><span class="op">&gt;</span>/dev/null <span class="kw">||</span> <span class="fu">true</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> rm <span class="at">-f</span> <span class="va">$(</span><span class="ex">docker</span> ps <span class="at">-a</span> <span class="at">-q</span><span class="va">)</span> <span class="dv">2</span><span class="op">&gt;</span>/dev/null <span class="kw">||</span> <span class="fu">true</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Eliminación de la totalidad de imágenes locales y volúmenes huérfanos</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> rmi <span class="at">-f</span> <span class="va">$(</span><span class="ex">docker</span> images <span class="at">-a</span> <span class="at">-q</span><span class="va">)</span> <span class="dv">2</span><span class="op">&gt;</span>/dev/null <span class="kw">||</span> <span class="fu">true</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm <span class="va">$(</span><span class="ex">docker</span> volume ls <span class="at">-q</span><span class="va">)</span> <span class="dv">2</span><span class="op">&gt;</span>/dev/null <span class="kw">||</span> <span class="fu">true</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Detención forzada y eliminación de todos los contenedores registrados</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> stop <span class="va">$(</span><span class="ex">docker</span> ps <span class="at">-a</span> <span class="at">-q</span><span class="va">)</span> <span class="dv">2</span><span class="op">&gt;</span>/dev/null <span class="kw">||</span> <span class="fu">true</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> rm <span class="at">-f</span> <span class="va">$(</span><span class="ex">docker</span> ps <span class="at">-a</span> <span class="at">-q</span><span class="va">)</span> <span class="dv">2</span><span class="op">&gt;</span>/dev/null <span class="kw">||</span> <span class="fu">true</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Eliminación de la totalidad de imágenes locales y volúmenes huérfanos</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> rmi <span class="at">-f</span> <span class="va">$(</span><span class="ex">docker</span> images <span class="at">-a</span> <span class="at">-q</span><span class="va">)</span> <span class="dv">2</span><span class="op">&gt;</span>/dev/null <span class="kw">||</span> <span class="fu">true</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm <span class="va">$(</span><span class="ex">docker</span> volume ls <span class="at">-q</span><span class="va">)</span> <span class="dv">2</span><span class="op">&gt;</span>/dev/null <span class="kw">||</span> <span class="fu">true</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="auditoría-y-confirmación-de-estado-limpio" class="level3">
 <h3 class="anchored" data-anchor-id="auditoría-y-confirmación-de-estado-limpio">Auditoría y confirmación de estado limpio</h3>
 <p>Finalizado el procedimiento de saneamiento, se valida que el subsistema de contenedores reporte una ocupación volumétrica nula (<code>0 B</code>) y que no existan entidades residuales en memoria o disco:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificación de volumetría del motor</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> system df</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Comprobación de inventarios vacíos por subsistema</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> ps <span class="at">-a</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> images <span class="at">-a</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume ls</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificación de volumetría del motor</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> system df</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Comprobación de inventarios vacíos por subsistema</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> ps <span class="at">-a</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> images <span class="at">-a</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume ls</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
 <section id="verificación-de-registros-de-instalación" class="level2" data-number="B.14">
 <h2 data-number="B.14" class="anchored" data-anchor-id="verificación-de-registros-de-instalación"><span class="header-section-number">B.14</span> Verificación de registros de instalación</h2>
 <p>Para inspeccionar el flujo estándar de errores y salidas emitidas por el contenedor principal:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: docker-logs-sig</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> logs contenedor_sig_unal</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: docker-logs-sig</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> logs contenedor_sig_unal</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="comandos-de-orquestación" class="level2" data-number="B.15">
 <h2 data-number="B.15" class="anchored" data-anchor-id="comandos-de-orquestación"><span class="header-section-number">B.15</span> Comandos de orquestación</h2>
@@ -894,9 +1040,9 @@ Tabla&nbsp;B.4: Inventario de arquitectura y componentes del laboratorio
 <section id="sec-acceder-jupyterlab" class="level3">
 <h3 class="anchored" data-anchor-id="sec-acceder-jupyterlab">Ingreso al entorno interactivo</h3>
 <p>Desde la terminal integrada, asegure el arranque del servidor forzando los tokens de seguridad y los parámetros de red (evitando concatenaciones en las banderas cortas):</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-jupyter-arranque</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="ex">jupyter</span> lab <span class="at">--ip</span> 0.0.0.0 <span class="at">--port</span> 8889 <span class="at">--no-browser</span> <span class="at">--allow-root</span> <span class="at">--ServerApp.token</span> geomatica2025</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-jupyter-arranque</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="ex">jupyter</span> lab <span class="at">--ip</span> 0.0.0.0 <span class="at">--port</span> 8889 <span class="at">--no-browser</span> <span class="at">--allow-root</span> <span class="at">--ServerApp.token</span> geomatica2025</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Acceso web: <code>http://127.0.0.1:8889</code> (Token: <code>geomatica2025</code>).</p>
 </section>
 <section id="guía-visual-del-entorno" class="level3">
@@ -908,21 +1054,21 @@ Tabla&nbsp;B.4: Inventario de arquitectura y componentes del laboratorio
 <h2 data-number="B.18" class="anchored" data-anchor-id="validación-del-entorno-r"><span class="header-section-number">B.18</span> Validación del entorno R</h2>
 <section id="sec-httpgd-config" class="level3">
 <h3 class="anchored" data-anchor-id="sec-httpgd-config">Visualización interactiva con httpgd</h3>
-<p>Al tratarse de una infraestructura sin servidor X11 nativo (<em>headless</em>), se implementa <code>httpgd</code> como puente de renderizado de gráficos vectoriales para VS Code.</p>
+<p>Al tratarse de una infraestructura sin servidor X11 nativo (<em>headless</em>), se implementa <code>httpgd</code> como puente de renderizado de gráficos vectoriales para VSCode.</p>
 <section id="inicio-del-servidor-gráfico" class="level4">
 <h4 class="anchored" data-anchor-id="inicio-del-servidor-gráfico">Inicio del servidor gráfico</h4>
 <p>Active el motor explícitamente al inicio de cada sesión interactiva:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-httpgd-arranque</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>httpgd<span class="sc">::</span><span class="fu">hgd</span>()</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>httpgd<span class="sc">::</span><span class="fu">hgd_details</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-httpgd-arranque</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>httpgd<span class="sc">::</span><span class="fu">hgd</span>()</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>httpgd<span class="sc">::</span><span class="fu">hgd_details</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="resolución-de-conflictos" class="level4">
 <h4 class="anchored" data-anchor-id="resolución-de-conflictos">Resolución de conflictos</h4>
 <p>Si el sistema de red omite la inyección del puerto <code>8787</code>, aplique una directiva forzada inhabilitando transitoriamente los tokens de seguridad de capa:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-httpgd-fuerza</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>httpgd<span class="sc">::</span><span class="fu">hgd</span>(<span class="at">host =</span> <span class="st">"0.0.0.0"</span>, <span class="at">port =</span> <span class="dv">8787</span>, <span class="at">token =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-httpgd-fuerza</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>httpgd<span class="sc">::</span><span class="fu">hgd</span>(<span class="at">host =</span> <span class="st">"0.0.0.0"</span>, <span class="at">port =</span> <span class="dv">8787</span>, <span class="at">token =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="función-crítica-del-servidor-gráfico" class="level4">
 <h4 class="anchored" data-anchor-id="función-crítica-del-servidor-gráfico">Función crítica del servidor gráfico</h4>
@@ -936,18 +1082,18 @@ Tabla&nbsp;B.4: Inventario de arquitectura y componentes del laboratorio
 <h3 class="anchored" data-anchor-id="ejecución-de-rutinas-mediante-evaluación-cruzada">Ejecución de rutinas mediante evaluación cruzada</h3>
 <p>El sistema procesa bloques Quarto mediante <code>knitr</code>. La incompatibilidad histórica de <code>JuliaCall</code> con punteros de librerías geoespaciales requirió la creación de los wrappers <code>j_eval</code> y <code>j_plot</code> soportados por <code>JuliaConnectoR</code>.</p>
 <p>Invoque las directivas de comunicación interlenguaje mediante el archivo base:</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-julia-puente</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: asis</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../j_eval_j_plot.r"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-julia-puente</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: asis</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../j_eval_j_plot.r"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
 <section id="verificación-de-conectividad-multilenguaje" class="level2" data-number="B.20">
 <h2 data-number="B.20" class="anchored" data-anchor-id="verificación-de-conectividad-multilenguaje"><span class="header-section-number">B.20</span> Verificación de conectividad multilenguaje</h2>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">Python</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Julia</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">Python</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-3" role="tab" aria-controls="tabset-4-3" aria-selected="false">Julia</a></li></ul>
 <div class="tab-content">
-<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -961,47 +1107,47 @@ Código crudo de auditoría (Python)
 <div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> psycopg2</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shapely.geometry <span class="im">import</span> Point</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    conn <span class="op">=</span> psycopg2.<span class="ex">connect</span>(</span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>        host<span class="op">=</span><span class="st">"db-postgis"</span>, </span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>        dbname<span class="op">=</span><span class="st">"sig_db_unal"</span>, </span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>        user<span class="op">=</span><span class="st">"profe_unal"</span>, </span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>        password<span class="op">=</span><span class="st">"geomatica2025"</span></span>
-<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Conexión a base de datos espacial exitosa"</span>)</span>
-<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>    conn.close()</span>
-<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
-<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Error relacional: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> psycopg2</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shapely.geometry <span class="im">import</span> Point</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    conn <span class="op">=</span> psycopg2.<span class="ex">connect</span>(</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>        host<span class="op">=</span><span class="st">"db-postgis"</span>, </span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>        dbname<span class="op">=</span><span class="st">"sig_db_unal"</span>, </span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>        user<span class="op">=</span><span class="st">"profe_unal"</span>, </span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>        password<span class="op">=</span><span class="st">"geomatica2025"</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Conexión a base de datos espacial exitosa"</span>)</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>    conn.close()</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Error relacional: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> psycopg2</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shapely.geometry <span class="im">import</span> Point</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    conn <span class="op">=</span> psycopg2.<span class="ex">connect</span>(</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>        host<span class="op">=</span><span class="st">"db-postgis"</span>, </span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>        dbname<span class="op">=</span><span class="st">"sig_db_unal"</span>, </span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>        user<span class="op">=</span><span class="st">"profe_unal"</span>, </span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>        password<span class="op">=</span><span class="st">"geomatica2025"</span></span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Conexión a base de datos espacial exitosa"</span>)</span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    conn.close()</span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Error relacional: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> psycopg2</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shapely.geometry <span class="im">import</span> Point</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    conn <span class="op">=</span> psycopg2.<span class="ex">connect</span>(</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>        host<span class="op">=</span><span class="st">"db-postgis"</span>, </span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>        dbname<span class="op">=</span><span class="st">"sig_db_unal"</span>, </span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>        user<span class="op">=</span><span class="st">"profe_unal"</span>, </span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>        password<span class="op">=</span><span class="st">"geomatica2025"</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Conexión a base de datos espacial exitosa"</span>)</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>    conn.close()</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Error relacional: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Conexión a base de datos espacial exitosa</code></pre>
 </div>
 </div>
 </div>
-<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -1015,24 +1161,24 @@ Código crudo de auditoría (R)
 <div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>conf <span class="ot">&lt;-</span> <span class="fu">sf_extSoftVersion</span>()</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">paste0</span>(<span class="st">"Motores de sistema detectados:</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>           <span class="st">" - GDAL: "</span>, conf[<span class="st">"GDAL"</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>           <span class="st">" - GEOS: "</span>, conf[<span class="st">"GEOS"</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>           <span class="st">" - PROJ: "</span>, conf[<span class="st">"PROJ"</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>conf <span class="ot">&lt;-</span> <span class="fu">sf_extSoftVersion</span>()</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">paste0</span>(<span class="st">"Motores de sistema detectados:</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>           <span class="st">" - GDAL: "</span>, conf[<span class="st">"GDAL"</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>           <span class="st">" - GEOS: "</span>, conf[<span class="st">"GEOS"</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>           <span class="st">" - PROJ: "</span>, conf[<span class="st">"PROJ"</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Linking to GEOS 3.12.1, GDAL 3.8.4, PROJ 9.4.0; sf_use_s2() is TRUE</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>terra 1.8.93</code></pre>
 </div>
@@ -1045,11 +1191,11 @@ Attaching package: 'terra'</code></pre>
 
     depth</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>conf <span class="ot">&lt;-</span> <span class="fu">sf_extSoftVersion</span>()</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">paste0</span>(<span class="st">"Motores de sistema detectados:</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>           <span class="st">" - GDAL: "</span>, conf[<span class="st">"GDAL"</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>           <span class="st">" - GEOS: "</span>, conf[<span class="st">"GEOS"</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>           <span class="st">" - PROJ: "</span>, conf[<span class="st">"PROJ"</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>conf <span class="ot">&lt;-</span> <span class="fu">sf_extSoftVersion</span>()</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">paste0</span>(<span class="st">"Motores de sistema detectados:</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>           <span class="st">" - GDAL: "</span>, conf[<span class="st">"GDAL"</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>           <span class="st">" - GEOS: "</span>, conf[<span class="st">"GEOS"</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>           <span class="st">" - PROJ: "</span>, conf[<span class="st">"PROJ"</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Motores de sistema detectados:
  - GDAL: 3.8.4
@@ -1058,7 +1204,7 @@ Attaching package: 'terra'</code></pre>
 </div>
 </div>
 </div>
-<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<div id="tabset-4-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -1072,75 +1218,75 @@ Código crudo de auditoría (Julia)
 <div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">LibPQ</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">DataFrames</span></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Plots</span></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="cn">ENV</span>[<span class="st">"GKSwstype"</span>] <span class="op">=</span> <span class="st">"100"</span></span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="fu">gr</span>()</span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>plots_dir <span class="op">=</span> <span class="fu">get</span>(<span class="cn">ENV</span>, <span class="st">"PLOTS_DIR"</span>, <span class="st">"."</span>)</span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="fu">mkpath</span>(plots_dir)</span>
-<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>try</span>
-<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>    canal <span class="op">=</span> LibPQ.<span class="fu">Connection</span>(<span class="st">"host=db-postgis port=5432 dbname=sig_db_unal user=profe_unal password=geomatica2025"</span>)</span>
-<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>    query_autoridades <span class="op">=</span> <span class="st">"""</span></span>
-<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a><span class="st">        SELECT auth_name, count(*)::int AS total</span></span>
-<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a><span class="st">        FROM spatial_ref_sys</span></span>
-<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a><span class="st">        WHERE auth_name IS NOT NULL</span></span>
-<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a><span class="st">        GROUP BY auth_name</span></span>
-<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a><span class="st">        ORDER BY total DESC</span></span>
-<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a><span class="st">        LIMIT 5;</span></span>
-<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a><span class="st">    """</span></span>
-<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>    df_autoridades <span class="op">=</span> <span class="fu">DataFrame</span>(<span class="fu">execute</span>(canal, query_autoridades))</span>
-<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a>    query_longitudes <span class="op">=</span> <span class="st">"""</span></span>
-<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a><span class="st">        SELECT length(coalesce(srtext, ''))::int AS longitud_wkt</span></span>
-<span id="cb32-26"><a href="#cb32-26" aria-hidden="true" tabindex="-1"></a><span class="st">        FROM spatial_ref_sys</span></span>
-<span id="cb32-27"><a href="#cb32-27" aria-hidden="true" tabindex="-1"></a><span class="st">        WHERE auth_name = 'EPSG' AND srtext IS NOT NULL</span></span>
-<span id="cb32-28"><a href="#cb32-28" aria-hidden="true" tabindex="-1"></a><span class="st">        LIMIT 1000;</span></span>
-<span id="cb32-29"><a href="#cb32-29" aria-hidden="true" tabindex="-1"></a><span class="st">    """</span></span>
-<span id="cb32-30"><a href="#cb32-30" aria-hidden="true" tabindex="-1"></a>    df_longitudes <span class="op">=</span> <span class="fu">DataFrame</span>(<span class="fu">execute</span>(canal, query_longitudes))</span>
-<span id="cb32-31"><a href="#cb32-31" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb32-32"><a href="#cb32-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">close</span>(canal)</span>
-<span id="cb32-33"><a href="#cb32-33" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb32-34"><a href="#cb32-34" aria-hidden="true" tabindex="-1"></a>    p1 <span class="op">=</span> <span class="fu">bar</span>(</span>
-<span id="cb32-35"><a href="#cb32-35" aria-hidden="true" tabindex="-1"></a>        df_autoridades.auth_name, </span>
-<span id="cb32-36"><a href="#cb32-36" aria-hidden="true" tabindex="-1"></a>        df_autoridades.total, </span>
-<span id="cb32-37"><a href="#cb32-37" aria-hidden="true" tabindex="-1"></a>        color <span class="op">=</span> <span class="op">:</span>steelblue,</span>
-<span id="cb32-38"><a href="#cb32-38" aria-hidden="true" tabindex="-1"></a>        xlabel <span class="op">=</span> <span class="st">"Autoridad"</span>, </span>
-<span id="cb32-39"><a href="#cb32-39" aria-hidden="true" tabindex="-1"></a>        ylabel <span class="op">=</span> <span class="st">"Cantidad de SRID"</span>, </span>
-<span id="cb32-40"><a href="#cb32-40" aria-hidden="true" tabindex="-1"></a>        title <span class="op">=</span> <span class="st">"Sistemas de referencia por autoridad"</span>,</span>
-<span id="cb32-41"><a href="#cb32-41" aria-hidden="true" tabindex="-1"></a>        xrotation <span class="op">=</span> <span class="fl">15</span>,</span>
-<span id="cb32-42"><a href="#cb32-42" aria-hidden="true" tabindex="-1"></a>        legend <span class="op">=</span> <span class="cn">false</span></span>
-<span id="cb32-43"><a href="#cb32-43" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb32-44"><a href="#cb32-44" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb32-45"><a href="#cb32-45" aria-hidden="true" tabindex="-1"></a>    p2 <span class="op">=</span> <span class="fu">histogram</span>(</span>
-<span id="cb32-46"><a href="#cb32-46" aria-hidden="true" tabindex="-1"></a>        df_longitudes.longitud_wkt, </span>
-<span id="cb32-47"><a href="#cb32-47" aria-hidden="true" tabindex="-1"></a>        bins <span class="op">=</span> <span class="fl">20</span>, </span>
-<span id="cb32-48"><a href="#cb32-48" aria-hidden="true" tabindex="-1"></a>        color <span class="op">=</span> <span class="op">:</span>coral,</span>
-<span id="cb32-49"><a href="#cb32-49" aria-hidden="true" tabindex="-1"></a>        xlabel <span class="op">=</span> <span class="st">"Longitud WKT EPSG (campo srtext)"</span>, </span>
-<span id="cb32-50"><a href="#cb32-50" aria-hidden="true" tabindex="-1"></a>        ylabel <span class="op">=</span> <span class="st">"Frecuencia"</span>, </span>
-<span id="cb32-51"><a href="#cb32-51" aria-hidden="true" tabindex="-1"></a>        title <span class="op">=</span> <span class="st">"Distribución de longitud WKT"</span>,</span>
-<span id="cb32-52"><a href="#cb32-52" aria-hidden="true" tabindex="-1"></a>        legend <span class="op">=</span> <span class="cn">false</span></span>
-<span id="cb32-53"><a href="#cb32-53" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb32-54"><a href="#cb32-54" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb32-55"><a href="#cb32-55" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Composición con márgenes explícitos en milímetros</span></span>
-<span id="cb32-56"><a href="#cb32-56" aria-hidden="true" tabindex="-1"></a>    p_final <span class="op">=</span> <span class="fu">plot</span>(</span>
-<span id="cb32-57"><a href="#cb32-57" aria-hidden="true" tabindex="-1"></a>        p1, p2, </span>
-<span id="cb32-58"><a href="#cb32-58" aria-hidden="true" tabindex="-1"></a>        layout <span class="op">=</span> (<span class="fl">1</span>, <span class="fl">2</span>), </span>
-<span id="cb32-59"><a href="#cb32-59" aria-hidden="true" tabindex="-1"></a>        size <span class="op">=</span> (<span class="fl">900</span>, <span class="fl">420</span>),</span>
-<span id="cb32-60"><a href="#cb32-60" aria-hidden="true" tabindex="-1"></a>        left_margin <span class="op">=</span> <span class="fl">12</span>Plots.mm,</span>
-<span id="cb32-61"><a href="#cb32-61" aria-hidden="true" tabindex="-1"></a>        bottom_margin <span class="op">=</span> <span class="fl">10</span>Plots.mm,</span>
-<span id="cb32-62"><a href="#cb32-62" aria-hidden="true" tabindex="-1"></a>        top_margin <span class="op">=</span> <span class="fl">6</span>Plots.mm,</span>
-<span id="cb32-63"><a href="#cb32-63" aria-hidden="true" tabindex="-1"></a>        right_margin <span class="op">=</span> <span class="fl">6</span>Plots.mm</span>
-<span id="cb32-64"><a href="#cb32-64" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb32-65"><a href="#cb32-65" aria-hidden="true" tabindex="-1"></a>    <span class="fu">savefig</span>(p_final, <span class="fu">joinpath</span>(plots_dir, <span class="st">"temp_grafica_julia.png"</span>))</span>
-<span id="cb32-66"><a href="#cb32-66" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb32-67"><a href="#cb32-67" aria-hidden="true" tabindex="-1"></a>catch fallo_conexion</span>
-<span id="cb32-68"><a href="#cb32-68" aria-hidden="true" tabindex="-1"></a>    <span class="fu">println</span>(<span class="st">"Fallo de interconexión o consulta al orquestador: "</span>, fallo_conexion)</span>
-<span id="cb32-69"><a href="#cb32-69" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">LibPQ</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">DataFrames</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Plots</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="cn">ENV</span>[<span class="st">"GKSwstype"</span>] <span class="op">=</span> <span class="st">"100"</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="fu">gr</span>()</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>plots_dir <span class="op">=</span> <span class="fu">get</span>(<span class="cn">ENV</span>, <span class="st">"PLOTS_DIR"</span>, <span class="st">"."</span>)</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a><span class="fu">mkpath</span>(plots_dir)</span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>try</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>    canal <span class="op">=</span> LibPQ.<span class="fu">Connection</span>(<span class="st">"host=db-postgis port=5432 dbname=sig_db_unal user=profe_unal password=geomatica2025"</span>)</span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>    query_autoridades <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a><span class="st">        SELECT auth_name, count(*)::int AS total</span></span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a><span class="st">        FROM spatial_ref_sys</span></span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a><span class="st">        WHERE auth_name IS NOT NULL</span></span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a><span class="st">        GROUP BY auth_name</span></span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a><span class="st">        ORDER BY total DESC</span></span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a><span class="st">        LIMIT 5;</span></span>
+<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a><span class="st">    """</span></span>
+<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a>    df_autoridades <span class="op">=</span> <span class="fu">DataFrame</span>(<span class="fu">execute</span>(canal, query_autoridades))</span>
+<span id="cb37-23"><a href="#cb37-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb37-24"><a href="#cb37-24" aria-hidden="true" tabindex="-1"></a>    query_longitudes <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb37-25"><a href="#cb37-25" aria-hidden="true" tabindex="-1"></a><span class="st">        SELECT length(coalesce(srtext, ''))::int AS longitud_wkt</span></span>
+<span id="cb37-26"><a href="#cb37-26" aria-hidden="true" tabindex="-1"></a><span class="st">        FROM spatial_ref_sys</span></span>
+<span id="cb37-27"><a href="#cb37-27" aria-hidden="true" tabindex="-1"></a><span class="st">        WHERE auth_name = 'EPSG' AND srtext IS NOT NULL</span></span>
+<span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a><span class="st">        LIMIT 1000;</span></span>
+<span id="cb37-29"><a href="#cb37-29" aria-hidden="true" tabindex="-1"></a><span class="st">    """</span></span>
+<span id="cb37-30"><a href="#cb37-30" aria-hidden="true" tabindex="-1"></a>    df_longitudes <span class="op">=</span> <span class="fu">DataFrame</span>(<span class="fu">execute</span>(canal, query_longitudes))</span>
+<span id="cb37-31"><a href="#cb37-31" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb37-32"><a href="#cb37-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">close</span>(canal)</span>
+<span id="cb37-33"><a href="#cb37-33" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb37-34"><a href="#cb37-34" aria-hidden="true" tabindex="-1"></a>    p1 <span class="op">=</span> <span class="fu">bar</span>(</span>
+<span id="cb37-35"><a href="#cb37-35" aria-hidden="true" tabindex="-1"></a>        df_autoridades.auth_name, </span>
+<span id="cb37-36"><a href="#cb37-36" aria-hidden="true" tabindex="-1"></a>        df_autoridades.total, </span>
+<span id="cb37-37"><a href="#cb37-37" aria-hidden="true" tabindex="-1"></a>        color <span class="op">=</span> <span class="op">:</span>steelblue,</span>
+<span id="cb37-38"><a href="#cb37-38" aria-hidden="true" tabindex="-1"></a>        xlabel <span class="op">=</span> <span class="st">"Autoridad"</span>, </span>
+<span id="cb37-39"><a href="#cb37-39" aria-hidden="true" tabindex="-1"></a>        ylabel <span class="op">=</span> <span class="st">"Cantidad de SRID"</span>, </span>
+<span id="cb37-40"><a href="#cb37-40" aria-hidden="true" tabindex="-1"></a>        title <span class="op">=</span> <span class="st">"Sistemas de referencia por autoridad"</span>,</span>
+<span id="cb37-41"><a href="#cb37-41" aria-hidden="true" tabindex="-1"></a>        xrotation <span class="op">=</span> <span class="fl">15</span>,</span>
+<span id="cb37-42"><a href="#cb37-42" aria-hidden="true" tabindex="-1"></a>        legend <span class="op">=</span> <span class="cn">false</span></span>
+<span id="cb37-43"><a href="#cb37-43" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb37-44"><a href="#cb37-44" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb37-45"><a href="#cb37-45" aria-hidden="true" tabindex="-1"></a>    p2 <span class="op">=</span> <span class="fu">histogram</span>(</span>
+<span id="cb37-46"><a href="#cb37-46" aria-hidden="true" tabindex="-1"></a>        df_longitudes.longitud_wkt, </span>
+<span id="cb37-47"><a href="#cb37-47" aria-hidden="true" tabindex="-1"></a>        bins <span class="op">=</span> <span class="fl">20</span>, </span>
+<span id="cb37-48"><a href="#cb37-48" aria-hidden="true" tabindex="-1"></a>        color <span class="op">=</span> <span class="op">:</span>coral,</span>
+<span id="cb37-49"><a href="#cb37-49" aria-hidden="true" tabindex="-1"></a>        xlabel <span class="op">=</span> <span class="st">"Longitud WKT EPSG (campo srtext)"</span>, </span>
+<span id="cb37-50"><a href="#cb37-50" aria-hidden="true" tabindex="-1"></a>        ylabel <span class="op">=</span> <span class="st">"Frecuencia"</span>, </span>
+<span id="cb37-51"><a href="#cb37-51" aria-hidden="true" tabindex="-1"></a>        title <span class="op">=</span> <span class="st">"Distribución de longitud WKT"</span>,</span>
+<span id="cb37-52"><a href="#cb37-52" aria-hidden="true" tabindex="-1"></a>        legend <span class="op">=</span> <span class="cn">false</span></span>
+<span id="cb37-53"><a href="#cb37-53" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb37-54"><a href="#cb37-54" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb37-55"><a href="#cb37-55" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Composición con márgenes explícitos en milímetros</span></span>
+<span id="cb37-56"><a href="#cb37-56" aria-hidden="true" tabindex="-1"></a>    p_final <span class="op">=</span> <span class="fu">plot</span>(</span>
+<span id="cb37-57"><a href="#cb37-57" aria-hidden="true" tabindex="-1"></a>        p1, p2, </span>
+<span id="cb37-58"><a href="#cb37-58" aria-hidden="true" tabindex="-1"></a>        layout <span class="op">=</span> (<span class="fl">1</span>, <span class="fl">2</span>), </span>
+<span id="cb37-59"><a href="#cb37-59" aria-hidden="true" tabindex="-1"></a>        size <span class="op">=</span> (<span class="fl">900</span>, <span class="fl">420</span>),</span>
+<span id="cb37-60"><a href="#cb37-60" aria-hidden="true" tabindex="-1"></a>        left_margin <span class="op">=</span> <span class="fl">12</span>Plots.mm,</span>
+<span id="cb37-61"><a href="#cb37-61" aria-hidden="true" tabindex="-1"></a>        bottom_margin <span class="op">=</span> <span class="fl">10</span>Plots.mm,</span>
+<span id="cb37-62"><a href="#cb37-62" aria-hidden="true" tabindex="-1"></a>        top_margin <span class="op">=</span> <span class="fl">6</span>Plots.mm,</span>
+<span id="cb37-63"><a href="#cb37-63" aria-hidden="true" tabindex="-1"></a>        right_margin <span class="op">=</span> <span class="fl">6</span>Plots.mm</span>
+<span id="cb37-64"><a href="#cb37-64" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb37-65"><a href="#cb37-65" aria-hidden="true" tabindex="-1"></a>    <span class="fu">savefig</span>(p_final, <span class="fu">joinpath</span>(plots_dir, <span class="st">"temp_grafica_julia.png"</span>))</span>
+<span id="cb37-66"><a href="#cb37-66" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb37-67"><a href="#cb37-67" aria-hidden="true" tabindex="-1"></a>catch fallo_conexion</span>
+<span id="cb37-68"><a href="#cb37-68" aria-hidden="true" tabindex="-1"></a>    <span class="fu">println</span>(<span class="st">"Fallo de interconexión o consulta al orquestador: "</span>, fallo_conexion)</span>
+<span id="cb37-69"><a href="#cb37-69" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -1148,20 +1294,20 @@ Código crudo de auditoría (Julia)
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">j_eval</span>(<span class="st">'</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="st">using LibPQ</span></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="st">using DataFrames</span></span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="st">try</span></span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="st">    canal = LibPQ.Connection("host=db-postgis port=5432 dbname=sig_db_unal user=profe_unal password=geomatica2025")</span></span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="st">    resultado_sql = execute(canal, "SELECT PostGIS_Version();")</span></span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="st">    dataframe_version = DataFrame(resultado_sql)</span></span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="st">    println("Enlace de datos espacial establecido con éxito en Julia. Versión: ", dataframe_version[1, 1])</span></span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a><span class="st">    close(canal)</span></span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a><span class="st">catch fallo_conexion</span></span>
-<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a><span class="st">    println("Fallo de interconexión al orquestador: ", fallo_conexion)</span></span>
-<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a><span class="st">end</span></span>
-<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">j_eval</span>(<span class="st">'</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="st">using LibPQ</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="st">using DataFrames</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="st">try</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="st">    canal = LibPQ.Connection("host=db-postgis port=5432 dbname=sig_db_unal user=profe_unal password=geomatica2025")</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="st">    resultado_sql = execute(canal, "SELECT PostGIS_Version();")</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a><span class="st">    dataframe_version = DataFrame(resultado_sql)</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a><span class="st">    println("Enlace de datos espacial establecido con éxito en Julia. Versión: ", dataframe_version[1, 1])</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a><span class="st">    close(canal)</span></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a><span class="st">catch fallo_conexion</span></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a><span class="st">    println("Fallo de interconexión al orquestador: ", fallo_conexion)</span></span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a><span class="st">end</span></span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <pre><code>Starting Julia ...</code></pre>
 <pre class="julia-code" style="display:block; background:#f4f6f8; border:1px solid #c0c8d0; border-radius:4px; padding:10px; margin-top:10px; margin-bottom:0; font-family:&quot;Lucida Console&quot;, Consolas, monospace; font-size:0.9em; white-space:pre-wrap; color:#333;"><span style="color:#28a745; font-weight:bold;">julia&gt;</span>
@@ -1341,72 +1487,72 @@ end
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>plots_dir <span class="ot">&lt;-</span> <span class="fu">Sys.getenv</span>(<span class="st">"PLOTS_DIR"</span>, <span class="at">unset =</span> <span class="st">"."</span>)</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">dir.exists</span>(plots_dir)) <span class="fu">dir.create</span>(plots_dir, <span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>ruta_img <span class="ot">&lt;-</span> <span class="fu">file.path</span>(plots_dir, <span class="st">"temp_grafica_julia.png"</span>)</span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="fu">j_plot</span>(<span class="st">'</span></span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="st">ENV["GKSwstype"] = "100" </span></span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="st">using LibPQ</span></span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="st">using DataFrames</span></span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a><span class="st">using Plots</span></span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a><span class="st">gr()</span></span>
-<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a><span class="st">try</span></span>
-<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a><span class="st">    canal = LibPQ.Connection("host=db-postgis port=5432 dbname=sig_db_unal user=profe_unal password=geomatica2025")</span></span>
-<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
-<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a><span class="st">    query_autoridades = "SELECT auth_name, count(*)::int AS total FROM spatial_ref_sys WHERE auth_name IS NOT NULL GROUP BY auth_name ORDER BY total DESC LIMIT 5;"</span></span>
-<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a><span class="st">    df_autoridades = DataFrame(execute(canal, query_autoridades))</span></span>
-<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
-<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a><span class="st">    query_longitudes = "SELECT length(coalesce(srtext, </span><span class="sc">\\\'\\\'</span><span class="st">))::int AS longitud_wkt FROM spatial_ref_sys WHERE auth_name = </span><span class="sc">\\\'</span><span class="st">EPSG</span><span class="sc">\\\'</span><span class="st"> AND srtext IS NOT NULL LIMIT 1000;"</span></span>
-<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a><span class="st">    df_longitudes = DataFrame(execute(canal, query_longitudes))</span></span>
-<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
-<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a><span class="st">    close(canal)</span></span>
-<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
-<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a><span class="st">    local p1 = bar(</span></span>
-<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a><span class="st">        df_autoridades.auth_name, </span></span>
-<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a><span class="st">        df_autoridades.total, </span></span>
-<span id="cb35-26"><a href="#cb35-26" aria-hidden="true" tabindex="-1"></a><span class="st">        color = :steelblue,</span></span>
-<span id="cb35-27"><a href="#cb35-27" aria-hidden="true" tabindex="-1"></a><span class="st">        xlabel = "Autoridad", </span></span>
-<span id="cb35-28"><a href="#cb35-28" aria-hidden="true" tabindex="-1"></a><span class="st">        ylabel = "Cantidad de SRID", </span></span>
-<span id="cb35-29"><a href="#cb35-29" aria-hidden="true" tabindex="-1"></a><span class="st">        title = "Sistemas de referencia por autoridad",</span></span>
-<span id="cb35-30"><a href="#cb35-30" aria-hidden="true" tabindex="-1"></a><span class="st">        xrotation = 15,</span></span>
-<span id="cb35-31"><a href="#cb35-31" aria-hidden="true" tabindex="-1"></a><span class="st">        legend = false</span></span>
-<span id="cb35-32"><a href="#cb35-32" aria-hidden="true" tabindex="-1"></a><span class="st">    )</span></span>
-<span id="cb35-33"><a href="#cb35-33" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
-<span id="cb35-34"><a href="#cb35-34" aria-hidden="true" tabindex="-1"></a><span class="st">    local p2 = histogram(</span></span>
-<span id="cb35-35"><a href="#cb35-35" aria-hidden="true" tabindex="-1"></a><span class="st">        df_longitudes.longitud_wkt, </span></span>
-<span id="cb35-36"><a href="#cb35-36" aria-hidden="true" tabindex="-1"></a><span class="st">        bins = 20, </span></span>
-<span id="cb35-37"><a href="#cb35-37" aria-hidden="true" tabindex="-1"></a><span class="st">        color = :coral,</span></span>
-<span id="cb35-38"><a href="#cb35-38" aria-hidden="true" tabindex="-1"></a><span class="st">        xlabel = "Longitud WKT EPSG (campo srtext)", </span></span>
-<span id="cb35-39"><a href="#cb35-39" aria-hidden="true" tabindex="-1"></a><span class="st">        ylabel = "Frecuencia", </span></span>
-<span id="cb35-40"><a href="#cb35-40" aria-hidden="true" tabindex="-1"></a><span class="st">        title = "Distribución de longitud WKT",</span></span>
-<span id="cb35-41"><a href="#cb35-41" aria-hidden="true" tabindex="-1"></a><span class="st">        legend = false</span></span>
-<span id="cb35-42"><a href="#cb35-42" aria-hidden="true" tabindex="-1"></a><span class="st">    )</span></span>
-<span id="cb35-43"><a href="#cb35-43" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
-<span id="cb35-44"><a href="#cb35-44" aria-hidden="true" tabindex="-1"></a><span class="st">    plot(</span></span>
-<span id="cb35-45"><a href="#cb35-45" aria-hidden="true" tabindex="-1"></a><span class="st">        p1, p2, </span></span>
-<span id="cb35-46"><a href="#cb35-46" aria-hidden="true" tabindex="-1"></a><span class="st">        layout = (1, 2), </span></span>
-<span id="cb35-47"><a href="#cb35-47" aria-hidden="true" tabindex="-1"></a><span class="st">        size = (900, 420),</span></span>
-<span id="cb35-48"><a href="#cb35-48" aria-hidden="true" tabindex="-1"></a><span class="st">        left_margin = 12Plots.mm,</span></span>
-<span id="cb35-49"><a href="#cb35-49" aria-hidden="true" tabindex="-1"></a><span class="st">        bottom_margin = 10Plots.mm,</span></span>
-<span id="cb35-50"><a href="#cb35-50" aria-hidden="true" tabindex="-1"></a><span class="st">        top_margin = 6Plots.mm,</span></span>
-<span id="cb35-51"><a href="#cb35-51" aria-hidden="true" tabindex="-1"></a><span class="st">        right_margin = 6Plots.mm</span></span>
-<span id="cb35-52"><a href="#cb35-52" aria-hidden="true" tabindex="-1"></a><span class="st">    )</span></span>
-<span id="cb35-53"><a href="#cb35-53" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
-<span id="cb35-54"><a href="#cb35-54" aria-hidden="true" tabindex="-1"></a><span class="st">catch fallo_proceso</span></span>
-<span id="cb35-55"><a href="#cb35-55" aria-hidden="true" tabindex="-1"></a><span class="st">    println("Error durante la extracción o graficación en Julia: ", fallo_proceso)</span></span>
-<span id="cb35-56"><a href="#cb35-56" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
-<span id="cb35-57"><a href="#cb35-57" aria-hidden="true" tabindex="-1"></a><span class="st">    # Gráfico de contingencia para evitar el colapso del compilador</span></span>
-<span id="cb35-58"><a href="#cb35-58" aria-hidden="true" tabindex="-1"></a><span class="st">    plot(</span></span>
-<span id="cb35-59"><a href="#cb35-59" aria-hidden="true" tabindex="-1"></a><span class="st">        title = "Fallo en ejecución de bloque espacial",</span></span>
-<span id="cb35-60"><a href="#cb35-60" aria-hidden="true" tabindex="-1"></a><span class="st">        framestyle = :none,</span></span>
-<span id="cb35-61"><a href="#cb35-61" aria-hidden="true" tabindex="-1"></a><span class="st">        annotations = (0.5, 0.5, text("Error: " * string(fallo_proceso), 10, :red, :center)),</span></span>
-<span id="cb35-62"><a href="#cb35-62" aria-hidden="true" tabindex="-1"></a><span class="st">        legend = false,</span></span>
-<span id="cb35-63"><a href="#cb35-63" aria-hidden="true" tabindex="-1"></a><span class="st">        size = (900, 420)</span></span>
-<span id="cb35-64"><a href="#cb35-64" aria-hidden="true" tabindex="-1"></a><span class="st">    )</span></span>
-<span id="cb35-65"><a href="#cb35-65" aria-hidden="true" tabindex="-1"></a><span class="st">end</span></span>
-<span id="cb35-66"><a href="#cb35-66" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>, <span class="at">n =</span> ruta_img, <span class="at">w =</span> <span class="dv">900</span>, <span class="at">h =</span> <span class="dv">420</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>plots_dir <span class="ot">&lt;-</span> <span class="fu">Sys.getenv</span>(<span class="st">"PLOTS_DIR"</span>, <span class="at">unset =</span> <span class="st">"."</span>)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">dir.exists</span>(plots_dir)) <span class="fu">dir.create</span>(plots_dir, <span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>ruta_img <span class="ot">&lt;-</span> <span class="fu">file.path</span>(plots_dir, <span class="st">"temp_grafica_julia.png"</span>)</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="fu">j_plot</span>(<span class="st">'</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="st">ENV["GKSwstype"] = "100" </span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="st">using LibPQ</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a><span class="st">using DataFrames</span></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a><span class="st">using Plots</span></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a><span class="st">gr()</span></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a><span class="st">try</span></span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a><span class="st">    canal = LibPQ.Connection("host=db-postgis port=5432 dbname=sig_db_unal user=profe_unal password=geomatica2025")</span></span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a><span class="st">    query_autoridades = "SELECT auth_name, count(*)::int AS total FROM spatial_ref_sys WHERE auth_name IS NOT NULL GROUP BY auth_name ORDER BY total DESC LIMIT 5;"</span></span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a><span class="st">    df_autoridades = DataFrame(execute(canal, query_autoridades))</span></span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a><span class="st">    query_longitudes = "SELECT length(coalesce(srtext, </span><span class="sc">\\\'\\\'</span><span class="st">))::int AS longitud_wkt FROM spatial_ref_sys WHERE auth_name = </span><span class="sc">\\\'</span><span class="st">EPSG</span><span class="sc">\\\'</span><span class="st"> AND srtext IS NOT NULL LIMIT 1000;"</span></span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a><span class="st">    df_longitudes = DataFrame(execute(canal, query_longitudes))</span></span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a><span class="st">    close(canal)</span></span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a><span class="st">    local p1 = bar(</span></span>
+<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a><span class="st">        df_autoridades.auth_name, </span></span>
+<span id="cb40-25"><a href="#cb40-25" aria-hidden="true" tabindex="-1"></a><span class="st">        df_autoridades.total, </span></span>
+<span id="cb40-26"><a href="#cb40-26" aria-hidden="true" tabindex="-1"></a><span class="st">        color = :steelblue,</span></span>
+<span id="cb40-27"><a href="#cb40-27" aria-hidden="true" tabindex="-1"></a><span class="st">        xlabel = "Autoridad", </span></span>
+<span id="cb40-28"><a href="#cb40-28" aria-hidden="true" tabindex="-1"></a><span class="st">        ylabel = "Cantidad de SRID", </span></span>
+<span id="cb40-29"><a href="#cb40-29" aria-hidden="true" tabindex="-1"></a><span class="st">        title = "Sistemas de referencia por autoridad",</span></span>
+<span id="cb40-30"><a href="#cb40-30" aria-hidden="true" tabindex="-1"></a><span class="st">        xrotation = 15,</span></span>
+<span id="cb40-31"><a href="#cb40-31" aria-hidden="true" tabindex="-1"></a><span class="st">        legend = false</span></span>
+<span id="cb40-32"><a href="#cb40-32" aria-hidden="true" tabindex="-1"></a><span class="st">    )</span></span>
+<span id="cb40-33"><a href="#cb40-33" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb40-34"><a href="#cb40-34" aria-hidden="true" tabindex="-1"></a><span class="st">    local p2 = histogram(</span></span>
+<span id="cb40-35"><a href="#cb40-35" aria-hidden="true" tabindex="-1"></a><span class="st">        df_longitudes.longitud_wkt, </span></span>
+<span id="cb40-36"><a href="#cb40-36" aria-hidden="true" tabindex="-1"></a><span class="st">        bins = 20, </span></span>
+<span id="cb40-37"><a href="#cb40-37" aria-hidden="true" tabindex="-1"></a><span class="st">        color = :coral,</span></span>
+<span id="cb40-38"><a href="#cb40-38" aria-hidden="true" tabindex="-1"></a><span class="st">        xlabel = "Longitud WKT EPSG (campo srtext)", </span></span>
+<span id="cb40-39"><a href="#cb40-39" aria-hidden="true" tabindex="-1"></a><span class="st">        ylabel = "Frecuencia", </span></span>
+<span id="cb40-40"><a href="#cb40-40" aria-hidden="true" tabindex="-1"></a><span class="st">        title = "Distribución de longitud WKT",</span></span>
+<span id="cb40-41"><a href="#cb40-41" aria-hidden="true" tabindex="-1"></a><span class="st">        legend = false</span></span>
+<span id="cb40-42"><a href="#cb40-42" aria-hidden="true" tabindex="-1"></a><span class="st">    )</span></span>
+<span id="cb40-43"><a href="#cb40-43" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb40-44"><a href="#cb40-44" aria-hidden="true" tabindex="-1"></a><span class="st">    plot(</span></span>
+<span id="cb40-45"><a href="#cb40-45" aria-hidden="true" tabindex="-1"></a><span class="st">        p1, p2, </span></span>
+<span id="cb40-46"><a href="#cb40-46" aria-hidden="true" tabindex="-1"></a><span class="st">        layout = (1, 2), </span></span>
+<span id="cb40-47"><a href="#cb40-47" aria-hidden="true" tabindex="-1"></a><span class="st">        size = (900, 420),</span></span>
+<span id="cb40-48"><a href="#cb40-48" aria-hidden="true" tabindex="-1"></a><span class="st">        left_margin = 12Plots.mm,</span></span>
+<span id="cb40-49"><a href="#cb40-49" aria-hidden="true" tabindex="-1"></a><span class="st">        bottom_margin = 10Plots.mm,</span></span>
+<span id="cb40-50"><a href="#cb40-50" aria-hidden="true" tabindex="-1"></a><span class="st">        top_margin = 6Plots.mm,</span></span>
+<span id="cb40-51"><a href="#cb40-51" aria-hidden="true" tabindex="-1"></a><span class="st">        right_margin = 6Plots.mm</span></span>
+<span id="cb40-52"><a href="#cb40-52" aria-hidden="true" tabindex="-1"></a><span class="st">    )</span></span>
+<span id="cb40-53"><a href="#cb40-53" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb40-54"><a href="#cb40-54" aria-hidden="true" tabindex="-1"></a><span class="st">catch fallo_proceso</span></span>
+<span id="cb40-55"><a href="#cb40-55" aria-hidden="true" tabindex="-1"></a><span class="st">    println("Error durante la extracción o graficación en Julia: ", fallo_proceso)</span></span>
+<span id="cb40-56"><a href="#cb40-56" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb40-57"><a href="#cb40-57" aria-hidden="true" tabindex="-1"></a><span class="st">    # Gráfico de contingencia para evitar el colapso del compilador</span></span>
+<span id="cb40-58"><a href="#cb40-58" aria-hidden="true" tabindex="-1"></a><span class="st">    plot(</span></span>
+<span id="cb40-59"><a href="#cb40-59" aria-hidden="true" tabindex="-1"></a><span class="st">        title = "Fallo en ejecución de bloque espacial",</span></span>
+<span id="cb40-60"><a href="#cb40-60" aria-hidden="true" tabindex="-1"></a><span class="st">        framestyle = :none,</span></span>
+<span id="cb40-61"><a href="#cb40-61" aria-hidden="true" tabindex="-1"></a><span class="st">        annotations = (0.5, 0.5, text("Error: " * string(fallo_proceso), 10, :red, :center)),</span></span>
+<span id="cb40-62"><a href="#cb40-62" aria-hidden="true" tabindex="-1"></a><span class="st">        legend = false,</span></span>
+<span id="cb40-63"><a href="#cb40-63" aria-hidden="true" tabindex="-1"></a><span class="st">        size = (900, 420)</span></span>
+<span id="cb40-64"><a href="#cb40-64" aria-hidden="true" tabindex="-1"></a><span class="st">    )</span></span>
+<span id="cb40-65"><a href="#cb40-65" aria-hidden="true" tabindex="-1"></a><span class="st">end</span></span>
+<span id="cb40-66"><a href="#cb40-66" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>, <span class="at">n =</span> ruta_img, <span class="at">w =</span> <span class="dv">900</span>, <span class="at">h =</span> <span class="dv">420</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <pre class="julia-code" style="display:block; background:#f4f6f8; border:1px solid #c0c8d0; border-radius:4px; padding:10px; margin-top:10px; margin-bottom:0; font-family:&quot;Lucida Console&quot;, Consolas, monospace; font-size:0.9em; white-space:pre-wrap; color:#333;"><span style="color:#28a745; font-weight:bold;">julia&gt;</span>
 <span style="color:#008b8b;">ENV["GKSwstype"] = "100"</span>

@@ -10,27 +10,58 @@ El propósito central consiste en desarrollar competencias avanzadas para la ing
 
 - **Fundamentos y diseño conceptual:** Formulación de modelos entidad-relación espaciales normalizados (1FN, 2FN, 3FN), diseño visual asistido con pgModeler y cumplimiento de las especificaciones OGC *Simple Features for SQL* e ISO 19107.
 - **Motores relacionales espaciales con PostgreSQL y PostGIS:** Administración de instancias, tipado cartesiano (`geometry`) y geodésico (`geography`), indexación multidimensional (GiST, SP-GiST, BRIN), análisis topológico con la matriz DE-9IM, topología persistente y estrategias de respaldo estructurado con tablas de contenido (TOC).
-- **Geodatabases corporativas y flujos ETL:** Arquitecturas basadas en archivos y multiusuario, ingeniería guiada por modelos (ShapeChange), vistas de diseño integradas (*Data design views*), reglas de atributos, almacenamiento ráster y construcción de pipelines reproducibles de extracción, transformación y carga.
+- **Geodatabases corporativas y flujos ETL:** Arquitecturas basadas en archivos y multiusuario, ingeniería guiada por modelos (ShapeChange), vistas de diseño integradas (*data design views*), reglas de atributos, almacenamiento ráster y construcción de pipelines reproducibles de extracción, transformación y carga.
 - **Ecosistema de conexión políglota:** Interacción directa mediante la consola de comandos (`psql`), herramientas de administración gráfica (`pgAdmin 4`) y controladores analíticos en Python (`psycopg`, `GeoPandas`), R (`DBI`, `sf`) y Julia (`LibPQ.jl`, `GeoDataFrames.jl`).
 - **Paradigmas analíticos emergentes:** Evaluación experimental de motores analíticos columnares (DuckDB espacial, GeoParquet), procesamiento distribuido (Apache Sedona, PySpark), mallas espaciales discretas globales (DGGS H3/S2), bases de datos de grafos (Neo4j Spatial, pgRouting), motores NoSQL y extensiones compiladas nativas en Rust.
+
+## Material de la clase {.unnumbered}
+
+El material de la clase se distribuye como un proyecto Quarto alojado en el repositorio:
+
+- Protocolo SSH: `git@github.com:alexyshr/bde2026.git`
+- Interfaz web HTTPS: <https://github.com/alexyshr/bde2026>
+
+
+::: {.content-visible when-format="html"}
+::: {.callout-note appearance="simple" title="Presentación de la sesión"}
+Las diapositivas interactivas correspondientes a la introducción y lineamientos generales del curso se encuentran disponibles en: [Presentación interactiva: Introducción general](slides/00-introduccion.html){target="_blank"}.
+:::
+:::
+
+Para acceder y sincronizar este material se requiere:
+
+- Inscripción formal en la asignatura *Bases de datos espaciales* (UNAL 2026).
+- Disponer de una cuenta registrada en GitHub.
+- Contar con la herramienta de control de versiones `git` instalada en el sistema anfitrión.
+
+La documentación procedimental sobre Git y GitHub se detalla en @sec-anexo-git-github, donde se presentan las guías para clonar proyectos y gestionar credenciales criptográficas de acceso.
 
 ## Cómo usar este libro {.unnumbered}
 
 A lo largo de los capítulos, las bases conceptuales, las guías metodológicas y los talleres prácticos se encuentran organizados de forma secuencial. En los módulos que integran flujos analíticos políglotas, las implementaciones computacionales se estructuran en paneles con pestañas (*tabsets*) para contrastar la sintaxis y el rendimiento entre entornos:
 
-::: {.callout-note}
-### Navegación y reproducibilidad
+::: {.callout-note title="Navegación y reproducibilidad"}
 Los bloques de código contienen directivas YAML de Quarto (`#| label: ...`, `#| eval: ...`) con prefijos taxonómicos estandarizados (`setup-`, `docker-`, `ddl-`, `dml-`, `query-`, `audit-`, `export-`) para facilitar la trazabilidad y ejecución en la terminal integrada de Visual Studio Code o Positron.
 :::
 
+::: {.callout-note title="Enfoque instrumental y prerrequisitos de programación"}
+Si bien este material integra demostraciones dentro de un ecosistema analítico políglota, el eje procedimental y evaluativo del curso se fundamenta en la interacción directa mediante la consola de comandos con el cliente `psql`, complementada periódicamente a través del entorno gráfico `pgAdmin 4`.
+
+Las implementaciones presentadas en Python, R y Julia se incorporan exclusivamente como marcos de referencia comparativa para consulta autónoma. En consecuencia, no se exigen conocimientos previos de programación ni dominio de sintaxis en dichos lenguajes para el desarrollo y culminación de los talleres prácticos.
+:::
+
+
 ## Requisitos previos del entorno {.unnumbered}
 
-Para la ejecución de los talleres aplicados y los proyectos experimentales, se proporcionan guías de configuración para:
+La compilación de los talleres y guías disponibles en formato `.qmd` exige la configuración previa de las siguientes utilidades, detalladas en el módulo de instalación y en los anexos técnicos:
 
-- Orquestación de servicios y motores de bases de datos en contenedores mediante Docker Desktop o Docker Engine.
-- Entorno de desarrollo sobre la terminal integrada de Visual Studio Code.
-- Clientes de administración relacional y Sistemas de Información Geográfica de escritorio (QGIS y ArcGIS Pro).
-- Fundamentos de álgebra relacional, sintaxis SQL estándar, tipos de datos espaciales y sistemas de referencia de coordenadas (SRC/EPSG).
+- Git (sistema anfitrión)
+- Docker Desktop (sistema anfitrión)
+- Contenedores Docker preconfigurados para el curso (orquestación de servicios y motores de bases de datos)
+- Entorno de desarrollo sobre la terminal integrada de Visual Studio Code (sistema anfitrión)
+- Motor de bases de datos PostgreSQL con extensión espacial PostGIS (sistema anfitrión)
+- Clientes de administración relacional y espacial (sistema anfitrión y contenedor)
+- Software de Sistemas de Información Geográfica de escritorio: QGIS y ArcGIS Pro (sistema anfitrión)
 
 ## Licencia y citación del material {.unnumbered #sec-licencia}
 
@@ -38,8 +69,7 @@ Para la ejecución de los talleres aplicados y los proyectos experimentales, se 
 
 Este material pedagógico y científico se distribuye bajo una licencia **Creative Commons Atribución-NoComercial 4.0 Internacional (CC BY-NC 4.0)**.
 
-::: {.callout-note}
-#### Alcance y condiciones de uso
+::: {.callout-note title="Alcance y condiciones de uso"}
 Bajo los principios de la Ciencia Abierta (*Open Science*) y las directrices FAIR (*Findable, Accessible, Interoperable, Reusable*), se autoriza:
 
 1. **Compartir**: Copiar y redistribuir el material en cualquier medio o formato.
@@ -47,18 +77,20 @@ Bajo los principios de la Ciencia Abierta (*Open Science*) y las directrices FAI
 
 **Condiciones obligatorias:**
 
-* **Atribución**: Debe otorgarse el crédito académico correspondiente, proveer un enlace a la licencia e indicar explícitamente si se efectuaron modificaciones.
-* **Uso no comercial**: No se autoriza la explotación comercial ni el uso de este material con fines de lucro directo o indirecto.
+- **Atribución**: Debe otorgarse el crédito académico correspondiente, proveer un enlace a la licencia e indicar explícitamente si se efectuaron modificaciones.
+- **Uso no comercial**: No se autoriza la explotación comercial ni el uso de este material con fines de lucro directo o indirecto.
 :::
 
 ### Cómo citar este material
 
 Para la utilización de los esquemas DDL, consultas analíticas, guías de laboratorio o datos en proyectos de investigación o publicaciones técnicas, se deben incluir las siguientes referencias:
 
-#### Referencia en formato APA (7.ª edición)
+**Referencia en formato APA (7.ª edición)**
+
 > Rodríguez-Avellaneda, A. H. (2026). *Bases de datos espaciales* [Material de curso]. Maestría en Geomática, Universidad Nacional de Colombia. https://github.com/alexyshr/bde2026
 
-#### Referencia en formato BibTeX (para LaTeX y gestores bibliográficos)
+**Referencia en formato BibTeX (para LaTeX y gestores bibliográficos)**
+
 ```bibtex
 @misc{rodriguez2026basesdatos,
   author       = {Rodriguez-Avellaneda, Alexys H.},
@@ -76,15 +108,10 @@ Para la utilización de los esquemas DDL, consultas analíticas, guías de labor
 
 Este documento constituye una obra técnica en construcción y actualización permanente. Para reportar inconsistencias en los scripts DDL/DML, erratas conceptuales o proponer extensiones a los módulos de laboratorio, se contemplan los siguientes mecanismos:
 
-1. **Apertura de un Issue**: Para notificar fallas de compilación, inconsistencias en consultas SQL o correcciones de redacción.
-2. **Envío de un Pull Request**: Para someter correcciones directas en los archivos `.qmd` o incorporar nuevos talleres y flujos reproducibles.
+1. **Apertura de un Issue**: Notificar fallas de compilación, inconsistencias en consultas SQL o correcciones de redacción.
+2. **Envío de un Pull Request**: Someter correcciones directas en los archivos `.qmd` o incorporar nuevos talleres y flujos reproducibles.
 
-
-
-::: {.callout-tip}
-
-### Reconocimiento a herramientas de IA
-
+::: {.callout-tip title="Reconocimiento a herramientas de IA"}
 La estructuración de plantillas de configuración, la resolución de dependencias en contenedores Docker y la optimización de flujos de integración continua han sido asistidas mediante herramientas de Inteligencia Artificial, bajo la validación, diseño conceptual y supervisión técnica del autor principal.
 :::
 

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Bases de Datos Espaciales - Prefacio</title>
+<title>Bases de datos espaciales - Prefacio</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -42,11 +42,11 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
-  "location": "sidebar",
+  "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
-  "panel-placement": "start",
-  "type": "textbox",
+  "panel-placement": "end",
+  "type": "overlay",
   "limit": 50,
   "keyboard-shortcut": [
     "f",
@@ -72,10 +72,38 @@ ul.task-list li input[type="checkbox"] {
 
 </head>
 
-<body class="nav-sidebar floating">
+<body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Bases de datos espaciales</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../slides/index.html"> 
+<span class="menu-text">Diapositivas</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/alexyshr/bde2026"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
@@ -84,26 +112,13 @@ ul.task-list li input[type="checkbox"] {
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/00-prefacio.html">Prefacio</a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
     </div>
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
-    <div class="sidebar-title mb-0 py-0">
-      <a href="../">Bases de Datos Espaciales</a> 
-    </div>
-      </div>
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Buscar"></div>
-        </div>
-        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -126,7 +141,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a href="../chapters/04-introduccion_instalacion_entornos.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Instalación y entornos</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -136,7 +151,7 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/05-guia_instalacion_vscode_docker.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación: VS Code y contenedores Docker</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -266,10 +281,13 @@ ul.task-list li input[type="checkbox"] {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Tabla de Contenidos</h2>
+    <h2 id="toc-title">Tabla de contenidos</h2>
    
   <ul>
-  <li><a href="#enfoque-metodológico-y-computacional" id="toc-enfoque-metodológico-y-computacional" class="nav-link active" data-scroll-target="#enfoque-metodológico-y-computacional">Enfoque metodológico y computacional</a></li>
+  <li><a href="#enfoque-metodológico-y-computacional" id="toc-enfoque-metodológico-y-computacional" class="nav-link active" data-scroll-target="#enfoque-metodológico-y-computacional">Enfoque metodológico y computacional</a>
+  <ul class="collapse">
+  <li><a href="#pilares-operativos-de-la-práctica-computacional" id="toc-pilares-operativos-de-la-práctica-computacional" class="nav-link" data-scroll-target="#pilares-operativos-de-la-práctica-computacional">Pilares operativos de la práctica computacional</a></li>
+  </ul></li>
   <li><a href="#reproducibilidad-y-entorno-de-trabajo" id="toc-reproducibilidad-y-entorno-de-trabajo" class="nav-link" data-scroll-target="#reproducibilidad-y-entorno-de-trabajo">Reproducibilidad y entorno de trabajo</a></li>
   <li><a href="#organización-de-la-obra" id="toc-organización-de-la-obra" class="nav-link" data-scroll-target="#organización-de-la-obra">Organización de la obra</a></li>
   </ul>
@@ -297,30 +315,40 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Bienvenidas y bienvenidos al curso de <strong>Bases de datos espaciales</strong> en el nivel de posgrado. Este documento constituye el material de referencia técnica, metodológica y computacional diseñado para acompañar el desarrollo conceptual y práctico de la asignatura. El propósito central de esta obra es proporcionar una base rigurosa para el modelado formal, la administración, la optimización de consultas y la experimentación con sistemas de gestión de bases de datos espaciales (SGBDE) y arquitecturas analíticas de vanguardia.</p>
-<p>En el contexto contemporáneo de la geomática y la ciencia de datos espaciales, el crecimiento en volumen y complejidad de la información geográfica exige superar el almacenamiento en archivos planos y la dependencia exclusiva de interfaces gráficas de usuario. El dominio de los motores relacionales espaciales, el diseño estructurado de esquemas y el procesamiento analítico a gran escala constituyen competencias fundamentales para garantizar la integridad topológica, la concurrencia y la reproducibilidad en proyectos de investigación y aplicaciones profesionales avanzadas.</p>
+<p>El presente documento constituye el material de referencia técnica, metodológica y computacional del curso de posgrado <strong>Bases de datos espaciales</strong>. El propósito central de esta obra es proporcionar un marco riguroso para el modelado conceptual, la administración de infraestructura, la optimización de consultas (<em>Spatial SQL</em>) y la experimentación con sistemas de gestión de bases de datos espaciales (SGBDE) y arquitecturas analíticas contemporáneas.</p>
+<p>En el contexto contemporáneo de la geomática y la ciencia de datos espaciales, el crecimiento sostenido en volumen y dimensionalidad de la información geográfica exige superar el almacenamiento en formatos planos desarticulados y la dependencia exclusiva de interfaces de escritorio. El dominio de los motores relacionales espaciales, el diseño normalizado de esquemas y el procesamiento analítico a gran escala constituyen competencias críticas para garantizar la integridad topológica, la concurrencia y la reproducibilidad técnica en flujos de investigación y producción técnica avanzada.</p>
 <section id="enfoque-metodológico-y-computacional" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="enfoque-metodológico-y-computacional">Enfoque metodológico y computacional</h2>
-<p>El desarrollo del curso y la estructura del material se fundamentan en los principios de la Ciencia Abierta (<em>Open Science</em>), los estándares FAIR (<em>Findable, Accessible, Interoperable, Reusable</em>) y la reproducibilidad computacional integral:</p>
+<p>El desarrollo temático de la asignatura y la estructura del material se fundamentan en los principios de la Ciencia Abierta (<em>Open Science</em>), las directrices FAIR (<em>Findable, Accessible, Interoperable, Reusable</em>) y la reproducibilidad computacional integral:</p>
 <ul>
-<li><strong>Modelado conceptual y estándares internacionales:</strong> Aplicación de las especificaciones del <em>Open Geospatial Consortium</em> (OGC Simple Features for SQL), la norma ISO 19107, normalización relacional y diseño visual de esquemas asistido con pgModeler.</li>
-<li><strong>Motores relacionales y Spatial SQL:</strong> Administración avanzada de PostgreSQL/PostGIS, tipado geométrico y geodésico, análisis topológico mediante la matriz DE-9IM, indexación multidimensional (GiST, SP-GiST, BRIN), diagnóstico de planes de ejecución y topología vectorial persistente.</li>
-<li><strong>Geodatabases corporativas y flujos ETL:</strong> Arquitecturas basadas en archivos y corporativas, ingeniería guiada por modelos (ShapeChange), vistas de diseño integradas, reglas de atributos, almacenamiento ráster y construcción de flujos de extracción, transformación y carga reproducibles.</li>
-<li><strong>Ecosistema de conexión políglota:</strong> Interacción directa mediante la consola nativa (<code>psql</code>) y herramientas de administración gráfica (<code>pgAdmin 4</code>), combinada con controladores analíticos en Python (<code>psycopg</code>, <code>GeoPandas</code>), R (<code>DBI</code>, <code>sf</code>) y Julia (<code>LibPQ.jl</code>, <code>GeoDataFrames.jl</code>).</li>
-<li><strong>Seminario de paradigmas emergentes:</strong> Evaluación experimental de tecnologías de frontera como procesamiento masivo distribuido (Apache Sedona, PySpark), motores analíticos columnares y formatos nativos de nube (DuckDB, GeoParquet), mallas discretas globales (DGGS H3/S2), bases de datos de grafos (Neo4j, pgRouting), motores NoSQL y extensiones compiladas nativas en Rust.</li>
+<li><strong>Modelado conceptual y estándares internacionales:</strong> Aplicación de las especificaciones del <em>Open Geospatial Consortium</em> (OGC, <em>Simple Features for SQL</em>), la norma ISO 19107, normalización relacional formal (1FN, 2FN, 3FN) y diseño visual de esquemas asistido con pgModeler.</li>
+<li><strong>Motores relacionales y Spatial SQL:</strong> Administración avanzada de clústeres PostgreSQL y PostGIS, tipado geométrico cartesiano y geodésico, análisis topológico mediante la matriz DE-9IM, indexación multidimensional (GiST, SP-GiST, BRIN), diagnóstico de planes de ejecución y topología vectorial persistente.</li>
+<li><strong>Geodatabases corporativas y flujos ETL:</strong> Arquitecturas basadas en archivos y motores multiusuario, ingeniería guiada por modelos (ShapeChange), vistas de diseño integradas (<em>data design views</em>), reglas de atributos, almacenamiento de coberturas ráster y construcción de flujos de extracción, transformación y carga reproducibles.</li>
+<li><strong>Ecosistema de conexión políglota:</strong> Interacción directa mediante la consola nativa (<code>psql</code>) y entornos de administración gráfica (<code>pgAdmin 4</code>), complementada con librerías analíticas en Python (<code>psycopg</code>, <code>GeoPandas</code>), R (<code>DBI</code>, <code>sf</code>) y Julia (<code>LibPQ.jl</code>, <code>GeoDataFrames.jl</code>).</li>
+<li><strong>Seminario de paradigmas emergentes:</strong> Evaluación experimental de tecnologías analíticas contemporáneas, tales como procesamiento masivo distribuido (Apache Sedona, PySpark), motores columnares y formatos nativos de nube (DuckDB, GeoParquet), mallas espaciales discretas globales (DGGS H3/S2), grafos espaciales (Neo4j, pgRouting), motores NoSQL y extensiones compiladas nativas en Rust.</li>
 </ul>
+<section id="pilares-operativos-de-la-práctica-computacional" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="pilares-operativos-de-la-práctica-computacional">Pilares operativos de la práctica computacional</h3>
+<p>El aprendizaje aplicado se consolida mediante tres fases secuenciales de trabajo técnico:</p>
+<ol type="1">
+<li><strong>Despliegue y administración del entorno:</strong> Configuración e inicialización de motores de bases de datos espaciales desde la línea de comandos y orquestación en contenedores, garantizando entornos reproducibles e independientes del sistema anfitrión.</li>
+<li><strong>Implementación de esquemas y explotación analítica:</strong> Ejecución de sentencias DDL para la definición de estructuras, manipulación DML para ingestión masiva y resolución de problemas geográficos complejos mediante Spatial SQL y análisis topológico.</li>
+<li><strong>Integración con clientes y flujos analíticos:</strong> Conexión de repositorios espaciales con software SIG de escritorio (QGIS, ArcGIS Pro) y librerías espaciales en ecosistemas de computación científica.</li>
+</ol>
+</section>
 </section>
 <section id="reproducibilidad-y-entorno-de-trabajo" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="reproducibilidad-y-entorno-de-trabajo">Reproducibilidad y entorno de trabajo</h2>
-<p>Todos los talleres prácticos, ejercicios y proyectos de investigación están concebidos para ejecutarse desde la terminal integrada de Visual Studio Code o Positron. La totalidad de los servicios de bases de datos, librerías y entornos de análisis se encuentra orquestada en contenedores <strong>Docker</strong>. Esta arquitectura garantiza un ambiente homogéneo y determinista, aislando las dependencias del sistema anfitrión (<em>host</em>) y asegurando que los experimentos y flujos de consulta sean plenamente reproducibles. Para los módulos orientados a geodatabases corporativas y herramientas propietarias complementarias como ArcGIS Pro, se requiere la instalación y licenciamiento respectivo en la estación de trabajo local.</p>
+<p>Los talleres aplicados, ejercicios guiados y proyectos experimentales se encuentran estructurados para ejecutarse desde la terminal integrada de Visual Studio Code o Positron. La totalidad de los servicios de bases de datos relacionales, extensiones espaciales y entornos analíticos políglotas se suministra orquestada mediante contenedores Docker.</p>
+<p>Esta aproximación asegura un ambiente de desarrollo homogéneo, desacoplado de las particularidades del sistema operativo del sistema anfitrión (<em>host</em>), lo cual mitiga discrepancias en versiones de dependencias dinámicas (GEOS, PROJ, GDAL). Para los módulos que integran geodatabases corporativas y herramientas propietarias complementarias como ArcGIS Pro, los procedimientos se desarrollan sobre el sistema anfitrión atendiendo a los requerimientos de instalación local correspondientes.</p>
 </section>
 <section id="organización-de-la-obra" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="organización-de-la-obra">Organización de la obra</h2>
-<p>El libro está organizado de manera modular para guiar el aprendizaje teórico y la experimentación aplicada:</p>
+<p>El texto se encuentra organizado de manera modular para articular el rigor conceptual con la instrumentación práctica:</p>
 <ul>
-<li><strong>Syllabus y lineamientos del curso:</strong> En el capítulo inmediatamente posterior a este prefacio se presentan los objetivos de aprendizaje, la programación detallada de las 16 semanas, las políticas de trabajo y el sistema de evaluación.</li>
-<li><strong>Capítulos conceptuales y talleres aplicados:</strong> Guías metodológicas y bloques de código estructurados para el desarrollo de los laboratorios del curso.</li>
-<li><strong>Proyectos de investigación experimental:</strong> Capítulos dedicados a la profundización técnica y evaluación de rendimiento de los paradigmas geoespaciales emergentes. Los proyectos integran su respectiva guía metodológica de implementación, el desarrollo experimental y la rúbrica de evaluación.</li>
+<li><strong>Syllabus y lineamientos del curso:</strong> Expone las competencias formativas, la programación temática estructurada a lo largo de las 16 semanas académicas, las políticas operativas y los criterios de evaluación.</li>
+<li><strong>Capítulos conceptuales y talleres aplicados:</strong> Desarrolla la fundamentación teórica, las directivas procedimentales y los bloques de código auditados para las prácticas de laboratorio.</li>
+<li><strong>Proyectos de investigación experimental:</strong> Profundiza en el análisis comparativo, benchmarking y evaluación de desempeño computacional de los paradigmas geoespaciales emergentes, incluyendo su marco metodológico, código reproducible y rúbrica técnica de evaluación.</li>
 </ul>
 
 

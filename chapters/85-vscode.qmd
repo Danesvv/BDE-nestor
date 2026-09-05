@@ -68,193 +68,103 @@ Además de la paleta, memorice estos tres para su flujo diario:
 
 > La herramienta `Tinytex` viene instalada dentro del contenedor `contenedor_sig_unal`, así que no necesita instalarla.
 
+
+
 ## Instalación de extensiones {#sec-extensiones-vscode}
 
-Para que el entorno de desarrollo sea plenamente funcional, es necesario instalar un conjunto de extensiones específicas. Inicialmente todas las extensiones se pueden instalar para el entorno local (ej: Windows), sin embargo esas mismas extensiones deben estar instaladas también dentro del contenedor `contenedor_sig_unal`.
+Para garantizar la plena operatividad del entorno analítico, es indispensable verificar el despliegue del conjunto de extensiones en Visual Studio Code. La arquitectura de trabajo opera bajo un esquema desacoplado: una instancia del editor en el sistema anfitrión conectada a los servicios mediante el contenedor de desarrollo (`contenedor_sig_unal`).
 
-Una vez que haya realizado el proceso de **"Dev Containers: Attach to Running Container ..."** (`Ctrl + Shift + P` en VSCode), asegúrese de que estas herramientas estén instaladas **dentro del contenedor** (busque el botón azul *Install in ...* en la pestaña de extensiones).
+El despliegue de las herramientas se estructura bajo una **estrategia de instalación modular**:
 
-| Categoría | Herramienta | Propósito | ID de la Extensión |
-|:--- |:--- |:--- |:--- |
-| **Infraestructura** | **Dev Containers** | Conexión y gestión del contenedor activo | `ms-vscode-remote.remote-containers` |
-| | **Docker / Container Tools** | Control de imágenes y recursos del contenedor | `ms-azuretools.vscode-docker` |
-| **Ecosistema R** | **R (REditorSupport)** | Soporte de sintaxis, LSP y terminal de R | `REditorSupport.r` |
-| | **R Debugger & Tools** | Depuración de scripts y herramientas de desarrollo | `RDebugger.r-debugger` |
-| | **R Extension Pack** | Pack de utilidades (por Yuki Ueda) | `yukiueda.r-extension-pack` |
-| **Ecosistema Python** | **Python (Microsoft)** | IntelliSense (Pylance) y depuración avanzada | `ms-python.python` |
-| | **Python Debugger** | Motor de depuración específico para Python | `ms-python.debugpy` |
-| | **Jupyter (Microsoft)** | Soporte para Notebooks e interactividad nativa | `ms-toolsai.jupyter` |
-| **Ecosistema Julia** | **Julia** | Soporte integral para ejecución y gráficos | `julialang.language-julia` |
-| **Base de Datos** | **PostgreSQL** | Cliente para explorar la DB (Chris Kolkman) | `ckolkman.vscode-postgres` |
-| | **psql** | Herramienta de consulta SQL (doublefint) | `doublefint.psql` |
-| **Publicación** | **Quarto** | Renderizado y preview de archivos `.qmd` | `quarto.quarto` |
-| **Versión** | **GitHub Repositories** | Manejo de archivos remotos sin clonar todo | `github.remotehub` |
-| **Utilidad** | **Live Server** | Servidor local con recarga automática para previsualizar HTML | `ritwickdey.liveserver` |
-|| **Code Spell Checker** | Corrector ortográfico para código y comentarios | `streetsidesoftware.code-spell-checker` |
-| | **Spanish - Code Spell Checker** | Diccionario en español para el corrector ortográfico | `streetsidesoftware.code-spell-checker-spanish` |
+* **Herramientas base (en contenedor):** Conjunto preconfigurado e integrado en la capa interna del contenedor dentro de la imagen base. Al vincular la sesión mediante **Dev Containers: Attach to Running Container...** (`Ctrl + Shift + P`), este núcleo funcional se encuentra habilitado y disponible de forma inmediata dentro de la sesión remota del contenedor.
+* **Herramientas del sistema anfitrión (host):** Extensiones que deben instalarse directamente en el Visual Studio Code local. Incluyen las herramientas de infraestructura requeridas para comunicarse con Docker y utilidades ligeras de diagramación y validación de formatos que se ejecutan localmente para optimizar la memoria del contenedor.
+* **Herramientas diferidas bajo demanda:** Extensiones especializadas requeridas para los módulos avanzados de geodatabases corporativas, procesamiento columnar y procedimientos compilados (Ejes 3 y 4). Se instalarán puntualmente dentro del contenedor durante el desarrollo de los laboratorios respectivos.
 
-: Extensiones de VSCode para el entorno de Geomática y Programación SIG {#tbl-extensiones}
 
-### Notas sobre herramientas específicas
+### Persistencia y ciclo de vida del contenedor {#sec-persistencia-contenedor}
 
-* **PostgreSQL (Chris Kolkman)**: Esta extensión le permitirá conectarse a la base de datos espacial del contenedor sin salir de VSCode. Podrá ejecutar queries SQL y visualizar tablas directamente.
-* **Jupyter Ecosystem**: Incluimos el *Jupyter Keymap* para aquellos acostumbrados a los atajos de teclado de Jupyter Notebooks. Esto facilita la transición al trabajar con kernels de Python dentro de Quarto.
-* **Sobre `psql`**: La herramienta de línea de comandos `psql` ya viene preinstalada **dentro del sistema operativo del contenedor** (PostgreSQL Client). No requiere instalación adicional para funcionar en la terminal del contenedor. Sin embargo, la instalación de `psql` y dentro de VSCode garantiza soporte adicional, ver @sec-sinergia-psql líneas abajo.
-* **Live Server (Ritwick Dey)**: Esta extensión le permite lanzar un servidor de desarrollo local con un solo clic. Es extremadamente útil para previsualizar exportaciones de mapas interactivos (**Leaflet** u **OpenLayers**) o sitios web estáticos generados por **Quarto**. La ventaja principal es la "recarga en vivo" (*live reload*): cada vez que guarde un cambio en su archivo HTML o CSS, el navegador se actualizará automáticamente sin necesidad de recargar la página manualmente.
-* **Code Spell Checker**: Esta extensión es esencial para evitar errores tipográficos en el código y, sobre todo, en la documentación de archivos `.qmd`. Para que reconozca términos en nuestro idioma, se recomienda instalar también el paquete **Spanish - Code Spell Checker** (`streetsidesoftware.code-spell-checker-spanish`).
+El aislamiento de procesos en contenedores introduce una distinción fundamental entre el estado de ejecución y la persistencia de datos. Cuando se instala una extensión adicional dentro del contenedor desde la interfaz de Visual Studio Code, los archivos binarios se escriben en la capa de lectura y escritura del contenedor activo (`/root/.vscode-server/extensions` o `/home/<usuario>/.vscode-server/extensions`).
 
-::: {.callout-important}
-#### Instalación Local vs. Remota
-Recuerde que extensiones como **Dev Containers** y **Docker** deben estar instaladas en su VSCode **local** (en Windows), mientras que las de análisis (R, Python, Julia, PostgreSQL) deben estar instaladas **dentro de la sesión del contenedor** para acceder a los compiladores y librerías de la imagen.
+Para conservar las nuevas extensiones instaladas en el contenedor y evitar la reconstrucción innecesaria del entorno, la gestión de sesiones debe regirse por las siguientes directivas:
+
+1. **Uso exclusivo de `docker compose stop` y `docker compose start`:** Al finalizar la jornada de trabajo, el contenedor debe suspenderse mediante `docker compose stop`. Esta instrucción detiene los procesos del motor relacional preservando intacta la capa de escritura. Para reanudar la sesión en clases posteriores, se ejecuta `docker compose start`, manteniendo las extensiones añadidas y el historial de comandos.
+2. **Evitar comandos destructivos (`docker compose down`, `docker rm`):** Las instrucciones de eliminación de contenedores destruyen la capa mutable. Si el contenedor se remueve, cualquier extensión instalada manualmente se perderá y el entorno regresará al estado base empaquetado en la imagen original.
+
+Una vez reiniciado el contenedor mediante `docker compose start`, inicie Visual Studio Code en el sistema anfitrión, presione `Ctrl + Shift + P`, seleccione **Dev Containers: Attach to Running Container...** y elija `/contenedor_sig_unal`.
+
+
+### Clasificación y catálogo de extensiones {#sec-catalogo-extensiones}
+
+A continuación se detalla el inventario técnico de extensiones, categorizado según el ámbito de ejecución y fase de disponibilidad en el curso:
+
+| Categoría | Herramienta | Propósito | ID de la extensión | Disponibilidad y ámbito |
+|:--- |:--- |:--- |:--- |:--- |
+| **Infraestructura** | **Dev Containers** | Conexión y gestión del contenedor activo | `ms-vscode-remote.remote-containers` | Sistema anfitrión |
+| | **Docker** | Control de imágenes, redes, volúmenes y servicios | `ms-azuretools.vscode-docker` | Sistema anfitrión |
+| **Ecosistema R** | **R (REditorSupport)** | Sintaxis, servidor de lenguaje (LSP) y terminal | `REditorSupport.r` | Base (en contenedor) |
+| | **R Debugger** | Depuración interactiva de scripts en R | `RDebugger.r-debugger` | Base (en contenedor) |
+| | **R Extension Pack** | Paquete de utilidades y snippets para análisis en R | `Ikuyadeu.r-pack` | Base (en contenedor) |
+| **Ecosistema Python** | **Python (Microsoft)** | IntelliSense (Pylance), tipado y entornos virtuales | `ms-python.python` | Base (en contenedor) |
+| | **Python Debugger** | Motor de depuración desacoplado para flujos Python | `ms-python.debugpy` | Base (en contenedor) |
+| | **Jupyter (Microsoft)** | Cuadernos interactivos (`.ipynb`) y celdas de código | `ms-toolsai.jupyter` | Base (en contenedor) |
+| **Ecosistema Julia** | **Julia** | Soporte de lenguaje, REPL integrado y gráficos | `julialang.language-julia` | Base (en contenedor) |
+| **Bases de datos** | **PostgreSQL (Chris Kolkman)** | Árbol visual para exploración de esquemas y tablas | `ckolkman.vscode-postgres` | Base (en contenedor) |
+| | **pgsql (psql runner)** | Ejecución de scripts SQL en consola vía `psql` (`Ctrl + F5`) | `doublefint.pgsql` | Base (en contenedor) |
+| **Publicación** | **Quarto** | Renderizado y compilación de documentos `.qmd` | `quarto.quarto` | Base (en contenedor) |
+| | **Live Server** | Servidor HTTP local para previsualización de salidas HTML | `ritwickdey.liveserver` | Base (en contenedor) |
+| **Control de versiones** | **GitHub Repositories** | Inspección y lectura de repositorios remotos en GitHub | `github.remotehub` | Base (en contenedor) |
+| **Calidad de código** | **Code Spell Checker** | Corrector ortográfico en código y comentarios | `streetsidesoftware.code-spell-checker` | Base (en contenedor) |
+| | **Spanish - Code Spell Checker** | Diccionario en español para el corrector ortográfico | `streetsidesoftware.code-spell-checker-spanish` | Base (en contenedor) |
+| **Formato y modelado** | **Rainbow CSV** | Resaltado de columnas e inspección de geometrías WKT | `mechatroner.rainbow-csv` | Sistema anfitrión |
+| | **Mermaid Chart** | Modelado y previsualización de diagramas Entidad-Relación | `MermaidChart.vscode-mermaid-chart` | Sistema anfitrión |
+| | **YAML Language Support** | Validación de sintaxis en `_quarto.yml` y contenedores | `redhat.vscode-yaml` | Sistema anfitrión |
+| | **Geo Data Viewer** | Previsualización rápida de capas GeoJSON y WKT | `RandomFractalsInc.geo-data-viewer` | Sistema anfitrión |
+| **Formatos avanzados** | **XML Language Support** | Validación de esquemas XML Workspace y transformaciones | `redhat.vscode-xml` | Diferida (Semana 9) |
+| | **Parquet Viewer** | Inspección tabular de archivos Parquet y GeoParquet | `dvirtz.parquet-viewer` | Diferida (Semana 11) |
+| **Sistemas compilados** | **rust-analyzer** | Servidor de lenguaje para extensiones nativas con PGRX | `rust-lang.rust-analyzer` | Diferida (Semana 16) |
+
+: Extensiones de Visual Studio Code para el entorno de bases de datos espaciales {#tbl-extensiones}
+
+::: {.callout-important title="Ámbito de instalación: sistema anfitrión frente a contenedor"}
+Las extensiones de infraestructura (**Dev Containers** y **Docker**) deben instalarse exclusivamente en el sistema anfitrión para gestionar la comunicación con el motor de virtualización. 
+
+En contraste, las herramientas analíticas (R, Python, Julia, PostgreSQL, Quarto) operan **dentro de la sesión remota del contenedor**. No es necesario instalarlas previamente en el sistema anfitrión: una vez ejecutada la directiva **Dev Containers: Attach to Running Container...**, cualquier extensión instalada desde la pestaña correspondiente se alojará directamente en el entorno de ejecución Linux del contenedor.
 :::
 
 
-::: {.callout-note}
-#### Soporte del Lenguaje en R
-Para que el autocompletado y la documentación en tiempo real funcionen, el contenedor requiere el paquete `languageserver`. Aunque la imagen ya lo incluye por defecto, si nota que el resaltado de sintaxis falla, puede reinstalarlo ejecutando:
-`install.packages("languageserver")` en su consola de R.
-:::
+### Notas técnicas sobre herramientas específicas {#sec-notas-herramientas}
 
-::: {.callout-tip}
-#### ¿Cuándo usar Live Server?
-Úselo cuando necesite probar cómo se comporta un mapa interactivo exportado fuera del entorno de **Quarto**. Simplemente haga clic derecho sobre su archivo `.html` en el explorador de **VSCode** y seleccione **"Open with Live Server"**. La opción de búsqueda en la página del curso (archivo `_site\index.html`) solo funcionará si la ejecuta dentro de **Live Server**.
-:::
+**PostgreSQL (Chris Kolkman):** Permite conectarse directamente al motor espacial PostGIS del contenedor sin abandonar Visual Studio Code, facilitando la exploración de la estructura de tablas y catálogos espaciales.
 
-#### Configuración del corrector ortográfico
+**Cliente de terminal `psql`:** La herramienta de línea de comandos `psql` se encuentra integrada de forma nativa en el sistema operativo del contenedor. No requiere configuración adicional para ejecutarse en la terminal integrada. La extensión `doublefint.pgsql` complementa esta utilidad canalizando bloques de código SQL desde el editor hacia la sesión activa mediante atajos de teclado.
 
-Para habilitar corrección ortográfica en idioma español:
+**Previsualización web con Live Server:** Instancia un servidor HTTP local con recarga automática (*live reload*). Es requerida para examinar artefactos HTML interactivos fuera del entorno Quarto (mapas exportados con Leaflet, OpenLayers o MapLibre) y para ejecutar la función de búsqueda del sitio compilado del curso (`_site/index.html`), evitando bloqueos originados por políticas CORS al abrir archivos locales directamente en el navegador.
 
-* Active el idioma: Presione `Ctrl + Shift + P`, escriba "Spell", seleccione `Enable Spanish Spell Checker Dictionary` y finalmente seleccione `User` de la lista.
+**Corrector ortográfico multilingüe:** La extensión **Code Spell Checker** previene errores léxicos en comentarios de código y en la documentación técnica de archivos `.qmd`. Para habilitar la compatibilidad léxica con terminología en español, se integra el paquete **Spanish - Code Spell Checker** (`streetsidesoftware.code-spell-checker-spanish`).
 
-Para que el corrector funcione simultáneamente con términos técnicos en inglés y redacción en español, puede añadir la siguiente configuración en su archivo `settings.json` de **VSCode**:
 
-```json
-{
-    "cSpell.language": "en,es",
-    "cSpell.enabled": true,
-    "cSpell.spellCheckDelayMs": 500,
-    "cSpell.diagnosticLevel": "Information"
-}
-```
+### Sinergia de las herramientas de PostgreSQL en Visual Studio Code {#sec-sinergia-psql}
 
-::: {.callout-tip}
-#### Diccionario técnico
-A medida que trabaje con librerías como `geopandas` o `ArchGDAL`, es posible que el corrector marque estas palabras como errores. Puede agregarlas a su "Diccionario de Usuario" haciendo clic derecho sobre la palabra y seleccionando **Add to User Dictionary**.
-:::
+La coexistencia de `ckolkman.vscode-postgres` y `doublefint.pgsql` dentro del contenedor responde a una separación deliberada de funciones operativas: inspección estructural del catálogo frente a ejecución procedural interactiva.
 
-## Sinergia de las extensiones de PostgreSQL en VSCode {#sec-sinergia-psql}
-
-Contar con ambas extensiones instaladas dentro del contenedor no es redundancia, sino una estrategia para optimizar el flujo de trabajo con datos espaciales. Cada una ofrece una "capa" de interacción distinta que, al combinarse, potencia la productividad.
-
-| Extensión | Fortaleza técnica | Utilidad principal |
+| Extensión | Especialidad técnica | Alcance en el flujo analítico |
 |:--- |:--- |:--- |
-| **PostgreSQL (Chris Kolkman)** | Exploración de objetos | Navegar visualmente por esquemas, ver la lista de tablas y verificar columnas de **PostGIS**. |
-| **psql (doublefint)** | Ejecución de consultas | Ejecutar bloques de código SQL directamente desde scripts `.sql` con atajos de teclado rápidos. |
+| **PostgreSQL (Chris Kolkman)** | Inspección del catálogo relacional | Navegación jerárquica de bases de datos, esquemas, llaves, tipos y columnas espaciales PostGIS. |
+| **pgsql (doublefint)** | Ejecución procedural y scripts | Envío directo de bloques DDL/DML hacia el proceso `psql` en terminal, preservando variables de sesión. |
 
-### Ventajas de la instalación dual {#sec-ventajas-dual}
-
-* **Validación visual inmediata**: Mientras escribe una consulta compleja en el editor (usando la extensión de **doublefint**), puede consultar el panel lateral de **Chris Kolkman** para verificar nombres de columnas o tipos de datos geográficos sin tener que hacer un `SELECT *`.
-* **Soporte de sintaxis robusto**: La combinación garantiza que **VSCode** reconozca perfectamente las palabras clave de **SQL** y proporcione sugerencias automáticas (IntelliSense) precisas.
-* **Resultados en pestañas independientes**: Permite mantener los resultados de una consulta abiertos en una pestaña mientras se sigue editando el código en otra, algo fundamental cuando se comparan estadísticas de diferentes capas ráster o vectoriales.
-
-::: {.callout-note}
-### Recomendación de flujo
-1. Use el panel de **Chris Kolkman** para conectarse y "ver" qué hay en la base de datos.
-2. Escriba sus scripts de análisis espacial en archivos `.sql` y ejecútelos usando la extensión de **doublefint** para obtener una respuesta rápida en la consola.
-:::
-
-::: {.callout-tip}
-### Atajo de teclado (Shortcut)
-Para la mayoría de estas extensiones, puede resaltar una consulta SQL y presionar `Ctrl + E` (o `Cmd + E` en Mac) para ejecutarla inmediatamente y ver los resultados en una tabla formateada.
-:::
-
-## Verificación de conectividad
-
-Una vez instaladas las extensiones, verifique que su entorno esté correctamente configurado siguiendo estos puntos:
-
-* **Estado del Contenedor**: En la esquina inferior izquierda de VSCode, debe aparecer un recuadro azul con el texto: **Dev Container: contenedor_sig_unal**.
-* **Activación de Kernels**: Al abrir un archivo `.qmd`, en la esquina superior derecha debe poder seleccionar el kernel deseado (R, Python 3 o Julia).
-* **Terminal Unificada**: Al abrir una nueva terminal (`Ctrl + Shift + ` ` `), la línea de comandos debe estar identificada como `rstudio@contenedor_sig_unal:/home/rstudio/work$`.
-
-::: {.callout-tip}
-### Sincronización Automática
-Recuerde que cualquier cambio que realice en la configuración de estas extensiones mientras esté conectado al contenedor se guardará en su perfil local de VSCode, facilitando las conexiones futuras.
-:::
+: Matriz funcional de herramientas para interacción con PostgreSQL {#tbl-sinergia-postgresql}
 
 
-## Configuración de asistentes de IA en VSCode
+#### Ventajas de la integración complementaria
 
-Para optimizar el entorno de desarrollo y evitar conflictos de concurrencia entre los diferentes motores de inteligencia artificial (IA) integrados en Visual Studio Code, se estableció una arquitectura distribuida de funciones. Esta organización técnica previene colisiones en el proveedor de sugerencias en línea (`inlineCompletionsProvider`), asegurando la estabilidad del editor durante la generación de código y el análisis de datos.
+* **Validación de esquemas sin bloqueo:** Durante la estructuración de consultas espaciales complejas, el árbol lateral de exploración permite corroborar nombres de atributos, proyecciones cartográficas (`SRID`) y tipos geométricos sin interrumpir el búfer de edición mediante consultas exploratorias de sondeo.
+* **Preservación del contexto de sesión:** La extensión `doublefint.pgsql` opera contra la sesión nativa de `psql` en la terminal integrada, asegurando que directivas de entorno como `SET search_path`, esquemas de codificación (`client_encoding`) y transacciones manuales (`BEGIN ... COMMIT`) permanezcan consistentes.
+* **Aislamiento de salidas analíticas:** Facilita mantener los resultados tabulares o planes de ejecución (`EXPLAIN ANALYZE`) desplegados en paneles independientes mientras se refactoriza el script principal en el editor.
 
-La distribución de responsabilidades se estructuró bajo el siguiente esquema:
 
-* **Gemini Code Assist:** Actúa como el motor principal para la generación de código en tiempo real y autocompletado en línea (*inline completions*).
-* **Continue:** Especializado exclusivamente en tareas de auditoría estructural de repositorios mediante indexación local (`@codebase`), ejecución de agentes complejos y consultas contextuales profundas en el panel lateral a través de la API de Gemini Pro.
-* **GitHub Copilot:** Configurado de manera de restringir la ejecución al panel de chat secundario, suspendiendo el autocompletado automático para evitar solapamientos.
+#### Flujo de trabajo analítico recomendado
 
-### Procedimiento de despliegue e integración
+1. **Exploración:** Utilizar el explorador de objetos de `ckolkman.vscode-postgres` para verificar la conectividad, constatar la activación de extensiones espaciales (`postgis`, `postgis_topology`) y revisar la definición de vistas analíticas.
+2. **Desarrollo y depuración:** Redactar los scripts de análisis espacial en archivos `.sql` y ejecutarlos mediante `doublefint.pgsql` presionando el atajo `Ctrl + F5` para canalizar el código a la terminal interactiva del contenedor.
 
-El proceso secuencial para la puesta en marcha del entorno distribuido consta de las siguientes fases analíticas:
 
-1. **Instalación de componentes:** Desde el gestor de extensiones de Visual Studio Code (`Ctrl+Shift+X`), se incorporaron los complementos oficiales **Gemini Code Assist**, **Continue**, y **GitHub Copilot**.
-2. **Autenticación y vinculación de proyecto en Gemini:** Se efectuó el inicio de sesión en la extensión Gemini Code Assist utilizando las credenciales institucionales asociadas a la cuenta de Google. Posteriormente, mediante el menú de comandos de la extensión en la barra de estado, se seleccionó el proyecto activo de Google Cloud Platform (`gen-lang-client-...`) para habilitar la cuota de computación y el motor de sugerencias.
-3. **Extracción de credenciales para Continue:** Desde la plataforma Google AI Studio, se obtuvo una clave de API (*API key*) dedicada, vinculada al proyecto, para la configuración bajo la modalidad *Bring Your Own Key* (BYOK).
-4. **Inhabilitación de redundancias:** A través de la interfaz de comandos de Gemini Code Assist y la especificación de directivas en el archivo de preferencias del editor, se suspendieron las sugerencias predictivas secundarias, delegando el autocompletado en línea al motor principal seleccionado y evitando colisiones en el flujo de trabajo.
-
-### Parametrización de archivos de configuración
-
-La persistencia de la arquitectura configurada requiere la modificación de los archivos de control del entorno.
-
-El archivo de configuración de la extensión Continue, localizado en la ruta `C:\Users\<id_usuario>\.continue\config.yaml`, se estructuró de la siguiente forma para registrar el modelo y deshabilitar el autocompletado nativo:
-
-```yaml
-name: Local Config
-version: 1.0.0
-schema: v1
-models:
-  - title: Gemini Pro
-    provider: gemini
-    model: gemini-pro
-    apiKey: "..."
-tabAutocompleteModel: null
-
-```
-
-> El `apiKey` se copió de *Google AI Studio*
-
-El archivo de preferencias globales del editor (`settings.json`), ubicado en la ruta de usuario `C:\Users\<id_usuario>\AppData\Roaming\Code\User\settings.json`, registra las directivas definitivas de exclusión mutua para mitigar la degradación de rendimiento en el proceso de extensiones:
-
-```json
-{
-    "workbench.colorTheme": "Light 2026",
-    "terminal.integrated.commandsToSkipShell": [
-        "language-julia.interrupt"
-    ],
-    "julia.symbolCacheDownload": false,
-    "security.workspace.trust.untrustedFiles": "open",
-    "remote.autoForwardPortsSource": "hybrid",
-    "cSpell.language": "en,es-ES",
-    "python.analysis.typeCheckingMode": "standard",
-    "editor.renderWhitespace": "all",
-    "jupyter.interactiveWindow.creationMode": "perFile",
-    "languageTool.language": "es",
-    "github.copilot.enable": {
-        "*": false,
-        "plaintext": false,
-        "markdown": false,
-        "scminput": false,
-        "quarto": false
-    },
-    "geminicodeassist.project": "gen-lang-client-..."
-}
-
-```
-
-### Desactivación mediante componentes visuales de la barra de estado
-
-Para gestionar de forma ágil la exclusión mutua de los motores de sugerencias sin alterar directamente los archivos de configuración, el entorno de desarrollo permite conmutar el estado de autocompletado a través de los iconos interactivos ubicados en la barra de estado.
-
-El procedimiento operativo para cada asistente se ejecuta de la siguiente manera:
-
-* **GitHub Copilot:** Localizar el icono del avatar de robot en la sección inferior de la interfaz. Al hacer clic sobre este, se despliega el menú contextual donde se debe seleccionar la directiva *Disable Completions* (Desactivar completados), lo cual suspende la inserción de texto predictivo en el editor de forma global o para el lenguaje activo.
-* **Gemini Code Assist:** Seleccionar el identificador de Gemini situado en el extremo inferior del editor. En la ventana emergente de comandos rápidos, hacer clic en la opción *Enable/disable Auto Completion*. Esta acción cambia el estado de la propiedad a *Status: off* y remueve la marca de verificación, manteniendo operativas las funciones de consulta analítica en el panel de chat sin generar conflictos en el área de edición de código.

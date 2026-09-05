@@ -2,12 +2,18 @@
 project:
   type: book                     # Tipo: libro (genera estructura de capítulos)
   output-dir: _site              # Carpeta de salida para archivos generados
+  pre-render:
+    - quarto render slides/
+  resources:
+    - "slides/**"
+    - "!slides/**/*.qmd"
+    - "images/**"
 
 lang: es  # <--- VITAL: Esto activa el español para todo el proyecto (HTML y PDF)
 
 # CONFIGURACIÓN DEL LIBRO
 book:
-  title: "Bases de Datos Espaciales"
+  title: "Bases de datos espaciales"
   author: "Alexys H. Rodríguez-Avellaneda Ph.D."
   date: today                    # Fecha automática
   #language: es                   # Idioma: español
@@ -17,6 +23,13 @@ book:
   #    appendices-title: "Apéndices"
   #lang: es
   language: _language.yml  # <--- Aquí apuntas al archivo
+  #
+  navbar:
+    right:
+      - text: "Diapositivas"
+        href: slides/index.html
+      - icon: github
+        href: https://github.com/alexyshr/bde2026
 
   # FUSIONAMOS TODO AQUÍ (Sin repetir la palabra 'language')
   #language:
@@ -34,7 +47,8 @@ book:
     - index.qmd                  # Portada/índice
     - chapters/00-prefacio.qmd             # Prefacio (sin numeración)
     - chapters/01-syllabus.qmd
-    - part: "Instalación y entornos"  # Primera parte
+    - part: chapters/04-introduccion_instalacion_entornos.qmd
+    #- part: "Instalación y entornos"   # Primera parte
       chapters:                  # Capítulos de esta parte
         - chapters/05-guia_instalacion_vscode_docker.qmd
         - chapters/10-instalacion_postgresql_18_windows.qmd
@@ -101,9 +115,9 @@ format:
     # Opciones: 'section' (final de sección) o 'document' (final del documento)
     # Con bibliografía global, las referencias solo aparecen en el apéndice 93_references.qmd
     # TÍTULO EN ESPAÑOL PARA HTML
-    toc-title: "Tabla de Contenidos"
-    lof-title: "Lista de Figuras"
-    lot-title: "Lista de Tablas"
+    toc-title: "Tabla de contenidos"
+    lof-title: "Lista de figuras"
+    lot-title: "Lista de tablas"
 
   # FORMATO PDF (para impresión)
   pdf:
@@ -119,9 +133,9 @@ format:
     # CONFIGURACIÓN DIRECTA PARA TÍTULOS EN ESPAÑOL
     # Esto va AQUÍ, NO en include-in-header
     # lang: es-ES
-    toc-title: "Tabla de Contenidos"
-    lof-title: "Lista de Figuras"
-    lot-title: "Lista de Tablas"
+    toc-title: "Tabla de contenidos"
+    lof-title: "Lista de figuras"
+    lot-title: "Lista de tablas"
 
     geometry:                    # Márgenes de la página
       - top=2.5cm

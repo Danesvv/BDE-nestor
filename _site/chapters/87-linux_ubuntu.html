@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Bases de Datos Espaciales - Apéndice F — Temas Técnicos sobre Linux</title>
+<title>Bases de datos espaciales - Apéndice F — Temas Técnicos sobre Linux</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -76,11 +76,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
-  "location": "sidebar",
+  "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
-  "panel-placement": "start",
-  "type": "textbox",
+  "panel-placement": "end",
+  "type": "overlay",
   "limit": 50,
   "keyboard-shortcut": [
     "f",
@@ -106,10 +106,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </head>
 
-<body class="nav-sidebar floating">
+<body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Bases de datos espaciales</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../slides/index.html"> 
+<span class="menu-text">Diapositivas</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/alexyshr/bde2026"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
@@ -118,26 +146,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/82-quarto.html">Apéndices</a></li><li class="breadcrumb-item"><a href="../chapters/87-linux_ubuntu.html"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Temas Técnicos sobre Linux</span></a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
     </div>
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
-    <div class="sidebar-title mb-0 py-0">
-      <a href="../">Bases de Datos Espaciales</a> 
-    </div>
-      </div>
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Buscar"></div>
-        </div>
-        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -160,7 +175,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a href="../chapters/04-introduccion_instalacion_entornos.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Instalación y entornos</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -170,7 +185,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/05-guia_instalacion_vscode_docker.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación: VS Code y contenedores Docker</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -300,21 +315,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Tabla de Contenidos</h2>
+    <h2 id="toc-title">Tabla de contenidos</h2>
    
   <ul>
-  <li><a href="#sec-comandos-so" id="toc-sec-comandos-so" class="nav-link active" data-scroll-target="#sec-comandos-so"><span class="header-section-number">F.1</span> Comandos comúnes de terminal</a></li>
-  <li><a href="#verificación-de-librerías-geoespaciales" id="toc-verificación-de-librerías-geoespaciales" class="nav-link" data-scroll-target="#verificación-de-librerías-geoespaciales"><span class="header-section-number">F.2</span> Verificación de librerías geoespaciales</a>
+  <li><a href="#sec-anexo-linux-instalacion-psql" id="toc-sec-anexo-linux-instalacion-psql" class="nav-link active" data-scroll-target="#sec-anexo-linux-instalacion-psql"><span class="header-section-number">F.1</span> Aprovisionamiento y actualización del cliente PostgreSQL en el contenedor</a></li>
+  <li><a href="#sec-anexo-linux-instalacion-graphviz" id="toc-sec-anexo-linux-instalacion-graphviz" class="nav-link" data-scroll-target="#sec-anexo-linux-instalacion-graphviz"><span class="header-section-number">F.2</span> Instalación y verificación de Graphviz en el contenedor</a>
+  <ul class="collapse">
+  <li><a href="#diagnóstico-previo-del-entorno" id="toc-diagnóstico-previo-del-entorno" class="nav-link" data-scroll-target="#diagnóstico-previo-del-entorno">Diagnóstico previo del entorno</a></li>
+  <li><a href="#aprovisionamiento-del-paquete-graphviz" id="toc-aprovisionamiento-del-paquete-graphviz" class="nav-link" data-scroll-target="#aprovisionamiento-del-paquete-graphviz">Aprovisionamiento del paquete Graphviz</a></li>
+  <li><a href="#verificación-posterior-de-los-binarios" id="toc-verificación-posterior-de-los-binarios" class="nav-link" data-scroll-target="#verificación-posterior-de-los-binarios">Verificación posterior de los binarios</a></li>
+  </ul></li>
+  <li><a href="#sec-comandos-so" id="toc-sec-comandos-so" class="nav-link" data-scroll-target="#sec-comandos-so"><span class="header-section-number">F.3</span> Comandos comúnes de terminal</a></li>
+  <li><a href="#verificación-de-librerías-geoespaciales" id="toc-verificación-de-librerías-geoespaciales" class="nav-link" data-scroll-target="#verificación-de-librerías-geoespaciales"><span class="header-section-number">F.4</span> Verificación de librerías geoespaciales</a>
   <ul class="collapse">
   <li><a href="#cómo-leer-la-salida-de-dpkg" id="toc-cómo-leer-la-salida-de-dpkg" class="nav-link" data-scroll-target="#cómo-leer-la-salida-de-dpkg">¿Cómo leer la salida de <code>dpkg</code>?</a></li>
-  </ul></li>
-  <li><a href="#sec-openssl-surgery" id="toc-sec-openssl-surgery" class="nav-link" data-scroll-target="#sec-openssl-surgery"><span class="header-section-number">F.3</span> La cirugía de librerías: el “cambiazo” de OpenSSL</a>
-  <ul class="collapse">
-  <li><a href="#el-conflicto-3.0.x-o-3.3.x" id="toc-el-conflicto-3.0.x-o-3.3.x" class="nav-link" data-scroll-target="#el-conflicto-3.0.x-o-3.3.x">El conflicto: ¿3.0.x o 3.3.x?</a></li>
-  <li><a href="#la-solución-qué-hace-exactamente-ln--sf" id="toc-la-solución-qué-hace-exactamente-ln--sf" class="nav-link" data-scroll-target="#la-solución-qué-hace-exactamente-ln--sf">La solución: ¿qué hace exactamente <code>ln -sf</code>?</a></li>
-  <li><a href="#por-qué-funciona-si-las-versiones-son-distintas" id="toc-por-qué-funciona-si-las-versiones-son-distintas" class="nav-link" data-scroll-target="#por-qué-funciona-si-las-versiones-son-distintas">¿por qué funciona si las versiones son distintas?</a></li>
-  <li><a href="#sec-openssl-side-effects" id="toc-sec-openssl-side-effects" class="nav-link" data-scroll-target="#sec-openssl-side-effects">La “factura” de la cirugía: el adiós a <code>JuliaCall</code></a></li>
-  <li><a href="#el-nacimiento-de-j_eval-y-j_plot" id="toc-el-nacimiento-de-j_eval-y-j_plot" class="nav-link" data-scroll-target="#el-nacimiento-de-j_eval-y-j_plot">El nacimiento de <code>j_eval</code> y <code>j_plot</code></a></li>
   </ul></li>
   </ul>
 </nav>
@@ -341,8 +355,75 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="sec-comandos-so" class="level2" data-number="F.1">
-<h2 data-number="F.1" class="anchored" data-anchor-id="sec-comandos-so"><span class="header-section-number">F.1</span> Comandos comúnes de terminal</h2>
+<section id="sec-anexo-linux-instalacion-psql" class="level2" data-number="F.1">
+<h2 data-number="F.1" class="anchored" data-anchor-id="sec-anexo-linux-instalacion-psql"><span class="header-section-number">F.1</span> Aprovisionamiento y actualización del cliente PostgreSQL en el contenedor</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Aprovisionamiento y actualización del cliente PostgreSQL en el contenedor</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># NOTA: En la base del sistema operativo (Ubuntu 24.04 LTS), el metapaquete </span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># estándar instala por defecto la versión 16:</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># apt-get install -y --no-install-recommends postgresql-client</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Procedimiento para instalar PostgreSQL Client 18 desde el repositorio oficial PGDG</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># (Resuelve el error 'server version mismatch' al ejecutar pg_dump contra PostgreSQL 18)</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Sincronizar el catálogo de paquetes</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="ex">apt-get</span> update</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Instalar utilidades para gestión de repositorios</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="ex">apt-get</span> install <span class="at">-y</span> <span class="at">--no-install-recommends</span> postgresql-common curl lsb-release ca-certificates</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Registrar el repositorio oficial PGDG y sus llaves criptográficas</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/share/postgresql-common/pgdg/apt.postgresql.org.sh</span> <span class="at">-y</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Instalar los binarios cliente de PostgreSQL</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="ex">apt-get</span> install <span class="at">-y</span> <span class="at">--no-install-recommends</span> postgresql-client-18</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Verificar versiones activas</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">--version</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="ex">pg_dump</span> <span class="at">--version</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="sec-anexo-linux-instalacion-graphviz" class="level2" data-number="F.2">
+<h2 data-number="F.2" class="anchored" data-anchor-id="sec-anexo-linux-instalacion-graphviz"><span class="header-section-number">F.2</span> Instalación y verificación de Graphviz en el contenedor</h2>
+<p>La generación automatizada de diagramas entidad-relación y esquemas de dependencias relacionales requiere el motor de renderizado Graphviz y su utilidad de compilación de grafos <code>dot</code>. A continuación, se detalla el procedimiento para diagnosticar el estado del binario en el contenedor, aprovisionar el paquete mediante los repositorios oficiales de la distribución e inspeccionar la instalación resultante.</p>
+<section id="diagnóstico-previo-del-entorno" class="level3">
+<h3 class="anchored" data-anchor-id="diagnóstico-previo-del-entorno">Diagnóstico previo del entorno</h3>
+<p>Antes de proceder con la instalación, es conveniente verificar si el ejecutable ya se encuentra en las rutas del sistema (<code>PATH</code>) o registrado en la base de datos de paquetes de Debian/Ubuntu:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-check-graphviz</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Comprobar la disponibilidad del ejecutable y su versión</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">dot</span> <span class="at">-V</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Localizar la ruta absoluta del binario en el sistema de archivos</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span> dot</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Consultar el estado del paquete en el gestor dpkg</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="ex">dpkg</span> <span class="at">-l</span> <span class="kw">|</span> <span class="fu">grep</span> graphviz</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Si el comando <code>dot -V</code> retorna un error de comando no encontrado (<code>command not found</code>), se debe ejecutar el aprovisionamiento.</p>
+</section>
+<section id="aprovisionamiento-del-paquete-graphviz" class="level3">
+<h3 class="anchored" data-anchor-id="aprovisionamiento-del-paquete-graphviz">Aprovisionamiento del paquete Graphviz</h3>
+<p>Para asegurar la descarga de los metadatos más recientes y evitar fallos por catálogos locales vacíos, se debe sincronizar el índice de paquetes antes de invocar la instalación. Se incluye el modificador <code>--no-install-recommends</code> para evitar dependencias accesorias innecesarias en el contenedor:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-install-graphviz</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Sincronizar el catálogo de paquetes</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="ex">apt-get</span> update</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Instalar el motor Graphviz</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="ex">apt-get</span> install <span class="at">-y</span> <span class="at">--no-install-recommends</span> graphviz</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="verificación-posterior-de-los-binarios" class="level3">
+<h3 class="anchored" data-anchor-id="verificación-posterior-de-los-binarios">Verificación posterior de los binarios</h3>
+<p>Finalizada la instalación, se comprueba la correcta vinculación del ejecutable <code>dot</code> y la versión provista por la distribución:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-verify-graphviz</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">dot</span> <span class="at">-V</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span> dot</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="sec-comandos-so" class="level2" data-number="F.3">
+<h2 data-number="F.3" class="anchored" data-anchor-id="sec-comandos-so"><span class="header-section-number">F.3</span> Comandos comúnes de terminal</h2>
 <p>Al trabajar dentro de un contenedor Docker, la terminal es su línea directa con el sistema operativo (Ubuntu/Debian). Estos comandos le permitirán verificar que los motores geoespaciales y las librerías de sistema están correctamente instalados.</p>
 <table class="table">
 <colgroup>
@@ -401,8 +482,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 </section>
-<section id="verificación-de-librerías-geoespaciales" class="level2" data-number="F.2">
-<h2 data-number="F.2" class="anchored" data-anchor-id="verificación-de-librerías-geoespaciales"><span class="header-section-number">F.2</span> Verificación de librerías geoespaciales</h2>
+<section id="verificación-de-librerías-geoespaciales" class="level2" data-number="F.4">
+<h2 data-number="F.4" class="anchored" data-anchor-id="verificación-de-librerías-geoespaciales"><span class="header-section-number">F.4</span> Verificación de librerías geoespaciales</h2>
 <p>El comando <code>dpkg -l | grep -E "libpng|libgdal|libproj|libgeos"</code> es su principal herramienta de diagnóstico. Si al ejecutarlo no obtiene resultados, las funciones de mapeo en R (<code>sf</code>), Python (<code>geopandas</code>) y Julia (<code>ArchGDAL</code>) fallarán, ya que todas dependen de estos binarios del sistema.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -426,73 +507,6 @@ Tip de Productividad
 </ul>
 <p>Si ve algo diferente a <code>ii</code>, el paquete tiene problemas de instalación.</p>
 <hr>
-</section>
-</section>
-<section id="sec-openssl-surgery" class="level2" data-number="F.3">
-<h2 data-number="F.3" class="anchored" data-anchor-id="sec-openssl-surgery"><span class="header-section-number">F.3</span> La cirugía de librerías: el “cambiazo” de OpenSSL</h2>
-<p>Al trabajar con contenedores de última generación, a veces nos encontramos con un choque de versiones entre lo que el sistema operativo ofrece y lo que los lenguajes de programación esperan. En nuestro caso, realizamos una “cirugía” técnica utilizando enlaces simbólicos (<code>ln -sf</code>).</p>
-<section id="el-conflicto-3.0.x-o-3.3.x" class="level3">
-<h3 class="anchored" data-anchor-id="el-conflicto-3.0.x-o-3.3.x">El conflicto: ¿3.0.x o 3.3.x?</h3>
-<p>La respuesta corta es: <strong>Físicamente tiene instalada la versión 3.0.x, pero le mentimos al software diciéndole que es la 3.3.x.</strong></p>
-<ul>
-<li><strong>La Realidad (Sistema)</strong>: Su contenedor corre sobre <strong>Ubuntu 24.04 (Noble Numbat)</strong>. Esta versión viene de fábrica con <strong>OpenSSL 3.0.x</strong>, que es la versión estable y oficial del sistema.</li>
-<li><strong>La Expectativa (Julia)</strong>: Algunos paquetes potentes de Julia (como los binarios JLL de <code>GDAL</code> o <code>NCDatasets</code>) fueron compilados en entornos más recientes que ya usaban <strong>OpenSSL 3.3.x</strong>.</li>
-</ul>
-<p>Cuando Julia intenta arrancar, busca una “etiqueta” interna llamada <code>OPENSSL_3.3.0</code>. Al no encontrarla en la librería de Ubuntu, el sistema lanza un error y bloquea la carga de mapas.</p>
-</section>
-<section id="la-solución-qué-hace-exactamente-ln--sf" class="level3">
-<h3 class="anchored" data-anchor-id="la-solución-qué-hace-exactamente-ln--sf">La solución: ¿qué hace exactamente <code>ln -sf</code>?</h3>
-<p>Imagine que Julia es un guardia de seguridad que busca una llave maestra etiquetada como <strong>“Llave 3.3”</strong>. Al revisar la caja fuerte (el sistema), solo ve la <strong>“Llave 3.0”</strong> y se niega a abrir. Lo que hicimos fue un “cambiazo” estratégico.</p>
-<p>Ejecutamos este comando de “cirugía”:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> /root/.julia/artifacts <span class="at">-name</span> <span class="st">"libssl.so*"</span> <span class="at">-exec</span> ln <span class="at">-sf</span> /usr/lib/x86_64-linux-gnu/libssl.so.3 {} <span class="dt">\;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><strong>Desglose de la operación:</strong> 1. <strong><code>find ... -name "libssl.so*"</code></strong>: Localiza todos los archivos de librería que Julia descargó por su cuenta (sus propios binarios internos). 2. <strong><code>-exec ln -sf ... {}</code></strong>: Por cada archivo encontrado, borra el original (la <code>-f</code> de <em>force</em>) y crea un <strong>enlace simbólico</strong> (la <code>-s</code> de <em>symbolic</em>). 3. <strong>El Destino</strong>: El enlace apunta directamente a la librería real de Ubuntu (<code>/usr/lib/.../libssl.so.3</code>).</p>
-</section>
-<section id="por-qué-funciona-si-las-versiones-son-distintas" class="level3">
-<h3 class="anchored" data-anchor-id="por-qué-funciona-si-las-versiones-son-distintas">¿por qué funciona si las versiones son distintas?</h3>
-<p>Funciona gracias a que <strong>OpenSSL 3</strong> mantiene algo llamado <strong>compatibilidad binaria</strong> entre sus versiones menores. Las funciones internas se llaman exactamente igual; lo único que cambió fue el “nombre del archivo” que Julia buscaba.</p>
-<p>Al redirigir el nombre, Julia utiliza la librería de Ubuntu pensando que es la suya, y como las instrucciones internas son compatibles, el sistema arranca sin errores y con total estabilidad.</p>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Importancia para el SIG
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Sin esta cirugía, paquetes como <code>ArchGDAL</code> en Julia no podrían cargar los controladores para leer archivos <code>.tif</code> o conectarse a bases de datos espaciales, ya que la comunicación segura (SSL) fallaría al inicio.</p>
-</div>
-</div>
-</section>
-<section id="sec-openssl-side-effects" class="level3">
-<h3 class="anchored" data-anchor-id="sec-openssl-side-effects">La “factura” de la cirugía: el adiós a <code>JuliaCall</code></h3>
-<p>Como en toda operación de emergencia, el “cambiazo” de librerías tuvo un efecto secundario importante: la ruptura definitiva de la compatibilidad con <strong><code>JuliaCall</code></strong>, el puente más común entre R y Julia.</p>
-<ul>
-<li><strong>El Conflicto</strong>: <code>JuliaCall</code> intenta embeber a Julia directamente dentro del proceso de R (comparten la misma memoria). Al detectar que las librerías de OpenSSL han sido redirigidas mediante enlaces simbólicos, el proceso de R entra en un conflicto de seguridad y colapsa inmediatamente (<em>Segmentation Fault</em>), impidiendo cualquier comunicación.</li>
-<li><strong>La Solución</strong>: Para no renunciar a la integración de ambos lenguajes, cambiamos de estrategia y adoptamos <strong><code>JuliaConnectoR</code></strong>. A diferencia del método anterior, este paquete trata a Julia como un servicio independiente que se comunica mediante <em>sockets</em>. Esto lo hace inmune al conflicto de OpenSSL, ya que cada lenguaje corre en su propia parcela de memoria.</li>
-</ul>
-</section>
-<section id="el-nacimiento-de-j_eval-y-j_plot" class="level3">
-<h3 class="anchored" data-anchor-id="el-nacimiento-de-j_eval-y-j_plot">El nacimiento de <code>j_eval</code> y <code>j_plot</code></h3>
-<p>Para que este cambio de arquitectura fuera invisible para el usuario final, se desarrollaron dos funciones “envolventes” (<em>wrappers</em>) que automatizan la traducción entre lenguajes:</p>
-<ol type="1">
-<li><strong><code>j_eval()</code></strong>: Toma comandos escritos en R, los envía al motor de Julia de forma segura y captura el resultado (numérico o textual) para devolverlo a la consola de R. Es el cerebro detrás de nuestros benchmarks.</li>
-<li><strong><code>j_plot()</code></strong>: Resuelve el problema del renderizado. Julia genera la visualización geoespacial “tras bambalinas”, y esta función captura la salida gráfica para insertarla automáticamente en el reporte de Quarto.</li>
-</ol>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Conclusión Técnica
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Gracias a esta combinación estratégica (<strong>Cirugía OpenSSL</strong> + <strong>JuliaConnectoR</strong> + <strong>Funciones j_</strong>), logramos lo que parecía imposible en un entorno Docker restrictivo: un ecosistema donde <strong>R, Python y Julia conviven en paz</strong>, permitiéndonos procesar datos masivos sin colapsos de memoria ni errores de librerías.</p>
-</div>
-</div>
 
 
 </section>

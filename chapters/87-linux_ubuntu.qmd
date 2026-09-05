@@ -1,6 +1,91 @@
 # Temas Técnicos sobre Linux {#sec-anexo-linux}
 
 
+## Aprovisionamiento y actualización del cliente PostgreSQL en el contenedor {#sec-anexo-linux-instalacion-psql}
+
+```bash
+# ==============================================================================
+# Aprovisionamiento y actualización del cliente PostgreSQL en el contenedor
+# ==============================================================================
+
+# NOTA: En la base del sistema operativo (Ubuntu 24.04 LTS), el metapaquete 
+# estándar instala por defecto la versión 16:
+# apt-get install -y --no-install-recommends postgresql-client
+
+# Procedimiento para instalar PostgreSQL Client 18 desde el repositorio oficial PGDG
+# (Resuelve el error 'server version mismatch' al ejecutar pg_dump contra PostgreSQL 18)
+
+# 1. Sincronizar el catálogo de paquetes
+apt-get update
+
+# 2. Instalar utilidades para gestión de repositorios
+apt-get install -y --no-install-recommends postgresql-common curl lsb-release ca-certificates
+
+# 3. Registrar el repositorio oficial PGDG y sus llaves criptográficas
+/usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+
+# 4. Instalar los binarios cliente de PostgreSQL
+apt-get install -y --no-install-recommends postgresql-client-18
+
+# 5. Verificar versiones activas
+psql --version
+pg_dump --version
+```
+
+
+## Instalación y verificación de Graphviz en el contenedor {#sec-anexo-linux-instalacion-graphviz}
+
+La generación automatizada de diagramas entidad-relación y esquemas de dependencias relacionales requiere el motor de renderizado Graphviz y su utilidad de compilación de grafos `dot`. A continuación, se detalla el procedimiento para diagnosticar el estado del binario en el contenedor, aprovisionar el paquete mediante los repositorios oficiales de la distribución e inspeccionar la instalación resultante.
+
+### Diagnóstico previo del entorno
+
+Antes de proceder con la instalación, es conveniente verificar si el ejecutable ya se encuentra en las rutas del sistema (`PATH`) o registrado en la base de datos de paquetes de Debian/Ubuntu:
+
+```bash
+#| label: setup-check-graphviz
+#| eval: false
+# 1. Comprobar la disponibilidad del ejecutable y su versión
+dot -V
+
+# 2. Localizar la ruta absoluta del binario en el sistema de archivos
+which dot
+
+# 3. Consultar el estado del paquete en el gestor dpkg
+dpkg -l | grep graphviz
+
+```
+
+Si el comando `dot -V` retorna un error de comando no encontrado (`command not found`), se debe ejecutar el aprovisionamiento.
+
+### Aprovisionamiento del paquete Graphviz
+
+Para asegurar la descarga de los metadatos más recientes y evitar fallos por catálogos locales vacíos, se debe sincronizar el índice de paquetes antes de invocar la instalación. Se incluye el modificador `--no-install-recommends` para evitar dependencias accesorias innecesarias en el contenedor:
+
+```bash
+#| label: setup-install-graphviz
+#| eval: false
+# 1. Sincronizar el catálogo de paquetes
+apt-get update
+
+# 2. Instalar el motor Graphviz
+apt-get install -y --no-install-recommends graphviz
+
+```
+
+### Verificación posterior de los binarios
+
+Finalizada la instalación, se comprueba la correcta vinculación del ejecutable `dot` y la versión provista por la distribución:
+
+```bash
+#| label: setup-verify-graphviz
+#| eval: false
+dot -V
+which dot
+
+```
+
+
+
 ## Comandos comúnes de terminal {#sec-comandos-so}
 
 Al trabajar dentro de un contenedor Docker, la terminal es su línea directa con el sistema operativo (Ubuntu/Debian). Estos comandos le permitirán verificar que los motores geoespaciales y las librerías de sistema están correctamente instalados.
@@ -34,61 +119,3 @@ Si ve algo diferente a `ii`, el paquete tiene problemas de instalación.
 
 ---
 
-## La cirugía de librerías: el "cambiazo" de OpenSSL {#sec-openssl-surgery}
-
-Al trabajar con contenedores de última generación, a veces nos encontramos con un choque de versiones entre lo que el sistema operativo ofrece y lo que los lenguajes de programación esperan. En nuestro caso, realizamos una "cirugía" técnica utilizando enlaces simbólicos (`ln -sf`).
-
-### El conflicto: ¿3.0.x o 3.3.x?
-
-La respuesta corta es: **Físicamente tiene instalada la versión 3.0.x, pero le mentimos al software diciéndole que es la 3.3.x.**
-
-* **La Realidad (Sistema)**: Su contenedor corre sobre **Ubuntu 24.04 (Noble Numbat)**. Esta versión viene de fábrica con **OpenSSL 3.0.x**, que es la versión estable y oficial del sistema.
-* **La Expectativa (Julia)**: Algunos paquetes potentes de Julia (como los binarios JLL de `GDAL` o `NCDatasets`) fueron compilados en entornos más recientes que ya usaban **OpenSSL 3.3.x**. 
-
-Cuando Julia intenta arrancar, busca una "etiqueta" interna llamada `OPENSSL_3.3.0`. Al no encontrarla en la librería de Ubuntu, el sistema lanza un error y bloquea la carga de mapas.
-
-
-### La solución: ¿qué hace exactamente `ln -sf`?
-
-Imagine que Julia es un guardia de seguridad que busca una llave maestra etiquetada como **"Llave 3.3"**. Al revisar la caja fuerte (el sistema), solo ve la **"Llave 3.0"** y se niega a abrir. Lo que hicimos fue un "cambiazo" estratégico.
-
-Ejecutamos este comando de "cirugía":
-```bash
-find /root/.julia/artifacts -name "libssl.so*" -exec ln -sf /usr/lib/x86_64-linux-gnu/libssl.so.3 {} \;
-```
-
-**Desglose de la operación:**
-1.  **`find ... -name "libssl.so*"`**: Localiza todos los archivos de librería que Julia descargó por su cuenta (sus propios binarios internos).
-2.  **`-exec ln -sf ... {}`**: Por cada archivo encontrado, borra el original (la `-f` de *force*) y crea un **enlace simbólico** (la `-s` de *symbolic*).
-3.  **El Destino**: El enlace apunta directamente a la librería real de Ubuntu (`/usr/lib/.../libssl.so.3`).
-
-### ¿por qué funciona si las versiones son distintas?
-
-Funciona gracias a que **OpenSSL 3** mantiene algo llamado **compatibilidad binaria** entre sus versiones menores. Las funciones internas se llaman exactamente igual; lo único que cambió fue el "nombre del archivo" que Julia buscaba. 
-
-Al redirigir el nombre, Julia utiliza la librería de Ubuntu pensando que es la suya, y como las instrucciones internas son compatibles, el sistema arranca sin errores y con total estabilidad.
-
-::: {.callout-warning}
-#### Importancia para el SIG
-Sin esta cirugía, paquetes como `ArchGDAL` en Julia no podrían cargar los controladores para leer archivos `.tif` o conectarse a bases de datos espaciales, ya que la comunicación segura (SSL) fallaría al inicio.
-:::
-
-
-### La "factura" de la cirugía: el adiós a `JuliaCall` {#sec-openssl-side-effects}
-
-Como en toda operación de emergencia, el "cambiazo" de librerías tuvo un efecto secundario importante: la ruptura definitiva de la compatibilidad con **`JuliaCall`**, el puente más común entre R y Julia.
-
-* **El Conflicto**: `JuliaCall` intenta embeber a Julia directamente dentro del proceso de R (comparten la misma memoria). Al detectar que las librerías de OpenSSL han sido redirigidas mediante enlaces simbólicos, el proceso de R entra en un conflicto de seguridad y colapsa inmediatamente (*Segmentation Fault*), impidiendo cualquier comunicación.
-* **La Solución**: Para no renunciar a la integración de ambos lenguajes, cambiamos de estrategia y adoptamos **`JuliaConnectoR`**. A diferencia del método anterior, este paquete trata a Julia como un servicio independiente que se comunica mediante *sockets*. Esto lo hace inmune al conflicto de OpenSSL, ya que cada lenguaje corre en su propia parcela de memoria.
-
-### El nacimiento de `j_eval` y `j_plot`
-
-Para que este cambio de arquitectura fuera invisible para el usuario final, se desarrollaron dos funciones "envolventes" (*wrappers*) que automatizan la traducción entre lenguajes:
-
-1.  **`j_eval()`**: Toma comandos escritos en R, los envía al motor de Julia de forma segura y captura el resultado (numérico o textual) para devolverlo a la consola de R. Es el cerebro detrás de nuestros benchmarks.
-2.  **`j_plot()`**: Resuelve el problema del renderizado. Julia genera la visualización geoespacial "tras bambalinas", y esta función captura la salida gráfica para insertarla automáticamente en el reporte de Quarto.
-
-::: {.callout-tip}
-#### Conclusión Técnica
-Gracias a esta combinación estratégica (**Cirugía OpenSSL** + **JuliaConnectoR** + **Funciones j_**), logramos lo que parecía imposible en un entorno Docker restrictivo: un ecosistema donde **R, Python y Julia conviven en paz**, permitiéndonos procesar datos masivos sin colapsos de memoria ni errores de librerías.
-:::

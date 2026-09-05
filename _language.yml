@@ -4,5 +4,5 @@ appendices-title: "Apéndices"
 # Añadimos estas para asegurar el HTML
 toc-title-document: "Tabla de contenidos"
 section-title-abstract: "Resumen"
-lof-title-document: "Lista de Figuras"
-lot-title-document: "Lista de Tablas"
+lof-title-document: "Lista de figuras"
+lot-title-document: "Lista de tablas"

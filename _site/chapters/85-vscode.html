@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Bases de Datos Espaciales - Apéndice D — Visual Studio Code (VScode): Extensiones e Interfaz</title>
+<title>Bases de datos espaciales - Apéndice D — Visual Studio Code (VScode): Extensiones e Interfaz</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -96,11 +96,11 @@ div.csl-indent {
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
-  "location": "sidebar",
+  "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
-  "panel-placement": "start",
-  "type": "textbox",
+  "panel-placement": "end",
+  "type": "overlay",
   "limit": 50,
   "keyboard-shortcut": [
     "f",
@@ -126,10 +126,38 @@ div.csl-indent {
 
 </head>
 
-<body class="nav-sidebar floating">
+<body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Bases de datos espaciales</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../slides/index.html"> 
+<span class="menu-text">Diapositivas</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/alexyshr/bde2026"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
@@ -138,26 +166,13 @@ div.csl-indent {
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/82-quarto.html">Apéndices</a></li><li class="breadcrumb-item"><a href="../chapters/85-vscode.html"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Visual Studio Code (VScode): Extensiones e Interfaz</span></a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
     </div>
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
-    <div class="sidebar-title mb-0 py-0">
-      <a href="../">Bases de Datos Espaciales</a> 
-    </div>
-      </div>
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Buscar"></div>
-        </div>
-        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -180,7 +195,7 @@ div.csl-indent {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a href="../chapters/04-introduccion_instalacion_entornos.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Instalación y entornos</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -190,7 +205,7 @@ div.csl-indent {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/05-guia_instalacion_vscode_docker.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación: VS Code y contenedores Docker</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -320,7 +335,7 @@ div.csl-indent {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Tabla de Contenidos</h2>
+    <h2 id="toc-title">Tabla de contenidos</h2>
    
   <ul>
   <li><a href="#instalación" id="toc-instalación" class="nav-link active" data-scroll-target="#instalación"><span class="header-section-number">D.1</span> Instalación</a></li>
@@ -335,18 +350,10 @@ div.csl-indent {
   <li><a href="#sec-tinytex" id="toc-sec-tinytex" class="nav-link" data-scroll-target="#sec-tinytex"><span class="header-section-number">D.5</span> Instalación Tinytex</a></li>
   <li><a href="#sec-extensiones-vscode" id="toc-sec-extensiones-vscode" class="nav-link" data-scroll-target="#sec-extensiones-vscode"><span class="header-section-number">D.6</span> Instalación de extensiones</a>
   <ul class="collapse">
-  <li><a href="#notas-sobre-herramientas-específicas" id="toc-notas-sobre-herramientas-específicas" class="nav-link" data-scroll-target="#notas-sobre-herramientas-específicas">Notas sobre herramientas específicas</a></li>
-  </ul></li>
-  <li><a href="#sec-sinergia-psql" id="toc-sec-sinergia-psql" class="nav-link" data-scroll-target="#sec-sinergia-psql"><span class="header-section-number">D.7</span> Sinergia de las extensiones de PostgreSQL en VSCode</a>
-  <ul class="collapse">
-  <li><a href="#sec-ventajas-dual" id="toc-sec-ventajas-dual" class="nav-link" data-scroll-target="#sec-ventajas-dual">Ventajas de la instalación dual</a></li>
-  </ul></li>
-  <li><a href="#verificación-de-conectividad" id="toc-verificación-de-conectividad" class="nav-link" data-scroll-target="#verificación-de-conectividad"><span class="header-section-number">D.8</span> Verificación de conectividad</a></li>
-  <li><a href="#configuración-de-asistentes-de-ia-en-vscode" id="toc-configuración-de-asistentes-de-ia-en-vscode" class="nav-link" data-scroll-target="#configuración-de-asistentes-de-ia-en-vscode"><span class="header-section-number">D.9</span> Configuración de asistentes de IA en VSCode</a>
-  <ul class="collapse">
-  <li><a href="#procedimiento-de-despliegue-e-integración" id="toc-procedimiento-de-despliegue-e-integración" class="nav-link" data-scroll-target="#procedimiento-de-despliegue-e-integración">Procedimiento de despliegue e integración</a></li>
-  <li><a href="#parametrización-de-archivos-de-configuración" id="toc-parametrización-de-archivos-de-configuración" class="nav-link" data-scroll-target="#parametrización-de-archivos-de-configuración">Parametrización de archivos de configuración</a></li>
-  <li><a href="#desactivación-mediante-componentes-visuales-de-la-barra-de-estado" id="toc-desactivación-mediante-componentes-visuales-de-la-barra-de-estado" class="nav-link" data-scroll-target="#desactivación-mediante-componentes-visuales-de-la-barra-de-estado">Desactivación mediante componentes visuales de la barra de estado</a></li>
+  <li><a href="#sec-persistencia-contenedor" id="toc-sec-persistencia-contenedor" class="nav-link" data-scroll-target="#sec-persistencia-contenedor">Persistencia y ciclo de vida del contenedor</a></li>
+  <li><a href="#sec-catalogo-extensiones" id="toc-sec-catalogo-extensiones" class="nav-link" data-scroll-target="#sec-catalogo-extensiones">Clasificación y catálogo de extensiones</a></li>
+  <li><a href="#sec-notas-herramientas" id="toc-sec-notas-herramientas" class="nav-link" data-scroll-target="#sec-notas-herramientas">Notas técnicas sobre herramientas específicas</a></li>
+  <li><a href="#sec-sinergia-psql" id="toc-sec-sinergia-psql" class="nav-link" data-scroll-target="#sec-sinergia-psql">Sinergia de las herramientas de PostgreSQL en Visual Studio Code</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -519,27 +526,47 @@ El comando de “Primer Auxilio”
 </section>
 <section id="sec-extensiones-vscode" class="level2" data-number="D.6">
 <h2 data-number="D.6" class="anchored" data-anchor-id="sec-extensiones-vscode"><span class="header-section-number">D.6</span> Instalación de extensiones</h2>
-<p>Para que el entorno de desarrollo sea plenamente funcional, es necesario instalar un conjunto de extensiones específicas. Inicialmente todas las extensiones se pueden instalar para el entorno local (ej: Windows), sin embargo esas mismas extensiones deben estar instaladas también dentro del contenedor <code>contenedor_sig_unal</code>.</p>
-<p>Una vez que haya realizado el proceso de <strong>“Dev Containers: Attach to Running Container …”</strong> (<code>Ctrl + Shift + P</code> en VSCode), asegúrese de que estas herramientas estén instaladas <strong>dentro del contenedor</strong> (busque el botón azul <em>Install in …</em> en la pestaña de extensiones).</p>
+<p>Para garantizar la plena operatividad del entorno analítico, es indispensable verificar el despliegue del conjunto de extensiones en Visual Studio Code. La arquitectura de trabajo opera bajo un esquema desacoplado: una instancia del editor en el sistema anfitrión conectada a los servicios mediante el contenedor de desarrollo (<code>contenedor_sig_unal</code>).</p>
+<p>El despliegue de las herramientas se estructura bajo una <strong>estrategia de instalación modular</strong>:</p>
+<ul>
+<li><strong>Herramientas base (en contenedor):</strong> Conjunto preconfigurado e integrado en la capa interna del contenedor dentro de la imagen base. Al vincular la sesión mediante <strong>Dev Containers: Attach to Running Container…</strong> (<code>Ctrl + Shift + P</code>), este núcleo funcional se encuentra habilitado y disponible de forma inmediata dentro de la sesión remota del contenedor.</li>
+<li><strong>Herramientas del sistema anfitrión (host):</strong> Extensiones que deben instalarse directamente en el Visual Studio Code local. Incluyen las herramientas de infraestructura requeridas para comunicarse con Docker y utilidades ligeras de diagramación y validación de formatos que se ejecutan localmente para optimizar la memoria del contenedor.</li>
+<li><strong>Herramientas diferidas bajo demanda:</strong> Extensiones especializadas requeridas para los módulos avanzados de geodatabases corporativas, procesamiento columnar y procedimientos compilados (Ejes 3 y 4). Se instalarán puntualmente dentro del contenedor durante el desarrollo de los laboratorios respectivos.</li>
+</ul>
+<section id="sec-persistencia-contenedor" class="level3">
+<h3 class="anchored" data-anchor-id="sec-persistencia-contenedor">Persistencia y ciclo de vida del contenedor</h3>
+<p>El aislamiento de procesos en contenedores introduce una distinción fundamental entre el estado de ejecución y la persistencia de datos. Cuando se instala una extensión adicional dentro del contenedor desde la interfaz de Visual Studio Code, los archivos binarios se escriben en la capa de lectura y escritura del contenedor activo (<code>/root/.vscode-server/extensions</code> o <code>/home/&lt;usuario&gt;/.vscode-server/extensions</code>).</p>
+<p>Para conservar las nuevas extensiones instaladas en el contenedor y evitar la reconstrucción innecesaria del entorno, la gestión de sesiones debe regirse por las siguientes directivas:</p>
+<ol type="1">
+<li><strong>Uso exclusivo de <code>docker compose stop</code> y <code>docker compose start</code>:</strong> Al finalizar la jornada de trabajo, el contenedor debe suspenderse mediante <code>docker compose stop</code>. Esta instrucción detiene los procesos del motor relacional preservando intacta la capa de escritura. Para reanudar la sesión en clases posteriores, se ejecuta <code>docker compose start</code>, manteniendo las extensiones añadidas y el historial de comandos.</li>
+<li><strong>Evitar comandos destructivos (<code>docker compose down</code>, <code>docker rm</code>):</strong> Las instrucciones de eliminación de contenedores destruyen la capa mutable. Si el contenedor se remueve, cualquier extensión instalada manualmente se perderá y el entorno regresará al estado base empaquetado en la imagen original.</li>
+</ol>
+<p>Una vez reiniciado el contenedor mediante <code>docker compose start</code>, inicie Visual Studio Code en el sistema anfitrión, presione <code>Ctrl + Shift + P</code>, seleccione <strong>Dev Containers: Attach to Running Container…</strong> y elija <code>/contenedor_sig_unal</code>.</p>
+</section>
+<section id="sec-catalogo-extensiones" class="level3">
+<h3 class="anchored" data-anchor-id="sec-catalogo-extensiones">Clasificación y catálogo de extensiones</h3>
+<p>A continuación se detalla el inventario técnico de extensiones, categorizado según el ámbito de ejecución y fase de disponibilidad en el curso:</p>
 <div id="tbl-extensiones" class="quarto-float anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-extensiones-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Tabla&nbsp;D.1: Extensiones de VSCode para el entorno de Geomática y Programación SIG
+Tabla&nbsp;D.1: Extensiones de Visual Studio Code para el entorno de bases de datos espaciales
 </figcaption>
 <div aria-describedby="tbl-extensiones-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="table">
 <colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Categoría</th>
 <th style="text-align: left;">Herramienta</th>
 <th style="text-align: left;">Propósito</th>
-<th style="text-align: left;">ID de la Extensión</th>
+<th style="text-align: left;">ID de la extensión</th>
+<th style="text-align: left;">Disponibilidad y ámbito</th>
 </tr>
 </thead>
 <tbody>
@@ -548,182 +575,198 @@ Tabla&nbsp;D.1: Extensiones de VSCode para el entorno de Geomática y Programaci
 <td style="text-align: left;"><strong>Dev Containers</strong></td>
 <td style="text-align: left;">Conexión y gestión del contenedor activo</td>
 <td style="text-align: left;"><code>ms-vscode-remote.remote-containers</code></td>
+<td style="text-align: left;">Sistema anfitrión</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"></td>
-<td style="text-align: left;"><strong>Docker / Container Tools</strong></td>
-<td style="text-align: left;">Control de imágenes y recursos del contenedor</td>
+<td style="text-align: left;"><strong>Docker</strong></td>
+<td style="text-align: left;">Control de imágenes, redes, volúmenes y servicios</td>
 <td style="text-align: left;"><code>ms-azuretools.vscode-docker</code></td>
+<td style="text-align: left;">Sistema anfitrión</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><strong>Ecosistema R</strong></td>
 <td style="text-align: left;"><strong>R (REditorSupport)</strong></td>
-<td style="text-align: left;">Soporte de sintaxis, LSP y terminal de R</td>
+<td style="text-align: left;">Sintaxis, servidor de lenguaje (LSP) y terminal</td>
 <td style="text-align: left;"><code>REditorSupport.r</code></td>
+<td style="text-align: left;">Base (en contenedor)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"></td>
-<td style="text-align: left;"><strong>R Debugger &amp; Tools</strong></td>
-<td style="text-align: left;">Depuración de scripts y herramientas de desarrollo</td>
+<td style="text-align: left;"><strong>R Debugger</strong></td>
+<td style="text-align: left;">Depuración interactiva de scripts en R</td>
 <td style="text-align: left;"><code>RDebugger.r-debugger</code></td>
+<td style="text-align: left;">Base (en contenedor)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"></td>
 <td style="text-align: left;"><strong>R Extension Pack</strong></td>
-<td style="text-align: left;">Pack de utilidades (por Yuki Ueda)</td>
-<td style="text-align: left;"><code>yukiueda.r-extension-pack</code></td>
+<td style="text-align: left;">Paquete de utilidades y snippets para análisis en R</td>
+<td style="text-align: left;"><code>Ikuyadeu.r-pack</code></td>
+<td style="text-align: left;">Base (en contenedor)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><strong>Ecosistema Python</strong></td>
 <td style="text-align: left;"><strong>Python (Microsoft)</strong></td>
-<td style="text-align: left;">IntelliSense (Pylance) y depuración avanzada</td>
+<td style="text-align: left;">IntelliSense (Pylance), tipado y entornos virtuales</td>
 <td style="text-align: left;"><code>ms-python.python</code></td>
+<td style="text-align: left;">Base (en contenedor)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"></td>
 <td style="text-align: left;"><strong>Python Debugger</strong></td>
-<td style="text-align: left;">Motor de depuración específico para Python</td>
+<td style="text-align: left;">Motor de depuración desacoplado para flujos Python</td>
 <td style="text-align: left;"><code>ms-python.debugpy</code></td>
+<td style="text-align: left;">Base (en contenedor)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"></td>
 <td style="text-align: left;"><strong>Jupyter (Microsoft)</strong></td>
-<td style="text-align: left;">Soporte para Notebooks e interactividad nativa</td>
+<td style="text-align: left;">Cuadernos interactivos (<code>.ipynb</code>) y celdas de código</td>
 <td style="text-align: left;"><code>ms-toolsai.jupyter</code></td>
+<td style="text-align: left;">Base (en contenedor)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><strong>Ecosistema Julia</strong></td>
 <td style="text-align: left;"><strong>Julia</strong></td>
-<td style="text-align: left;">Soporte integral para ejecución y gráficos</td>
+<td style="text-align: left;">Soporte de lenguaje, REPL integrado y gráficos</td>
 <td style="text-align: left;"><code>julialang.language-julia</code></td>
+<td style="text-align: left;">Base (en contenedor)</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><strong>Base de Datos</strong></td>
-<td style="text-align: left;"><strong>PostgreSQL</strong></td>
-<td style="text-align: left;">Cliente para explorar la DB (Chris Kolkman)</td>
+<td style="text-align: left;"><strong>Bases de datos</strong></td>
+<td style="text-align: left;"><strong>PostgreSQL (Chris Kolkman)</strong></td>
+<td style="text-align: left;">Árbol visual para exploración de esquemas y tablas</td>
 <td style="text-align: left;"><code>ckolkman.vscode-postgres</code></td>
+<td style="text-align: left;">Base (en contenedor)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"></td>
-<td style="text-align: left;"><strong>psql</strong></td>
-<td style="text-align: left;">Herramienta de consulta SQL (doublefint)</td>
-<td style="text-align: left;"><code>doublefint.psql</code></td>
+<td style="text-align: left;"><strong>pgsql (psql runner)</strong></td>
+<td style="text-align: left;">Ejecución de scripts SQL en consola vía <code>psql</code> (<code>Ctrl + F5</code>)</td>
+<td style="text-align: left;"><code>doublefint.pgsql</code></td>
+<td style="text-align: left;">Base (en contenedor)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><strong>Publicación</strong></td>
 <td style="text-align: left;"><strong>Quarto</strong></td>
-<td style="text-align: left;">Renderizado y preview de archivos <code>.qmd</code></td>
+<td style="text-align: left;">Renderizado y compilación de documentos <code>.qmd</code></td>
 <td style="text-align: left;"><code>quarto.quarto</code></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>Versión</strong></td>
-<td style="text-align: left;"><strong>GitHub Repositories</strong></td>
-<td style="text-align: left;">Manejo de archivos remotos sin clonar todo</td>
-<td style="text-align: left;"><code>github.remotehub</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Utilidad</strong></td>
-<td style="text-align: left;"><strong>Live Server</strong></td>
-<td style="text-align: left;">Servidor local con recarga automática para previsualizar HTML</td>
-<td style="text-align: left;"><code>ritwickdey.liveserver</code></td>
+<td style="text-align: left;">Base (en contenedor)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"></td>
+<td style="text-align: left;"><strong>Live Server</strong></td>
+<td style="text-align: left;">Servidor HTTP local para previsualización de salidas HTML</td>
+<td style="text-align: left;"><code>ritwickdey.liveserver</code></td>
+<td style="text-align: left;">Base (en contenedor)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Control de versiones</strong></td>
+<td style="text-align: left;"><strong>GitHub Repositories</strong></td>
+<td style="text-align: left;">Inspección y lectura de repositorios remotos en GitHub</td>
+<td style="text-align: left;"><code>github.remotehub</code></td>
+<td style="text-align: left;">Base (en contenedor)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Calidad de código</strong></td>
 <td style="text-align: left;"><strong>Code Spell Checker</strong></td>
-<td style="text-align: left;">Corrector ortográfico para código y comentarios</td>
+<td style="text-align: left;">Corrector ortográfico en código y comentarios</td>
 <td style="text-align: left;"><code>streetsidesoftware.code-spell-checker</code></td>
+<td style="text-align: left;">Base (en contenedor)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"></td>
 <td style="text-align: left;"><strong>Spanish - Code Spell Checker</strong></td>
 <td style="text-align: left;">Diccionario en español para el corrector ortográfico</td>
 <td style="text-align: left;"><code>streetsidesoftware.code-spell-checker-spanish</code></td>
+<td style="text-align: left;">Base (en contenedor)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Formato y modelado</strong></td>
+<td style="text-align: left;"><strong>Rainbow CSV</strong></td>
+<td style="text-align: left;">Resaltado de columnas e inspección de geometrías WKT</td>
+<td style="text-align: left;"><code>mechatroner.rainbow-csv</code></td>
+<td style="text-align: left;">Sistema anfitrión</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><strong>Mermaid Chart</strong></td>
+<td style="text-align: left;">Modelado y previsualización de diagramas Entidad-Relación</td>
+<td style="text-align: left;"><code>MermaidChart.vscode-mermaid-chart</code></td>
+<td style="text-align: left;">Sistema anfitrión</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><strong>YAML Language Support</strong></td>
+<td style="text-align: left;">Validación de sintaxis en <code>_quarto.yml</code> y contenedores</td>
+<td style="text-align: left;"><code>redhat.vscode-yaml</code></td>
+<td style="text-align: left;">Sistema anfitrión</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><strong>Geo Data Viewer</strong></td>
+<td style="text-align: left;">Previsualización rápida de capas GeoJSON y WKT</td>
+<td style="text-align: left;"><code>RandomFractalsInc.geo-data-viewer</code></td>
+<td style="text-align: left;">Sistema anfitrión</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Formatos avanzados</strong></td>
+<td style="text-align: left;"><strong>XML Language Support</strong></td>
+<td style="text-align: left;">Validación de esquemas XML Workspace y transformaciones</td>
+<td style="text-align: left;"><code>redhat.vscode-xml</code></td>
+<td style="text-align: left;">Diferida (Semana 9)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><strong>Parquet Viewer</strong></td>
+<td style="text-align: left;">Inspección tabular de archivos Parquet y GeoParquet</td>
+<td style="text-align: left;"><code>dvirtz.parquet-viewer</code></td>
+<td style="text-align: left;">Diferida (Semana 11)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Sistemas compilados</strong></td>
+<td style="text-align: left;"><strong>rust-analyzer</strong></td>
+<td style="text-align: left;">Servidor de lenguaje para extensiones nativas con PGRX</td>
+<td style="text-align: left;"><code>rust-lang.rust-analyzer</code></td>
+<td style="text-align: left;">Diferida (Semana 16)</td>
 </tr>
 </tbody>
 </table>
 </div>
 </figure>
 </div>
-<section id="notas-sobre-herramientas-específicas" class="level3">
-<h3 class="anchored" data-anchor-id="notas-sobre-herramientas-específicas">Notas sobre herramientas específicas</h3>
-<ul>
-<li><strong>PostgreSQL (Chris Kolkman)</strong>: Esta extensión le permitirá conectarse a la base de datos espacial del contenedor sin salir de VSCode. Podrá ejecutar queries SQL y visualizar tablas directamente.</li>
-<li><strong>Jupyter Ecosystem</strong>: Incluimos el <em>Jupyter Keymap</em> para aquellos acostumbrados a los atajos de teclado de Jupyter Notebooks. Esto facilita la transición al trabajar con kernels de Python dentro de Quarto.</li>
-<li><strong>Sobre <code>psql</code></strong>: La herramienta de línea de comandos <code>psql</code> ya viene preinstalada <strong>dentro del sistema operativo del contenedor</strong> (PostgreSQL Client). No requiere instalación adicional para funcionar en la terminal del contenedor. Sin embargo, la instalación de <code>psql</code> y dentro de VSCode garantiza soporte adicional, ver <a href="#sec-sinergia-psql" class="quarto-xref"><span>Sección D.7</span></a> líneas abajo.</li>
-<li><strong>Live Server (Ritwick Dey)</strong>: Esta extensión le permite lanzar un servidor de desarrollo local con un solo clic. Es extremadamente útil para previsualizar exportaciones de mapas interactivos (<strong>Leaflet</strong> u <strong>OpenLayers</strong>) o sitios web estáticos generados por <strong>Quarto</strong>. La ventaja principal es la “recarga en vivo” (<em>live reload</em>): cada vez que guarde un cambio en su archivo HTML o CSS, el navegador se actualizará automáticamente sin necesidad de recargar la página manualmente.</li>
-<li><strong>Code Spell Checker</strong>: Esta extensión es esencial para evitar errores tipográficos en el código y, sobre todo, en la documentación de archivos <code>.qmd</code>. Para que reconozca términos en nuestro idioma, se recomienda instalar también el paquete <strong>Spanish - Code Spell Checker</strong> (<code>streetsidesoftware.code-spell-checker-spanish</code>).</li>
-</ul>
-<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout callout-style-default callout-important callout-titled" title="Ámbito de instalación: sistema anfitrión frente a contenedor">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Instalación Local vs.&nbsp;Remota
+Ámbito de instalación: sistema anfitrión frente a contenedor
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Recuerde que extensiones como <strong>Dev Containers</strong> y <strong>Docker</strong> deben estar instaladas en su VSCode <strong>local</strong> (en Windows), mientras que las de análisis (R, Python, Julia, PostgreSQL) deben estar instaladas <strong>dentro de la sesión del contenedor</strong> para acceder a los compiladores y librerías de la imagen.</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Soporte del Lenguaje en R
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Para que el autocompletado y la documentación en tiempo real funcionen, el contenedor requiere el paquete <code>languageserver</code>. Aunque la imagen ya lo incluye por defecto, si nota que el resaltado de sintaxis falla, puede reinstalarlo ejecutando: <code>install.packages("languageserver")</code> en su consola de R.</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-¿Cuándo usar Live Server?
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Úselo cuando necesite probar cómo se comporta un mapa interactivo exportado fuera del entorno de <strong>Quarto</strong>. Simplemente haga clic derecho sobre su archivo <code>.html</code> en el explorador de <strong>VSCode</strong> y seleccione <strong>“Open with Live Server”</strong>. La opción de búsqueda en la página del curso (archivo <code>_site\index.html</code>) solo funcionará si la ejecuta dentro de <strong>Live Server</strong>.</p>
-</div>
-</div>
-<section id="configuración-del-corrector-ortográfico" class="level4">
-<h4 class="anchored" data-anchor-id="configuración-del-corrector-ortográfico">Configuración del corrector ortográfico</h4>
-<p>Para habilitar corrección ortográfica en idioma español:</p>
-<ul>
-<li>Active el idioma: Presione <code>Ctrl + Shift + P</code>, escriba “Spell”, seleccione <code>Enable Spanish Spell Checker Dictionary</code> y finalmente seleccione <code>User</code> de la lista.</li>
-</ul>
-<p>Para que el corrector funcione simultáneamente con términos técnicos en inglés y redacción en español, puede añadir la siguiente configuración en su archivo <code>settings.json</code> de <strong>VSCode</strong>:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"cSpell.language"</span><span class="fu">:</span> <span class="st">"en,es"</span><span class="fu">,</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"cSpell.enabled"</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"cSpell.spellCheckDelayMs"</span><span class="fu">:</span> <span class="dv">500</span><span class="fu">,</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"cSpell.diagnosticLevel"</span><span class="fu">:</span> <span class="st">"Information"</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Diccionario técnico
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>A medida que trabaje con librerías como <code>geopandas</code> o <code>ArchGDAL</code>, es posible que el corrector marque estas palabras como errores. Puede agregarlas a su “Diccionario de Usuario” haciendo clic derecho sobre la palabra y seleccionando <strong>Add to User Dictionary</strong>.</p>
+<p>Las extensiones de infraestructura (<strong>Dev Containers</strong> y <strong>Docker</strong>) deben instalarse exclusivamente en el sistema anfitrión para gestionar la comunicación con el motor de virtualización.</p>
+<p>En contraste, las herramientas analíticas (R, Python, Julia, PostgreSQL, Quarto) operan <strong>dentro de la sesión remota del contenedor</strong>. No es necesario instalarlas previamente en el sistema anfitrión: una vez ejecutada la directiva <strong>Dev Containers: Attach to Running Container…</strong>, cualquier extensión instalada desde la pestaña correspondiente se alojará directamente en el entorno de ejecución Linux del contenedor.</p>
 </div>
 </div>
 </section>
+<section id="sec-notas-herramientas" class="level3">
+<h3 class="anchored" data-anchor-id="sec-notas-herramientas">Notas técnicas sobre herramientas específicas</h3>
+<p><strong>PostgreSQL (Chris Kolkman):</strong> Permite conectarse directamente al motor espacial PostGIS del contenedor sin abandonar Visual Studio Code, facilitando la exploración de la estructura de tablas y catálogos espaciales.</p>
+<p><strong>Cliente de terminal <code>psql</code>:</strong> La herramienta de línea de comandos <code>psql</code> se encuentra integrada de forma nativa en el sistema operativo del contenedor. No requiere configuración adicional para ejecutarse en la terminal integrada. La extensión <code>doublefint.pgsql</code> complementa esta utilidad canalizando bloques de código SQL desde el editor hacia la sesión activa mediante atajos de teclado.</p>
+<p><strong>Previsualización web con Live Server:</strong> Instancia un servidor HTTP local con recarga automática (<em>live reload</em>). Es requerida para examinar artefactos HTML interactivos fuera del entorno Quarto (mapas exportados con Leaflet, OpenLayers o MapLibre) y para ejecutar la función de búsqueda del sitio compilado del curso (<code>_site/index.html</code>), evitando bloqueos originados por políticas CORS al abrir archivos locales directamente en el navegador.</p>
+<p><strong>Corrector ortográfico multilingüe:</strong> La extensión <strong>Code Spell Checker</strong> previene errores léxicos en comentarios de código y en la documentación técnica de archivos <code>.qmd</code>. Para habilitar la compatibilidad léxica con terminología en español, se integra el paquete <strong>Spanish - Code Spell Checker</strong> (<code>streetsidesoftware.code-spell-checker-spanish</code>).</p>
 </section>
-</section>
-<section id="sec-sinergia-psql" class="level2" data-number="D.7">
-<h2 data-number="D.7" class="anchored" data-anchor-id="sec-sinergia-psql"><span class="header-section-number">D.7</span> Sinergia de las extensiones de PostgreSQL en VSCode</h2>
-<p>Contar con ambas extensiones instaladas dentro del contenedor no es redundancia, sino una estrategia para optimizar el flujo de trabajo con datos espaciales. Cada una ofrece una “capa” de interacción distinta que, al combinarse, potencia la productividad.</p>
+<section id="sec-sinergia-psql" class="level3">
+<h3 class="anchored" data-anchor-id="sec-sinergia-psql">Sinergia de las herramientas de PostgreSQL en Visual Studio Code</h3>
+<p>La coexistencia de <code>ckolkman.vscode-postgres</code> y <code>doublefint.pgsql</code> dentro del contenedor responde a una separación deliberada de funciones operativas: inspección estructural del catálogo frente a ejecución procedural interactiva.</p>
+<div id="tbl-sinergia-postgresql" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-sinergia-postgresql-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;D.2: Matriz funcional de herramientas para interacción con PostgreSQL
+</figcaption>
+<div aria-describedby="tbl-sinergia-postgresql-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="table">
 <colgroup>
 <col style="width: 33%">
@@ -733,150 +776,40 @@ Diccionario técnico
 <thead>
 <tr class="header">
 <th style="text-align: left;">Extensión</th>
-<th style="text-align: left;">Fortaleza técnica</th>
-<th style="text-align: left;">Utilidad principal</th>
+<th style="text-align: left;">Especialidad técnica</th>
+<th style="text-align: left;">Alcance en el flujo analítico</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;"><strong>PostgreSQL (Chris Kolkman)</strong></td>
-<td style="text-align: left;">Exploración de objetos</td>
-<td style="text-align: left;">Navegar visualmente por esquemas, ver la lista de tablas y verificar columnas de <strong>PostGIS</strong>.</td>
+<td style="text-align: left;">Inspección del catálogo relacional</td>
+<td style="text-align: left;">Navegación jerárquica de bases de datos, esquemas, llaves, tipos y columnas espaciales PostGIS.</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><strong>psql (doublefint)</strong></td>
-<td style="text-align: left;">Ejecución de consultas</td>
-<td style="text-align: left;">Ejecutar bloques de código SQL directamente desde scripts <code>.sql</code> con atajos de teclado rápidos.</td>
+<td style="text-align: left;"><strong>pgsql (doublefint)</strong></td>
+<td style="text-align: left;">Ejecución procedural y scripts</td>
+<td style="text-align: left;">Envío directo de bloques DDL/DML hacia el proceso <code>psql</code> en terminal, preservando variables de sesión.</td>
 </tr>
 </tbody>
 </table>
-<section id="sec-ventajas-dual" class="level3">
-<h3 class="anchored" data-anchor-id="sec-ventajas-dual">Ventajas de la instalación dual</h3>
+</div>
+</figure>
+</div>
+<section id="ventajas-de-la-integración-complementaria" class="level4">
+<h4 class="anchored" data-anchor-id="ventajas-de-la-integración-complementaria">Ventajas de la integración complementaria</h4>
 <ul>
-<li><strong>Validación visual inmediata</strong>: Mientras escribe una consulta compleja en el editor (usando la extensión de <strong>doublefint</strong>), puede consultar el panel lateral de <strong>Chris Kolkman</strong> para verificar nombres de columnas o tipos de datos geográficos sin tener que hacer un <code>SELECT *</code>.</li>
-<li><strong>Soporte de sintaxis robusto</strong>: La combinación garantiza que <strong>VSCode</strong> reconozca perfectamente las palabras clave de <strong>SQL</strong> y proporcione sugerencias automáticas (IntelliSense) precisas.</li>
-<li><strong>Resultados en pestañas independientes</strong>: Permite mantener los resultados de una consulta abiertos en una pestaña mientras se sigue editando el código en otra, algo fundamental cuando se comparan estadísticas de diferentes capas ráster o vectoriales.</li>
+<li><strong>Validación de esquemas sin bloqueo:</strong> Durante la estructuración de consultas espaciales complejas, el árbol lateral de exploración permite corroborar nombres de atributos, proyecciones cartográficas (<code>SRID</code>) y tipos geométricos sin interrumpir el búfer de edición mediante consultas exploratorias de sondeo.</li>
+<li><strong>Preservación del contexto de sesión:</strong> La extensión <code>doublefint.pgsql</code> opera contra la sesión nativa de <code>psql</code> en la terminal integrada, asegurando que directivas de entorno como <code>SET search_path</code>, esquemas de codificación (<code>client_encoding</code>) y transacciones manuales (<code>BEGIN ... COMMIT</code>) permanezcan consistentes.</li>
+<li><strong>Aislamiento de salidas analíticas:</strong> Facilita mantener los resultados tabulares o planes de ejecución (<code>EXPLAIN ANALYZE</code>) desplegados en paneles independientes mientras se refactoriza el script principal en el editor.</li>
 </ul>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Recomendación de flujo
-</div>
-</div>
-<div class="callout-body-container callout-body">
+</section>
+<section id="flujo-de-trabajo-analítico-recomendado" class="level4">
+<h4 class="anchored" data-anchor-id="flujo-de-trabajo-analítico-recomendado">Flujo de trabajo analítico recomendado</h4>
 <ol type="1">
-<li>Use el panel de <strong>Chris Kolkman</strong> para conectarse y “ver” qué hay en la base de datos.</li>
-<li>Escriba sus scripts de análisis espacial en archivos <code>.sql</code> y ejecútelos usando la extensión de <strong>doublefint</strong> para obtener una respuesta rápida en la consola.</li>
+<li><strong>Exploración:</strong> Utilizar el explorador de objetos de <code>ckolkman.vscode-postgres</code> para verificar la conectividad, constatar la activación de extensiones espaciales (<code>postgis</code>, <code>postgis_topology</code>) y revisar la definición de vistas analíticas.</li>
+<li><strong>Desarrollo y depuración:</strong> Redactar los scripts de análisis espacial en archivos <code>.sql</code> y ejecutarlos mediante <code>doublefint.pgsql</code> presionando el atajo <code>Ctrl + F5</code> para canalizar el código a la terminal interactiva del contenedor.</li>
 </ol>
-</div>
-</div>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Atajo de teclado (Shortcut)
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Para la mayoría de estas extensiones, puede resaltar una consulta SQL y presionar <code>Ctrl + E</code> (o <code>Cmd + E</code> en Mac) para ejecutarla inmediatamente y ver los resultados en una tabla formateada.</p>
-</div>
-</div>
-</section>
-</section>
-<section id="verificación-de-conectividad" class="level2" data-number="D.8">
-<h2 data-number="D.8" class="anchored" data-anchor-id="verificación-de-conectividad"><span class="header-section-number">D.8</span> Verificación de conectividad</h2>
-<p>Una vez instaladas las extensiones, verifique que su entorno esté correctamente configurado siguiendo estos puntos:</p>
-<ul>
-<li><strong>Estado del Contenedor</strong>: En la esquina inferior izquierda de VSCode, debe aparecer un recuadro azul con el texto: <strong>Dev Container: contenedor_sig_unal</strong>.</li>
-<li><strong>Activación de Kernels</strong>: Al abrir un archivo <code>.qmd</code>, en la esquina superior derecha debe poder seleccionar el kernel deseado (R, Python 3 o Julia).</li>
-<li><strong>Terminal Unificada</strong>: Al abrir una nueva terminal (<code>Ctrl + Shift +</code> <code></code>), la línea de comandos debe estar identificada como <code>rstudio@contenedor_sig_unal:/home/rstudio/work$</code>.</li>
-</ul>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Sincronización Automática
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Recuerde que cualquier cambio que realice en la configuración de estas extensiones mientras esté conectado al contenedor se guardará en su perfil local de VSCode, facilitando las conexiones futuras.</p>
-</div>
-</div>
-</section>
-<section id="configuración-de-asistentes-de-ia-en-vscode" class="level2" data-number="D.9">
-<h2 data-number="D.9" class="anchored" data-anchor-id="configuración-de-asistentes-de-ia-en-vscode"><span class="header-section-number">D.9</span> Configuración de asistentes de IA en VSCode</h2>
-<p>Para optimizar el entorno de desarrollo y evitar conflictos de concurrencia entre los diferentes motores de inteligencia artificial (IA) integrados en Visual Studio Code, se estableció una arquitectura distribuida de funciones. Esta organización técnica previene colisiones en el proveedor de sugerencias en línea (<code>inlineCompletionsProvider</code>), asegurando la estabilidad del editor durante la generación de código y el análisis de datos.</p>
-<p>La distribución de responsabilidades se estructuró bajo el siguiente esquema:</p>
-<ul>
-<li><strong>Gemini Code Assist:</strong> Actúa como el motor principal para la generación de código en tiempo real y autocompletado en línea (<em>inline completions</em>).</li>
-<li><strong>Continue:</strong> Especializado exclusivamente en tareas de auditoría estructural de repositorios mediante indexación local (<code>@codebase</code>), ejecución de agentes complejos y consultas contextuales profundas en el panel lateral a través de la API de Gemini Pro.</li>
-<li><strong>GitHub Copilot:</strong> Configurado de manera de restringir la ejecución al panel de chat secundario, suspendiendo el autocompletado automático para evitar solapamientos.</li>
-</ul>
-<section id="procedimiento-de-despliegue-e-integración" class="level3">
-<h3 class="anchored" data-anchor-id="procedimiento-de-despliegue-e-integración">Procedimiento de despliegue e integración</h3>
-<p>El proceso secuencial para la puesta en marcha del entorno distribuido consta de las siguientes fases analíticas:</p>
-<ol type="1">
-<li><strong>Instalación de componentes:</strong> Desde el gestor de extensiones de Visual Studio Code (<code>Ctrl+Shift+X</code>), se incorporaron los complementos oficiales <strong>Gemini Code Assist</strong>, <strong>Continue</strong>, y <strong>GitHub Copilot</strong>.</li>
-<li><strong>Autenticación y vinculación de proyecto en Gemini:</strong> Se efectuó el inicio de sesión en la extensión Gemini Code Assist utilizando las credenciales institucionales asociadas a la cuenta de Google. Posteriormente, mediante el menú de comandos de la extensión en la barra de estado, se seleccionó el proyecto activo de Google Cloud Platform (<code>gen-lang-client-...</code>) para habilitar la cuota de computación y el motor de sugerencias.</li>
-<li><strong>Extracción de credenciales para Continue:</strong> Desde la plataforma Google AI Studio, se obtuvo una clave de API (<em>API key</em>) dedicada, vinculada al proyecto, para la configuración bajo la modalidad <em>Bring Your Own Key</em> (BYOK).</li>
-<li><strong>Inhabilitación de redundancias:</strong> A través de la interfaz de comandos de Gemini Code Assist y la especificación de directivas en el archivo de preferencias del editor, se suspendieron las sugerencias predictivas secundarias, delegando el autocompletado en línea al motor principal seleccionado y evitando colisiones en el flujo de trabajo.</li>
-</ol>
-</section>
-<section id="parametrización-de-archivos-de-configuración" class="level3">
-<h3 class="anchored" data-anchor-id="parametrización-de-archivos-de-configuración">Parametrización de archivos de configuración</h3>
-<p>La persistencia de la arquitectura configurada requiere la modificación de los archivos de control del entorno.</p>
-<p>El archivo de configuración de la extensión Continue, localizado en la ruta <code>C:\Users\&lt;id_usuario&gt;\.continue\config.yaml</code>, se estructuró de la siguiente forma para registrar el modelo y deshabilitar el autocompletado nativo:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> Local Config</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">version</span><span class="kw">:</span><span class="at"> </span><span class="fl">1.0.0</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">schema</span><span class="kw">:</span><span class="at"> v1</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">models</span><span class="kw">:</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">title</span><span class="kw">:</span><span class="at"> Gemini Pro</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">provider</span><span class="kw">:</span><span class="at"> gemini</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">model</span><span class="kw">:</span><span class="at"> gemini-pro</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">apiKey</span><span class="kw">:</span><span class="at"> </span><span class="st">"..."</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">tabAutocompleteModel</span><span class="kw">:</span><span class="at"> </span><span class="ch">null</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<blockquote class="blockquote">
-<p>El <code>apiKey</code> se copió de <em>Google AI Studio</em></p>
-</blockquote>
-<p>El archivo de preferencias globales del editor (<code>settings.json</code>), ubicado en la ruta de usuario <code>C:\Users\&lt;id_usuario&gt;\AppData\Roaming\Code\User\settings.json</code>, registra las directivas definitivas de exclusión mutua para mitigar la degradación de rendimiento en el proceso de extensiones:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"workbench.colorTheme"</span><span class="fu">:</span> <span class="st">"Light 2026"</span><span class="fu">,</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"terminal.integrated.commandsToSkipShell"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"language-julia.interrupt"</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"julia.symbolCacheDownload"</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"security.workspace.trust.untrustedFiles"</span><span class="fu">:</span> <span class="st">"open"</span><span class="fu">,</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"remote.autoForwardPortsSource"</span><span class="fu">:</span> <span class="st">"hybrid"</span><span class="fu">,</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"cSpell.language"</span><span class="fu">:</span> <span class="st">"en,es-ES"</span><span class="fu">,</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"python.analysis.typeCheckingMode"</span><span class="fu">:</span> <span class="st">"standard"</span><span class="fu">,</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"editor.renderWhitespace"</span><span class="fu">:</span> <span class="st">"all"</span><span class="fu">,</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"jupyter.interactiveWindow.creationMode"</span><span class="fu">:</span> <span class="st">"perFile"</span><span class="fu">,</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"languageTool.language"</span><span class="fu">:</span> <span class="st">"es"</span><span class="fu">,</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"github.copilot.enable"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"*"</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"plaintext"</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"markdown"</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"scminput"</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"quarto"</span><span class="fu">:</span> <span class="kw">false</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"geminicodeassist.project"</span><span class="fu">:</span> <span class="st">"gen-lang-client-..."</span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="desactivación-mediante-componentes-visuales-de-la-barra-de-estado" class="level3">
-<h3 class="anchored" data-anchor-id="desactivación-mediante-componentes-visuales-de-la-barra-de-estado">Desactivación mediante componentes visuales de la barra de estado</h3>
-<p>Para gestionar de forma ágil la exclusión mutua de los motores de sugerencias sin alterar directamente los archivos de configuración, el entorno de desarrollo permite conmutar el estado de autocompletado a través de los iconos interactivos ubicados en la barra de estado.</p>
-<p>El procedimiento operativo para cada asistente se ejecuta de la siguiente manera:</p>
-<ul>
-<li><strong>GitHub Copilot:</strong> Localizar el icono del avatar de robot en la sección inferior de la interfaz. Al hacer clic sobre este, se despliega el menú contextual donde se debe seleccionar la directiva <em>Disable Completions</em> (Desactivar completados), lo cual suspende la inserción de texto predictivo en el editor de forma global o para el lenguaje activo.</li>
-<li><strong>Gemini Code Assist:</strong> Seleccionar el identificador de Gemini situado en el extremo inferior del editor. En la ventana emergente de comandos rápidos, hacer clic en la opción <em>Enable/disable Auto Completion</em>. Esta acción cambia el estado de la propiedad a <em>Status: off</em> y remueve la marca de verificación, manteniendo operativas las funciones de consulta analítica en el panel de chat sin generar conflictos en el área de edición de código.</li>
-</ul>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list" style="display: none">
@@ -887,6 +820,7 @@ Microsoft Corporation. (2026). <em>Visual Studio Code</em>. <a href="https://cod
 Xie, Y. (2019). TinyTeX: A lightweight, cross-platform, and easy-to-maintain LaTeX distribution based on TeX Live. <em>TUGboat</em>, <em>40</em>(1), 30-32.
 </div>
 </div>
+</section>
 </section>
 </section>
 

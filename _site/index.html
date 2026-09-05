@@ -8,7 +8,7 @@
 
 <meta name="author" content="Alexys H. Rodríguez-Avellaneda Ph.D.">
 
-<title>Bases de Datos Espaciales</title>
+<title>Bases de datos espaciales</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -76,11 +76,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
-  "location": "sidebar",
+  "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
-  "panel-placement": "start",
-  "type": "textbox",
+  "panel-placement": "end",
+  "type": "overlay",
   "limit": 50,
   "keyboard-shortcut": [
     "f",
@@ -106,10 +106,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </head>
 
-<body class="nav-sidebar floating">
+<body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Bases de datos espaciales</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./slides/index.html"> 
+<span class="menu-text">Diapositivas</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/alexyshr/bde2026"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
@@ -118,26 +146,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Bienvenida</a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
     </div>
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
-    <div class="sidebar-title mb-0 py-0">
-      <a href="./">Bases de Datos Espaciales</a> 
-    </div>
-      </div>
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Buscar"></div>
-        </div>
-        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -160,7 +175,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a href="./chapters/04-introduccion_instalacion_entornos.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Instalación y entornos</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -170,7 +185,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./chapters/05-guia_instalacion_vscode_docker.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación: VS Code y contenedores Docker</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -300,12 +315,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Tabla de Contenidos</h2>
+    <h2 id="toc-title">Tabla de contenidos</h2>
    
   <ul>
   <li><a href="#bienvenida" id="toc-bienvenida" class="nav-link active" data-scroll-target="#bienvenida">Bienvenida</a>
   <ul class="collapse">
   <li><a href="#objetivos-y-alcance-formativo" id="toc-objetivos-y-alcance-formativo" class="nav-link" data-scroll-target="#objetivos-y-alcance-formativo">Objetivos y alcance formativo</a></li>
+  <li><a href="#material-de-la-clase" id="toc-material-de-la-clase" class="nav-link" data-scroll-target="#material-de-la-clase">Material de la clase</a></li>
   <li><a href="#cómo-usar-este-libro" id="toc-cómo-usar-este-libro" class="nav-link" data-scroll-target="#cómo-usar-este-libro">Cómo usar este libro</a></li>
   <li><a href="#requisitos-previos-del-entorno" id="toc-requisitos-previos-del-entorno" class="nav-link" data-scroll-target="#requisitos-previos-del-entorno">Requisitos previos del entorno</a></li>
   <li><a href="#sec-licencia" id="toc-sec-licencia" class="nav-link" data-scroll-target="#sec-licencia">Licencia y citación del material</a>
@@ -323,7 +339,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Bases de Datos Espaciales</h1>
+<h1 class="title">Bases de datos espaciales</h1>
 </div>
 
 
@@ -340,7 +356,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Fecha de publicación</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">31 de agosto de 2026</p>
+      <p class="date">5 de septiembre de 2026</p>
     </div>
   </div>
   
@@ -362,15 +378,43 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul>
 <li><strong>Fundamentos y diseño conceptual:</strong> Formulación de modelos entidad-relación espaciales normalizados (1FN, 2FN, 3FN), diseño visual asistido con pgModeler y cumplimiento de las especificaciones OGC <em>Simple Features for SQL</em> e ISO 19107.</li>
 <li><strong>Motores relacionales espaciales con PostgreSQL y PostGIS:</strong> Administración de instancias, tipado cartesiano (<code>geometry</code>) y geodésico (<code>geography</code>), indexación multidimensional (GiST, SP-GiST, BRIN), análisis topológico con la matriz DE-9IM, topología persistente y estrategias de respaldo estructurado con tablas de contenido (TOC).</li>
-<li><strong>Geodatabases corporativas y flujos ETL:</strong> Arquitecturas basadas en archivos y multiusuario, ingeniería guiada por modelos (ShapeChange), vistas de diseño integradas (<em>Data design views</em>), reglas de atributos, almacenamiento ráster y construcción de pipelines reproducibles de extracción, transformación y carga.</li>
+<li><strong>Geodatabases corporativas y flujos ETL:</strong> Arquitecturas basadas en archivos y multiusuario, ingeniería guiada por modelos (ShapeChange), vistas de diseño integradas (<em>data design views</em>), reglas de atributos, almacenamiento ráster y construcción de pipelines reproducibles de extracción, transformación y carga.</li>
 <li><strong>Ecosistema de conexión políglota:</strong> Interacción directa mediante la consola de comandos (<code>psql</code>), herramientas de administración gráfica (<code>pgAdmin 4</code>) y controladores analíticos en Python (<code>psycopg</code>, <code>GeoPandas</code>), R (<code>DBI</code>, <code>sf</code>) y Julia (<code>LibPQ.jl</code>, <code>GeoDataFrames.jl</code>).</li>
 <li><strong>Paradigmas analíticos emergentes:</strong> Evaluación experimental de motores analíticos columnares (DuckDB espacial, GeoParquet), procesamiento distribuido (Apache Sedona, PySpark), mallas espaciales discretas globales (DGGS H3/S2), bases de datos de grafos (Neo4j Spatial, pgRouting), motores NoSQL y extensiones compiladas nativas en Rust.</li>
 </ul>
 </section>
+<section id="material-de-la-clase" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="material-de-la-clase">Material de la clase</h2>
+<p>El material de la clase se distribuye como un proyecto Quarto alojado en el repositorio:</p>
+<ul>
+<li>Protocolo SSH: <code>git@github.com:alexyshr/bde2026.git</code></li>
+<li>Interfaz web HTTPS: <a href="https://github.com/alexyshr/bde2026" class="uri">https://github.com/alexyshr/bde2026</a></li>
+</ul>
+<div class="callout callout-style-simple callout-note callout-titled" title="Presentación de la sesión">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Presentación de la sesión
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Las diapositivas interactivas correspondientes a la introducción y lineamientos generales del curso se encuentran disponibles en: <a href="slides/00-introduccion.html" target="_blank">Presentación interactiva: Introducción general</a>.</p>
+</div>
+</div>
+<p>Para acceder y sincronizar este material se requiere:</p>
+<ul>
+<li>Inscripción formal en la asignatura <em>Bases de datos espaciales</em> (UNAL 2026).</li>
+<li>Disponer de una cuenta registrada en GitHub.</li>
+<li>Contar con la herramienta de control de versiones <code>git</code> instalada en el sistema anfitrión.</li>
+</ul>
+<p>La documentación procedimental sobre Git y GitHub se detalla en <a href="chapters/84-git_github.html" class="quarto-xref"><span>Apéndice C — Git y GitHub: Sincronización Local-Remota</span></a>, donde se presentan las guías para clonar proyectos y gestionar credenciales criptográficas de acceso.</p>
+</section>
 <section id="cómo-usar-este-libro" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="cómo-usar-este-libro">Cómo usar este libro</h2>
 <p>A lo largo de los capítulos, las bases conceptuales, las guías metodológicas y los talleres prácticos se encuentran organizados de forma secuencial. En los módulos que integran flujos analíticos políglotas, las implementaciones computacionales se estructuran en paneles con pestañas (<em>tabsets</em>) para contrastar la sintaxis y el rendimiento entre entornos:</p>
-<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout callout-style-default callout-note callout-titled" title="Navegación y reproducibilidad">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -383,15 +427,32 @@ Navegación y reproducibilidad
 <p>Los bloques de código contienen directivas YAML de Quarto (<code>#| label: ...</code>, <code>#| eval: ...</code>) con prefijos taxonómicos estandarizados (<code>setup-</code>, <code>docker-</code>, <code>ddl-</code>, <code>dml-</code>, <code>query-</code>, <code>audit-</code>, <code>export-</code>) para facilitar la trazabilidad y ejecución en la terminal integrada de Visual Studio Code o Positron.</p>
 </div>
 </div>
+<div class="callout callout-style-default callout-note callout-titled" title="Enfoque instrumental y prerrequisitos de programación">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Enfoque instrumental y prerrequisitos de programación
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Si bien este material integra demostraciones dentro de un ecosistema analítico políglota, el eje procedimental y evaluativo del curso se fundamenta en la interacción directa mediante la consola de comandos con el cliente <code>psql</code>, complementada periódicamente a través del entorno gráfico <code>pgAdmin 4</code>.</p>
+<p>Las implementaciones presentadas en Python, R y Julia se incorporan exclusivamente como marcos de referencia comparativa para consulta autónoma. En consecuencia, no se exigen conocimientos previos de programación ni dominio de sintaxis en dichos lenguajes para el desarrollo y culminación de los talleres prácticos.</p>
+</div>
+</div>
 </section>
 <section id="requisitos-previos-del-entorno" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="requisitos-previos-del-entorno">Requisitos previos del entorno</h2>
-<p>Para la ejecución de los talleres aplicados y los proyectos experimentales, se proporcionan guías de configuración para:</p>
+<p>La compilación de los talleres y guías disponibles en formato <code>.qmd</code> exige la configuración previa de las siguientes utilidades, detalladas en el módulo de instalación y en los anexos técnicos:</p>
 <ul>
-<li>Orquestación de servicios y motores de bases de datos en contenedores mediante Docker Desktop o Docker Engine.</li>
-<li>Entorno de desarrollo sobre la terminal integrada de Visual Studio Code.</li>
-<li>Clientes de administración relacional y Sistemas de Información Geográfica de escritorio (QGIS y ArcGIS Pro).</li>
-<li>Fundamentos de álgebra relacional, sintaxis SQL estándar, tipos de datos espaciales y sistemas de referencia de coordenadas (SRC/EPSG).</li>
+<li>Git (sistema anfitrión)</li>
+<li>Docker Desktop (sistema anfitrión)</li>
+<li>Contenedores Docker preconfigurados para el curso (orquestación de servicios y motores de bases de datos)</li>
+<li>Entorno de desarrollo sobre la terminal integrada de Visual Studio Code (sistema anfitrión)</li>
+<li>Motor de bases de datos PostgreSQL con extensión espacial PostGIS (sistema anfitrión)</li>
+<li>Clientes de administración relacional y espacial (sistema anfitrión y contenedor)</li>
+<li>Software de Sistemas de Información Geográfica de escritorio: QGIS y ArcGIS Pro (sistema anfitrión)</li>
 </ul>
 </section>
 <section id="sec-licencia" class="level2 unnumbered">
@@ -399,7 +460,7 @@ Navegación y reproducibilidad
 <section id="licencia-de-uso" class="level3">
 <h3 class="anchored" data-anchor-id="licencia-de-uso">Licencia de uso</h3>
 <p>Este material pedagógico y científico se distribuye bajo una licencia <strong>Creative Commons Atribución-NoComercial 4.0 Internacional (CC BY-NC 4.0)</strong>.</p>
-<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout callout-style-default callout-note callout-titled" title="Alcance y condiciones de uso">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -425,14 +486,11 @@ Alcance y condiciones de uso
 <section id="cómo-citar-este-material" class="level3">
 <h3 class="anchored" data-anchor-id="cómo-citar-este-material">Cómo citar este material</h3>
 <p>Para la utilización de los esquemas DDL, consultas analíticas, guías de laboratorio o datos en proyectos de investigación o publicaciones técnicas, se deben incluir las siguientes referencias:</p>
-<section id="referencia-en-formato-apa-7.ª-edición" class="level4">
-<h4 class="anchored" data-anchor-id="referencia-en-formato-apa-7.ª-edición">Referencia en formato APA (7.ª edición)</h4>
+<p><strong>Referencia en formato APA (7.ª edición)</strong></p>
 <blockquote class="blockquote">
 <p>Rodríguez-Avellaneda, A. H. (2026). <em>Bases de datos espaciales</em> [Material de curso]. Maestría en Geomática, Universidad Nacional de Colombia. https://github.com/alexyshr/bde2026</p>
 </blockquote>
-</section>
-<section id="referencia-en-formato-bibtex-para-latex-y-gestores-bibliográficos" class="level4">
-<h4 class="anchored" data-anchor-id="referencia-en-formato-bibtex-para-latex-y-gestores-bibliográficos">Referencia en formato BibTeX (para LaTeX y gestores bibliográficos)</h4>
+<p><strong>Referencia en formato BibTeX (para LaTeX y gestores bibliográficos)</strong></p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bibtex code-with-copy"><code class="sourceCode bibtex"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="va">@misc</span>{<span class="ot">rodriguez2026basesdatos</span>,</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span>       = {Rodriguez-Avellaneda, Alexys H.},</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span>        = {Bases de datos espaciales},</span>
@@ -444,15 +502,14 @@ Alcance y condiciones de uso
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
-</section>
 <section id="sec-contacto" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="sec-contacto">Contacto y colaboración</h2>
 <p>Este documento constituye una obra técnica en construcción y actualización permanente. Para reportar inconsistencias en los scripts DDL/DML, erratas conceptuales o proponer extensiones a los módulos de laboratorio, se contemplan los siguientes mecanismos:</p>
 <ol type="1">
-<li><strong>Apertura de un Issue</strong>: Para notificar fallas de compilación, inconsistencias en consultas SQL o correcciones de redacción.</li>
-<li><strong>Envío de un Pull Request</strong>: Para someter correcciones directas en los archivos <code>.qmd</code> o incorporar nuevos talleres y flujos reproducibles.</li>
+<li><strong>Apertura de un Issue</strong>: Notificar fallas de compilación, inconsistencias en consultas SQL o correcciones de redacción.</li>
+<li><strong>Envío de un Pull Request</strong>: Someter correcciones directas en los archivos <code>.qmd</code> o incorporar nuevos talleres y flujos reproducibles.</li>
 </ol>
-<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout callout-style-default callout-tip callout-titled" title="Reconocimiento a herramientas de IA">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>

@@ -1,55 +1,71 @@
-# Guía de instalación: VS Code y contenedores Docker {#sec-guia-a}
+# Guía de instalación {#sec-guia-a}
+
+::: {.content-visible when-format="html"}
+::: {.callout-note appearance="simple"}
+### Diapositivas del módulo
+
+Las diapositivas interactivas correspondientes a la visión de conjunto, arquitectura de software y lineamientos de esta sección se encuentran disponibles en: [Presentación interactiva: Instalación y entornos](../slides/01-instalacion_entornos.html){target="_blank"}.
+:::
+:::
 
 ## Introducción
 
-Para garantizar una estructura preconfigurada y estándar para el curso, se utilizará la orquestación de contenedores con Docker [@docker2025]. Las imágenes a instalar contienen, de forma aislada y coordinada, un motor de procesamiento habilitado con los lenguajes Python, R y Julia, así como el servidor de datos PostgreSQL y PostGIS con una base de datos pedagógica preconfigurada.
+En esta guía se detallan los procedimientos requeridos para:
 
-Esta guía establece un entorno de **reproducibilidad científica**. Se implementa una arquitectura híbrida: **Visual Studio Code** como editor en el equipo local [@vscode2026] y **Docker** como laboratorio de ejecución [@docker2025]. Esta aproximación garantiza la operación bajo versiones de software homologadas, eliminando discrepancias de entorno.
+* Instalar y configurar Visual Studio Code.
+* Instalar y parametrizar Docker Desktop.
+* Desplegar y orquestar los contenedores del curso.
 
-El documento detalla el procedimiento de instalación de las herramientas mediante un método **offline**, ideal para infraestructuras con conectividad limitada.
+Para garantizar un entorno preconfigurado y homogéneo, se utiliza la orquestación de contenedores con Docker [@docker2025]. Las imágenes a instalar aprovisionan, de forma aislada y coordinada, un motor analítico habilitado con los lenguajes Python, R y Julia, así como el motor relacional PostgreSQL y la extensión espacial PostGIS con una base de datos pedagógica estructurada.
+
+Esta configuración establece un marco formal de **reproducibilidad científica** sustentado en una arquitectura híbrida: **Visual Studio Code** como entorno de desarrollo en el equipo local [@vscode2026] y **Docker** como laboratorio de ejecución aislado [@docker2025]. Dicha aproximación garantiza la compatibilidad de versiones de software y elimina discrepancias asociadas a la plataforma operativa del sistema anfitrión.
+
+El procedimiento detalla la instalación y carga de componentes mediante un flujo desacoplado de la red (*offline*), diseñado para operar de forma confiable en infraestructuras con restricciones de conectividad.
 
 ## Instalación de Visual Studio Code
 
-En el @sec-anexo-vscode se documenta el proceso de instalación y las principales extensiones requeridas en el entorno de desarrollo.
+En el @sec-anexo-vscode se documenta el proceso de instalación del entorno y la parametrización de las principales extensiones requeridas para el flujo analítico.
 
 ## Instalación del orquestador de contenedores
 
-En el @sec-anexo-docker se expone la guía de despliegue y el proceso de configuración previo descrito en el @sec-preparacion-docker para garantizar un funcionamiento óptimo. 
+El repositorio central del curso exige la presencia operativa de Docker Desktop y de dos contenedores preconfigurados. Estos servicios integran el motor PostgreSQL 18 con PostGIS 3.6, la base de datos espacial inicial para los talleres analíticos y el ecosistema de procesamiento políglota (Python, R y Julia).
 
-> Importante: Antes de proceder con la instalación, es imperativo ejecutar el procedimiento descrito en el @sec-preparacion-docker.
+En el @sec-anexo-docker se expone la guía de instalación de Docker Desktop, complementada por el procedimiento de optimización inicial detallado en la @sec-preparacion-docker para asegurar un rendimiento óptimo del subsistema de almacenamiento.
 
-### Limpieza del entorno
-
-Consulte la información de purga en el @sec-limpieza-entorno.
-
-
-### Descarga y preparación de archivos
-
-El código fuente, las guías de laboratorio y los archivos de configuración del curso se encuentran alojados en un repositorio privado en GitHub. El acceso a los recursos y el flujo de trabajo académico requieren la vinculación de una cuenta individual en dicha plataforma. Consulte el protocolo de autenticación, clonación y obtención de recursos en el @sec-descarga-tar-yml.
-
-::: {.callout-note}
-## Requisito de cuenta en GitHub
-
-Es indispensable disponer de una cuenta activa en GitHub. Esta cuenta es requerida para habilitar los permisos de lectura sobre el repositorio privado del curso, clonar las plantillas de trabajo y gestionar la entrega formal de los talleres asignados.
+::: {.callout-important}
+### Optimización previa de recursos
+Antes de importar las imágenes del curso, es mandatorio ejecutar la rutina de ajuste descrita en la @sec-preparacion-docker para evitar la degradación de memoria y espacio en disco del sistema anfitrión.
 :::
 
+### Limpieza del entorno de virtualización
 
-## Instalación de las imágenes 
+Si existen despliegues previos de Docker Desktop y se requiere iniciar el aprovisionamiento sobre un estado limpio, consulte el protocolo de purga técnica en la @sec-limpieza-entorno.
 
-Consulte el procedimiento de carga binaria en el @sec-cargar-docker-tar.
+::: {.callout-warning}
+### Advertencia sobre remoción de volúmenes
+El procedimiento documentado en la @sec-limpieza-entorno elimina la totalidad de contenedores, imágenes y volúmenes existentes en el motor local. Se debe respaldar cualquier recurso previo ajeno al curso antes de proceder.
+:::
 
-## Inicio de contenedores 
+### Descarga y preparación de recursos
 
-Consulte las instrucciones de arranque en el @sec-arrancar-contenedores.
+El código fuente, las guías de laboratorio y los archivos de configuración residen en un repositorio privado en GitHub. La sincronización y entrega formal de actividades requiere la autenticación individual en la plataforma. Consulte el protocolo de clonación y obtención de artefactos en la @sec-descarga-tar-yml.
 
-## Vinculación de contenedores en la terminal integrada
+::: {.callout-note}
+### Requisito de cuenta en GitHub
 
-Consulte los pasos de acoplamiento interactivo en el @sec-cargar-contenedores-vscode.
+Es indispensable disponer de una cuenta activa en GitHub para habilitar los permisos de acceso al repositorio privado, clonar las plantillas de trabajo y gestionar la trazabilidad de los talleres evaluativos.
+:::
 
-## Detención de contenedores
+## Despliegue operativo y administración de contenedores
 
-Consulte las directivas de apagado seguro en el @sec-detener-contenedores.
+La puesta en marcha de los servicios orquestados se desarrolla mediante los siguientes procedimientos modulares:
 
-## Catálogo de contenedores instalados
+* **Carga de imágenes binarias:** Para importar los paquetes precompilados sin depender de descargas remotas masivas, consulte la @sec-cargar-docker-tar.
+* **Inicialización de servicios:** Las instrucciones de arranque en segundo plano mediante `docker compose` se detallan en la @sec-arrancar-contenedores.
+* **Acoplamiento en la terminal integrada:** El procedimiento de vinculación de la sesión de trabajo interactiva desde Visual Studio Code hacia el contenedor analítico se documenta en la @sec-cargar-contenedores-vscode.
+* **Detención y apagado seguro:** Las directivas para suspender o desmontar los servicios sin comprometer la persistencia de datos se exponen en la @sec-detener-contenedores.
+* **Catálogo de servicios activos:** El inventario de imágenes, puertos y contenedores desplegados se encuentra sistematizado en la @sec-contenedores-instalados.
 
-Consulte el inventario de servicios aprovisionados en el @sec-contenedores-instalados.
+## Instalación de herramientas cliente complementarias
+
+Una vez inicializado el contenedor analítico y abierta la sesión en la terminal integrada de Visual Studio Code, se deben ejecutar las directivas de aprovisionamiento descritas en la @sec-anexo-linux-instalacion-psql y la @sec-anexo-linux-instalacion-psql. Esto garantiza la disponibilidad del cliente nativo `psql` correspondiente a la versión mayor del clúster PostgreSQL (v18), así como las utilidades de renderizado topológico y grafos (Graphviz).

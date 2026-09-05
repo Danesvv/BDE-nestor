@@ -35,9 +35,11 @@ Sys.setenv(
 
 Antes de continuar con este capítulo, se debe contar con las siguientes herramientas instaladas y operativas en el equipo local:
 
-* Motor de contenedores: ver @sec-guia-a
-* Visual Studio Code: ver @sec-guia-a
-* PostgreSQL y PostGIS en el contenedor: ver @sec-anexo-docker
+* VSCode, Docker Desktop y contenedores para el curso: ver @sec-guia-a
+* PostgreSQL y PostGIS en el sistema anfitrión: ver @sec-instalacion-aprovisionamiento-postgresql-postgis
+* Configuración de PostgreSQL y PostGIS en el sistema anfitrión: ver @sec-configurar-postgresql
+* Configuración del cliente `psql` en el Docker: ver @sec-anexo-linux-instalacion-psql
+* Instalación y verificación de Graphviz en el contenedor: ver @sec-anexo-linux-instalacion-graphviz
 
 En esta sección se configura el entorno de contenedores para acceder a la base de datos espacial pedagógica (`sig_db_unal`), la cual contiene PostgreSQL 18 y PostGIS 3.6 preconfigurados con la cartografía de estudio. Adicionalmente, se presenta el procedimiento para replicar, cargar y auditar este catálogo en la instalación nativa del equipo local.
 
@@ -59,7 +61,7 @@ docker info
 
 ```
 
-Tras ejecutar el aprovisionamiento descrito en el @sec-guia-a, verifique la presencia de las imágenes requeridas:
+Tras ejecutar el aprovisionamiento descrito en la @sec-guia-a, verifique la presencia de las imágenes requeridas:
 
 ```{bash}
 #| label: docker-listado-imagenes
@@ -107,36 +109,36 @@ En la @fig-arquitectura-inicializacion se esquematiza el mecanismo de auto-inici
 
 graph TD
 
-    classDef inicio fill:#e8f4f8,stroke:#0dcaf0,stroke-width:2px,color:#000
-    classDef decision fill:#fff3cd,stroke:#e6b800,stroke-width:2px,color:#000
-    classDef proceso fill:#d4edda,stroke:#28a745,stroke-width:2px,color:#000
-    classDef persistente fill:#e2e3e5,stroke:#343a40,stroke-width:2px,color:#000
-    classDef final fill:#333,stroke:#666,stroke-width:2px,color:#fff
+    classDef inicio fill:#e8f4f8,stroke:#0dcaf0,stroke-width:2px,color:#000
+    classDef decision fill:#fff3cd,stroke:#e6b800,stroke-width:2px,color:#000
+    classDef proceso fill:#d4edda,stroke:#28a745,stroke-width:2px,color:#000
+    classDef persistente fill:#e2e3e5,stroke:#343a40,stroke-width:2px,color:#000
+    classDef final fill:#333,stroke:#666,stroke-width:2px,color:#fff
 
-    A["Ejecución:<br/>docker compose up -d"]:::inicio
+    A["Ejecución:<br/>docker compose up -d"]:::inicio
 
-    B{"¿Volumen<br/>postgis_data_unal<br/>vacío?"}:::decision
+    B{"¿Volumen<br/>postgis_data_unal<br/>vacío?"}:::decision
 
-    C["Inicialización del clúster<br/>PostgreSQL 18"]:::proceso
-    D["Habilitación de<br/>extensiones espaciales"]:::proceso
-    E["Inyección del script SQL:<br/>esquemas base750 y divpol"]:::proceso
+    C["Inicialización del clúster<br/>PostgreSQL 18"]:::proceso
+    D["Habilitación de<br/>extensiones espaciales"]:::proceso
+    E["Inyección del script SQL:<br/>esquemas base750 y divpol"]:::proceso
 
-    F[("Volumen persistente<br/>postgis_data_unal")]:::persistente
+    F[("Volumen persistente<br/>postgis_data_unal")]:::persistente
 
-    G["Enlace directo a<br/>datos persistidos"]:::proceso
+    G["Enlace directo a<br/>datos persistidos"]:::proceso
 
-    H["Disponibilidad inmediata del<br/>catálogo sig_db_unal"]:::final
+    H["Disponibilidad inmediata del<br/>catálogo sig_db_unal"]:::final
 
-    A --> B
+    A --> B
 
-    B -->|"Sí: primer despliegue"| C
-    C --> D
-    D --> E
-    E --> F
-    F --> H
+    B -->|"Sí: primer despliegue"| C
+    C --> D
+    D --> E
+    E --> F
+    F --> H
 
-    B -->|"No: despliegues posteriores"| G
-    G --> H
+    B -->|"No: despliegues posteriores"| G
+    G --> H
 ```
 
 
@@ -176,6 +178,10 @@ graph LR
         DevCont["Contenedor analítico: contenedor_sig_unal<br/>Terminal integrada de Visual Studio Code"]:::contenedor
         PostGISCont["Contenedor espacial: contenedor_postgis_unal<br/>Servicio: db-postgis<br/>Puerto nativo: 5432"]:::contenedor
     end
+
+    %% Estilos de fondo para los contenedores (subgraphs)
+    style Host fill:#f8f9fa,stroke:#6c757d
+    style DockerNet fill:#f8f9fa,stroke:#6c757d
 
     VSCodeHost -->|"localhost:5432"| LocalPG
     VSCodeHost -->|"127.0.0.1:5434 (port forwarding)"| PostGISCont
@@ -292,14 +298,21 @@ echo "Destino por defecto: ${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}"
 
 ```
 
-> **Nota (persistencia):** Las variables exportadas dentro de un bloque `{bash}` durante la compilación residen exclusivamente en la memoria volátil de esa subshell efímera y se destruyen al concluir su ejecución. Dado que el procesamiento del documento es orquestado por el motor Knitr, la persistencia de estos parámetros a lo largo de todos los subprocesos se garantiza mediante su inyección en la tabla de entorno del proceso principal en el bloque `setup-variables-sistema-r`. Si se requiere disponer de estas variables para interactuar de forma manual durante la sesión de trabajo, el bloque de comandos debe copiarse y ejecutarse directamente en la terminal integrada de Visual Studio Code.
+::: {.callout-note title="Persistencia de variables en subprocesos"}
+Las variables exportadas dentro de un bloque `{bash}` durante la compilación residen exclusivamente en la memoria volátil de esa subshell efímera y se destruyen al concluir dicha ejecución. Dado que el procesamiento del documento es orquestado por el motor Knitr, la persistencia de estos parámetros a lo largo de todos los subprocesos se garantiza mediante la inyección en la tabla de entorno del proceso principal en el bloque `setup-variables-sistema-r`. Si se requiere disponer de estas variables para interactuar de forma manual durante la sesión de trabajo, el bloque de comandos debe copiarse y ejecutarse directamente en la terminal integrada de Visual Studio Code.
+:::
 
-> **Nota (nomenclatura de conexión: `usuario@host:puerto/base_de_datos`):** La estructura compuesta `${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}` (por ejemplo, `profe_unal@db-postgis:5432/sig_db_unal`) corresponde a la notación canónica para la identificación unívoca de un extremo de conexión (*target endpoint*), fundamentada en el estándar de URI (*Uniform Resource Identifier*) de PostgreSQL (RFC 3986) y cadenas DSN (*Data Source Name*). Este descriptor unifica los tres planos funcionales requeridos:
-> * **Identidad del rol autenticado (`profe_unal@`):** Determina las credenciales y los privilegios de ejecución DDL/DML.
-> * **Dirección y puerto del socket de red (`db-postgis:5432`):** Especifica la ruta de enrutamiento hacia la instancia.
-> * **Catálogo relacional objetivo (`/sig_db_unal`):** Define la base de datos relacional y espacial vinculada a la sesión.
-> 
-> 
+::: {.callout-note title="Nomenclatura canónica de conexión (usuario@host:puerto/base_de_datos)"}
+La estructura compuesta `${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}` (por ejemplo, `profe_unal@db-postgis:5432/sig_db_unal`) corresponde a la notación canónica para la identificación unívoca de un extremo de conexión (*target endpoint*), fundamentada en el estándar de URI (*Uniform Resource Identifier*) de PostgreSQL (RFC 3986) y cadenas DSN (*Data Source Name*). Este descriptor unifica los tres planos funcionales requeridos:
+
+* **Identidad del rol autenticado (`profe_unal@`):** Determina las credenciales y los privilegios de ejecución DDL/DML.
+
+
+* **Dirección y puerto del socket de red (`db-postgis:5432`):** Especifica la ruta de enrutamiento hacia la instancia.
+
+
+* **Catálogo relacional objetivo (`/sig_db_unal`):** Define la base de datos relacional y espacial vinculada a la sesión.
+:::
 
 ## Verificación de versiones y extensiones espaciales
 
@@ -313,7 +326,7 @@ Para asegurar la correcta vinculación entre el motor relacional y las bibliotec
 export PGPASSWORD="${DOCKER_PGPASSWORD}"
 
 # 1. Versión del motor relacional PostgreSQL
-psql -h ${DOCKER_PGHOST} -p${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d${DOCKER_PGDATABASE} -x -P format=wrapped -P columns=90 -c "SELECT version();"
+psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -x -P format=wrapped -P columns=90 -c "SELECT version();"
 
 # 2. Versiones granulares de PostGIS y librerías geoespaciales
 query_versiones="
@@ -325,7 +338,7 @@ SELECT
     postgis_libxml_version() AS version_libxml;
 "
 
-psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -x -P format=wrapped -P columns=90 -c "${query_versiones}"
+psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -x -P format=wrapped -P columns=90 -c "${query_versiones}"
 
 
 # 3. Versión de PostGIS y dependencias geoespaciales
@@ -337,7 +350,7 @@ query_full="
 SELECT regexp_split_to_table(postgis_full_version(), ' ') AS componentes_postgis;
 "
 
-psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -c "${query_full}"
+psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -c "${query_full}"
 
 ```
 
@@ -411,6 +424,12 @@ graph TD
         end
 
     end
+    
+    style DB fill:#f8f9fa
+    style Ext fill:#e9ecef
+    style Meta fill:#e9ecef
+    style Base fill:#e9ecef
+    style Divpol fill:#e9ecef
 
     E1 --> M1
     E2 --> M1
@@ -513,7 +532,7 @@ ORDER BY schemaname, tablename;
 #psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -x -c "${query_indices}"
 
 # Usamos -P para evitar el desborde
-psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -P format=wrapped -P columns=90 -c "${query_indices}"
+psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -P format=wrapped -P columns=90 -c "${query_indices}"
 
 ```
 

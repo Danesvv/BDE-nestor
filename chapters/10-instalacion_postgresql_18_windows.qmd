@@ -1,34 +1,36 @@
 # Instalación y aprovisionamiento de PostgreSQL 18 y PostGIS 3.6 {#sec-instalacion-aprovisionamiento-postgresql-postgis}
 
-El despliegue de un sistema de gestión de bases de datos relacionales espaciales (RDBMS) de alto rendimiento requiere la articulación precisa entre el motor relacional PostgreSQL y la suite de extensiones PostGIS. Esta integración dota al motor de tipos de datos geométricos y geográficos alineados con los estándares de la Open Geospatial Consortium (OGC), funciones analíticas vectoriales, soporte ráster y motores topológicos.
+El despliegue de un sistema de gestión de bases de datos relacionales espaciales (SGBDE) de alto rendimiento requiere la articulación precisa entre el motor relacional PostgreSQL y la suite de extensiones PostGIS. Esta integración dota al motor de tipos de datos geométricos y geográficos alineados con los estándares del Open Geospatial Consortium (OGC), funciones analíticas vectoriales, soporte ráster y motores topológicos.
 
 A continuación, se detalla el procedimiento de instalación, configuración de parámetros del sistema anfitrión, aprovisionamiento de variables de entorno y validación funcional del clúster espacial.
 
 ## Arquitectura de directorios y parámetros del sistema anfitrión
 
-La instalación debe realizarse a partir del paquete binario oficial de 64 bits (`postgresql-18.x-x64`), el cuál se puede descargar de [https://www.postgresql.org/download/](https://www.postgresql.org/download/). Durante la ejecución del asistente, se deben definir las rutas base del software, el directorio segregado de almacenamiento de datos (`data`) y las credenciales maestras de administración.
+La instalación debe realizarse a partir del paquete binario oficial de 64 bits (`postgresql-18.x-x64`), el cual se puede descargar de [https://www.postgresql.org/download/](https://www.postgresql.org/download/). Durante la ejecución del asistente, se deben definir las rutas base del software, el directorio segregado de almacenamiento de datos (`data`) y las credenciales maestras de administración.
 
 La siguiente tabla resume los parámetros nominales de configuración aplicados en el despliegue del clúster:
 
 | Componente | Parámetro / Ruta sugerida | Descripción técnica |
 | :- | :-- | :--- |
-| **Installation directory** | `<ruta_instalacion>/` `PostgreSQL/18` | Directorio raíz para binarios, librerías compartidas y encabezados. |
-| **Data directory** | `<ruta_instalacion>/` `PostgreSQL/18/data` | Espacio físico exclusivo donde residen las tablas, índices y catálogos. |
+| **Installation directory** | `<ruta_instalacion>/ PostgreSQL/18` | Directorio raíz para binarios, librerías compartidas y encabezados. |
+| **Data directory** | `<ruta_instalacion>/ PostgreSQL/18/data` | Espacio físico exclusivo donde residen las tablas, índices y catálogos. |
 | **Database port** | `5432` | Puerto TCP estándar de escucha del servicio relacional. |
 | **Superuser** | `postgres` | Rol principal de administración de base de datos con privilegios absolutos. |
 | **Contraseña superusuario** | `geomatica2025` | Clave de acceso asignada al rol administrativo `postgres`. |
 | **Service account** | Cuenta de servicio de red estándar | Identidad del sistema anfitrión que administra el servicio del motor. |
 | **Database service** | `postgresql-x64-18` | Nombre del servicio registrado para gestión de arranque en segundo plano. |
-| **Command-line tools** | `<ruta_instalacion>/` `PostgreSQL/18/bin` | Ubicación de ejecutables y utilidades de terminal (`psql`, `pg_dump`, etc.). |
-| **pgAdmin 4** | `<ruta_instalacion>/` `PostgreSQL/18/pgAdmin 4` | Interfaz gráfica desacoplada para gestión, monitoreo y consultas. |
-| **StackBuilder** | `<ruta_instalacion>/` `PostgreSQL/18` | Gestor modular para descarga de extensiones y drivers complementarios. |
-| **Installation log** | `<ruta_temporal>/` `install-postgresql.log` | Registro detallado de eventos de compilación, copia y registro de llaves. |
+| **Command-line tools** | `<ruta_instalacion>/ PostgreSQL/18/bin` | Ubicación de ejecutables y utilidades de terminal (`psql`, `pg_dump`, etc.). |
+| **pgAdmin 4** | `<ruta_instalacion>/ PostgreSQL/18/pgAdmin 4` | Interfaz gráfica desacoplada para gestión, monitoreo y consultas. |
+| **StackBuilder** | `<ruta_instalacion>/ PostgreSQL/18` | Gestor modular para descarga de extensiones y drivers complementarios. |
+| **Installation log** | `<ruta_temporal>/ install-postgresql.log` | Registro detallado de eventos de compilación, copia y registro de llaves. |
+
+: Parámetros nominales de configuración aplicados en el despliegue del clúster local {#tbl-parametros-instalacion}
 
 ## Descripción y funcionalidad de herramientas del ecosistema
 
 El paquete distribuido integra herramientas administrativas de interfaz gráfica, clientes de línea de comandos, cargadores de datos espaciales y motores de cálculo geométrico esenciales para el análisis geoespacial avanzado.
 
-La tabla a continuación describe la utilidad técnica de cada herramienta instalada:
+La siguiente tabla describe la utilidad técnica de cada herramienta instalada:
 
 | Herramienta / Componente | Tipo | Funcionalidad principal en el flujo espacial |
 | :- | :- | :--- |
@@ -40,19 +42,21 @@ La tabla a continuación describe la utilidad técnica de cada herramienta insta
 | **`raster2pgsql`** | CLI (Cargador) | Herramienta para particionar, piramidar y cargar coberturas ráster multiespectrales en tablas relacionales. |
 | **GEOS** | Motor algorítmico | Librería computacional encargada de operaciones topológicas 2D (`ST_Intersects`, `ST_Buffer`, `ST_Intersection`). |
 | **PROJ** | Motor geodésico | Librería para transformaciones de coordenadas, proyección cartográfica y conversión de datum/SRID. |
-| **GDAL** | Motor de traducción | Capa de abstracción para lectura/escritura de formatos geoespaciales raster y vectoriales integrados al motor. |
+| **GDAL** | Motor de traducción | Capa de abstracción para lectura y escritura de formatos geoespaciales ráster y vectoriales integrados al motor. |
+
+: Utilidades y librerías del ecosistema PostgreSQL y PostGIS {#tbl-herramientas-ecosistema}
 
 ## Despliegue del motor relacional PostgreSQL
 
-El procedimiento de instalación se realiza mediante el ejecutable interactivo siguiendo una secuencia ordenada:
+El procedimiento de instalación se realiza mediante el instalador interactivo siguiendo una secuencia ordenada:
 
-1. Ejecutar el instalador con privilegios de administración en el sistema anfitrión.
+1. Ejecutar el instalador binario con privilegios administrativos en el sistema anfitrión.
 2. Indicar el directorio de instalación deseado (por ejemplo, `D:\Programs\PostgreSQL\18` o `<ruta_instalacion>/PostgreSQL/18`).
-3. Definir el directorio de datos (`data`), garantizando que se localice en un volumen con espacio suficiente para las capas geográficas del curso.
+3. Definir el directorio de datos (`data`), garantizando que se localice en un volumen con espacio suficiente para los catálogos y capas geográficas del curso.
 4. Establecer la contraseña obligatoria del superusuario `postgres` como `geomatica2025`.
-5. Conservar el puerto de conexión estándar `5432` y la configuración regional por defecto del clúster (*Locale* por defecto).
-6. Confirmar el resumen de instalación y proceder con la copia de componentes.
-7. Al finalizar la transferencia, mantener marcada la casilla para inicializar **StackBuilder** antes de cerrar el instalador.
+5. Conservar el puerto de conexión estándar `5432` y la configuración regional predeterminada del clúster (*Locale* por defecto).
+6. Confirmar el resumen de parámetros y proceder con la copia de componentes binarios.
+7. Al finalizar la transferencia, mantener marcada la casilla para inicializar **StackBuilder** antes de cerrar el asistente.
 
 ## Integración de la extensión espacial con StackBuilder
 
@@ -61,10 +65,11 @@ PostGIS debe incorporarse como una extensión binaria compatible con la versión
 1. En la ventana inicial de StackBuilder, seleccionar la instancia activa del clúster (puerto `5432`).
 2. Desplegar la categoría **Spatial Extensions**.
 3. Marcar la opción correspondiente al paquete espacial:
-   
-   ```text
+
+```text
    PostGIS 3.6 Bundle for PostgreSQL 18 (64 bit) v3.6.1
-   ```
+
+```
 
 4. Definir un directorio de descarga temporal en el almacenamiento local.
 5. Durante la instalación de los componentes espaciales, **no activar** la casilla orientada a crear automáticamente una base de datos espacial genérica (*Create spatial database*). La creación y configuración de la base de datos se ejecutará manualmente para controlar la parametrización de esquemas y extensiones.
@@ -77,27 +82,30 @@ Para ejecutar los binarios del gestor desde la terminal integrada de Visual Stud
 1. Abrir la configuración avanzada del sistema en el panel de control del sistema anfitrión y acceder a **Variables de entorno**.
 2. En la sección **Variables del sistema**, seleccionar la variable `Path` y presionar **Editar**.
 3. Agregar una nueva entrada con la ruta absoluta hacia los ejecutables:
+
+
 ```text
 <ruta_instalacion>/PostgreSQL/18/bin
 
 ```
 
-
 4. Guardar los cambios aplicados.
 5. Iniciar una nueva sesión de la terminal integrada de Visual Studio Code y verificar el reconocimiento del binario principal `psql`:
 
-```bash
+```{bash}
 #| label: setup-verify-psql
 #| eval: false
 psql --version
 
 ```
 
-Mas información sobre psql en @#sec-anexo-psql:
+Más información sobre `psql` en el @sec-anexo-psql:
 
-* Metacomandos de barra invertida frente a sentencias SQL @sec-anexo-metacomandos (o en @tbl-metacomandos-psql)
-* Parámetros de invocación y modificadores de línea de comandos @sec-anexo-parametros-cli (o en @tbl-banderas-cli)
-* Guía de inicio rápido para la administración con psql  @sec-anexo-inicio-psql
+* Metacomandos de barra invertida frente a sentencias SQL (@sec-anexo-metacomandos o en @tbl-metacomandos-psql).
+* Parámetros de invocación y modificadores de línea de comandos (@sec-anexo-parametros-cli o en @tbl-banderas-cli).
+* Guía de inicio rápido para la administración con psql (@sec-anexo-inicio-psql).
+
+
 
 ## Inicialización manual de la base de datos espacial
 
@@ -107,7 +115,7 @@ El aprovisionamiento manual permite aislar los catálogos y registrar únicament
 
 Abrir la terminal integrada de Visual Studio Code y conectarse a la instancia local utilizando el usuario administrativo:
 
-```bash
+```{bash}
 #| label: setup-connect-psql
 #| eval: false
 psql -U postgres
@@ -120,7 +128,7 @@ El sistema solicitará la contraseña configurada (`geomatica2025`).
 
 Crear el contenedor lógico destinado a las prácticas analíticas del curso:
 
-```sql
+```{sql}
 #| label: ddl-create-spatialdb
 #| eval: false
 CREATE DATABASE spatialdb;
@@ -129,7 +137,7 @@ CREATE DATABASE spatialdb;
 
 Conectarse a la base de datos recién creada:
 
-```sql
+```{sql}
 #| label: setup-switch-database
 #| eval: false
 \c spatialdb
@@ -140,7 +148,7 @@ Conectarse a la base de datos recién creada:
 
 Ejecutar las directivas DDL para activar el núcleo vectorial, el soporte ráster y el módulo topológico:
 
-```sql
+```{sql}
 #| label: ddl-enable-postgis-extensions
 #| eval: false
 CREATE EXTENSION postgis;
@@ -153,7 +161,7 @@ CREATE EXTENSION postgis_topology;
 
 Comprobar que PostGIS se encuentre vinculado correctamente con GEOS, PROJ y los componentes de estadísticas espaciales:
 
-```sql
+```{sql}
 #| label: audit-postgis-version
 #| eval: false
 SELECT postgis_version();
@@ -171,7 +179,7 @@ Resultado esperado en consola:
 
 Para confirmar la operatividad de los constructores geométricos basados en el estándar OGC SFS (*Simple Feature Access*), se ejecuta una consulta de prueba instanciando una geometría de tipo punto en dos dimensiones:
 
-```sql
+```{sql}
 #| label: query-test-point-geometry
 #| eval: false
 SELECT ST_AsText(ST_Point(10, 20));
@@ -204,3 +212,56 @@ Al culminar el procedimiento, el árbol de directorios en el sistema anfitrión 
 
 El clúster PostgreSQL 18 con PostGIS 3.6 queda completamente operativo, validado y disponible para la ingesta y manipulación de datos geográficos a través de la terminal integrada de Visual Studio Code.
 
+## Configuración de PostgreSQL local para acceso desde Docker {#sec-configurar-postgresql}
+
+Dado que el material y las prácticas del curso se compilan dentro de contenedores Docker (ver @sec-guia-a), la instancia de PostgreSQL alojada en el sistema anfitrión debe permitir conexiones entrantes originadas desde las interfaces virtuales de dichos contenedores. Por omisión, el motor restringe la escucha exclusivamente a la interfaz local (*loopback* o `127.0.0.1`), lo que bloquea las solicitudes provenientes del entorno contenedorizado.
+
+A continuación, se detalla el procedimiento para habilitar la escucha de red, autorizar la autenticación y aplicar las nuevas directivas operativas.
+
+### Habilitación de la escucha de red en postgresql.conf
+
+Localizar el archivo principal `postgresql.conf` dentro del directorio de datos del clúster local. Se debe asegurar la presencia y activación de la siguiente directiva:
+
+```ini
+listen_addresses = '*'
+
+```
+
+Esta directiva instruye al motor a enlazar los puertos de escucha a todas las interfaces de red disponibles en el equipo local, incluyendo los adaptadores puente (*bridge*) creados por Docker.
+
+### Control de acceso y autenticación en pg_hba.conf
+
+El parámetro anterior únicamente habilita la escucha en los puertos; la política de admisión debe autorizarse de forma explícita en el archivo de control de acceso `pg_hba.conf`. Se debe incorporar la siguiente directiva al final del archivo:
+
+```text
+host    all             all             0.0.0.0/0               scram-sha-256
+
+```
+
+Esta entrada autoriza conexiones TCP/IP (`host`) hacia cualquier base de datos (`all`) para todos los usuarios registrados (`all`), desde cualquier segmento IPv4 (`0.0.0.0/0`), exigiendo el protocolo criptográfico `scram-sha-256` para la validación de credenciales.
+
+### Reinicio del servicio en el motor de base de datos
+
+Tras modificar los archivos `postgresql.conf` y `pg_hba.conf`, es obligatorio reiniciar el proceso del motor para que cargue la nueva tabla de enrutamiento y autenticación en memoria.
+
+::: {.panel-tabset}
+
+#### Consola de comandos (agnóstico)
+
+Desde la terminal integrada de Visual Studio Code con permisos de administración, ejecutar el comando agnóstico de control del clúster indicando la ruta del directorio de datos:
+
+```{bash}
+#| label: setup-restart-pg-engine
+#| eval: false
+pg_ctl -D "<ruta_al_directorio_de_datos>" restart
+
+```
+
+#### Sistema anfitrión (Windows)
+
+1. Presione la combinación de teclas `Windows + R` para abrir el diálogo de ejecución.
+2. Escriba `services.msc` y presione `Enter`.
+3. En la lista de servicios del sistema, localice la entrada `postgresql-x64-18` (`PostgreSQL Server 18`).
+4. Haga clic derecho sobre el servicio y seleccione la opción **Restart** (Reiniciar).
+
+:::

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Bases de Datos Espaciales - 2&nbsp; Guía de instalación: VS Code y contenedores Docker</title>
+<title>Bases de datos espaciales - 2&nbsp; Guía de instalación</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -51,7 +51,7 @@ div.csl-indent {
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
 <link href="../chapters/10-instalacion_postgresql_18_windows.html" rel="next">
-<link href="../chapters/01-syllabus.html" rel="prev">
+<link href="../chapters/04-introduccion_instalacion_entornos.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -62,11 +62,11 @@ div.csl-indent {
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
-  "location": "sidebar",
+  "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
-  "panel-placement": "start",
-  "type": "textbox",
+  "panel-placement": "end",
+  "type": "overlay",
   "limit": 50,
   "keyboard-shortcut": [
     "f",
@@ -92,38 +92,53 @@ div.csl-indent {
 
 </head>
 
-<body class="nav-sidebar floating">
+<body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Bases de datos espaciales</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../slides/index.html"> 
+<span class="menu-text">Diapositivas</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/alexyshr/bde2026"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/05-guia_instalacion_vscode_docker.html">Instalación y entornos</a></li><li class="breadcrumb-item"><a href="../chapters/05-guia_instalacion_vscode_docker.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación: VS Code y contenedores Docker</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/04-introduccion_instalacion_entornos.html">Instalación y entornos</a></li><li class="breadcrumb-item"><a href="../chapters/05-guia_instalacion_vscode_docker.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación</span></a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
     </div>
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
-    <div class="sidebar-title mb-0 py-0">
-      <a href="../">Bases de Datos Espaciales</a> 
-    </div>
-      </div>
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Buscar"></div>
-        </div>
-        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -146,7 +161,7 @@ div.csl-indent {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a href="../chapters/04-introduccion_instalacion_entornos.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Instalación y entornos</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -156,7 +171,7 @@ div.csl-indent {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/05-guia_instalacion_vscode_docker.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación: VS Code y contenedores Docker</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -286,30 +301,27 @@ div.csl-indent {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Tabla de Contenidos</h2>
+    <h2 id="toc-title">Tabla de contenidos</h2>
    
   <ul>
   <li><a href="#introducción" id="toc-introducción" class="nav-link active" data-scroll-target="#introducción"><span class="header-section-number">2.1</span> Introducción</a></li>
   <li><a href="#instalación-de-visual-studio-code" id="toc-instalación-de-visual-studio-code" class="nav-link" data-scroll-target="#instalación-de-visual-studio-code"><span class="header-section-number">2.2</span> Instalación de Visual Studio Code</a></li>
   <li><a href="#instalación-del-orquestador-de-contenedores" id="toc-instalación-del-orquestador-de-contenedores" class="nav-link" data-scroll-target="#instalación-del-orquestador-de-contenedores"><span class="header-section-number">2.3</span> Instalación del orquestador de contenedores</a>
   <ul class="collapse">
-  <li><a href="#limpieza-del-entorno" id="toc-limpieza-del-entorno" class="nav-link" data-scroll-target="#limpieza-del-entorno">Limpieza del entorno</a></li>
-  <li><a href="#descarga-y-preparación-de-archivos" id="toc-descarga-y-preparación-de-archivos" class="nav-link" data-scroll-target="#descarga-y-preparación-de-archivos">Descarga y preparación de archivos</a></li>
+  <li><a href="#limpieza-del-entorno-de-virtualización" id="toc-limpieza-del-entorno-de-virtualización" class="nav-link" data-scroll-target="#limpieza-del-entorno-de-virtualización">Limpieza del entorno de virtualización</a></li>
+  <li><a href="#descarga-y-preparación-de-recursos" id="toc-descarga-y-preparación-de-recursos" class="nav-link" data-scroll-target="#descarga-y-preparación-de-recursos">Descarga y preparación de recursos</a></li>
   </ul></li>
-  <li><a href="#instalación-de-las-imágenes" id="toc-instalación-de-las-imágenes" class="nav-link" data-scroll-target="#instalación-de-las-imágenes"><span class="header-section-number">2.4</span> Instalación de las imágenes</a></li>
-  <li><a href="#inicio-de-contenedores" id="toc-inicio-de-contenedores" class="nav-link" data-scroll-target="#inicio-de-contenedores"><span class="header-section-number">2.5</span> Inicio de contenedores</a></li>
-  <li><a href="#vinculación-de-contenedores-en-la-terminal-integrada" id="toc-vinculación-de-contenedores-en-la-terminal-integrada" class="nav-link" data-scroll-target="#vinculación-de-contenedores-en-la-terminal-integrada"><span class="header-section-number">2.6</span> Vinculación de contenedores en la terminal integrada</a></li>
-  <li><a href="#detención-de-contenedores" id="toc-detención-de-contenedores" class="nav-link" data-scroll-target="#detención-de-contenedores"><span class="header-section-number">2.7</span> Detención de contenedores</a></li>
-  <li><a href="#catálogo-de-contenedores-instalados" id="toc-catálogo-de-contenedores-instalados" class="nav-link" data-scroll-target="#catálogo-de-contenedores-instalados"><span class="header-section-number">2.8</span> Catálogo de contenedores instalados</a></li>
+  <li><a href="#despliegue-operativo-y-administración-de-contenedores" id="toc-despliegue-operativo-y-administración-de-contenedores" class="nav-link" data-scroll-target="#despliegue-operativo-y-administración-de-contenedores"><span class="header-section-number">2.4</span> Despliegue operativo y administración de contenedores</a></li>
+  <li><a href="#instalación-de-herramientas-cliente-complementarias" id="toc-instalación-de-herramientas-cliente-complementarias" class="nav-link" data-scroll-target="#instalación-de-herramientas-cliente-complementarias"><span class="header-section-number">2.5</span> Instalación de herramientas cliente complementarias</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/05-guia_instalacion_vscode_docker.html">Instalación y entornos</a></li><li class="breadcrumb-item"><a href="../chapters/05-guia_instalacion_vscode_docker.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación: VS Code y contenedores Docker</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/04-introduccion_instalacion_entornos.html">Instalación y entornos</a></li><li class="breadcrumb-item"><a href="../chapters/05-guia_instalacion_vscode_docker.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span id="sec-guia-a" class="quarto-section-identifier"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación: VS Code y contenedores Docker</span></span></h1>
+<h1 class="title"><span id="sec-guia-a" class="quarto-section-identifier"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación</span></span></h1>
 </div>
 
 
@@ -326,29 +338,72 @@ div.csl-indent {
 </header>
 
 
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Diapositivas del módulo
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Las diapositivas interactivas correspondientes a la visión de conjunto, arquitectura de software y lineamientos de esta sección se encuentran disponibles en: <a href="../slides/01-instalacion_entornos.html" target="_blank">Presentación interactiva: Instalación y entornos</a>.</p>
+</div>
+</div>
 <section id="introducción" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="introducción"><span class="header-section-number">2.1</span> Introducción</h2>
-<p>Para garantizar una estructura preconfigurada y estándar para el curso, se utilizará la orquestación de contenedores con Docker <span class="citation" data-cites="docker2025">(<a href="99-referencias.html#ref-docker2025" role="doc-biblioref">Inc., 2025</a>)</span>. Las imágenes a instalar contienen, de forma aislada y coordinada, un motor de procesamiento habilitado con los lenguajes Python, R y Julia, así como el servidor de datos PostgreSQL y PostGIS con una base de datos pedagógica preconfigurada.</p>
-<p>Esta guía establece un entorno de <strong>reproducibilidad científica</strong>. Se implementa una arquitectura híbrida: <strong>Visual Studio Code</strong> como editor en el equipo local <span class="citation" data-cites="vscode2026">(<a href="99-referencias.html#ref-vscode2026" role="doc-biblioref">Microsoft Corporation, 2026</a>)</span> y <strong>Docker</strong> como laboratorio de ejecución <span class="citation" data-cites="docker2025">(<a href="99-referencias.html#ref-docker2025" role="doc-biblioref">Inc., 2025</a>)</span>. Esta aproximación garantiza la operación bajo versiones de software homologadas, eliminando discrepancias de entorno.</p>
-<p>El documento detalla el procedimiento de instalación de las herramientas mediante un método <strong>offline</strong>, ideal para infraestructuras con conectividad limitada.</p>
+<p>En esta guía se detallan los procedimientos requeridos para:</p>
+<ul>
+<li>Instalar y configurar Visual Studio Code.</li>
+<li>Instalar y parametrizar Docker Desktop.</li>
+<li>Desplegar y orquestar los contenedores del curso.</li>
+</ul>
+<p>Para garantizar un entorno preconfigurado y homogéneo, se utiliza la orquestación de contenedores con Docker <span class="citation" data-cites="docker2025">(<a href="99-referencias.html#ref-docker2025" role="doc-biblioref">Inc., 2025</a>)</span>. Las imágenes a instalar aprovisionan, de forma aislada y coordinada, un motor analítico habilitado con los lenguajes Python, R y Julia, así como el motor relacional PostgreSQL y la extensión espacial PostGIS con una base de datos pedagógica estructurada.</p>
+<p>Esta configuración establece un marco formal de <strong>reproducibilidad científica</strong> sustentado en una arquitectura híbrida: <strong>Visual Studio Code</strong> como entorno de desarrollo en el equipo local <span class="citation" data-cites="vscode2026">(<a href="99-referencias.html#ref-vscode2026" role="doc-biblioref">Microsoft Corporation, 2026</a>)</span> y <strong>Docker</strong> como laboratorio de ejecución aislado <span class="citation" data-cites="docker2025">(<a href="99-referencias.html#ref-docker2025" role="doc-biblioref">Inc., 2025</a>)</span>. Dicha aproximación garantiza la compatibilidad de versiones de software y elimina discrepancias asociadas a la plataforma operativa del sistema anfitrión.</p>
+<p>El procedimiento detalla la instalación y carga de componentes mediante un flujo desacoplado de la red (<em>offline</em>), diseñado para operar de forma confiable en infraestructuras con restricciones de conectividad.</p>
 </section>
 <section id="instalación-de-visual-studio-code" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="instalación-de-visual-studio-code"><span class="header-section-number">2.2</span> Instalación de Visual Studio Code</h2>
-<p>En el <a href="85-vscode.html" class="quarto-xref"><span>Apéndice D</span></a> se documenta el proceso de instalación y las principales extensiones requeridas en el entorno de desarrollo.</p>
+<p>En el <a href="85-vscode.html" class="quarto-xref"><span>Apéndice D</span></a> se documenta el proceso de instalación del entorno y la parametrización de las principales extensiones requeridas para el flujo analítico.</p>
 </section>
 <section id="instalación-del-orquestador-de-contenedores" class="level2" data-number="2.3">
 <h2 data-number="2.3" class="anchored" data-anchor-id="instalación-del-orquestador-de-contenedores"><span class="header-section-number">2.3</span> Instalación del orquestador de contenedores</h2>
-<p>En el <a href="83-docker.html" class="quarto-xref"><span>Apéndice B</span></a> se expone la guía de despliegue y el proceso de configuración previo descrito en el <a href="83-docker.html#sec-preparacion-docker" class="quarto-xref"><span>Sección B.2</span></a> para garantizar un funcionamiento óptimo.</p>
-<blockquote class="blockquote">
-<p>Importante: Antes de proceder con la instalación, es imperativo ejecutar el procedimiento descrito en el <a href="83-docker.html#sec-preparacion-docker" class="quarto-xref"><span>Sección B.2</span></a>.</p>
-</blockquote>
-<section id="limpieza-del-entorno" class="level3">
-<h3 class="anchored" data-anchor-id="limpieza-del-entorno">Limpieza del entorno</h3>
-<p>Consulte la información de purga en el <a href="83-docker.html#sec-limpieza-entorno" class="quarto-xref"><span>Sección B.13</span></a>.</p>
+<p>El repositorio central del curso exige la presencia operativa de Docker Desktop y de dos contenedores preconfigurados. Estos servicios integran el motor PostgreSQL 18 con PostGIS 3.6, la base de datos espacial inicial para los talleres analíticos y el ecosistema de procesamiento políglota (Python, R y Julia).</p>
+<p>En el <a href="83-docker.html" class="quarto-xref"><span>Apéndice B</span></a> se expone la guía de instalación de Docker Desktop, complementada por el procedimiento de optimización inicial detallado en la <a href="83-docker.html#sec-preparacion-docker" class="quarto-xref"><span>Sección B.2</span></a> para asegurar un rendimiento óptimo del subsistema de almacenamiento.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Optimización previa de recursos
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Antes de importar las imágenes del curso, es mandatorio ejecutar la rutina de ajuste descrita en la <a href="83-docker.html#sec-preparacion-docker" class="quarto-xref"><span>Sección B.2</span></a> para evitar la degradación de memoria y espacio en disco del sistema anfitrión.</p>
+</div>
+</div>
+<section id="limpieza-del-entorno-de-virtualización" class="level3">
+<h3 class="anchored" data-anchor-id="limpieza-del-entorno-de-virtualización">Limpieza del entorno de virtualización</h3>
+<p>Si existen despliegues previos de Docker Desktop y se requiere iniciar el aprovisionamiento sobre un estado limpio, consulte el protocolo de purga técnica en la <a href="83-docker.html#sec-limpieza-entorno" class="quarto-xref"><span>Sección B.13</span></a>.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Advertencia sobre remoción de volúmenes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>El procedimiento documentado en la <a href="83-docker.html#sec-limpieza-entorno" class="quarto-xref"><span>Sección B.13</span></a> elimina la totalidad de contenedores, imágenes y volúmenes existentes en el motor local. Se debe respaldar cualquier recurso previo ajeno al curso antes de proceder.</p>
+</div>
+</div>
 </section>
-<section id="descarga-y-preparación-de-archivos" class="level3">
-<h3 class="anchored" data-anchor-id="descarga-y-preparación-de-archivos">Descarga y preparación de archivos</h3>
-<p>El código fuente, las guías de laboratorio y los archivos de configuración del curso se encuentran alojados en un repositorio privado en GitHub. El acceso a los recursos y el flujo de trabajo académico requieren la vinculación de una cuenta individual en dicha plataforma. Consulte el protocolo de autenticación, clonación y obtención de recursos en el <a href="83-docker.html#sec-descarga-tar-yml" class="quarto-xref"><span>Sección B.3</span></a>.</p>
+<section id="descarga-y-preparación-de-recursos" class="level3">
+<h3 class="anchored" data-anchor-id="descarga-y-preparación-de-recursos">Descarga y preparación de recursos</h3>
+<p>El código fuente, las guías de laboratorio y los archivos de configuración residen en un repositorio privado en GitHub. La sincronización y entrega formal de actividades requiere la autenticación individual en la plataforma. Consulte el protocolo de clonación y obtención de artefactos en la <a href="83-docker.html#sec-descarga-tar-yml" class="quarto-xref"><span>Sección B.3</span></a>.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -359,30 +414,25 @@ Requisito de cuenta en GitHub
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Es indispensable disponer de una cuenta activa en GitHub. Esta cuenta es requerida para habilitar los permisos de lectura sobre el repositorio privado del curso, clonar las plantillas de trabajo y gestionar la entrega formal de los talleres asignados.</p>
+<p>Es indispensable disponer de una cuenta activa en GitHub para habilitar los permisos de acceso al repositorio privado, clonar las plantillas de trabajo y gestionar la trazabilidad de los talleres evaluativos.</p>
 </div>
 </div>
 </section>
 </section>
-<section id="instalación-de-las-imágenes" class="level2" data-number="2.4">
-<h2 data-number="2.4" class="anchored" data-anchor-id="instalación-de-las-imágenes"><span class="header-section-number">2.4</span> Instalación de las imágenes</h2>
-<p>Consulte el procedimiento de carga binaria en el <a href="83-docker.html#sec-cargar-docker-tar" class="quarto-xref"><span>Sección B.4</span></a>.</p>
+<section id="despliegue-operativo-y-administración-de-contenedores" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="despliegue-operativo-y-administración-de-contenedores"><span class="header-section-number">2.4</span> Despliegue operativo y administración de contenedores</h2>
+<p>La puesta en marcha de los servicios orquestados se desarrolla mediante los siguientes procedimientos modulares:</p>
+<ul>
+<li><strong>Carga de imágenes binarias:</strong> Para importar los paquetes precompilados sin depender de descargas remotas masivas, consulte la <a href="83-docker.html#sec-cargar-docker-tar" class="quarto-xref"><span>Sección B.4</span></a>.</li>
+<li><strong>Inicialización de servicios:</strong> Las instrucciones de arranque en segundo plano mediante <code>docker compose</code> se detallan en la <a href="83-docker.html#sec-arrancar-contenedores" class="quarto-xref"><span>Sección B.6.1</span></a>.</li>
+<li><strong>Acoplamiento en la terminal integrada:</strong> El procedimiento de vinculación de la sesión de trabajo interactiva desde Visual Studio Code hacia el contenedor analítico se documenta en la <a href="83-docker.html#sec-cargar-contenedores-vscode" class="quarto-xref"><span>Sección B.8</span></a>.</li>
+<li><strong>Detención y apagado seguro:</strong> Las directivas para suspender o desmontar los servicios sin comprometer la persistencia de datos se exponen en la <a href="83-docker.html#sec-detener-contenedores" class="quarto-xref"><span>Sección B.6.2</span></a>.</li>
+<li><strong>Catálogo de servicios activos:</strong> El inventario de imágenes, puertos y contenedores desplegados se encuentra sistematizado en la <a href="83-docker.html#sec-contenedores-instalados" class="quarto-xref"><span>Sección B.5</span></a>.</li>
+</ul>
 </section>
-<section id="inicio-de-contenedores" class="level2" data-number="2.5">
-<h2 data-number="2.5" class="anchored" data-anchor-id="inicio-de-contenedores"><span class="header-section-number">2.5</span> Inicio de contenedores</h2>
-<p>Consulte las instrucciones de arranque en el <a href="83-docker.html#sec-arrancar-contenedores" class="quarto-xref"><span>Sección B.6.1</span></a>.</p>
-</section>
-<section id="vinculación-de-contenedores-en-la-terminal-integrada" class="level2" data-number="2.6">
-<h2 data-number="2.6" class="anchored" data-anchor-id="vinculación-de-contenedores-en-la-terminal-integrada"><span class="header-section-number">2.6</span> Vinculación de contenedores en la terminal integrada</h2>
-<p>Consulte los pasos de acoplamiento interactivo en el <a href="83-docker.html#sec-cargar-contenedores-vscode" class="quarto-xref"><span>Sección B.8</span></a>.</p>
-</section>
-<section id="detención-de-contenedores" class="level2" data-number="2.7">
-<h2 data-number="2.7" class="anchored" data-anchor-id="detención-de-contenedores"><span class="header-section-number">2.7</span> Detención de contenedores</h2>
-<p>Consulte las directivas de apagado seguro en el <a href="83-docker.html#sec-detener-contenedores" class="quarto-xref"><span>Sección B.6.2</span></a>.</p>
-</section>
-<section id="catálogo-de-contenedores-instalados" class="level2" data-number="2.8">
-<h2 data-number="2.8" class="anchored" data-anchor-id="catálogo-de-contenedores-instalados"><span class="header-section-number">2.8</span> Catálogo de contenedores instalados</h2>
-<p>Consulte el inventario de servicios aprovisionados en el <a href="83-docker.html#sec-contenedores-instalados" class="quarto-xref"><span>Sección B.5</span></a>.</p>
+<section id="instalación-de-herramientas-cliente-complementarias" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="instalación-de-herramientas-cliente-complementarias"><span class="header-section-number">2.5</span> Instalación de herramientas cliente complementarias</h2>
+<p>Una vez inicializado el contenedor analítico y abierta la sesión en la terminal integrada de Visual Studio Code, se deben ejecutar las directivas de aprovisionamiento descritas en la <a href="87-linux_ubuntu.html#sec-anexo-linux-instalacion-psql" class="quarto-xref"><span>Sección F.1</span></a> y la <a href="87-linux_ubuntu.html#sec-anexo-linux-instalacion-psql" class="quarto-xref"><span>Sección F.1</span></a>. Esto garantiza la disponibilidad del cliente nativo <code>psql</code> correspondiente a la versión mayor del clúster PostgreSQL (v18), así como las utilidades de renderizado topológico y grafos (Graphviz).</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list" style="display: none">
@@ -785,8 +835,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../chapters/01-syllabus.html" class="pagination-link" aria-label="Syllabus: bases de datos espaciales">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Syllabus: bases de datos espaciales</span></span>
+      <a href="../chapters/04-introduccion_instalacion_entornos.html" class="pagination-link" aria-label="Instalación y entornos">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Instalación y entornos</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

@@ -1,0 +1,25 @@
+---
+title: "Catálogo de presentaciones"
+subtitle: "Bases de datos espaciales"
+format:
+  html:
+    toc: true
+---
+
+## Diapositivas del curso
+
+En este apartado se centralizan las presentaciones interactivas utilizadas durante las sesiones teóricas y metodológicas del curso. Cada presentación cuenta con controles de pantalla completa (tecla **F**), modo de vista del moderador (tecla **S**), herramientas de pizarra digital y enlaces de retorno hacia los capítulos del libro.
+
+| Identificador | Sesión / módulo temático | Formato interactivo | Capítulo asociado |
+| :---: | :--- | :---: | :--- |
+| **00** | Introducción general y lineamientos del curso | [Ver diapositivas](00-introduccion.html){target="_blank"} | [Syllabus](../chapters/01-syllabus.html) |
+| **01** | Infraestructura, instalación y entornos | [Ver diapositivas](01-instalacion_entornos.html){target="_blank"} | [Instalación y entornos](../chapters/04-introduccion_instalacion_entornos.html) |
+
+: Índice general de presentaciones RevealJS {#tbl-catalogo-slides}
+
+::: {.callout-note title="Atajos de navegación en RevealJS"}
+* **F:** Entrar o salir del modo pantalla completa.
+* **O:** Modo vista previa (*Overview*) de todas las diapositivas.
+* **C:** Activar o desactivar la pizarra digital (*Chalkboard*).
+* **B:** Pausar la presentación (pantalla en negro).
+:::

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Bases de Datos Espaciales - 3&nbsp; Instalación y aprovisionamiento de PostgreSQL 18 y PostGIS 3.6</title>
+<title>Bases de datos espaciales - 3&nbsp; Instalación y aprovisionamiento de PostgreSQL 18 y PostGIS 3.6</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -76,11 +76,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
-  "location": "sidebar",
+  "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
-  "panel-placement": "start",
-  "type": "textbox",
+  "panel-placement": "end",
+  "type": "overlay",
   "limit": 50,
   "keyboard-shortcut": [
     "f",
@@ -106,38 +106,53 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </head>
 
-<body class="nav-sidebar floating">
+<body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Bases de datos espaciales</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../slides/index.html"> 
+<span class="menu-text">Diapositivas</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/alexyshr/bde2026"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/05-guia_instalacion_vscode_docker.html">Instalación y entornos</a></li><li class="breadcrumb-item"><a href="../chapters/10-instalacion_postgresql_18_windows.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Instalación y aprovisionamiento de PostgreSQL 18 y PostGIS 3.6</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/04-introduccion_instalacion_entornos.html">Instalación y entornos</a></li><li class="breadcrumb-item"><a href="../chapters/10-instalacion_postgresql_18_windows.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Instalación y aprovisionamiento de PostgreSQL 18 y PostGIS 3.6</span></a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
     </div>
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
-    <div class="sidebar-title mb-0 py-0">
-      <a href="../">Bases de Datos Espaciales</a> 
-    </div>
-      </div>
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Buscar"></div>
-        </div>
-        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -160,7 +175,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a href="../chapters/04-introduccion_instalacion_entornos.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Instalación y entornos</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -170,7 +185,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/05-guia_instalacion_vscode_docker.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación: VS Code y contenedores Docker</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -300,7 +315,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Tabla de Contenidos</h2>
+    <h2 id="toc-title">Tabla de contenidos</h2>
    
   <ul>
   <li><a href="#arquitectura-de-directorios-y-parámetros-del-sistema-anfitrión" id="toc-arquitectura-de-directorios-y-parámetros-del-sistema-anfitrión" class="nav-link active" data-scroll-target="#arquitectura-de-directorios-y-parámetros-del-sistema-anfitrión"><span class="header-section-number">3.1</span> Arquitectura de directorios y parámetros del sistema anfitrión</a></li>
@@ -317,13 +332,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#verificación-analítica-del-módulo-espacial" id="toc-verificación-analítica-del-módulo-espacial" class="nav-link" data-scroll-target="#verificación-analítica-del-módulo-espacial"><span class="header-section-number">3.7</span> Verificación analítica del módulo espacial</a></li>
   <li><a href="#resumen-de-la-estructura-desplegada" id="toc-resumen-de-la-estructura-desplegada" class="nav-link" data-scroll-target="#resumen-de-la-estructura-desplegada"><span class="header-section-number">3.8</span> Resumen de la estructura desplegada</a></li>
+  <li><a href="#sec-configurar-postgresql" id="toc-sec-configurar-postgresql" class="nav-link" data-scroll-target="#sec-configurar-postgresql"><span class="header-section-number">3.9</span> Configuración de PostgreSQL local para acceso desde Docker</a>
+  <ul class="collapse">
+  <li><a href="#habilitación-de-la-escucha-de-red-en-postgresql.conf" id="toc-habilitación-de-la-escucha-de-red-en-postgresql.conf" class="nav-link" data-scroll-target="#habilitación-de-la-escucha-de-red-en-postgresql.conf">Habilitación de la escucha de red en postgresql.conf</a></li>
+  <li><a href="#control-de-acceso-y-autenticación-en-pg_hba.conf" id="toc-control-de-acceso-y-autenticación-en-pg_hba.conf" class="nav-link" data-scroll-target="#control-de-acceso-y-autenticación-en-pg_hba.conf">Control de acceso y autenticación en pg_hba.conf</a></li>
+  <li><a href="#reinicio-del-servicio-en-el-motor-de-base-de-datos" id="toc-reinicio-del-servicio-en-el-motor-de-base-de-datos" class="nav-link" data-scroll-target="#reinicio-del-servicio-en-el-motor-de-base-de-datos">Reinicio del servicio en el motor de base de datos</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/05-guia_instalacion_vscode_docker.html">Instalación y entornos</a></li><li class="breadcrumb-item"><a href="../chapters/10-instalacion_postgresql_18_windows.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Instalación y aprovisionamiento de PostgreSQL 18 y PostGIS 3.6</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/04-introduccion_instalacion_entornos.html">Instalación y entornos</a></li><li class="breadcrumb-item"><a href="../chapters/10-instalacion_postgresql_18_windows.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Instalación y aprovisionamiento de PostgreSQL 18 y PostGIS 3.6</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span id="sec-instalacion-aprovisionamiento-postgresql-postgis" class="quarto-section-identifier"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Instalación y aprovisionamiento de PostgreSQL 18 y PostGIS 3.6</span></span></h1>
 </div>
@@ -342,12 +363,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>El despliegue de un sistema de gestión de bases de datos relacionales espaciales (RDBMS) de alto rendimiento requiere la articulación precisa entre el motor relacional PostgreSQL y la suite de extensiones PostGIS. Esta integración dota al motor de tipos de datos geométricos y geográficos alineados con los estándares de la Open Geospatial Consortium (OGC), funciones analíticas vectoriales, soporte ráster y motores topológicos.</p>
+<p>El despliegue de un sistema de gestión de bases de datos relacionales espaciales (SGBDE) de alto rendimiento requiere la articulación precisa entre el motor relacional PostgreSQL y la suite de extensiones PostGIS. Esta integración dota al motor de tipos de datos geométricos y geográficos alineados con los estándares del Open Geospatial Consortium (OGC), funciones analíticas vectoriales, soporte ráster y motores topológicos.</p>
 <p>A continuación, se detalla el procedimiento de instalación, configuración de parámetros del sistema anfitrión, aprovisionamiento de variables de entorno y validación funcional del clúster espacial.</p>
 <section id="arquitectura-de-directorios-y-parámetros-del-sistema-anfitrión" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="arquitectura-de-directorios-y-parámetros-del-sistema-anfitrión"><span class="header-section-number">3.1</span> Arquitectura de directorios y parámetros del sistema anfitrión</h2>
-<p>La instalación debe realizarse a partir del paquete binario oficial de 64 bits (<code>postgresql-18.x-x64</code>), el cuál se puede descargar de <a href="https://www.postgresql.org/download/">https://www.postgresql.org/download/</a>. Durante la ejecución del asistente, se deben definir las rutas base del software, el directorio segregado de almacenamiento de datos (<code>data</code>) y las credenciales maestras de administración.</p>
+<p>La instalación debe realizarse a partir del paquete binario oficial de 64 bits (<code>postgresql-18.x-x64</code>), el cual se puede descargar de <a href="https://www.postgresql.org/download/">https://www.postgresql.org/download/</a>. Durante la ejecución del asistente, se deben definir las rutas base del software, el directorio segregado de almacenamiento de datos (<code>data</code>) y las credenciales maestras de administración.</p>
 <p>La siguiente tabla resume los parámetros nominales de configuración aplicados en el despliegue del clúster:</p>
+<div id="tbl-parametros-instalacion" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-parametros-instalacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;3.1: Parámetros nominales de configuración aplicados en el despliegue del clúster local
+</figcaption>
+<div aria-describedby="tbl-parametros-instalacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="table">
 <colgroup>
 <col style="width: 22%">
@@ -364,12 +391,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td style="text-align: left;"><strong>Installation directory</strong></td>
-<td style="text-align: left;"><code>&lt;ruta_instalacion&gt;/</code> <code>PostgreSQL/18</code></td>
+<td style="text-align: left;"><code>&lt;ruta_instalacion&gt;/ PostgreSQL/18</code></td>
 <td style="text-align: left;">Directorio raíz para binarios, librerías compartidas y encabezados.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><strong>Data directory</strong></td>
-<td style="text-align: left;"><code>&lt;ruta_instalacion&gt;/</code> <code>PostgreSQL/18/data</code></td>
+<td style="text-align: left;"><code>&lt;ruta_instalacion&gt;/ PostgreSQL/18/data</code></td>
 <td style="text-align: left;">Espacio físico exclusivo donde residen las tablas, índices y catálogos.</td>
 </tr>
 <tr class="odd">
@@ -399,31 +426,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="even">
 <td style="text-align: left;"><strong>Command-line tools</strong></td>
-<td style="text-align: left;"><code>&lt;ruta_instalacion&gt;/</code> <code>PostgreSQL/18/bin</code></td>
+<td style="text-align: left;"><code>&lt;ruta_instalacion&gt;/ PostgreSQL/18/bin</code></td>
 <td style="text-align: left;">Ubicación de ejecutables y utilidades de terminal (<code>psql</code>, <code>pg_dump</code>, etc.).</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><strong>pgAdmin 4</strong></td>
-<td style="text-align: left;"><code>&lt;ruta_instalacion&gt;/</code> <code>PostgreSQL/18/pgAdmin 4</code></td>
+<td style="text-align: left;"><code>&lt;ruta_instalacion&gt;/ PostgreSQL/18/pgAdmin 4</code></td>
 <td style="text-align: left;">Interfaz gráfica desacoplada para gestión, monitoreo y consultas.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><strong>StackBuilder</strong></td>
-<td style="text-align: left;"><code>&lt;ruta_instalacion&gt;/</code> <code>PostgreSQL/18</code></td>
+<td style="text-align: left;"><code>&lt;ruta_instalacion&gt;/ PostgreSQL/18</code></td>
 <td style="text-align: left;">Gestor modular para descarga de extensiones y drivers complementarios.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><strong>Installation log</strong></td>
-<td style="text-align: left;"><code>&lt;ruta_temporal&gt;/</code> <code>install-postgresql.log</code></td>
+<td style="text-align: left;"><code>&lt;ruta_temporal&gt;/ install-postgresql.log</code></td>
 <td style="text-align: left;">Registro detallado de eventos de compilación, copia y registro de llaves.</td>
 </tr>
 </tbody>
 </table>
+</div>
+</figure>
+</div>
 </section>
 <section id="descripción-y-funcionalidad-de-herramientas-del-ecosistema" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="descripción-y-funcionalidad-de-herramientas-del-ecosistema"><span class="header-section-number">3.2</span> Descripción y funcionalidad de herramientas del ecosistema</h2>
 <p>El paquete distribuido integra herramientas administrativas de interfaz gráfica, clientes de línea de comandos, cargadores de datos espaciales y motores de cálculo geométrico esenciales para el análisis geoespacial avanzado.</p>
-<p>La tabla a continuación describe la utilidad técnica de cada herramienta instalada:</p>
+<p>La siguiente tabla describe la utilidad técnica de cada herramienta instalada:</p>
+<div id="tbl-herramientas-ecosistema" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-herramientas-ecosistema-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;3.2: Utilidades y librerías del ecosistema PostgreSQL y PostGIS
+</figcaption>
+<div aria-describedby="tbl-herramientas-ecosistema-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="table">
 <colgroup>
 <col style="width: 25%">
@@ -481,35 +517,41 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="odd">
 <td style="text-align: left;"><strong>GDAL</strong></td>
 <td style="text-align: left;">Motor de traducción</td>
-<td style="text-align: left;">Capa de abstracción para lectura/escritura de formatos geoespaciales raster y vectoriales integrados al motor.</td>
+<td style="text-align: left;">Capa de abstracción para lectura y escritura de formatos geoespaciales ráster y vectoriales integrados al motor.</td>
 </tr>
 </tbody>
 </table>
+</div>
+</figure>
+</div>
 </section>
 <section id="despliegue-del-motor-relacional-postgresql" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="despliegue-del-motor-relacional-postgresql"><span class="header-section-number">3.3</span> Despliegue del motor relacional PostgreSQL</h2>
-<p>El procedimiento de instalación se realiza mediante el ejecutable interactivo siguiendo una secuencia ordenada:</p>
+<p>El procedimiento de instalación se realiza mediante el instalador interactivo siguiendo una secuencia ordenada:</p>
 <ol type="1">
-<li>Ejecutar el instalador con privilegios de administración en el sistema anfitrión.</li>
+<li>Ejecutar el instalador binario con privilegios administrativos en el sistema anfitrión.</li>
 <li>Indicar el directorio de instalación deseado (por ejemplo, <code>D:\Programs\PostgreSQL\18</code> o <code>&lt;ruta_instalacion&gt;/PostgreSQL/18</code>).</li>
-<li>Definir el directorio de datos (<code>data</code>), garantizando que se localice en un volumen con espacio suficiente para las capas geográficas del curso.</li>
+<li>Definir el directorio de datos (<code>data</code>), garantizando que se localice en un volumen con espacio suficiente para los catálogos y capas geográficas del curso.</li>
 <li>Establecer la contraseña obligatoria del superusuario <code>postgres</code> como <code>geomatica2025</code>.</li>
-<li>Conservar el puerto de conexión estándar <code>5432</code> y la configuración regional por defecto del clúster (<em>Locale</em> por defecto).</li>
-<li>Confirmar el resumen de instalación y proceder con la copia de componentes.</li>
-<li>Al finalizar la transferencia, mantener marcada la casilla para inicializar <strong>StackBuilder</strong> antes de cerrar el instalador.</li>
+<li>Conservar el puerto de conexión estándar <code>5432</code> y la configuración regional predeterminada del clúster (<em>Locale</em> por defecto).</li>
+<li>Confirmar el resumen de parámetros y proceder con la copia de componentes binarios.</li>
+<li>Al finalizar la transferencia, mantener marcada la casilla para inicializar <strong>StackBuilder</strong> antes de cerrar el asistente.</li>
 </ol>
 </section>
 <section id="integración-de-la-extensión-espacial-con-stackbuilder" class="level2" data-number="3.4">
 <h2 data-number="3.4" class="anchored" data-anchor-id="integración-de-la-extensión-espacial-con-stackbuilder"><span class="header-section-number">3.4</span> Integración de la extensión espacial con StackBuilder</h2>
 <p>PostGIS debe incorporarse como una extensión binaria compatible con la versión mayor del motor:</p>
 <ol type="1">
-<li><p>En la ventana inicial de StackBuilder, seleccionar la instancia activa del clúster (puerto <code>5432</code>).</p></li>
-<li><p>Desplegar la categoría <strong>Spatial Extensions</strong>.</p></li>
-<li><p>Marcar la opción correspondiente al paquete espacial:</p>
-<pre class="text"><code>PostGIS 3.6 Bundle for PostgreSQL 18 (64 bit) v3.6.1</code></pre></li>
-<li><p>Definir un directorio de descarga temporal en el almacenamiento local.</p></li>
-<li><p>Durante la instalación de los componentes espaciales, <strong>no activar</strong> la casilla orientada a crear automáticamente una base de datos espacial genérica (<em>Create spatial database</em>). La creación y configuración de la base de datos se ejecutará manualmente para controlar la parametrización de esquemas y extensiones.</p></li>
-<li><p>Aceptar la integración de las librerías dependientes (GEOS, PROJ, GDAL y controladores ráster asociados) hasta completar el asistente.</p></li>
+<li>En la ventana inicial de StackBuilder, seleccionar la instancia activa del clúster (puerto <code>5432</code>).</li>
+<li>Desplegar la categoría <strong>Spatial Extensions</strong>.</li>
+<li>Marcar la opción correspondiente al paquete espacial:</li>
+</ol>
+<pre class="text"><code>   PostGIS 3.6 Bundle for PostgreSQL 18 (64 bit) v3.6.1
+</code></pre>
+<ol start="4" type="1">
+<li>Definir un directorio de descarga temporal en el almacenamiento local.</li>
+<li>Durante la instalación de los componentes espaciales, <strong>no activar</strong> la casilla orientada a crear automáticamente una base de datos espacial genérica (<em>Create spatial database</em>). La creación y configuración de la base de datos se ejecutará manualmente para controlar la parametrización de esquemas y extensiones.</li>
+<li>Aceptar la integración de las librerías dependientes (GEOS, PROJ, GDAL y controladores ráster asociados) hasta completar el asistente.</li>
 </ol>
 </section>
 <section id="configuración-de-variables-de-entorno-y-terminal-integrada" class="level2" data-number="3.5">
@@ -526,14 +568,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Guardar los cambios aplicados.</li>
 <li>Iniciar una nueva sesión de la terminal integrada de Visual Studio Code y verificar el reconocimiento del binario principal <code>psql</code>:</li>
 </ol>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-verify-psql</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">--version</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Mas información sobre psql en @#sec-anexo-psql:</p>
+<pre class="{bash}"><code>#| label: setup-verify-psql
+#| eval: false
+psql --version
+</code></pre>
+<p>Más información sobre <code>psql</code> en el <a href="93-postgresql.html#sec-anexo-psql" class="quarto-xref"><span>Sección G.1</span></a>:</p>
 <ul>
-<li>Metacomandos de barra invertida frente a sentencias SQL <a href="93-postgresql.html#sec-anexo-metacomandos" class="quarto-xref"><span>Sección G.1.1</span></a> (o en <a href="93-postgresql.html#tbl-metacomandos-psql" class="quarto-xref">Tabla&nbsp;<span>G.1</span></a>)</li>
-<li>Parámetros de invocación y modificadores de línea de comandos <a href="93-postgresql.html#sec-anexo-parametros-cli" class="quarto-xref"><span>Sección G.1.2</span></a> (o en <a href="93-postgresql.html#tbl-banderas-cli" class="quarto-xref">Tabla&nbsp;<span>G.2</span></a>)</li>
-<li>Guía de inicio rápido para la administración con psql <a href="93-postgresql.html#sec-anexo-inicio-psql" class="quarto-xref"><span>Sección G.1.3</span></a></li>
+<li>Metacomandos de barra invertida frente a sentencias SQL (<a href="93-postgresql.html#sec-anexo-metacomandos" class="quarto-xref"><span>Sección G.1.1</span></a> o en <a href="93-postgresql.html#tbl-metacomandos-psql" class="quarto-xref">Tabla&nbsp;<span>G.1</span></a>).</li>
+<li>Parámetros de invocación y modificadores de línea de comandos (<a href="93-postgresql.html#sec-anexo-parametros-cli" class="quarto-xref"><span>Sección G.1.2</span></a> o en <a href="93-postgresql.html#tbl-banderas-cli" class="quarto-xref">Tabla&nbsp;<span>G.2</span></a>).</li>
+<li>Guía de inicio rápido para la administración con psql (<a href="93-postgresql.html#sec-anexo-inicio-psql" class="quarto-xref"><span>Sección G.1.3</span></a>).</li>
 </ul>
 </section>
 <section id="inicialización-manual-de-la-base-de-datos-espacial" class="level2" data-number="3.6">
@@ -542,37 +585,42 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="conexión-administrativa-al-clúster" class="level3">
 <h3 class="anchored" data-anchor-id="conexión-administrativa-al-clúster">Conexión administrativa al clúster</h3>
 <p>Abrir la terminal integrada de Visual Studio Code y conectarse a la instancia local utilizando el usuario administrativo:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup-connect-psql</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-U</span> postgres</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre class="{bash}"><code>#| label: setup-connect-psql
+#| eval: false
+psql -U postgres
+</code></pre>
 <p>El sistema solicitará la contraseña configurada (<code>geomatica2025</code>).</p>
 </section>
 <section id="creación-de-la-base-de-datos" class="level3">
 <h3 class="anchored" data-anchor-id="creación-de-la-base-de-datos">Creación de la base de datos</h3>
 <p>Crear el contenedor lógico destinado a las prácticas analíticas del curso:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>#| <span class="kw">label</span>: <span class="kw">ddl</span><span class="op">-</span><span class="kw">create</span><span class="op">-</span>spatialdb</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>#| eval: <span class="kw">false</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">DATABASE</span> spatialdb;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre class="{sql}"><code>#| label: ddl-create-spatialdb
+#| eval: false
+CREATE DATABASE spatialdb;
+</code></pre>
 <p>Conectarse a la base de datos recién creada:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>#| <span class="kw">label</span>: setup<span class="op">-</span><span class="kw">switch</span><span class="op">-</span><span class="kw">database</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>#| eval: <span class="kw">false</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>\c spatialdb</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre class="{sql}"><code>#| label: setup-switch-database
+#| eval: false
+\c spatialdb
+</code></pre>
 </section>
 <section id="habilitación-de-extensiones-espaciales" class="level3">
 <h3 class="anchored" data-anchor-id="habilitación-de-extensiones-espaciales">Habilitación de extensiones espaciales</h3>
 <p>Ejecutar las directivas DDL para activar el núcleo vectorial, el soporte ráster y el módulo topológico:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>#| <span class="kw">label</span>: <span class="kw">ddl</span><span class="op">-</span><span class="kw">enable</span><span class="op">-</span>postgis<span class="op">-</span>extensions</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>#| eval: <span class="kw">false</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> EXTENSION postgis;</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> EXTENSION postgis_raster;</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> EXTENSION postgis_topology;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre class="{sql}"><code>#| label: ddl-enable-postgis-extensions
+#| eval: false
+CREATE EXTENSION postgis;
+CREATE EXTENSION postgis_raster;
+CREATE EXTENSION postgis_topology;
+</code></pre>
 </section>
 <section id="auditoría-de-versiones-y-enlaces-de-librerías" class="level3">
 <h3 class="anchored" data-anchor-id="auditoría-de-versiones-y-enlaces-de-librerías">Auditoría de versiones y enlaces de librerías</h3>
 <p>Comprobar que PostGIS se encuentre vinculado correctamente con GEOS, PROJ y los componentes de estadísticas espaciales:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>#| <span class="kw">label</span>: <span class="kw">audit</span><span class="op">-</span>postgis<span class="op">-</span>version</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>#| eval: <span class="kw">false</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> postgis_version();</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre class="{sql}"><code>#| label: audit-postgis-version
+#| eval: false
+SELECT postgis_version();
+</code></pre>
 <p>Resultado esperado en consola:</p>
 <pre class="text"><code>3.6 USE_GEOS=1 USE_PROJ=1 USE_STATS=1
 </code></pre>
@@ -581,9 +629,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="verificación-analítica-del-módulo-espacial" class="level2" data-number="3.7">
 <h2 data-number="3.7" class="anchored" data-anchor-id="verificación-analítica-del-módulo-espacial"><span class="header-section-number">3.7</span> Verificación analítica del módulo espacial</h2>
 <p>Para confirmar la operatividad de los constructores geométricos basados en el estándar OGC SFS (<em>Simple Feature Access</em>), se ejecuta una consulta de prueba instanciando una geometría de tipo punto en dos dimensiones:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>#| <span class="kw">label</span>: <span class="kw">query</span><span class="op">-</span>test<span class="op">-</span>point<span class="op">-</span>geometry</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>#| eval: <span class="kw">false</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> ST_AsText(ST_Point(<span class="dv">10</span>, <span class="dv">20</span>));</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre class="{sql}"><code>#| label: query-test-point-geometry
+#| eval: false
+SELECT ST_AsText(ST_Point(10, 20));
+</code></pre>
 <p>Respuesta esperada:</p>
 <pre class="text"><code>POINT(10 20)
 </code></pre>
@@ -602,8 +651,50 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 └── StackBuilder/   &lt;- Utilidad de mantenimiento y actualización de componentes
 </code></pre>
 <p>El clúster PostgreSQL 18 con PostGIS 3.6 queda completamente operativo, validado y disponible para la ingesta y manipulación de datos geográficos a través de la terminal integrada de Visual Studio Code.</p>
+</section>
+<section id="sec-configurar-postgresql" class="level2" data-number="3.9">
+<h2 data-number="3.9" class="anchored" data-anchor-id="sec-configurar-postgresql"><span class="header-section-number">3.9</span> Configuración de PostgreSQL local para acceso desde Docker</h2>
+<p>Dado que el material y las prácticas del curso se compilan dentro de contenedores Docker (ver <a href="05-guia_instalacion_vscode_docker.html" class="quarto-xref"><span>Capítulo 2</span></a>), la instancia de PostgreSQL alojada en el sistema anfitrión debe permitir conexiones entrantes originadas desde las interfaces virtuales de dichos contenedores. Por omisión, el motor restringe la escucha exclusivamente a la interfaz local (<em>loopback</em> o <code>127.0.0.1</code>), lo que bloquea las solicitudes provenientes del entorno contenedorizado.</p>
+<p>A continuación, se detalla el procedimiento para habilitar la escucha de red, autorizar la autenticación y aplicar las nuevas directivas operativas.</p>
+<section id="habilitación-de-la-escucha-de-red-en-postgresql.conf" class="level3">
+<h3 class="anchored" data-anchor-id="habilitación-de-la-escucha-de-red-en-postgresql.conf">Habilitación de la escucha de red en postgresql.conf</h3>
+<p>Localizar el archivo principal <code>postgresql.conf</code> dentro del directorio de datos del clúster local. Se debe asegurar la presencia y activación de la siguiente directiva:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode ini code-with-copy"><code class="sourceCode ini"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="dt">listen_addresses </span><span class="ot">=</span><span class="st"> '*'</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Esta directiva instruye al motor a enlazar los puertos de escucha a todas las interfaces de red disponibles en el equipo local, incluyendo los adaptadores puente (<em>bridge</em>) creados por Docker.</p>
+</section>
+<section id="control-de-acceso-y-autenticación-en-pg_hba.conf" class="level3">
+<h3 class="anchored" data-anchor-id="control-de-acceso-y-autenticación-en-pg_hba.conf">Control de acceso y autenticación en pg_hba.conf</h3>
+<p>El parámetro anterior únicamente habilita la escucha en los puertos; la política de admisión debe autorizarse de forma explícita en el archivo de control de acceso <code>pg_hba.conf</code>. Se debe incorporar la siguiente directiva al final del archivo:</p>
+<pre class="text"><code>host    all             all             0.0.0.0/0               scram-sha-256
+</code></pre>
+<p>Esta entrada autoriza conexiones TCP/IP (<code>host</code>) hacia cualquier base de datos (<code>all</code>) para todos los usuarios registrados (<code>all</code>), desde cualquier segmento IPv4 (<code>0.0.0.0/0</code>), exigiendo el protocolo criptográfico <code>scram-sha-256</code> para la validación de credenciales.</p>
+</section>
+<section id="reinicio-del-servicio-en-el-motor-de-base-de-datos" class="level3">
+<h3 class="anchored" data-anchor-id="reinicio-del-servicio-en-el-motor-de-base-de-datos">Reinicio del servicio en el motor de base de datos</h3>
+<p>Tras modificar los archivos <code>postgresql.conf</code> y <code>pg_hba.conf</code>, es obligatorio reiniciar el proceso del motor para que cargue la nueva tabla de enrutamiento y autenticación en memoria.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">Consola de comandos (agnóstico)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Sistema anfitrión (Windows)</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<p>Desde la terminal integrada de Visual Studio Code con permisos de administración, ejecutar el comando agnóstico de control del clúster indicando la ruta del directorio de datos:</p>
+<pre class="{bash}"><code>#| label: setup-restart-pg-engine
+#| eval: false
+pg_ctl -D "&lt;ruta_al_directorio_de_datos&gt;" restart
+</code></pre>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<ol type="1">
+<li>Presione la combinación de teclas <code>Windows + R</code> para abrir el diálogo de ejecución.</li>
+<li>Escriba <code>services.msc</code> y presione <code>Enter</code>.</li>
+<li>En la lista de servicios del sistema, localice la entrada <code>postgresql-x64-18</code> (<code>PostgreSQL Server 18</code>).</li>
+<li>Haga clic derecho sobre el servicio y seleccione la opción <strong>Restart</strong> (Reiniciar).</li>
+</ol>
+</div>
+</div>
+</div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -996,8 +1087,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../chapters/05-guia_instalacion_vscode_docker.html" class="pagination-link" aria-label="Guía de instalación: VS Code y contenedores Docker">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación: VS Code y contenedores Docker</span></span>
+      <a href="../chapters/05-guia_instalacion_vscode_docker.html" class="pagination-link" aria-label="Guía de instalación">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

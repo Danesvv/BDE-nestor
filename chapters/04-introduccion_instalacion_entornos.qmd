@@ -1,0 +1,21 @@
+# Instalación y entornos
+
+El despliegue de una infraestructura homogénea y reproducible es condición indispensable para la administración de motores relacionales espaciales y el procesamiento analítico. En esta parte se detallan los procedimientos para configurar el entorno de trabajo sobre el sistema anfitrión, la orquestación de servicios en contenedores Docker, la gestión de instancias PostgreSQL/PostGIS y las políticas de respaldo estructurado.
+
+
+::: {.content-visible when-format="html"}
+::: {.callout-note appearance="simple"}
+### Presentación de la parte
+Las diapositivas interactivas correspondientes a la visión de conjunto, arquitectura de software y lineamientos de esta sección están disponibles en: [Presentación interactiva: Instalación y entornos](../slides/01-instalacion_entornos.html){target="_blank"}.
+:::
+:::
+
+
+## Contenido modular de la sección
+
+La presente parte se compone de los siguientes módulos operativos:
+
+* **Configuración del entorno de desarrollo:** Integración de Visual Studio Code y Docker Desktop.
+* **Instalación del motor relacional:** Despliegue de PostgreSQL y activación de la extensión PostGIS.
+* **Infraestructura y orquestación:** Despliegue de contenedores y verificación de conectividad por terminal.
+* **Administración de respaldos:** Estrategias de extracción y restauración mediante `pg_dump` y `pg_restore`.

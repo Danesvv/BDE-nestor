@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Bases de Datos Espaciales - 1&nbsp; Syllabus: bases de datos espaciales</title>
+<title>Bases de datos espaciales - 1&nbsp; Syllabus: bases de datos espaciales</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,7 +30,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../chapters/05-guia_instalacion_vscode_docker.html" rel="next">
+<link href="../chapters/04-introduccion_instalacion_entornos.html" rel="next">
 <link href="../chapters/00-prefacio.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -42,11 +42,11 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
-  "location": "sidebar",
+  "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
-  "panel-placement": "start",
-  "type": "textbox",
+  "panel-placement": "end",
+  "type": "overlay",
   "limit": 50,
   "keyboard-shortcut": [
     "f",
@@ -72,10 +72,38 @@ ul.task-list li input[type="checkbox"] {
 
 </head>
 
-<body class="nav-sidebar floating">
+<body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Bases de datos espaciales</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../slides/index.html"> 
+<span class="menu-text">Diapositivas</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/alexyshr/bde2026"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
@@ -84,26 +112,13 @@ ul.task-list li input[type="checkbox"] {
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/01-syllabus.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Syllabus: bases de datos espaciales</span></a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
     </div>
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
-    <div class="sidebar-title mb-0 py-0">
-      <a href="../">Bases de Datos Espaciales</a> 
-    </div>
-      </div>
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Buscar"></div>
-        </div>
-        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -126,7 +141,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a href="../chapters/04-introduccion_instalacion_entornos.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Instalación y entornos</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -136,7 +151,7 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/05-guia_instalacion_vscode_docker.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación: VS Code y contenedores Docker</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -266,14 +281,19 @@ ul.task-list li input[type="checkbox"] {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Tabla de Contenidos</h2>
+    <h2 id="toc-title">Tabla de contenidos</h2>
    
   <ul>
   <li><a href="#información-general" id="toc-información-general" class="nav-link active" data-scroll-target="#información-general"><span class="header-section-number">1.1</span> Información general</a></li>
   <li><a href="#justificación-académica" id="toc-justificación-académica" class="nav-link" data-scroll-target="#justificación-académica"><span class="header-section-number">1.2</span> Justificación académica</a></li>
-  <li><a href="#objetivos-de-aprendizaje" id="toc-objetivos-de-aprendizaje" class="nav-link" data-scroll-target="#objetivos-de-aprendizaje"><span class="header-section-number">1.3</span> Objetivos de aprendizaje</a></li>
-  <li><a href="#estructura-curricular-articulada-en-cuatro-ejes" id="toc-estructura-curricular-articulada-en-cuatro-ejes" class="nav-link" data-scroll-target="#estructura-curricular-articulada-en-cuatro-ejes"><span class="header-section-number">1.4</span> Estructura curricular articulada en cuatro ejes</a></li>
-  <li><a href="#programación-semanal-y-contenidos-detallados-16-semanas" id="toc-programación-semanal-y-contenidos-detallados-16-semanas" class="nav-link" data-scroll-target="#programación-semanal-y-contenidos-detallados-16-semanas"><span class="header-section-number">1.5</span> Programación semanal y contenidos detallados (16 semanas)</a>
+  <li><a href="#propósito-formativo-y-competencias" id="toc-propósito-formativo-y-competencias" class="nav-link" data-scroll-target="#propósito-formativo-y-competencias"><span class="header-section-number">1.3</span> Propósito formativo y competencias</a>
+  <ul class="collapse">
+  <li><a href="#propósito-general" id="toc-propósito-general" class="nav-link" data-scroll-target="#propósito-general">Propósito general</a></li>
+  <li><a href="#competencias-del-curso" id="toc-competencias-del-curso" class="nav-link" data-scroll-target="#competencias-del-curso">Competencias del curso</a></li>
+  </ul></li>
+  <li><a href="#objetivos-de-aprendizaje" id="toc-objetivos-de-aprendizaje" class="nav-link" data-scroll-target="#objetivos-de-aprendizaje"><span class="header-section-number">1.4</span> Objetivos de aprendizaje</a></li>
+  <li><a href="#estructura-curricular-articulada-en-cuatro-ejes" id="toc-estructura-curricular-articulada-en-cuatro-ejes" class="nav-link" data-scroll-target="#estructura-curricular-articulada-en-cuatro-ejes"><span class="header-section-number">1.5</span> Estructura curricular articulada en cuatro ejes</a></li>
+  <li><a href="#programación-semanal-y-contenidos-detallados-16-semanas" id="toc-programación-semanal-y-contenidos-detallados-16-semanas" class="nav-link" data-scroll-target="#programación-semanal-y-contenidos-detallados-16-semanas"><span class="header-section-number">1.6</span> Programación semanal y contenidos detallados (16 semanas)</a>
   <ul class="collapse">
   <li><a href="#eje-1-fundamentos-de-diseño-modelado-y-arquitecturas-de-datos-semanas-1-a-3" id="toc-eje-1-fundamentos-de-diseño-modelado-y-arquitecturas-de-datos-semanas-1-a-3" class="nav-link" data-scroll-target="#eje-1-fundamentos-de-diseño-modelado-y-arquitecturas-de-datos-semanas-1-a-3">Eje 1: fundamentos de diseño, modelado y arquitecturas de datos (semanas 1 a 3)</a></li>
   <li><a href="#eje-2-motores-relacionales-espaciales-con-postgresql-y-postgis-semanas-4-a-7" id="toc-eje-2-motores-relacionales-espaciales-con-postgresql-y-postgis-semanas-4-a-7" class="nav-link" data-scroll-target="#eje-2-motores-relacionales-espaciales-con-postgresql-y-postgis-semanas-4-a-7">Eje 2: motores relacionales espaciales con PostgreSQL y PostGIS (semanas 4 a 7)</a></li>
@@ -281,9 +301,9 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#eje-3-geodatabases-corporativas-diseño-y-formatos-avanzados-semanas-9-a-10" id="toc-eje-3-geodatabases-corporativas-diseño-y-formatos-avanzados-semanas-9-a-10" class="nav-link" data-scroll-target="#eje-3-geodatabases-corporativas-diseño-y-formatos-avanzados-semanas-9-a-10">Eje 3: geodatabases corporativas, diseño y formatos avanzados (semanas 9 a 10)</a></li>
   <li><a href="#eje-4-paradigmas-emergentes-y-seminario-de-proyectos-finales-semanas-11-a-16" id="toc-eje-4-paradigmas-emergentes-y-seminario-de-proyectos-finales-semanas-11-a-16" class="nav-link" data-scroll-target="#eje-4-paradigmas-emergentes-y-seminario-de-proyectos-finales-semanas-11-a-16">Eje 4: paradigmas emergentes y seminario de proyectos finales (semanas 11 a 16)</a></li>
   </ul></li>
-  <li><a href="#sistema-de-evaluación-y-ponderación-porcentual" id="toc-sistema-de-evaluación-y-ponderación-porcentual" class="nav-link" data-scroll-target="#sistema-de-evaluación-y-ponderación-porcentual"><span class="header-section-number">1.6</span> Sistema de evaluación y ponderación porcentual</a></li>
-  <li><a href="#estructura-de-entregables-del-proyecto-final-en-el-repositorio-quarto" id="toc-estructura-de-entregables-del-proyecto-final-en-el-repositorio-quarto" class="nav-link" data-scroll-target="#estructura-de-entregables-del-proyecto-final-en-el-repositorio-quarto"><span class="header-section-number">1.7</span> Estructura de entregables del proyecto final en el repositorio Quarto</a></li>
-  <li><a href="#políticas-del-curso-entregas-y-régimen-disciplinario" id="toc-políticas-del-curso-entregas-y-régimen-disciplinario" class="nav-link" data-scroll-target="#políticas-del-curso-entregas-y-régimen-disciplinario"><span class="header-section-number">1.8</span> Políticas del curso, entregas y régimen disciplinario</a>
+  <li><a href="#sistema-de-evaluación-y-ponderación-porcentual" id="toc-sistema-de-evaluación-y-ponderación-porcentual" class="nav-link" data-scroll-target="#sistema-de-evaluación-y-ponderación-porcentual"><span class="header-section-number">1.7</span> Sistema de evaluación y ponderación porcentual</a></li>
+  <li><a href="#estructura-de-entregables-del-proyecto-final-en-el-repositorio-quarto" id="toc-estructura-de-entregables-del-proyecto-final-en-el-repositorio-quarto" class="nav-link" data-scroll-target="#estructura-de-entregables-del-proyecto-final-en-el-repositorio-quarto"><span class="header-section-number">1.8</span> Estructura de entregables del proyecto final en el repositorio Quarto</a></li>
+  <li><a href="#políticas-del-curso-entregas-y-régimen-disciplinario" id="toc-políticas-del-curso-entregas-y-régimen-disciplinario" class="nav-link" data-scroll-target="#políticas-del-curso-entregas-y-régimen-disciplinario"><span class="header-section-number">1.9</span> Políticas del curso, entregas y régimen disciplinario</a>
   <ul class="collapse">
   <li><a href="#gestión-de-entregas-y-control-de-versiones-vía-github" id="toc-gestión-de-entregas-y-control-de-versiones-vía-github" class="nav-link" data-scroll-target="#gestión-de-entregas-y-control-de-versiones-vía-github">Gestión de entregas y control de versiones vía GitHub</a></li>
   <li><a href="#régimen-de-entregas-extemporáneas-y-penalizaciones" id="toc-régimen-de-entregas-extemporáneas-y-penalizaciones" class="nav-link" data-scroll-target="#régimen-de-entregas-extemporáneas-y-penalizaciones">Régimen de entregas extemporáneas y penalizaciones</a></li>
@@ -291,7 +311,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#plan-de-compensación-y-recuperación-de-sesiones-por-días-festivos" id="toc-plan-de-compensación-y-recuperación-de-sesiones-por-días-festivos" class="nav-link" data-scroll-target="#plan-de-compensación-y-recuperación-de-sesiones-por-días-festivos">Plan de compensación y recuperación de sesiones por días festivos</a></li>
   <li><a href="#integridad-académica-ética-en-investigación-y-código-de-conducta" id="toc-integridad-académica-ética-en-investigación-y-código-de-conducta" class="nav-link" data-scroll-target="#integridad-académica-ética-en-investigación-y-código-de-conducta">Integridad académica, ética en investigación y código de conducta</a></li>
   </ul></li>
-  <li><a href="#referencias-bibliográficas" id="toc-referencias-bibliográficas" class="nav-link" data-scroll-target="#referencias-bibliográficas"><span class="header-section-number">1.9</span> Referencias bibliográficas</a></li>
+  <li><a href="#referencias-bibliográficas" id="toc-referencias-bibliográficas" class="nav-link" data-scroll-target="#referencias-bibliográficas"><span class="header-section-number">1.10</span> Referencias bibliográficas</a></li>
   </ul>
 </nav>
     </div>
@@ -300,7 +320,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Syllabus: bases de datos espaciales</span></h1>
+<h1 class="title"><span id="sec-syllabus" class="quarto-section-identifier"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Syllabus: bases de datos espaciales</span></span></h1>
 </div>
 
 
@@ -317,6 +337,19 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<div class="callout callout-style-simple callout-note callout-titled" title="Presentación de la sesión">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Presentación de la sesión
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Las diapositivas interactivas correspondientes a la introducción y lineamientos generales del curso se encuentran disponibles en: <a href="../slides/00-introduccion.html" target="_blank">Presentación interactiva: Introducción general</a>.</p>
+</div>
+</div>
 <section id="información-general" class="level2" data-number="1.1">
 <h2 data-number="1.1" class="anchored" data-anchor-id="información-general"><span class="header-section-number">1.1</span> Información general</h2>
 <ul>
@@ -339,8 +372,24 @@ ul.task-list li input[type="checkbox"] {
 <li><strong>Temas emergentes (proyectos finales):</strong> Paradigmas de computación distribuida, motores OLAP columnares, mallas espaciales discretas globales (DGGS), bases de datos orientadas a grafos y motores NoSQL, liderados y ejecutados experimentalmente por los estudiantes.</li>
 </ol>
 </section>
-<section id="objetivos-de-aprendizaje" class="level2" data-number="1.3">
-<h2 data-number="1.3" class="anchored" data-anchor-id="objetivos-de-aprendizaje"><span class="header-section-number">1.3</span> Objetivos de aprendizaje</h2>
+<section id="propósito-formativo-y-competencias" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="propósito-formativo-y-competencias"><span class="header-section-number">1.3</span> Propósito formativo y competencias</h2>
+<section id="propósito-general" class="level3">
+<h3 class="anchored" data-anchor-id="propósito-general">Propósito general</h3>
+<p>Desarrollar la capacidad técnica y conceptual para diseñar, implementar, administrar y explotar analíticamente sistemas de bases de datos espaciales relacionales y arquitecturas analíticas contemporáneas en flujos reproducibles.</p>
+</section>
+<section id="competencias-del-curso" class="level3">
+<h3 class="anchored" data-anchor-id="competencias-del-curso">Competencias del curso</h3>
+<p>Al culminar el programa académico, se consolidan las siguientes competencias:</p>
+<ul>
+<li><strong>Fundamentación relacional y lenguaje SQL:</strong> Comprender la arquitectura interna de los sistemas gestores de bases de datos relacionales, el álgebra relacional subyacente y la formulación de consultas analíticas estándar mediante SQL.</li>
+<li><strong>Modelado e implementación espacial:</strong> Diseñar esquemas conceptuales y lógicos que capturen relaciones espaciales complejas, materializando los modelos mediante extensiones espaciales estandarizadas (PostGIS, OGC Simple Features) y herramientas de ingeniería de esquemas.</li>
+<li><strong>Ingeniería de datos e integración:</strong> Articular repositorios espaciales centralizados con clientes de visualización, sistemas de información geográfica de escritorio y entornos analíticos de programación.</li>
+</ul>
+</section>
+</section>
+<section id="objetivos-de-aprendizaje" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="objetivos-de-aprendizaje"><span class="header-section-number">1.4</span> Objetivos de aprendizaje</h2>
 <p>Al finalizar el periodo académico, el estudiante estará en capacidad de:</p>
 <ul>
 <li>Diseñar esquemas conceptuales y lógicos de bases de datos espaciales aplicando reglas de normalización, restricciones de integridad referencial y estándares internacionales (OGC Simple Features e ISO 19107).</li>
@@ -351,8 +400,8 @@ ul.task-list li input[type="checkbox"] {
 <li>Formular, liderar y evaluar experimentalmente proyectos de investigación aplicada sobre tecnologías geoespaciales emergentes, dirigiendo talleres prácticos en vivo (<em>live coding</em>) y documentando los resultados en reportes reproducibles bajo Quarto.</li>
 </ul>
 </section>
-<section id="estructura-curricular-articulada-en-cuatro-ejes" class="level2" data-number="1.4">
-<h2 data-number="1.4" class="anchored" data-anchor-id="estructura-curricular-articulada-en-cuatro-ejes"><span class="header-section-number">1.4</span> Estructura curricular articulada en cuatro ejes</h2>
+<section id="estructura-curricular-articulada-en-cuatro-ejes" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="estructura-curricular-articulada-en-cuatro-ejes"><span class="header-section-number">1.5</span> Estructura curricular articulada en cuatro ejes</h2>
 <pre class="text"><code>Eje 1: Fundamentos y diseño (Sem 1-3)
  ├── Sem 1: Arquitectura y estándares OGC
  ├── Sem 2: Modelado conceptual y normalización
@@ -376,84 +425,100 @@ Eje 4: Temas emergentes y proyectos finales (Sem 11-16)
  └── Sem 16: Procedimientos nativos en Rust (Tema 06) + Cierre
 </code></pre>
 </section>
-<section id="programación-semanal-y-contenidos-detallados-16-semanas" class="level2" data-number="1.5">
-<h2 data-number="1.5" class="anchored" data-anchor-id="programación-semanal-y-contenidos-detallados-16-semanas"><span class="header-section-number">1.5</span> Programación semanal y contenidos detallados (16 semanas)</h2>
+<section id="programación-semanal-y-contenidos-detallados-16-semanas" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="programación-semanal-y-contenidos-detallados-16-semanas"><span class="header-section-number">1.6</span> Programación semanal y contenidos detallados (16 semanas)</h2>
 <section id="eje-1-fundamentos-de-diseño-modelado-y-arquitecturas-de-datos-semanas-1-a-3" class="level3">
 <h3 class="anchored" data-anchor-id="eje-1-fundamentos-de-diseño-modelado-y-arquitecturas-de-datos-semanas-1-a-3">Eje 1: fundamentos de diseño, modelado y arquitecturas de datos (semanas 1 a 3)</h3>
-<p><strong>Semana 1: Arquitectura de sistemas de bases de datos espaciales y estándares OGC</strong> * Comparación entre el modelo de almacenamiento en archivos planos y los sistemas de gestión de bases de datos relacionales espaciales. * Estándar OGC <em>Simple Features for SQL</em> (SFS) y norma ISO 19107 (<em>Spatial Schema</em>). * Jerarquía de tipos de datos geométricos vectoriales: <code>Point</code>, <code>LineString</code>, <code>Polygon</code>, colecciones homogéneas y <code>GeometryCollection</code>. * Configuración del entorno de desarrollo sobre la terminal integrada de Visual Studio Code y orquestación de servicios en contenedores locales.</p>
+<p><strong>Semana 1: Arquitectura de sistemas de bases de datos espaciales y estándares OGC</strong></p>
 <ul>
-<li><p><strong>Semana 2: Modelado conceptual, lógico y normalización de datos espaciales</strong></p></li>
-<li><p>Diagramas Entidad-Relación extendidos para información espacial (notaciones conceptuales geográficas).</p></li>
-<li><p>Aplicación de formas normales (1FN, 2FN y 3FN) y restricciones de integridad referencial (<code>ON UPDATE</code>, <code>ON DELETE CASCADE / SET NULL</code>).</p></li>
-<li><p>Sistemas de referencia de coordenadas espaciales (catálogo EPSG, tabla <code>spatial_ref_sys</code>, proyecciones cartográficas y transformaciones de datum).</p></li>
-<li><p>Estándares de codificación e intercambio: WKT (<em>Well-Known Text</em>), WKB (<em>Well-Known Binary</em>) y GeoJSON.</p></li>
-<li><p><strong>Semana 3: Álgebra relacional espacial, definición de esquemas DDL y modelado visual con pgModeler</strong></p></li>
-<li><p>Operaciones del álgebra relacional proyectadas al contexto espacial: selección, proyección, unión, diferencia y producto cartesiano.</p></li>
-<li><p>Diseño visual de esquemas espaciales: fundamentos del modelado gráfico relacional.</p></li>
-<li><p>Modelado asistido con <strong>pgModeler</strong>: creación gráfica de tablas, tipos espaciales PostGIS, llaves foráneas, restricciones <code>CHECK</code> e índices.</p></li>
-<li><p>Generación automatizada de scripts DDL (<em>Forward Engineering</em>) y sincronización de esquemas.</p></li>
-<li><p><strong>Evaluación práctica:</strong> <strong>Taller 1: Modelado conceptual, normalización y diseño visual de esquemas DDL con pgModeler.</strong></p></li>
+<li>Comparación entre el modelo de almacenamiento en archivos planos y los sistemas de gestión de bases de datos relacionales espaciales.</li>
+<li>Estándar OGC <em>Simple Features for SQL</em> (SFS) y norma ISO 19107 (<em>Spatial Schema</em>).</li>
+<li>Jerarquía de tipos de datos geométricos vectoriales: <code>Point</code>, <code>LineString</code>, <code>Polygon</code>, colecciones homogéneas y <code>GeometryCollection</code>.</li>
+<li>Configuración del entorno de desarrollo sobre la terminal integrada de Visual Studio Code y orquestación de servicios en contenedores locales.</li>
+</ul>
+<p><strong>Semana 2: Modelado conceptual, lógico y normalización de datos espaciales</strong></p>
+<ul>
+<li>Diagramas Entidad-Relación extendidos para información espacial (notaciones conceptuales geográficas).</li>
+<li>Aplicación de formas normales (1FN, 2FN y 3FN) y restricciones de integridad referencial (<code>ON UPDATE</code>, <code>ON DELETE CASCADE / SET NULL</code>).</li>
+<li>Sistemas de referencia de coordenadas espaciales (catálogo EPSG, tabla <code>spatial_ref_sys</code>, proyecciones cartográficas y transformaciones de datum).</li>
+<li>Estándares de codificación e intercambio: WKT (<em>Well-Known Text</em>), WKB (<em>Well-Known Binary</em>) y GeoJSON.</li>
+</ul>
+<p><strong>Semana 3: Álgebra relacional espacial, definición de esquemas DDL y modelado visual con pgModeler</strong></p>
+<ul>
+<li>Operaciones del álgebra relacional proyectadas al contexto espacial: selección, proyección, unión, diferencia y producto cartesiano.</li>
+<li>Diseño visual de esquemas espaciales: fundamentos del modelado gráfico relacional.</li>
+<li>Modelado asistido con <strong>pgModeler</strong>: creación gráfica de tablas, tipos espaciales PostGIS, llaves foráneas, restricciones <code>CHECK</code> e índices.</li>
+<li>Generación automatizada de scripts DDL (<em>Forward Engineering</em>) y sincronización de esquemas.</li>
+<li><strong>Evaluación práctica: Taller 1: Modelado conceptual, normalización y diseño visual de esquemas DDL con pgModeler.</strong></li>
 </ul>
 </section>
 <section id="eje-2-motores-relacionales-espaciales-con-postgresql-y-postgis-semanas-4-a-7" class="level3">
 <h3 class="anchored" data-anchor-id="eje-2-motores-relacionales-espaciales-con-postgresql-y-postgis-semanas-4-a-7">Eje 2: motores relacionales espaciales con PostgreSQL y PostGIS (semanas 4 a 7)</h3>
+<p><strong>Semana 4: Implementación física, administración y ecosistema cliente políglota</strong></p>
 <ul>
-<li><p><strong>Semana 4: Implementación física, administración y ecosistema cliente políglota</strong></p></li>
-<li><p>Arquitectura cliente-servidor de PostgreSQL y activación modular de PostGIS.</p></li>
-<li><p>Despliegue del esquema físico a partir de modelos generados en pgModeler e ingeniería inversa (<em>Reverse Engineering</em>).</p></li>
-<li><p>Catálogos del sistema y tablas de metadatos: <code>geometry_columns</code> y <code>spatial_ref_sys</code>.</p></li>
-<li><p>Tipo de dato <code>geometry</code> (cartesiano/plano) frente al tipo <code>geography</code> (esferoidal/geodésico).</p></li>
-<li><p>Ingestión y extracción por consola de comandos: <code>shp2pgsql</code>, <code>pgsql2shp</code> y <code>ogr2ogr</code>.</p></li>
-<li><p>Interfaces de administración y conexión políglota:</p></li>
-<li><p><em>Consola nativa:</em> Cliente interactivo <code>psql</code> (variables de sesión <code>search_path</code>, <code>client_encoding</code>, ejecución de scripts con <code>\i</code>).</p></li>
-<li><p><em>Entorno gráfico:</em> Administración visual de esquemas y servidores con <code>pgAdmin 4</code>.</p></li>
-<li><p><em>Entornos de desarrollo analítico:</em> Conexión y lectura de datos espaciales desde Python (<code>psycopg</code>, <code>GeoPandas</code>), R (<code>DBI</code>, <code>sf</code>) y Julia (<code>LibPQ.jl</code>, <code>GeoDataFrames.jl</code>).</p></li>
-<li><p><strong>Semana 5: Consultas analíticas en Spatial SQL, modelo topológico DE-9IM y vistas espaciales</strong></p></li>
-<li><p>Matriz de intersección de 9 dimensiones extendida (DE-9IM) y formulación de predicados espaciales.</p></li>
-<li><p>Predicados topológicos estándar: <code>ST_Intersects</code>, <code>ST_Contains</code>, <code>ST_Within</code>, <code>ST_Disjoint</code>, <code>ST_Touches</code>, <code>ST_Crosses</code>, <code>ST_Overlaps</code>.</p></li>
-<li><p>Funciones de análisis, construcción y agregación espacial: <code>ST_Buffer</code>, <code>ST_Intersection</code>, <code>ST_Difference</code>, <code>ST_Union</code>, <code>ST_Centroid</code>.</p></li>
-<li><p>Creación y registro de vistas espaciales agregadas (<code>CREATE VIEW</code>) con identificadores únicos para interoperabilidad con software SIG.</p></li>
-<li><p>Extracción de métricas espaciales hacia DataFrames en Python, R y Julia.</p></li>
-<li><p><strong>Evaluación práctica:</strong> <strong>Taller 2: Consultas espaciales avanzadas, uniones espaciales (Spatial Joins), vistas y agregación con PostGIS.</strong></p></li>
-<li><p><strong>Semana 6: Indexación espacial, optimización de consultas y administración avanzada de respaldos</strong></p></li>
-<li><p>Principios teóricos del árbol R (<em>R-Tree</em>) e implementación de índices GiST (<em>Generalized Search Tree</em>) y SP-GiST en PostGIS.</p></li>
-<li><p>Índices de rango de bloques (BRIN) aplicados a series de telemetría masiva ordenada.</p></li>
-<li><p>Operadores espaciales optimizados por índice: delimitador de caja envolvente (<code>&amp;&amp;</code>) y búsqueda de vecinos más cercanos (<em>k-NN</em> vía <code>&lt;-&gt;</code>).</p></li>
-<li><p>Perfilamiento y análisis de planes de ejecución mediante <code>EXPLAIN (ANALYZE, BUFFERS)</code> para diagnóstico de cuellos de botella.</p></li>
-<li><p>Estrategias de respaldo y migración: generación de dumps personalizados (<code>pg_dump -F c</code>), extracción de esquemas y restauración ordenada mediante tablas de contenido (<code>pg_restore -l</code>, <code>pg_restore -L</code>).</p></li>
-<li><p><strong>Semana 7: Topología vectorial persistente y validación de reglas</strong></p></li>
-<li><p>Fundamento del modelo de nodos, aristas (<em>edges</em>) y caras (<em>faces</em>) con la extensión <code>postgis_topology</code>.</p></li>
-<li><p>Garantía de cobertura continua, eliminación de solapes (<em>overlaps</em>) y control de polígonos espurios (<em>slivers</em>).</p></li>
-<li><p>Funciones de validación y reparación automática de geometrías (<code>ST_IsValid</code>, <code>ST_IsValidReason</code>, <code>ST_MakeValid</code>).</p></li>
-<li><p><strong>Evaluación práctica:</strong> <strong>Taller 3: Optimización con índices espaciales, respaldos con TOC, planes de ejecución y topología.</strong></p></li>
+<li>Arquitectura cliente-servidor de PostgreSQL y activación modular de PostGIS.</li>
+<li>Despliegue del esquema físico a partir de modelos generados en pgModeler e ingeniería inversa (<em>Reverse Engineering</em>).</li>
+<li>Catálogos del sistema y tablas de metadatos: <code>geometry_columns</code> y <code>spatial_ref_sys</code>.</li>
+<li>Tipo de dato <code>geometry</code> (cartesiano/plano) frente al tipo <code>geography</code> (esferoidal/geodésico).</li>
+<li>Ingestión y extracción por consola de comandos: <code>shp2pgsql</code>, <code>pgsql2shp</code> y <code>ogr2ogr</code>.</li>
+<li>Interfaces de administración y conexión políglota:</li>
+<li><em>Consola nativa:</em> Cliente interactivo <code>psql</code> (variables de sesión <code>search_path</code>, <code>client_encoding</code>, ejecución de scripts con <code>\i</code>).</li>
+<li><em>Entorno gráfico:</em> Administración visual de esquemas y servidores con <code>pgAdmin 4</code>.</li>
+<li><em>Entornos de desarrollo analítico:</em> Conexión y lectura de datos espaciales desde Python (<code>psycopg</code>, <code>GeoPandas</code>), R (<code>DBI</code>, <code>sf</code>) y Julia (<code>LibPQ.jl</code>, <code>GeoDataFrames.jl</code>).</li>
+</ul>
+<p><strong>Semana 5: Consultas analíticas en Spatial SQL, modelo topológico DE-9IM y vistas espaciales</strong></p>
+<ul>
+<li>Matriz de intersección de 9 dimensiones extendida (DE-9IM) y formulación de predicados espaciales.</li>
+<li>Predicados topológicos estándar: <code>ST_Intersects</code>, <code>ST_Contains</code>, <code>ST_Within</code>, <code>ST_Disjoint</code>, <code>ST_Touches</code>, <code>ST_Crosses</code>, <code>ST_Overlaps</code>.</li>
+<li>Funciones de análisis, construcción y agregación espacial: <code>ST_Buffer</code>, <code>ST_Intersection</code>, <code>ST_Difference</code>, <code>ST_Union</code>, <code>ST_Centroid</code>.</li>
+<li>Creación y registro de vistas espaciales agregadas (<code>CREATE VIEW</code>) con identificadores únicos para interoperabilidad con software SIG.</li>
+<li>Extracción de métricas espaciales hacia DataFrames en Python, R y Julia.</li>
+<li><strong>Evaluación práctica: Taller 2: Consultas espaciales avanzadas, uniones espaciales (Spatial Joins), vistas y agregación con PostGIS.</strong></li>
+</ul>
+<p><strong>Semana 6: Indexación espacial, optimización de consultas y administración avanzada de respaldos</strong></p>
+<ul>
+<li>Principios teóricos del árbol R (<em>R-Tree</em>) e implementación de índices GiST (<em>Generalized Search Tree</em>) y SP-GiST en PostGIS.</li>
+<li>Índices de rango de bloques (BRIN) aplicados a series de telemetría masiva ordenada.</li>
+<li>Operadores espaciales optimizados por índice: delimitador de caja envolvente (<code>&amp;&amp;</code>) y búsqueda de vecinos más cercanos (<em>k-NN</em> vía <code>&lt;-&gt;</code>).</li>
+<li>Perfilamiento y análisis de planes de ejecución mediante <code>EXPLAIN (ANALYZE, BUFFERS)</code> para diagnóstico de cuellos de botella.</li>
+<li>Estrategias de respaldo y migración: generación de dumps personalizados (<code>pg_dump -F c</code>), extracción de esquemas y restauración ordenada mediante tablas de contenido (<code>pg_restore -l</code>, <code>pg_restore -L</code>).</li>
+</ul>
+<p><strong>Semana 7: Topología vectorial persistente y validación de reglas</strong></p>
+<ul>
+<li>Fundamento del modelo de nodos, aristas (<em>edges</em>) y caras (<em>faces</em>) con la extensión <code>postgis_topology</code>.</li>
+<li>Garantía de cobertura continua, eliminación de solapes (<em>overlaps</em>) y control de polígonos espurios (<em>slivers</em>).</li>
+<li>Funciones de validación y reparación automática de geometrías (<code>ST_IsValid</code>, <code>ST_IsValidReason</code>, <code>ST_MakeValid</code>).</li>
+<li><strong>Evaluación práctica: Taller 3: Optimización con índices espaciales, respaldos con TOC, planes de ejecución y topología.</strong></li>
 </ul>
 </section>
 <section id="evaluación-de-medio-término-y-balance-pedagógico-semana-8" class="level3">
 <h3 class="anchored" data-anchor-id="evaluación-de-medio-término-y-balance-pedagógico-semana-8">Evaluación de medio término y balance pedagógico (semana 8)</h3>
+<p><strong>Semana 8: Examen teórico individual y asesoría de proyectos de investigación</strong></p>
 <ul>
-<li><strong>Semana 8: Examen teórico individual y asesoría de proyectos de investigación</strong></li>
-<li><strong>Evaluación teórica (Semana 8):</strong> Examen individual escrito sobre diseño conceptual, álgebra relacional, normalización, cálculo espacial, optimización en <em>Spatial SQL</em> y administración de esquemas.</li>
+<li><strong>Evaluación teórica:</strong> Examen individual escrito sobre diseño conceptual, álgebra relacional, normalización, cálculo espacial, optimización en <em>Spatial SQL</em> y administración de esquemas.</li>
 <li>Sesión de acompañamiento y validación del diseño experimental para los seis equipos del proyecto final.</li>
 </ul>
 </section>
 <section id="eje-3-geodatabases-corporativas-diseño-y-formatos-avanzados-semanas-9-a-10" class="level3">
 <h3 class="anchored" data-anchor-id="eje-3-geodatabases-corporativas-diseño-y-formatos-avanzados-semanas-9-a-10">Eje 3: geodatabases corporativas, diseño y formatos avanzados (semanas 9 a 10)</h3>
+<p><strong>Semana 9: Arquitecturas de geodatabases, diseño guiado por modelos y paradigma moderno</strong></p>
 <ul>
-<li><p><strong>Semana 9: Arquitecturas de geodatabases, diseño guiado por modelos y paradigma moderno</strong></p></li>
-<li><p>Conceptos generales de geodatabases: almacenamiento relacional de objetos espaciales, clases de entidad (<em>feature classes</em>), conjuntos de datos (<em>feature datasets</em>) y catálogos.</p></li>
-<li><p>Comparación entre geodatabases basadas en archivos (<em>File Geodatabase</em>, <em>GeoPackage</em>) y geodatabases corporativas multiusuario (<em>Enterprise Geodatabase</em> desplegada sobre PostgreSQL).</p></li>
-<li><p>Enfoque guiado por modelos (<em>Model-Driven Architecture</em> - MDA) y estándares abiertos: transformación automatizada de modelos conceptuales UML a esquemas de geodatabase mediante <strong>ShapeChange</strong>.</p></li>
-<li><p>Paradigma moderno de diseño y gestión de geodatabases:</p></li>
-<li><p><em>Modelado visual integrado (</em>Data design views<em>):</em> Configuración directa e interactiva de campos, subtipos, dominios (rango y valores codificados), valores contingentes y reglas de atributos (<em>attribute rules</em> para cálculo, restricción y validación).</p></li>
-<li><p><em>Extracción y clonación del esquema:</em> Exportación de arquitecturas completas mediante documentos de espacio de trabajo XML (<em>Export XML Workspace Document</em> de tipo <code>SCHEMA_ONLY</code>) para versionamiento en repositorios Git.</p></li>
-<li><p><em>Documentación automática del esquema:</em> Generación del diccionario de datos estructurado en formato Markdown/HTML mediante la herramienta nativa <em>Generate Geodatabase Schema Report</em>.</p></li>
-<li><p>Reglas de topología vectorial en geodatabases: tolerancias de agrupamiento, validación y gestión de excepciones.</p></li>
-<li><p><strong>Semana 10: Almacenamiento ráster, lógica procedural en servidor y flujos ETL</strong></p></li>
-<li><p>Almacenamiento y teselado de datos ráster con la extensión <code>postgis_raster</code> y catálogos de mosaico en geodatabases.</p></li>
-<li><p>Álgebra de mapas en base de datos (<code>ST_MapAlgebra</code>) y extracción de estadísticas zonales (<code>ST_SummaryStats</code>).</p></li>
-<li><p>Funciones almacenadas en PL/pgSQL y disparadores espaciales (<em>triggers</em>) para automatización de integridad en servidor.</p></li>
-<li><p>Construcción de pipelines de extracción, transformación y carga (ETL) utilizando librerías geoespaciales (GDAL/OGR en Python).</p></li>
-<li><p><strong>Evaluación práctica:</strong> <strong>Taller 4: Diseño de geodatabases, reglas de integridad, topología, documentación y flujos ETL.</strong></p></li>
+<li>Conceptos generales de geodatabases: almacenamiento relacional de objetos espaciales, clases de entidad (<em>feature classes</em>), conjuntos de datos (<em>feature datasets</em>) y catálogos.</li>
+<li>Comparación entre geodatabases basadas en archivos (<em>File Geodatabase</em>, <em>GeoPackage</em>) y geodatabases corporativas multiusuario (<em>Enterprise Geodatabase</em> desplegada sobre PostgreSQL).</li>
+<li>Enfoque guiado por modelos (<em>Model-Driven Architecture</em> - MDA) y estándares abiertos: transformación automatizada de modelos conceptuales UML a esquemas de geodatabase mediante <strong>ShapeChange</strong>.</li>
+<li>Paradigma moderno de diseño y gestión de geodatabases:</li>
+<li><em>Modelado visual integrado (data design views):</em> Configuración directa e interactiva de campos, subtipos, dominios (rango y valores codificados), valores contingentes y reglas de atributos (<em>attribute rules</em> para cálculo, restricción y validación).</li>
+<li><em>Extracción y clonación del esquema:</em> Exportación de arquitecturas completas mediante documentos de espacio de trabajo XML (<em>Export XML Workspace Document</em> de tipo <code>SCHEMA_ONLY</code>) para versionamiento en repositorios Git.</li>
+<li><em>Documentación automática del esquema:</em> Generación del diccionario de datos estructurado en formato Markdown/HTML mediante la herramienta nativa <em>Generate Geodatabase Schema Report</em>.</li>
+<li>Reglas de topología vectorial en geodatabases: tolerancias de agrupamiento, validación y gestión de excepciones.</li>
+</ul>
+<p><strong>Semana 10: Almacenamiento ráster, lógica procedural en servidor y flujos ETL</strong></p>
+<ul>
+<li>Almacenamiento y teselado de datos ráster con la extensión <code>postgis_raster</code> y catálogos de mosaico en geodatabases.</li>
+<li>Álgebra de mapas en base de datos (<code>ST_MapAlgebra</code>) y extracción de estadísticas zonales (<code>ST_SummaryStats</code>).</li>
+<li>Funciones almacenadas en PL/pgSQL y disparadores espaciales (<em>triggers</em>) para automatización de integridad en servidor.</li>
+<li>Construcción de pipelines de extracción, transformación y carga (ETL) utilizando librerías geoespaciales (GDAL/OGR en Python).</li>
+<li><strong>Evaluación práctica: Taller 4: Diseño de geodatabases, reglas de integridad, topología, documentación y flujos ETL.</strong></li>
 </ul>
 </section>
 <section id="eje-4-paradigmas-emergentes-y-seminario-de-proyectos-finales-semanas-11-a-16" class="level3">
@@ -461,39 +526,51 @@ Eje 4: Temas emergentes y proyectos finales (Sem 11-16)
 <p>Para una cohorte de 10 a 15 estudiantes, se conforman 6 equipos de trabajo (2 a 3 estudiantes por grupo). Cada semana se destina íntegramente a una temática de investigación.</p>
 <p>El equipo asignado asume la dirección del aula durante la sesión de 2 horas (120 minutos), estructurada estrictamente en tres bloques secuenciales:</p>
 <ul>
-<li><p><strong>Bloque 1 (40 minutos):</strong> Presentación del marco conceptual, arquitectura tecnológica y diseño experimental.</p></li>
-<li><p><strong>Bloque 2 (65 minutos):</strong> Taller práctico guiado en tiempo real (<em>live coding</em>) con la cohorte conectada al entorno.</p></li>
-<li><p><strong>Bloque 3 (15 minutos):</strong> Debate técnico, análisis de limitaciones y retroalimentación docente.</p></li>
-<li><p><strong>Semana 11: Proyecto final 01 — Procesamiento analítico columnar y formatos nativos de nube</strong></p></li>
-<li><p><em>Tecnología:</em> DuckDB espacial y GeoParquet.</p></li>
-<li><p><em>Enfoque del taller:</em> Consultas analíticas vectoriales directas sobre almacenamiento en la nube, evaluación de <em>predicate pushdown</em> y límites de huella de memoria.</p></li>
-<li><p><em>Directores de sesión:</em> Equipo 01.</p></li>
-<li><p><strong>Semana 12: Proyecto final 02 — Escalabilidad y procesamiento masivo distribuido</strong></p></li>
-<li><p><em>Tecnología:</em> Apache Sedona y PySpark.</p></li>
-<li><p><em>Enfoque del taller:</em> <em>Spatial Join</em> masivo sobre clúster distribuido, particionamiento espacial (<em>Quad-Tree</em> / <em>KDB-Tree</em>) y análisis del grafo acíclico dirigido (<em>DAG</em>).</p></li>
-<li><p><em>Directores de sesión:</em> Equipo 02.</p></li>
-<li><p><strong>Semana 13: Proyecto final 03 — Sistemas de mallas espaciales discretas globales (DGGS)</strong></p></li>
-<li><p><em>Tecnología:</em> Mallas jerárquicas Uber H3 y Google S2.</p></li>
-<li><p><em>Enfoque del taller:</em> Agregación espacial de series temporales masivas, reclasificación multi-resolución y evaluación de distorsión métrica frente a índices continuos.</p></li>
-<li><p><em>Directores de sesión:</em> Equipo 03.</p></li>
-<li><p><strong>Semana 14: Proyecto final 04 — Bases de datos espaciales orientadas a grafos y análisis de redes</strong></p></li>
-<li><p><em>Tecnología:</em> Neo4j Spatial frente a pgRouting.</p></li>
-<li><p><em>Enfoque del taller:</em> Construcción de topologías de transporte, ruteo dinámico con Dijkstra / A* y cálculo de isócronas bajo concurrencia.</p></li>
-<li><p><em>Directores de sesión:</em> Equipo 04.</p></li>
-<li><p><strong>Semana 15: Proyecto final 05 — Indexación geoespacial en motores NoSQL para telemetría y flujos en tiempo real</strong></p></li>
-<li><p><em>Tecnología:</em> Elasticsearch / OpenSearch frente a MongoDB espacial.</p></li>
-<li><p><em>Enfoque del taller:</em> Ingestión de eventos de alta frecuencia, consultas concurrentes de <em>geo-fencing</em> e indexación con árboles BKD y mallas <code>2dsphere</code>.</p></li>
-<li><p><em>Directores de sesión:</em> Equipo 05.</p></li>
-<li><p><strong>Semana 16: Proyecto final 06 — Programación procedural en servidor y extensiones nativas</strong></p></li>
-<li><p><em>Tecnología:</em> PL/pgSQL avanzado, PL/Python y extensiones en lenguaje compilado (Rust vía PGRX).</p></li>
-<li><p><em>Enfoque del taller:</em> Evaluación de la sobrecarga de serialización WKB entre cliente y servidor, y <em>benchmarking</em> de algoritmos geométricos en extensiones nativas.</p></li>
-<li><p><em>Directores de sesión:</em> Equipo 06.</p></li>
-<li><p><em>Cierre académico:</em> Integración automatizada del libro del curso compilado con Quarto y balance general de la asignatura.</p></li>
+<li><strong>Bloque 1 (40 minutos):</strong> Presentación del marco conceptual, arquitectura tecnológica y diseño experimental.</li>
+<li><strong>Bloque 2 (65 minutos):</strong> Taller práctico guiado en tiempo real (<em>live coding</em>) con la cohorte conectada al entorno.</li>
+<li><strong>Bloque 3 (15 minutos):</strong> Debate técnico, análisis de limitaciones y retroalimentación docente.</li>
+</ul>
+<p><strong>Semana 11: Proyecto final 01 — Procesamiento analítico columnar y formatos nativos de nube</strong></p>
+<ul>
+<li><em>Tecnología:</em> DuckDB espacial y GeoParquet.</li>
+<li><em>Enfoque del taller:</em> Consultas analíticas vectoriales directas sobre almacenamiento en la nube, evaluación de <em>predicate pushdown</em> y límites de huella de memoria.</li>
+<li><em>Directores de sesión:</em> Equipo 01.</li>
+</ul>
+<p><strong>Semana 12: Proyecto final 02 — Escalabilidad y procesamiento masivo distribuido</strong></p>
+<ul>
+<li><em>Tecnología:</em> Apache Sedona y PySpark.</li>
+<li><em>Enfoque del taller:</em> <em>Spatial Join</em> masivo sobre clúster distribuido, particionamiento espacial (<em>Quad-Tree</em> / <em>KDB-Tree</em>) y análisis del grafo acíclico dirigido (<em>DAG</em>).</li>
+<li><em>Directores de sesión:</em> Equipo 02.</li>
+</ul>
+<p><strong>Semana 13: Proyecto final 03 — Sistemas de mallas espaciales discretas globales (DGGS)</strong></p>
+<ul>
+<li><em>Tecnología:</em> Mallas jerárquicas Uber H3 y Google S2.</li>
+<li><em>Enfoque del taller:</em> Agregación espacial de series temporales masivas, reclasificación multi-resolución y evaluación de distorsión métrica frente a índices continuos.</li>
+<li><em>Directores de sesión:</em> Equipo 03.</li>
+</ul>
+<p><strong>Semana 14: Proyecto final 04 — Bases de datos espaciales orientadas a grafos y análisis de redes</strong></p>
+<ul>
+<li><em>Tecnología:</em> Neo4j Spatial frente a pgRouting.</li>
+<li><em>Enfoque del taller:</em> Construcción de topologías de transporte, ruteo dinámico con Dijkstra / A* y cálculo de isócronas bajo concurrencia.</li>
+<li><em>Directores de sesión:</em> Equipo 04.</li>
+</ul>
+<p><strong>Semana 15: Proyecto final 05 — Indexación geoespacial en motores NoSQL para telemetría y flujos en tiempo real</strong></p>
+<ul>
+<li><em>Tecnología:</em> Elasticsearch / OpenSearch frente a MongoDB espacial.</li>
+<li><em>Enfoque del taller:</em> Ingestión de eventos de alta frecuencia, consultas concurrentes de <em>geo-fencing</em> e indexación con árboles BKD y mallas <code>2dsphere</code>.</li>
+<li><em>Directores de sesión:</em> Equipo 05.</li>
+</ul>
+<p><strong>Semana 16: Proyecto final 06 — Programación procedural en servidor y extensiones nativas</strong></p>
+<ul>
+<li><em>Tecnología:</em> PL/pgSQL avanzado, PL/Python y extensiones en lenguaje compilado (Rust vía PGRX).</li>
+<li><em>Enfoque del taller:</em> Evaluación de la sobrecarga de serialización WKB entre cliente y servidor, y <em>benchmarking</em> de algoritmos geométricos en extensiones nativas.</li>
+<li><em>Directores de sesión:</em> Equipo 06.</li>
+<li><em>Cierre académico:</em> Integración automatizada del libro del curso compilado con Quarto y balance general de la asignatura.</li>
 </ul>
 </section>
 </section>
-<section id="sistema-de-evaluación-y-ponderación-porcentual" class="level2" data-number="1.6">
-<h2 data-number="1.6" class="anchored" data-anchor-id="sistema-de-evaluación-y-ponderación-porcentual"><span class="header-section-number">1.6</span> Sistema de evaluación y ponderación porcentual</h2>
+<section id="sistema-de-evaluación-y-ponderación-porcentual" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="sistema-de-evaluación-y-ponderación-porcentual"><span class="header-section-number">1.7</span> Sistema de evaluación y ponderación porcentual</h2>
 <div id="tbl-sistema-evaluacion" class="quarto-float anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-sistema-evaluacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -558,8 +635,8 @@ Tabla&nbsp;1.1: Distribución de componentes evaluativos y ponderación porcentu
 </figure>
 </div>
 </section>
-<section id="estructura-de-entregables-del-proyecto-final-en-el-repositorio-quarto" class="level2" data-number="1.7">
-<h2 data-number="1.7" class="anchored" data-anchor-id="estructura-de-entregables-del-proyecto-final-en-el-repositorio-quarto"><span class="header-section-number">1.7</span> Estructura de entregables del proyecto final en el repositorio Quarto</h2>
+<section id="estructura-de-entregables-del-proyecto-final-en-el-repositorio-quarto" class="level2" data-number="1.8">
+<h2 data-number="1.8" class="anchored" data-anchor-id="estructura-de-entregables-del-proyecto-final-en-el-repositorio-quarto"><span class="header-section-number">1.8</span> Estructura de entregables del proyecto final en el repositorio Quarto</h2>
 <p>Cada equipo de investigación debe crear su carpeta correspondiente en el directorio <code>proyectos_finales/</code> respetando la estructura modular estandarizada:</p>
 <pre class="text"><code>proyectos_finales/
 └── tema_XX_[nombre_tema]/
@@ -579,8 +656,8 @@ Tabla&nbsp;1.1: Distribución de componentes evaluativos y ponderación porcentu
 <li><code>references.bib</code>: Archivo BibTeX con la literatura técnica y científica citada.</li>
 </ul>
 </section>
-<section id="políticas-del-curso-entregas-y-régimen-disciplinario" class="level2" data-number="1.8">
-<h2 data-number="1.8" class="anchored" data-anchor-id="políticas-del-curso-entregas-y-régimen-disciplinario"><span class="header-section-number">1.8</span> Políticas del curso, entregas y régimen disciplinario</h2>
+<section id="políticas-del-curso-entregas-y-régimen-disciplinario" class="level2" data-number="1.9">
+<h2 data-number="1.9" class="anchored" data-anchor-id="políticas-del-curso-entregas-y-régimen-disciplinario"><span class="header-section-number">1.9</span> Políticas del curso, entregas y régimen disciplinario</h2>
 <section id="gestión-de-entregas-y-control-de-versiones-vía-github" class="level3">
 <h3 class="anchored" data-anchor-id="gestión-de-entregas-y-control-de-versiones-vía-github">Gestión de entregas y control de versiones vía GitHub</h3>
 <p>Todas las asignaciones prácticas, talleres y reportes del curso se gestionan de manera obligatoria a través de la organización de GitHub del curso.</p>
@@ -625,8 +702,8 @@ Tabla&nbsp;1.1: Distribución de componentes evaluativos y ponderación porcentu
 </ul>
 </section>
 </section>
-<section id="referencias-bibliográficas" class="level2" data-number="1.9">
-<h2 data-number="1.9" class="anchored" data-anchor-id="referencias-bibliográficas"><span class="header-section-number">1.9</span> Referencias bibliográficas</h2>
+<section id="referencias-bibliográficas" class="level2" data-number="1.10">
+<h2 data-number="1.10" class="anchored" data-anchor-id="referencias-bibliográficas"><span class="header-section-number">1.10</span> Referencias bibliográficas</h2>
 <ul>
 <li>Güting, R. H., &amp; Schneider, M. (2005). <em>Moving objects databases</em>. Morgan Kaufmann.</li>
 <li>Li, C. C., &amp; Shan, J. (Eds.). (2015). <em>Advances in spatial and temporal databases</em>. Springer International Publishing.</li>
@@ -1036,8 +1113,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../chapters/05-guia_instalacion_vscode_docker.html" class="pagination-link" aria-label="Guía de instalación: VS Code y contenedores Docker">
-        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación: VS Code y contenedores Docker</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../chapters/04-introduccion_instalacion_entornos.html" class="pagination-link" aria-label="Instalación y entornos">
+        <span class="nav-page-text">Instalación y entornos</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

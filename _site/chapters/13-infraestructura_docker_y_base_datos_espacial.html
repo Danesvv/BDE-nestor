@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Bases de Datos Espaciales - 4&nbsp; Despliegue docker y verificación de la base de datos</title>
+<title>Bases de datos espaciales - 4&nbsp; Despliegue docker y verificación de la base de datos</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -76,11 +76,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
-  "location": "sidebar",
+  "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
-  "panel-placement": "start",
-  "type": "textbox",
+  "panel-placement": "end",
+  "type": "overlay",
   "limit": 50,
   "keyboard-shortcut": [
     "f",
@@ -109,38 +109,53 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </head>
 
-<body class="nav-sidebar floating">
+<body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Bases de datos espaciales</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../slides/index.html"> 
+<span class="menu-text">Diapositivas</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/alexyshr/bde2026"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/05-guia_instalacion_vscode_docker.html">Instalación y entornos</a></li><li class="breadcrumb-item"><a href="../chapters/13-infraestructura_docker_y_base_datos_espacial.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Despliegue docker y verificación de la base de datos</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/04-introduccion_instalacion_entornos.html">Instalación y entornos</a></li><li class="breadcrumb-item"><a href="../chapters/13-infraestructura_docker_y_base_datos_espacial.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Despliegue docker y verificación de la base de datos</span></a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
     </div>
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
-    <div class="sidebar-title mb-0 py-0">
-      <a href="../">Bases de Datos Espaciales</a> 
-    </div>
-      </div>
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Buscar"></div>
-        </div>
-        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -163,7 +178,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a href="../chapters/04-introduccion_instalacion_entornos.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Instalación y entornos</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -173,7 +188,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/05-guia_instalacion_vscode_docker.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación: VS Code y contenedores Docker</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -303,7 +318,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Tabla de Contenidos</h2>
+    <h2 id="toc-title">Tabla de contenidos</h2>
    
   <ul>
   <li><a href="#introducción" id="toc-introducción" class="nav-link active" data-scroll-target="#introducción"><span class="header-section-number">4.1</span> Introducción</a></li>
@@ -339,7 +354,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/05-guia_instalacion_vscode_docker.html">Instalación y entornos</a></li><li class="breadcrumb-item"><a href="../chapters/13-infraestructura_docker_y_base_datos_espacial.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Despliegue docker y verificación de la base de datos</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/04-introduccion_instalacion_entornos.html">Instalación y entornos</a></li><li class="breadcrumb-item"><a href="../chapters/13-infraestructura_docker_y_base_datos_espacial.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Despliegue docker y verificación de la base de datos</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span id="sec-infraestructura-docker" class="quarto-section-identifier"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Despliegue docker y verificación de la base de datos</span></span></h1>
 </div>
@@ -362,9 +377,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 data-number="4.1" class="anchored" data-anchor-id="introducción"><span class="header-section-number">4.1</span> Introducción</h2>
 <p>Antes de continuar con este capítulo, se debe contar con las siguientes herramientas instaladas y operativas en el equipo local:</p>
 <ul>
-<li>Motor de contenedores: ver <a href="05-guia_instalacion_vscode_docker.html" class="quarto-xref"><span>Capítulo 2</span></a></li>
-<li>Visual Studio Code: ver <a href="05-guia_instalacion_vscode_docker.html" class="quarto-xref"><span>Capítulo 2</span></a></li>
-<li>PostgreSQL y PostGIS en el contenedor: ver <a href="83-docker.html" class="quarto-xref"><span>Apéndice B</span></a></li>
+<li>VSCode, Docker Desktop y contenedores para el curso: ver <a href="05-guia_instalacion_vscode_docker.html" class="quarto-xref"><span>Capítulo 2</span></a></li>
+<li>PostgreSQL y PostGIS en el sistema anfitrión: ver <a href="10-instalacion_postgresql_18_windows.html" class="quarto-xref"><span>Capítulo 3</span></a></li>
+<li>Configuración de PostgreSQL y PostGIS en el sistema anfitrión: ver <a href="10-instalacion_postgresql_18_windows.html#sec-configurar-postgresql" class="quarto-xref"><span>Sección 3.9</span></a></li>
+<li>Configuración del cliente <code>psql</code> en el Docker: ver <a href="87-linux_ubuntu.html#sec-anexo-linux-instalacion-psql" class="quarto-xref"><span>Sección F.1</span></a></li>
+<li>Instalación y verificación de Graphviz en el contenedor: ver <a href="87-linux_ubuntu.html#sec-anexo-linux-instalacion-graphviz" class="quarto-xref"><span>Sección F.2</span></a></li>
 </ul>
 <p>En esta sección se configura el entorno de contenedores para acceder a la base de datos espacial pedagógica (<code>sig_db_unal</code>), la cual contiene PostgreSQL 18 y PostGIS 3.6 preconfigurados con la cartografía de estudio. Adicionalmente, se presenta el procedimiento para replicar, cargar y auditar este catálogo en la instalación nativa del equipo local.</p>
 </section>
@@ -379,7 +396,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> <span class="at">--version</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> info</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Tras ejecutar el aprovisionamiento descrito en el <a href="05-guia_instalacion_vscode_docker.html" class="quarto-xref"><span>Capítulo 2</span></a>, verifique la presencia de las imágenes requeridas:</p>
+<p>Tras ejecutar el aprovisionamiento descrito en la <a href="05-guia_instalacion_vscode_docker.html" class="quarto-xref"><span>Capítulo 2</span></a>, verifique la presencia de las imágenes requeridas:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> images</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -414,36 +431,36 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div>
 <pre class="mermaid mermaid-js" data-label="fig-arquitectura-inicializacion">graph TD
 
-&nbsp; &nbsp; classDef inicio fill:#e8f4f8,stroke:#0dcaf0,stroke-width:2px,color:#000
-&nbsp; &nbsp; classDef decision fill:#fff3cd,stroke:#e6b800,stroke-width:2px,color:#000
-&nbsp; &nbsp; classDef proceso fill:#d4edda,stroke:#28a745,stroke-width:2px,color:#000
-&nbsp; &nbsp; classDef persistente fill:#e2e3e5,stroke:#343a40,stroke-width:2px,color:#000
-&nbsp; &nbsp; classDef final fill:#333,stroke:#666,stroke-width:2px,color:#fff
+    classDef inicio fill:#e8f4f8,stroke:#0dcaf0,stroke-width:2px,color:#000
+    classDef decision fill:#fff3cd,stroke:#e6b800,stroke-width:2px,color:#000
+    classDef proceso fill:#d4edda,stroke:#28a745,stroke-width:2px,color:#000
+    classDef persistente fill:#e2e3e5,stroke:#343a40,stroke-width:2px,color:#000
+    classDef final fill:#333,stroke:#666,stroke-width:2px,color:#fff
 
-&nbsp; &nbsp; A["Ejecución:&lt;br/&gt;docker compose up -d"]:::inicio
+    A["Ejecución:&lt;br/&gt;docker compose up -d"]:::inicio
 
-&nbsp; &nbsp; B{"¿Volumen&lt;br/&gt;postgis_data_unal&lt;br/&gt;vacío?"}:::decision
+    B{"¿Volumen&lt;br/&gt;postgis_data_unal&lt;br/&gt;vacío?"}:::decision
 
-&nbsp; &nbsp; C["Inicialización del clúster&lt;br/&gt;PostgreSQL 18"]:::proceso
-&nbsp; &nbsp; D["Habilitación de&lt;br/&gt;extensiones espaciales"]:::proceso
-&nbsp; &nbsp; E["Inyección del script SQL:&lt;br/&gt;esquemas base750 y divpol"]:::proceso
+    C["Inicialización del clúster&lt;br/&gt;PostgreSQL 18"]:::proceso
+    D["Habilitación de&lt;br/&gt;extensiones espaciales"]:::proceso
+    E["Inyección del script SQL:&lt;br/&gt;esquemas base750 y divpol"]:::proceso
 
-&nbsp; &nbsp; F[("Volumen persistente&lt;br/&gt;postgis_data_unal")]:::persistente
+    F[("Volumen persistente&lt;br/&gt;postgis_data_unal")]:::persistente
 
-&nbsp; &nbsp; G["Enlace directo a&lt;br/&gt;datos persistidos"]:::proceso
+    G["Enlace directo a&lt;br/&gt;datos persistidos"]:::proceso
 
-&nbsp; &nbsp; H["Disponibilidad inmediata del&lt;br/&gt;catálogo sig_db_unal"]:::final
+    H["Disponibilidad inmediata del&lt;br/&gt;catálogo sig_db_unal"]:::final
 
-&nbsp; &nbsp; A --&gt; B
+    A --&gt; B
 
-&nbsp; &nbsp; B --&gt;|"Sí: primer despliegue"| C
-&nbsp; &nbsp; C --&gt; D
-&nbsp; &nbsp; D --&gt; E
-&nbsp; &nbsp; E --&gt; F
-&nbsp; &nbsp; F --&gt; H
+    B --&gt;|"Sí: primer despliegue"| C
+    C --&gt; D
+    D --&gt; E
+    E --&gt; F
+    F --&gt; H
 
-&nbsp; &nbsp; B --&gt;|"No: despliegues posteriores"| G
-&nbsp; &nbsp; G --&gt; H
+    B --&gt;|"No: despliegues posteriores"| G
+    G --&gt; H
 </pre>
 </div>
 </div>
@@ -488,6 +505,10 @@ Figura&nbsp;4.1: Ciclo de vida y auto-inicialización declarativa del clúster e
         DevCont["Contenedor analítico: contenedor_sig_unal&lt;br/&gt;Terminal integrada de Visual Studio Code"]:::contenedor
         PostGISCont["Contenedor espacial: contenedor_postgis_unal&lt;br/&gt;Servicio: db-postgis&lt;br/&gt;Puerto nativo: 5432"]:::contenedor
     end
+
+    %% Estilos de fondo para los contenedores (subgraphs)
+    style Host fill:#f8f9fa,stroke:#6c757d
+    style DockerNet fill:#f8f9fa,stroke:#6c757d
 
     VSCodeHost --&gt;|"localhost:5432"| LocalPG
     VSCodeHost --&gt;|"127.0.0.1:5434 (port forwarding)"| PostGISCont
@@ -665,12 +686,37 @@ Host: db-postgis:5432 | Usuario: profe_unal | BD: sig_db_unal
 Destino por defecto: profe_unal@db-postgis:5432/sig_db_unal</code></pre>
 </div>
 </div>
-<blockquote class="blockquote">
-<p><strong>Nota (persistencia):</strong> Las variables exportadas dentro de un bloque <code>{bash}</code> durante la compilación residen exclusivamente en la memoria volátil de esa subshell efímera y se destruyen al concluir su ejecución. Dado que el procesamiento del documento es orquestado por el motor Knitr, la persistencia de estos parámetros a lo largo de todos los subprocesos se garantiza mediante su inyección en la tabla de entorno del proceso principal en el bloque <code>setup-variables-sistema-r</code>. Si se requiere disponer de estas variables para interactuar de forma manual durante la sesión de trabajo, el bloque de comandos debe copiarse y ejecutarse directamente en la terminal integrada de Visual Studio Code.</p>
-</blockquote>
-<blockquote class="blockquote">
-<p><strong>Nota (nomenclatura de conexión: <code>usuario@host:puerto/base_de_datos</code>):</strong> La estructura compuesta <code>${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}</code> (por ejemplo, <code>profe_unal@db-postgis:5432/sig_db_unal</code>) corresponde a la notación canónica para la identificación unívoca de un extremo de conexión (<em>target endpoint</em>), fundamentada en el estándar de URI (<em>Uniform Resource Identifier</em>) de PostgreSQL (RFC 3986) y cadenas DSN (<em>Data Source Name</em>). Este descriptor unifica los tres planos funcionales requeridos: * <strong>Identidad del rol autenticado (<code>profe_unal@</code>):</strong> Determina las credenciales y los privilegios de ejecución DDL/DML. * <strong>Dirección y puerto del socket de red (<code>db-postgis:5432</code>):</strong> Especifica la ruta de enrutamiento hacia la instancia. * <strong>Catálogo relacional objetivo (<code>/sig_db_unal</code>):</strong> Define la base de datos relacional y espacial vinculada a la sesión.</p>
-</blockquote>
+<div class="callout callout-style-default callout-note callout-titled" title="Persistencia de variables en subprocesos">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Persistencia de variables en subprocesos
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Las variables exportadas dentro de un bloque <code>{bash}</code> durante la compilación residen exclusivamente en la memoria volátil de esa subshell efímera y se destruyen al concluir dicha ejecución. Dado que el procesamiento del documento es orquestado por el motor Knitr, la persistencia de estos parámetros a lo largo de todos los subprocesos se garantiza mediante la inyección en la tabla de entorno del proceso principal en el bloque <code>setup-variables-sistema-r</code>. Si se requiere disponer de estas variables para interactuar de forma manual durante la sesión de trabajo, el bloque de comandos debe copiarse y ejecutarse directamente en la terminal integrada de Visual Studio Code.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Nomenclatura canónica de conexión (usuario@host:puerto/base_de_datos)">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Nomenclatura canónica de conexión (usuario@host:puerto/base_de_datos)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>La estructura compuesta <code>${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}</code> (por ejemplo, <code>profe_unal@db-postgis:5432/sig_db_unal</code>) corresponde a la notación canónica para la identificación unívoca de un extremo de conexión (<em>target endpoint</em>), fundamentada en el estándar de URI (<em>Uniform Resource Identifier</em>) de PostgreSQL (RFC 3986) y cadenas DSN (<em>Data Source Name</em>). Este descriptor unifica los tres planos funcionales requeridos:</p>
+<ul>
+<li><p><strong>Identidad del rol autenticado (<code>profe_unal@</code>):</strong> Determina las credenciales y los privilegios de ejecución DDL/DML.</p></li>
+<li><p><strong>Dirección y puerto del socket de red (<code>db-postgis:5432</code>):</strong> Especifica la ruta de enrutamiento hacia la instancia.</p></li>
+<li><p><strong>Catálogo relacional objetivo (<code>/sig_db_unal</code>):</strong> Define la base de datos relacional y espacial vinculada a la sesión.</p></li>
+</ul>
+</div>
+</div>
 </section>
 </section>
 <section id="verificación-de-versiones-y-extensiones-espaciales" class="level2" data-number="4.4">
@@ -680,7 +726,7 @@ Destino por defecto: profe_unal@db-postgis:5432/sig_db_unal</code></pre>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGPASSWORD}</span><span class="st">"</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Versión del motor relacional PostgreSQL</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${DOCKER_PGHOST}</span> <span class="at">-p</span><span class="va">${DOCKER_PGPORT}</span> <span class="at">-U</span> <span class="va">${DOCKER_PGUSER}</span> <span class="at">-d</span><span class="va">${DOCKER_PGDATABASE}</span> <span class="at">-x</span> <span class="at">-P</span> format=wrapped <span class="at">-P</span> columns=90 <span class="at">-c</span> <span class="st">"SELECT version();"</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${DOCKER_PGHOST}</span> <span class="at">-p</span> <span class="va">${DOCKER_PGPORT}</span> <span class="at">-U</span> <span class="va">${DOCKER_PGUSER}</span> <span class="at">-d</span> <span class="va">${DOCKER_PGDATABASE}</span> <span class="at">-x</span> <span class="at">-P</span> format=wrapped <span class="at">-P</span> columns=90 <span class="at">-c</span> <span class="st">"SELECT version();"</span></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Versiones granulares de PostGIS y librerías geoespaciales</span></span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="va">query_versiones</span><span class="op">=</span><span class="st">"</span></span>
@@ -692,7 +738,7 @@ Destino por defecto: profe_unal@db-postgis:5432/sig_db_unal</code></pre>
 <span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="st">    postgis_libxml_version() AS version_libxml;</span></span>
 <span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
 <span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${DOCKER_PGHOST}</span> <span class="at">-p</span> <span class="va">${DOCKER_PGPORT}</span> <span class="at">-U</span><span class="va">${DOCKER_PGUSER}</span> <span class="at">-d</span> <span class="va">${DOCKER_PGDATABASE}</span> <span class="at">-x</span> <span class="at">-P</span> format=wrapped <span class="at">-P</span> columns=90 <span class="at">-c</span> <span class="st">"</span><span class="va">${query_versiones}</span><span class="st">"</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${DOCKER_PGHOST}</span> <span class="at">-p</span> <span class="va">${DOCKER_PGPORT}</span> <span class="at">-U</span> <span class="va">${DOCKER_PGUSER}</span> <span class="at">-d</span> <span class="va">${DOCKER_PGDATABASE}</span> <span class="at">-x</span> <span class="at">-P</span> format=wrapped <span class="at">-P</span> columns=90 <span class="at">-c</span> <span class="st">"</span><span class="va">${query_versiones}</span><span class="st">"</span></span>
 <span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Versión de PostGIS y dependencias geoespaciales</span></span>
@@ -704,7 +750,7 @@ Destino por defecto: profe_unal@db-postgis:5432/sig_db_unal</code></pre>
 <span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT regexp_split_to_table(postgis_full_version(), ' ') AS componentes_postgis;</span></span>
 <span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
 <span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${DOCKER_PGHOST}</span> <span class="at">-p</span> <span class="va">${DOCKER_PGPORT}</span> <span class="at">-U</span><span class="va">${DOCKER_PGUSER}</span> <span class="at">-d</span> <span class="va">${DOCKER_PGDATABASE}</span> <span class="at">-c</span> <span class="st">"</span><span class="va">${query_full}</span><span class="st">"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${DOCKER_PGHOST}</span> <span class="at">-p</span> <span class="va">${DOCKER_PGPORT}</span> <span class="at">-U</span> <span class="va">${DOCKER_PGUSER}</span> <span class="at">-d</span> <span class="va">${DOCKER_PGDATABASE}</span> <span class="at">-c</span> <span class="st">"</span><span class="va">${query_full}</span><span class="st">"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>-[ RECORD 1 ]----------------------------------------------------------------------------
 version | PostgreSQL 18.1 (Debian 18.1-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gc.
@@ -829,6 +875,12 @@ postgis_full_version | POSTGIS="3.6.1 f533623" [EXTENSION] PGSQL="180" GEOS="3.1
         end
 
     end
+    
+    style DB fill:#f8f9fa
+    style Ext fill:#e9ecef
+    style Meta fill:#e9ecef
+    style Base fill:#e9ecef
+    style Divpol fill:#e9ecef
 
     E1 --&gt; M1
     E2 --&gt; M1
@@ -958,7 +1010,7 @@ Figura&nbsp;4.4: Estructura modular, extensiones y registro de metadatos OGC en 
 <span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="co">#psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -x -c "${query_indices}"</span></span>
 <span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Usamos -P para evitar el desborde</span></span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${DOCKER_PGHOST}</span> <span class="at">-p</span> <span class="va">${DOCKER_PGPORT}</span> <span class="at">-U</span><span class="va">${DOCKER_PGUSER}</span> <span class="at">-d</span> <span class="va">${DOCKER_PGDATABASE}</span> <span class="at">-P</span> format=wrapped <span class="at">-P</span> columns=90 <span class="at">-c</span> <span class="st">"</span><span class="va">${query_indices}</span><span class="st">"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${DOCKER_PGHOST}</span> <span class="at">-p</span> <span class="va">${DOCKER_PGPORT}</span> <span class="at">-U</span> <span class="va">${DOCKER_PGUSER}</span> <span class="at">-d</span> <span class="va">${DOCKER_PGDATABASE}</span> <span class="at">-P</span> format=wrapped <span class="at">-P</span> columns=90 <span class="at">-c</span> <span class="st">"</span><span class="va">${query_indices}</span><span class="st">"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> esquema |    tabla     |       nombre_indice       |             definicion              
 ---------+--------------+---------------------------+-------------------------------------
@@ -1061,13 +1113,13 @@ Figura&nbsp;4.4: Estructura modular, extensiones y registro de metadatos OGC en 
 <div class="cell-output cell-output-stdout">
 <pre><code> esquema |     tabla     | registros_locales 
 ---------+---------------+-------------------
- base750 | hidro_lineas  |            124068
- base750 | vias_lineas   |             13399
- base750 | vias_puntos   |              6819
- base750 | vias_texto    |              6645
- divpol  | departamentos |                32
- divpol  | municipios    |              1121
- divpol  | nacion        |                 1
+ base750 | hidro_lineas  |                 0
+ base750 | vias_lineas   |                 0
+ base750 | vias_puntos   |                 0
+ base750 | vias_texto    |                 0
+ divpol  | departamentos |                 0
+ divpol  | municipios    |                 0
+ divpol  | nacion        |                 0
 (7 rows)
 
  esquema |        capa        | columna_geom | srid  | tipo_geometria 

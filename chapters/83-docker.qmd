@@ -43,43 +43,176 @@ echo "Directorio de ploteos: ${PLOTS_DIR}"
 
 El sistema Docker opera como un motor de virtualización [@docker2025] sobre el cual se desplegarán las máquinas virtuales basadas en Linux. Estas infraestructuras permiten la ejecución integrada de código analítico en Python, R y Julia, junto al soporte persistente de bases de datos geográficas.
 
+
 ## Instalación del software
 
-Descargue e instale la versión oficial del orquestador desde el repositorio principal:
+Descargue la versión oficial del orquestador desde el repositorio principal:
 
-- **URL**: <https://www.docker.com/products/docker-desktop/>
-- Descargue la versión estable correspondiente a la arquitectura de hardware del equipo local.
-- **Instalación**: Durante el proceso de instalación en el sistema anfitrión, asegúrese de autorizar la integración con los subsistemas de virtualización de bajo nivel (ej. WSL 2) si el asistente lo requiere, priorizando arquitecturas nativas sobre hipervisores emulados.
+- **URL oficial**: <https://www.docker.com/products/docker-desktop/>
+- Descargue el paquete instalador correspondiente a la arquitectura de hardware del equipo local.
+
+::: {.panel-tabset}
+
+### Sistema anfitrión (Windows)
+
+Para garantizar un rendimiento óptimo en Windows, el motor debe ejecutarse sobre la arquitectura nativa de virtualización de WSL 2 en lugar del hipervisor emulado Hyper-V.
+
+1. Abra una terminal de PowerShell con privilegios de administrador y actualice los componentes del subsistema:
+
+```powershell
+#| label: setup-wsl-update
+#| eval: false
+wsl --update
+
+```
+
+2. Ejecute el instalador descargado. Durante el asistente de configuración:
+* Asegúrese de marcar la casilla **"Use WSL 2 instead of Hyper-V"**.
+* Si el asistente solicita reiniciar el sistema al finalizar la descompresión de binarios, reinicie el equipo para inicializar el controlador de virtualización.
 
 
-A continuación, presento la sección reestructurada. Se ha integrado la profundidad técnica de la versión anterior (paso a paso y configuración de variables) abstrayendo las dependencias específicas de sistema operativo para cumplir estrictamente con los lineamientos de neutralidad de plataforma, manteniendo el estándar de Quarto y el rigor académico:
+3. **Instalación en una unidad secundaria (opcional)**: Si la unidad principal del sistema no dispone de espacio suficiente para la instalación de los binarios base, es posible forzar una ruta de instalación personalizada desde PowerShell como administrador:
+
+```powershell
+#| label: setup-install-docker-dir
+#| eval: false
+Start-Process "Docker Desktop Installer.exe" -ArgumentList "install", "--installation-dir=<unidad>:\Docker" -Wait
+
+```
+
+### Procedimiento general (agnóstico)
+
+En sistemas operativos tipo POSIX o arquitecturas alternativas:
+
+1. Instale el paquete siguiendo los estándares del sistema anfitrión (gestores de paquetes `apt`, `brew` o asistentes nativos).
+2. Asegúrese de que el demonio de Docker (`dockerd`) cuente con permisos de ejecución y esté habilitado para iniciar con el sistema.
+3. Integre el usuario local dentro del grupo de seguridad `docker` para permitir la interacción sin necesidad de elevar privilegios (`sudo`).
+
+:::
 
 ## Preparación del orquestador {#sec-preparacion-docker}
 
-Previo a la inicialización de imágenes, es indispensable configurar los recursos del equipo local:
+Previo a la inicialización de las imágenes del curso, es indispensable dimensionar los recursos de almacenamiento y memoria del equipo local. Las imágenes políglotas y los motores espaciales del entorno consolidan un volumen de datos considerable:
 
-* **Configuración de almacenamiento**: La imagen políglota y la base de datos exigen una volumetría considerable. Asegure un mínimo de **50 GB de espacio libre** en el disco de almacenamiento principal asignado a los volúmenes virtuales. El tamaño consolidado tras la expansión ronda los **45 GB**.
-* **Procedimiento para reasignación de discos virtuales**: Si el volumen de almacenamiento principal carece de capacidad, reubique el directorio de los discos virtuales. Acceda a la interfaz de configuración del cliente de orquestación, diríjase a la sección de recursos avanzados, modifique la ruta del catálogo de imágenes (*Disk image location*) hacia una unidad de mayor capacidad y reinicie el servicio.
-* **Optimización de memoria de intercambio (Swap)**: Para el procesamiento ininterrumpido de archivos ráster masivos, es imperativo ampliar el espacio de intercambio en el sistema anfitrión. Consulte la @sec-limpieza-entorno para mayores detalles sobre cómo este parámetro impacta el rendimiento analítico.
-* **Ajuste de memoria virtual en el sistema anfitrión**: Acceda a los parámetros avanzados de rendimiento del sistema base y configure manualmente la memoria virtual. Deshabilite la administración automática, seleccione una unidad de almacenamiento veloz y asigne un umbral inicial de **16384 MB** junto con un límite máximo de **32768 MB**, sujeto a la disponibilidad de espacio físico. Es obligatorio reiniciar el equipo tras aplicar los cambios.
-* **Configuración de recursos globales en arquitecturas virtualizadas**: En entornos soportados por subsistemas de virtualización (ej. arquitecturas tipo WSL2), ajuste el archivo de configuración global oculto (ej. `.wslconfig`) localizado en el directorio raíz del usuario. Este paso fuerza la asignación estricta de RAM física y orienta el archivo de intercambio de alta capacidad hacia un disco de estado sólido, previniendo el cierre de contenedores por saturación de memoria:
+* Se requiere un mínimo de **50 GB de espacio libre** en la unidad asignada a los discos virtuales.
+* El despliegue integral de las dos imágenes base del curso genera un consumo acumulado de aproximadamente **45 GB**.
+
+### Reasignación del almacenamiento de imágenes virtuales
+
+Si la unidad de almacenamiento principal carece del espacio libre requerido, se debe reubicar el catálogo donde el orquestador almacena los discos virtuales (archivos con extensión `.vhdx`).
+
+::: {.panel-tabset}
+
+#### Sistema anfitrión (Windows)
+
+Para mover la ubicación física del disco virtual de Docker Desktop a una unidad secundaria:
+
+1. Abra la interfaz de **Docker Desktop**.
+2. Haga clic en el ícono de engranaje en la barra superior para acceder a **Settings**.
+3. En el panel lateral izquierdo, diríjase a **Resources** y seleccione la sección **Advanced**.
+4. Localice el parámetro **Disk image location**.
+5. Haga clic en el botón `Browse` y seleccione una carpeta en una unidad con suficiente capacidad de almacenamiento.
+6. Haga clic en **Apply & restart** para que el servicio migre los datos y reinicie el motor.
+
+#### Procedimiento general (agnóstico)
+
+En configuraciones donde no se emplea Docker Desktop o se interactúa directamente con el demonio de Docker en el host:
+
+1. Detenga el servicio `docker`.
+2. Modifique el archivo `/etc/docker/daemon.json` agregando la directiva con la nueva ruta:
+
+```json
+#| label: setup-docker-daemon-dir
+#| eval: false
+{
+  "data-root": "/<ruta_al_disco_secundario>/docker-data"
+}
+
+```
+
+3. Mueva los archivos existentes e inicialice nuevamente el servicio.
+
+:::
+
+### Optimización de la memoria de intercambio (swap)
+
+Para procesar conjuntos de datos ráster y vectoriales masivos sin interrupciones en R, Python o Julia, es imperativo configurar una partición de intercambio de alta capacidad. Esto evita la terminación forzada de contenedores por saturación de memoria RAM (*Out of Memory Killer*). Puede consultar más detalles técnicos en la @sec-limpieza-entorno.
+
+::: {.panel-tabset}
+
+#### Sistema anfitrión (Windows)
+
+El ajuste del espacio de intercambio en Windows requiere configurar la memoria virtual del sistema operativo y los parámetros del subsistema WSL 2.
+
+**Paso 1: Ajustar la memoria virtual en el sistema anfitrión**
+
+1. En la barra de búsqueda de Windows, escriba y seleccione **"Ver la configuración avanzada del sistema"**.
+2. En la pestaña **Opciones avanzadas**, ubique la sección **Rendimiento** y haga clic en el botón `Configuración`.
+3. Diríjase a la pestaña **Opciones avanzadas**, vaya al bloque **Memoria virtual** y presione el botón `Cambiar`.
+4. Desmarque la casilla "Administrar automáticamente el tamaño del archivo de paginación para todas las unidades".
+5. Seleccione la unidad de almacenamiento principal o más veloz (SSD/NVMe), elija la opción **Tamaño personalizado** y defina los siguientes valores sugeridos (sujetos a la capacidad real del disco):
+* **Tamaño inicial**: `16384` MB (16 GB).
+* **Tamaño máximo**: `32768` MB (32 GB).
+
+
+6. Presione el botón `Establecer`, luego `Aceptar` y reinicie el equipo.
+
+**Paso 2: Configurar los recursos globales de WSL 2 (.wslconfig)**
+
+Docker Desktop delega la gestión de RAM y swap en el archivo de configuración global del hipervisor:
+
+1. Abra el explorador de archivos, ingrese `%USERPROFILE%` en la barra de direcciones y presione `Enter` para situarse en la raíz del usuario local.
+2. Cree un archivo de texto con el nombre exacto `.wslconfig` (verifique que no conserve la extensión oculta `.txt`).
+3. Incorpore la siguiente configuración para forzar el límite de RAM y dirigir el archivo de intercambio hacia un disco de alta velocidad:
 
 ```ini
 #| label: setup-wslconfig
 #| eval: false
 [wsl2]
-memory=12GB # RAM máxima física asignada al subsistema de virtualización
-swap=32GB   # Memoria de intercambio para evitar el cierre de contenedores
-swapfile=Ruta\Absoluta\Hacia\Disco\Secundario\swap.vhdx
+memory=12GB # RAM física asignada al subsistema de virtualización
+swap=32GB   # Memoria de intercambio para contingencia analítica
+swapfile=<unidad>:\\<ruta_al_directorio_con_espacio>\\swap.vhdx
 
 ```
 
+4. Reinicie el subsistema desde la terminal de comandos ejecutando `wsl --shutdown`.
+
+#### Procedimiento general (agnóstico)
+
+En entornos basados directamente en Linux, el espacio de intercambio se dimensiona en el host mediante la creación de un archivo de paginación estructurado:
+
+```bash
+#| label: setup-create-swapfile
+#| eval: false
+# 1. Crear un archivo reservado de 32 GB
+sudo fallocate -l 32G /swapfile
+
+# 2. Asignar permisos estrictos de lectura y escritura
+sudo chmod 600 /swapfile
+
+# 3. Formatear y activar el espacio de intercambio
+sudo mkswap /swapfile
+sudo swapon /swapfile
+
+```
+
+:::
+
 ::: {.callout-tip}
 
-### Auditoría de recursos
+#### Auditoría de recursos asignados
 
-Para corroborar la correcta asignación de memoria y espacio de intercambio desde el entorno de trabajo, ejecute el comando `free -h` en la terminal integrada de Visual Studio Code.
+Para comprobar si la memoria RAM y el espacio de intercambio se encuentran disponibles dentro del contenedor o en la terminal integrada de Visual Studio Code, ejecute:
+
+```bash
+#| label: audit-memory-resources
+#| eval: false
+free -h
+
+```
+
 :::
+
 
 
 ## Descarga y preparación de archivos {#sec-descarga-tar-yml}
@@ -99,6 +232,7 @@ Ejecute los siguientes pasos para consolidar el entorno base:
 desde el siguiente link en Google Drive.
 2. **Descompresión**: Extraiga el contenido del archivo comprimido `sig_unal_v1.12_completo_final.zip`.
 3. **Estructura del directorio**:
+
    * `sig_unal_v1.12_completo_final.tar`: Imagen consolidada del servidor espacial y del entorno analítico.
    * `docker-compose.yml`: Archivo de orquestación de puertos, redes y volúmenes persistentes.
    * `init_unal_spatialdb.sql`: Esquema base de datos espacial en texto plano.
@@ -135,56 +269,67 @@ docker ps -a
 ```
 
 1. Contenedor `contenedor_sig_unal` basado en la imagen `image_sig_unal:v1.11_produccion_final`, equipado con:
-* **Python**, **R** y **Julia** y librerías geoespaciales.
-* **Quarto** (Ver @sec-anexo-quarto).
+
+    * **Python**, **R** y **Julia** y librerías geoespaciales.
+    * **Quarto** (Ver @sec-anexo-quarto).
 
 
 2. Contenedor `contenedor_postgis_unal` basado en la imagen `postgis_unal:v1.12`, equipado con:
-* **PostgreSQL** y **PostGIS**, integrando el catálogo de estudio `sig_db_unal`.
+
+    * **PostgreSQL** y **PostGIS**, integrando el catálogo de estudio `sig_db_unal`.
 
 
 
 ## Puesta en marcha y detención de contenedores
 
-### Inicio de contenedores {#sec-arrancar-contenedores}
 
-El proceso de carga binaria se ejecuta por única vez. Para levantar la infraestructura orquestada, invoque el servicio desde la raíz del proyecto:
+### Inicio y reanudación de servicios {#sec-arrancar-contenedores}
+
+Para la provisión inicial del entorno, creación de redes virtuales y construcción de los contenedores a partir de la configuración declarativa:
 
 ```bash
-#| label: docker-arranque-servicios
+#| label: docker-up-servicios
 #| eval: false
 docker compose up -d
 
 ```
 
-Si el clúster se encontraba en estado de suspensión técnica, reactívelo mediante:
+Este comando valida la configuración, crea los contenedores definidos si no existen y levanta los servicios en segundo plano.
+
+Si los contenedores ya fueron creados previamente y únicamente se encuentran en estado suspendido, se reactivan sus procesos sin recrear las redes ni alterar su capa mutable mediante:
 
 ```bash
-#| label: docker-inicio-servicios
+#| label: docker-start-servicios
 #| eval: false
 docker compose start
 
 ```
 
-### Detención de contenedores {#sec-detener-contenedores}
+Una vez reactivada la instancia, abra Visual Studio Code en el sistema anfitrión, presione `Ctrl + Shift + P`, seleccione **Dev Containers: Attach to Running Container...** y elija `/contenedor_sig_unal` para retomar el espacio de trabajo con todas sus extensiones previas intactas.
 
-Para interrumpir la ejecución de los motores preservando la integridad de la base de datos:
+### Detención y desmontaje de servicios {#sec-detener-contenedores}
+
+Al finalizar la sesión ordinaria, se debe suspender la ejecución de los servicios enviando una señal de apagado controlado (`SIGTERM`):
 
 ```bash
-#| label: docker-parada-servicios
+#| label: docker-stop-servicios
 #| eval: false
 docker compose stop
 
 ```
 
-Para desmontar la topología de red y los contenedores (preservando los volúmenes de datos físicos):
+Esta operación detiene los procesos del motor relacional preservando intacta la capa de lectura y escritura del contenedor, lo cual asegura que las extensiones instaladas y la configuración del entorno **persistan** para la siguiente sesión.
+
+Por el contrario, si se requiere reiniciar la infraestructura a su estado base o liberar los recursos de red del sistema anfitrión, se procede con el desmontaje:
 
 ```bash
-#| label: docker-desmontaje-servicios
+#| label: docker-down-servicios
 #| eval: false
 docker compose down
 
 ```
+
+Esta instrucción detiene los servicios y destruye los contenedores y las redes virtuales asociadas. Aunque los datos espaciales almacenados en los volúmenes físicos de PostgreSQL permanecen intactos, la capa de escritura del contenedor **se elimina**, lo que requerirá reinstalar extensiones adicionales de Visual Studio Code al momento de volver a ejecutar `docker compose up -d`.
 
 ## Localización de archivos y persistencia
 
@@ -199,13 +344,13 @@ La topología garantiza que la caída del sistema anfitrión no comprometa las t
 
 ## Vinculación de contenedores en la terminal integrada {#sec-cargar-contenedores-vscode}
 
-Para consolidar el entorno de desarrollo, acople el editor de texto directamente al núcleo del contenedor:
+Para consolidar el entorno de desarrollo, acople el editor de texto (VSCode) directamente al núcleo del contenedor:
 
 1. Levante los servicios mediante `docker compose up -d`.
 2. Habilite la extensión *Dev Containers* en el equipo local.
-3. Desde la paleta de comandos, ejecute **Dev Containers: Attach to Running Container...** seleccionando el objetivo `contenedor_sig_unal`.
-4. Abra el directorio de montaje `/home/rstudio/work`.
-5. Instale las dependencias descritas en el @sec-anexo-vscode.
+3. Desde la paleta de comandos `Ctrl + Shift + P`, ejecute **Dev Containers: Attach to Running Container...** seleccionando el objetivo `contenedor_sig_unal`.
+4. Verifique el directorio de montaje `/home/rstudio/work`.
+5. Verifique las extensiones descritas en la @sec-extensiones-vscode, o directamente en la @tbl-extensiones.
 
 ## Configuración de puertos y topología de conectividad {#sec-puertos-conectividad}
 
@@ -417,7 +562,7 @@ La carpeta `/home/rstudio/work/` opera como un espejo asíncrono hacia el almace
 
 ### Visualización interactiva con httpgd {#sec-httpgd-config}
 
-Al tratarse de una infraestructura sin servidor X11 nativo (*headless*), se implementa `httpgd` como puente de renderizado de gráficos vectoriales para VS Code.
+Al tratarse de una infraestructura sin servidor X11 nativo (*headless*), se implementa `httpgd` como puente de renderizado de gráficos vectoriales para VSCode.
 
 #### Inicio del servidor gráfico
 

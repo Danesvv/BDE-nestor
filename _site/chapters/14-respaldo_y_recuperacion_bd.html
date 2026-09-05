@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Bases de Datos Espaciales - 5&nbsp; Respaldo y recuperación de la base de datos sig_db_unal</title>
+<title>Bases de datos espaciales - 5&nbsp; Respaldo y recuperación de la base de datos sig_db_unal</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -76,11 +76,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
-  "location": "sidebar",
+  "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
-  "panel-placement": "start",
-  "type": "textbox",
+  "panel-placement": "end",
+  "type": "overlay",
   "limit": 50,
   "keyboard-shortcut": [
     "f",
@@ -106,38 +106,53 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </head>
 
-<body class="nav-sidebar floating">
+<body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Bases de datos espaciales</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../slides/index.html"> 
+<span class="menu-text">Diapositivas</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/alexyshr/bde2026"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/05-guia_instalacion_vscode_docker.html">Instalación y entornos</a></li><li class="breadcrumb-item"><a href="../chapters/14-respaldo_y_recuperacion_bd.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Respaldo y recuperación de la base de datos sig_db_unal</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/04-introduccion_instalacion_entornos.html">Instalación y entornos</a></li><li class="breadcrumb-item"><a href="../chapters/14-respaldo_y_recuperacion_bd.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Respaldo y recuperación de la base de datos sig_db_unal</span></a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
     </div>
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
-    <div class="sidebar-title mb-0 py-0">
-      <a href="../">Bases de Datos Espaciales</a> 
-    </div>
-      </div>
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Buscar"></div>
-        </div>
-        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -160,7 +175,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a href="../chapters/04-introduccion_instalacion_entornos.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Instalación y entornos</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -170,7 +185,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/05-guia_instalacion_vscode_docker.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación: VS Code y contenedores Docker</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -300,7 +315,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Tabla de Contenidos</h2>
+    <h2 id="toc-title">Tabla de contenidos</h2>
    
   <ul>
   <li><a href="#persistencia-de-variables-y-configuración-de-entorno" id="toc-persistencia-de-variables-y-configuración-de-entorno" class="nav-link active" data-scroll-target="#persistencia-de-variables-y-configuración-de-entorno"><span class="header-section-number">5.1</span> Persistencia de variables y configuración de entorno</a></li>
@@ -309,7 +324,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#respaldo-desde-el-clúster-dockerizado" id="toc-respaldo-desde-el-clúster-dockerizado" class="nav-link" data-scroll-target="#respaldo-desde-el-clúster-dockerizado">Respaldo desde el clúster dockerizado</a></li>
   <li><a href="#respaldo-desde-la-instancia-en-el-sistema-anfitrión" id="toc-respaldo-desde-la-instancia-en-el-sistema-anfitrión" class="nav-link" data-scroll-target="#respaldo-desde-la-instancia-en-el-sistema-anfitrión">Respaldo desde la instancia en el sistema anfitrión</a></li>
   </ul></li>
-  <li><a href="#procedimientos-de-recuperación-y-restauración-sistema-anfitrión" id="toc-procedimientos-de-recuperación-y-restauración-sistema-anfitrión" class="nav-link" data-scroll-target="#procedimientos-de-recuperación-y-restauración-sistema-anfitrión"><span class="header-section-number">5.3</span> Procedimientos de recuperación y restauración (<strong>sistema anfitrión</strong>)</a>
+  <li><a href="#procedimientos-de-recuperación-y-restauración-sistema-anfitrión" id="toc-procedimientos-de-recuperación-y-restauración-sistema-anfitrión" class="nav-link" data-scroll-target="#procedimientos-de-recuperación-y-restauración-sistema-anfitrión"><span class="header-section-number">5.3</span> Procedimientos de recuperación y restauración (sistema anfitrión)</a>
   <ul class="collapse">
   <li><a href="#escenario-1-restauración-total-desde-backup-completo" id="toc-escenario-1-restauración-total-desde-backup-completo" class="nav-link" data-scroll-target="#escenario-1-restauración-total-desde-backup-completo">Escenario 1: restauración total desde backup completo</a></li>
   <li><a href="#escenario-2-restauración-por-componentes-estructura-y-datos" id="toc-escenario-2-restauración-por-componentes-estructura-y-datos" class="nav-link" data-scroll-target="#escenario-2-restauración-por-componentes-estructura-y-datos">Escenario 2: restauración por componentes (estructura y datos)</a></li>
@@ -325,9 +340,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/05-guia_instalacion_vscode_docker.html">Instalación y entornos</a></li><li class="breadcrumb-item"><a href="../chapters/14-respaldo_y_recuperacion_bd.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Respaldo y recuperación de la base de datos sig_db_unal</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/04-introduccion_instalacion_entornos.html">Instalación y entornos</a></li><li class="breadcrumb-item"><a href="../chapters/14-respaldo_y_recuperacion_bd.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Respaldo y recuperación de la base de datos sig_db_unal</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Respaldo y recuperación de la base de datos sig_db_unal</span></h1>
+<h1 class="title"><span id="sec-respaldo-recuperacion-bd" class="quarto-section-identifier"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Respaldo y recuperación de la base de datos sig_db_unal</span></span></h1>
 </div>
 
 
@@ -392,6 +407,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="estrategias-de-extracción-de-respaldos-lógicos" class="level2" data-number="5.2">
 <h2 data-number="5.2" class="anchored" data-anchor-id="estrategias-de-extracción-de-respaldos-lógicos"><span class="header-section-number">5.2</span> Estrategias de extracción de respaldos lógicos</h2>
 <p>La utilidad <code>pg_dump</code> extrae definiciones de esquemas, extensiones espaciales y registros tabulares en dos formatos principales:</p>
+<div id="tbl-formatos-extraccion-pgdump" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-formatos-extraccion-pgdump-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;5.1: Formatos estándar de extracción lógica mediante pg_dump
+</figcaption>
+<div aria-describedby="tbl-formatos-extraccion-pgdump-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="table">
 <colgroup>
 <col style="width: 25%">
@@ -422,6 +443,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 </tbody>
 </table>
+</div>
+</figure>
+</div>
 <section id="respaldo-desde-el-clúster-dockerizado" class="level3">
 <h3 class="anchored" data-anchor-id="respaldo-desde-el-clúster-dockerizado">Respaldo desde el clúster dockerizado</h3>
 <p>Para generar copias de respaldo de la base de datos <code>sig_db_unal</code> instanciada en el servicio <code>db-postgis</code>, se aplican las credenciales del rol docente (<code>profe_unal</code>).</p>
@@ -479,7 +503,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 </section>
 <section id="procedimientos-de-recuperación-y-restauración-sistema-anfitrión" class="level2" data-number="5.3">
-<h2 data-number="5.3" class="anchored" data-anchor-id="procedimientos-de-recuperación-y-restauración-sistema-anfitrión"><span class="header-section-number">5.3</span> Procedimientos de recuperación y restauración (<strong>sistema anfitrión</strong>)</h2>
+<h2 data-number="5.3" class="anchored" data-anchor-id="procedimientos-de-recuperación-y-restauración-sistema-anfitrión"><span class="header-section-number">5.3</span> Procedimientos de recuperación y restauración (sistema anfitrión)</h2>
 <p>La reconstrucción del catálogo espacial a partir de los respaldos generados se efectúa mediante dos escenarios operacionales estándar.</p>
 <section id="escenario-1-restauración-total-desde-backup-completo" class="level3">
 <h3 class="anchored" data-anchor-id="escenario-1-restauración-total-desde-backup-completo">Escenario 1: restauración total desde backup completo</h3>
@@ -495,9 +519,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>DROP DATABASE</code></pre>
 </div>
 </div>
-<blockquote class="blockquote">
-<p>Nota: La cláusula <code>WITH (FORCE)</code> asegura la terminación previa de cualquier sesión o conexión residual que haya quedado abierta contra <code>sig_db_unal_restaurada</code> durante la ejecución anterior, permitiendo la eliminación inmediata del catálogo.</p>
-</blockquote>
+<div class="callout callout-style-default callout-note callout-titled" title="Terminación forzada de sesiones concurrentes">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Terminación forzada de sesiones concurrentes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>La cláusula <code>WITH (FORCE)</code> asegura la terminación previa de cualquier sesión o conexión residual que haya quedado abierta contra <code>sig_db_unal_restaurada</code> durante la ejecución anterior, permitiendo la eliminación inmediata del catálogo.</p>
+</div>
+</div>
 <ol start="2" type="1">
 <li>Creación de la base de datos destino (vacía) en el clúster anfitrión:</li>
 </ol>
@@ -642,10 +676,25 @@ pg_restore: warning: errors ignored on restore: 2</code></pre>
 <ul>
 <li><code>-v</code>: Modo detallado (<em>verbose</em>) para monitorear el progreso de la reconstrucción de índices y tablas.</li>
 </ul>
-<blockquote class="blockquote">
-<p><strong>Nota técnica sobre advertencias en la restauración (<code>errors ignored on restore: 2</code>):</strong> Durante la ejecución de la restauración, la consola puede reportar dos advertencias específicas asociadas a la extensión <code>pg_cron</code>: 1. <code>ERROR: extension "pg_cron" is not available</code> (al intentar ejecutar <code>CREATE EXTENSION IF NOT EXISTS pg_cron</code>). 2. <code>ERROR: extension "pg_cron" does not exist</code> (al intentar asociar el comentario DDL de la extensión).</p>
-<p><strong>Origen técnico:</strong> El clúster dockerizado de origen cuenta con la librería compilada de la extensión <code>pg_cron</code> (utilizada para la programación de tareas en segundo plano), la cual no se encuentra instalada por defecto en el motor relacional del sistema anfitrión (host). <strong>Criterio de validación:</strong> Estas advertencias son <strong>no bloqueantes</strong> y pueden ignorarse con total seguridad. Su alcance se limita de forma exclusiva a las funciones del planificador de tareas. La totalidad de los esquemas cartográficos (<code>base750</code>, <code>divpol</code>), las extensiones espaciales (<code>postgis</code>, <code>postgis_raster</code>, <code>postgis_topology</code>), los registros tabulares, los catálogos OGC (<code>geometry_columns</code>, <code>spatial_ref_sys</code>) y los índices espaciales GiST se restauran de manera íntegra y funcional.</p>
-</blockquote>
+<div class="callout callout-style-default callout-warning callout-titled" title="Advertencias en la restauración (errors ignored on restore: 2)">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Advertencias en la restauración (errors ignored on restore: 2)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Durante la ejecución de la restauración, la consola puede reportar dos advertencias específicas asociadas a la extensión <code>pg_cron</code>:</p>
+<ol type="1">
+<li><code>ERROR: extension "pg_cron" is not available</code> (al intentar ejecutar <code>CREATE EXTENSION IF NOT EXISTS pg_cron</code>).</li>
+<li><code>ERROR: extension "pg_cron" does not exist</code> (al intentar asociar el comentario DDL de la extensión).</li>
+</ol>
+<p><strong>Origen técnico:</strong> El clúster dockerizado de origen cuenta con la librería compilada de la extensión <code>pg_cron</code> (utilizada para la programación de tareas en segundo plano), la cual no se encuentra instalada por defecto en el motor relacional del sistema anfitrión (host).</p>
+<p><strong>Criterio de validación:</strong> Estas advertencias son <strong>no bloqueantes</strong> y pueden ignorarse con total seguridad. Su alcance se limita de forma exclusiva a las funciones del planificador de tareas. La totalidad de los esquemas cartográficos (<code>base750</code>, <code>divpol</code>), las extensiones espaciales (<code>postgis</code>, <code>postgis_raster</code>, <code>postgis_topology</code>), los registros tabulares, los catálogos OGC (<code>geometry_columns</code>, <code>spatial_ref_sys</code>) y los índices espaciales GiST se restauran de manera íntegra y funcional.</p>
+</div>
+</div>
 </section>
 <section id="escenario-2-restauración-por-componentes-estructura-y-datos" class="level3">
 <h3 class="anchored" data-anchor-id="escenario-2-restauración-por-componentes-estructura-y-datos">Escenario 2: restauración por componentes (estructura y datos)</h3>
@@ -919,9 +968,20 @@ pg_restore: warning: errors ignored on restore: 8</code></pre>
 <li><code>-v</code>: Activa la salida detallada en consola para auditar el progreso tabla por tabla.</li>
 <li><code>--disable-triggers</code>: Optimiza la velocidad de inserción y suspende temporalmente las restricciones de integridad referencial (<em>foreign keys</em>).</li>
 </ul>
-<blockquote class="blockquote">
-<p><strong>Nota técnica sobre advertencias en la restauración desacoplada (<code>errors ignored on restore: 8</code>):</strong> Durante la ejecución del paso DDL (paso 3), la consola reporta que la extensión <code>pg_cron</code> no se encuentra instalada en el motor del sistema anfitrión. En consecuencia, el paso DML (paso 4) genera 8 advertencias no bloqueantes asociadas de forma exclusiva a la imposibilidad de deshabilitar disparadores, copiar datos y calibrar secuencias sobre las tablas <code>cron.job</code> y <code>cron.job_run_details</code>. Estas advertencias pueden ignorarse con total seguridad: la totalidad de las capas geográficas (<code>base750</code>, <code>divpol</code>), las extensiones PostGIS, las geometrías vectoriales y los índices espaciales GiST quedan restaurados de forma completa y funcional.</p>
-</blockquote>
+<div class="callout callout-style-default callout-warning callout-titled" title="Advertencias en la restauración desacoplada (errors ignored on restore: 8)">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Advertencias en la restauración desacoplada (errors ignored on restore: 8)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Durante la ejecución del paso DDL (paso 3), la consola reporta que la extensión <code>pg_cron</code> no se encuentra instalada en el motor del sistema anfitrión. En consecuencia, el paso DML (paso 4) genera 8 advertencias no bloqueantes asociadas de forma exclusiva a la imposibilidad de deshabilitar disparadores, copiar datos y calibrar secuencias sobre las tablas <code>cron.job</code> y <code>cron.job_run_details</code>.</p>
+<p>Estas advertencias pueden ignorarse con total seguridad: la totalidad de las capas geográficas (<code>base750</code>, <code>divpol</code>), las extensiones PostGIS, las geometrías vectoriales y los índices espaciales GiST quedan restaurados de forma completa y funcional.</p>
+</div>
+</div>
 <ol start="5" type="1">
 <li>Sincronización de secuencias e identificadores autonuméricos:</li>
 </ol>
@@ -975,13 +1035,13 @@ pg_restore: warning: errors ignored on restore: 8</code></pre>
  Database             | sig_db_unal_restaurada
  Client User          | postgres
  Host                 | host.docker.internal
- Host Address         | 192.168.65.254
+ Host Address         | 192.168.127.254
  Server Port          | 5432
  Options              | 
  Protocol Version     | 3.0
  Password Used        | true
  GSSAPI Authenticated | false
- Backend PID          | 38264
+ Backend PID          | 48172
  SSL Connection       | false
  Superuser            | on
  Hot Standby          | off

@@ -1,23 +1,41 @@
-_freeze/
-chapters_ds/
-chapter_groq/
-backups_pg18/
-00_administracion_curso.qmd
-.ipynb_checkpoints/
-__pycache__/
-notebooks/
-scripts/
-chapters/borradores/
-data_heavy/
-sample_qmds/
-carrera_sig/
+# Compilación y artefactos de Quarto
 .quarto/
+_site/
+_freeze/
+*_files/
+
+# Subproductos temporales de compilación LaTeX / PDF
+*.aux
+*.log
+*.out
+*.toc
+*.tex
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Entornos virtuales, Python y notebooks
+__pycache__/
+.ipynb_checkpoints/
+
+# Entornos R
 .Rhistory
 .Rproj.user/
+
+# Archivos del sistema anfitrión (Windows/macOS) y utilidades de depuración
 *.bat
-*.tex
-*.log
+Thumbs.db
+desktop.ini
+.DS_Store
 borrar_cache_linux.txt
 j_eval_j_plot_nuevabd_1.r
 
-/.quarto/
+# Depósitos de datos pesados, respaldos y borradores
+data_heavy/
+backups_pg18/
+chapters/borradores/
+chapters_ds/
+chapter_groq/
+notebooks/
+scripts/
+00_administracion_curso.qmd

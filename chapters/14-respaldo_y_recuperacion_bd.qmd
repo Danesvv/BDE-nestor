@@ -1,4 +1,4 @@
-# Respaldo y recuperación de la base de datos sig_db_unal
+# Respaldo y recuperación de la base de datos sig_db_unal {#sec-respaldo-recuperacion-bd}
 
 ```{r}
 #| label: setup-variables-sistema-r
@@ -96,6 +96,8 @@ La utilidad `pg_dump` extrae definiciones de esquemas, extensiones espaciales y 
 | **Texto plano (SQL)** | `-F p` | `.sql` | Archivo de texto estructurado con sentencias DDL/DML legibles por el analizador sintáctico del motor. |
 | **Personalizado (*Custom*)** | `-F c` | `.backup` / `.dump` | Formato binario comprimido de alta eficiencia que permite restauración paralela y selectiva. |
 
+: Formatos estándar de extracción lógica mediante pg_dump {#tbl-formatos-extraccion-pgdump}
+
 ### Respaldo desde el clúster dockerizado
 
 Para generar copias de respaldo de la base de datos `sig_db_unal` instanciada en el servicio `db-postgis`, se aplican las credenciales del rol docente (`profe_unal`).
@@ -175,7 +177,7 @@ pg_dump -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDA
 
 ```
 
-## Procedimientos de recuperación y restauración (**sistema anfitrión**)
+## Procedimientos de recuperación y restauración (sistema anfitrión)
 
 La reconstrucción del catálogo espacial a partir de los respaldos generados se efectúa mediante dos escenarios operacionales estándar.
 
@@ -196,7 +198,9 @@ psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d postgres -c "DR
 
 ```
 
-> Nota: La cláusula `WITH (FORCE)` asegura la terminación previa de cualquier sesión o conexión residual que haya quedado abierta contra `sig_db_unal_restaurada` durante la ejecución anterior, permitiendo la eliminación inmediata del catálogo.
+::: {.callout-note title="Terminación forzada de sesiones concurrentes"}
+La cláusula `WITH (FORCE)` asegura la terminación previa de cualquier sesión o conexión residual que haya quedado abierta contra `sig_db_unal_restaurada` durante la ejecución anterior, permitiendo la eliminación inmediata del catálogo.
+:::
 
 2. Creación de la base de datos destino (vacía) en el clúster anfitrión:
 
@@ -240,14 +244,16 @@ Parámetros implementados:
 * `-v`: Modo detallado (*verbose*) para monitorear el progreso de la reconstrucción de índices y tablas.
 
 
-> **Nota técnica sobre advertencias en la restauración (`errors ignored on restore: 2`):**
-> Durante la ejecución de la restauración, la consola puede reportar dos advertencias específicas asociadas a la extensión `pg_cron`:
-> 1. `ERROR: extension "pg_cron" is not available` (al intentar ejecutar `CREATE EXTENSION IF NOT EXISTS pg_cron`).
-> 2. `ERROR: extension "pg_cron" does not exist` (al intentar asociar el comentario DDL de la extensión).
-> 
-> 
-> **Origen técnico:** El clúster dockerizado de origen cuenta con la librería compilada de la extensión `pg_cron` (utilizada para la programación de tareas en segundo plano), la cual no se encuentra instalada por defecto en el motor relacional del sistema anfitrión (host).
-> **Criterio de validación:** Estas advertencias son **no bloqueantes** y pueden ignorarse con total seguridad. Su alcance se limita de forma exclusiva a las funciones del planificador de tareas. La totalidad de los esquemas cartográficos (`base750`, `divpol`), las extensiones espaciales (`postgis`, `postgis_raster`, `postgis_topology`), los registros tabulares, los catálogos OGC (`geometry_columns`, `spatial_ref_sys`) y los índices espaciales GiST se restauran de manera íntegra y funcional.
+::: {.callout-warning title="Advertencias en la restauración (errors ignored on restore: 2)"}
+Durante la ejecución de la restauración, la consola puede reportar dos advertencias específicas asociadas a la extensión `pg_cron`:
+
+1. `ERROR: extension "pg_cron" is not available` (al intentar ejecutar `CREATE EXTENSION IF NOT EXISTS pg_cron`).
+2. `ERROR: extension "pg_cron" does not exist` (al intentar asociar el comentario DDL de la extensión).
+
+**Origen técnico:** El clúster dockerizado de origen cuenta con la librería compilada de la extensión `pg_cron` (utilizada para la programación de tareas en segundo plano), la cual no se encuentra instalada por defecto en el motor relacional del sistema anfitrión (host).
+
+**Criterio de validación:** Estas advertencias son **no bloqueantes** y pueden ignorarse con total seguridad. Su alcance se limita de forma exclusiva a las funciones del planificador de tareas. La totalidad de los esquemas cartográficos (`base750`, `divpol`), las extensiones espaciales (`postgis`, `postgis_raster`, `postgis_topology`), los registros tabulares, los catálogos OGC (`geometry_columns`, `spatial_ref_sys`) y los índices espaciales GiST se restauran de manera íntegra y funcional.
+:::
 
 ### Escenario 2: restauración por componentes (estructura y datos)
 
@@ -320,9 +326,11 @@ Parámetros implementados:
 * `--disable-triggers`: Optimiza la velocidad de inserción y suspende temporalmente las restricciones de integridad referencial (*foreign keys*).
 
 
-> **Nota técnica sobre advertencias en la restauración desacoplada (`errors ignored on restore: 8`):**
-> Durante la ejecución del paso DDL (paso 3), la consola reporta que la extensión `pg_cron` no se encuentra instalada en el motor del sistema anfitrión. En consecuencia, el paso DML (paso 4) genera 8 advertencias no bloqueantes asociadas de forma exclusiva a la imposibilidad de deshabilitar disparadores, copiar datos y calibrar secuencias sobre las tablas `cron.job` y `cron.job_run_details`.
-> Estas advertencias pueden ignorarse con total seguridad: la totalidad de las capas geográficas (`base750`, `divpol`), las extensiones PostGIS, las geometrías vectoriales y los índices espaciales GiST quedan restaurados de forma completa y funcional.
+::: {.callout-warning title="Advertencias en la restauración desacoplada (errors ignored on restore: 8)"}
+Durante la ejecución del paso DDL (paso 3), la consola reporta que la extensión `pg_cron` no se encuentra instalada en el motor del sistema anfitrión. En consecuencia, el paso DML (paso 4) genera 8 advertencias no bloqueantes asociadas de forma exclusiva a la imposibilidad de deshabilitar disparadores, copiar datos y calibrar secuencias sobre las tablas `cron.job` y `cron.job_run_details`.
+
+Estas advertencias pueden ignorarse con total seguridad: la totalidad de las capas geográficas (`base750`, `divpol`), las extensiones PostGIS, las geometrías vectoriales y los índices espaciales GiST quedan restaurados de forma completa y funcional.
+:::
 
 5. Sincronización de secuencias e identificadores autonuméricos:
 

@@ -1,4 +1,10 @@
-# Syllabus: bases de datos espaciales
+# Syllabus: bases de datos espaciales {#sec-syllabus}
+
+::: {.content-visible when-format="html"}
+::: {.callout-note appearance="simple" title="Presentación de la sesión"}
+Las diapositivas interactivas correspondientes a la introducción y lineamientos generales del curso se encuentran disponibles en: [Presentación interactiva: Introducción general](../slides/00-introduccion.html){target="_blank"}.
+:::
+:::
 
 ## Información general
 
@@ -19,6 +25,21 @@ El programa académico se estructura alrededor de cuatro ejes fundamentales:
 2. **PostgreSQL y PostGIS:** Administración del motor relacional, ingeniería directa de esquemas con pgModeler, interacción políglota (`psql`, pgAdmin, Python, R, Julia), utilidades CLI (`shp2pgsql`, `pgsql2shp`), respaldos estructurados con TOC (`pg_dump`, `pg_restore`), indexación espacial avanzada, optimización en *Spatial SQL* y topología persistente.
 3. **Geodatabases:** Arquitecturas corporativas y basadas en archivos (*Enterprise* y *File Geodatabases*), ingeniería guiada por modelos (ShapeChange), paradigmas modernos de modelado visual integrado, reglas de atributos, topología y documentación automatizada de esquemas.
 4. **Temas emergentes (proyectos finales):** Paradigmas de computación distribuida, motores OLAP columnares, mallas espaciales discretas globales (DGGS), bases de datos orientadas a grafos y motores NoSQL, liderados y ejecutados experimentalmente por los estudiantes.
+
+
+## Propósito formativo y competencias
+
+### Propósito general
+Desarrollar la capacidad técnica y conceptual para diseñar, implementar, administrar y explotar analíticamente sistemas de bases de datos espaciales relacionales y arquitecturas analíticas contemporáneas en flujos reproducibles.
+
+### Competencias del curso
+
+Al culminar el programa académico, se consolidan las siguientes competencias:
+
+* **Fundamentación relacional y lenguaje SQL:** Comprender la arquitectura interna de los sistemas gestores de bases de datos relacionales, el álgebra relacional subyacente y la formulación de consultas analíticas estándar mediante SQL.
+* **Modelado e implementación espacial:** Diseñar esquemas conceptuales y lógicos que capturen relaciones espaciales complejas, materializando los modelos mediante extensiones espaciales estandarizadas (PostGIS, OGC Simple Features) y herramientas de ingeniería de esquemas.
+* **Ingeniería de datos e integración:** Articular repositorios espaciales centralizados con clientes de visualización, sistemas de información geográfica de escritorio y entornos analíticos de programación.
+
 
 ## Objetivos de aprendizaje
 
@@ -63,31 +84,35 @@ Eje 4: Temas emergentes y proyectos finales (Sem 11-16)
 ### Eje 1: fundamentos de diseño, modelado y arquitecturas de datos (semanas 1 a 3)
 
 **Semana 1: Arquitectura de sistemas de bases de datos espaciales y estándares OGC**
+
 * Comparación entre el modelo de almacenamiento en archivos planos y los sistemas de gestión de bases de datos relacionales espaciales.
 * Estándar OGC *Simple Features for SQL* (SFS) y norma ISO 19107 (*Spatial Schema*).
 * Jerarquía de tipos de datos geométricos vectoriales: `Point`, `LineString`, `Polygon`, colecciones homogéneas y `GeometryCollection`.
 * Configuración del entorno de desarrollo sobre la terminal integrada de Visual Studio Code y orquestación de servicios en contenedores locales.
 
 
-* **Semana 2: Modelado conceptual, lógico y normalización de datos espaciales**
+**Semana 2: Modelado conceptual, lógico y normalización de datos espaciales**
+
 * Diagramas Entidad-Relación extendidos para información espacial (notaciones conceptuales geográficas).
 * Aplicación de formas normales (1FN, 2FN y 3FN) y restricciones de integridad referencial (`ON UPDATE`, `ON DELETE CASCADE / SET NULL`).
 * Sistemas de referencia de coordenadas espaciales (catálogo EPSG, tabla `spatial_ref_sys`, proyecciones cartográficas y transformaciones de datum).
 * Estándares de codificación e intercambio: WKT (*Well-Known Text*), WKB (*Well-Known Binary*) y GeoJSON.
 
 
-* **Semana 3: Álgebra relacional espacial, definición de esquemas DDL y modelado visual con pgModeler**
+**Semana 3: Álgebra relacional espacial, definición de esquemas DDL y modelado visual con pgModeler**
+
 * Operaciones del álgebra relacional proyectadas al contexto espacial: selección, proyección, unión, diferencia y producto cartesiano.
 * Diseño visual de esquemas espaciales: fundamentos del modelado gráfico relacional.
 * Modelado asistido con **pgModeler**: creación gráfica de tablas, tipos espaciales PostGIS, llaves foráneas, restricciones `CHECK` e índices.
 * Generación automatizada de scripts DDL (*Forward Engineering*) y sincronización de esquemas.
-* **Evaluación práctica:** **Taller 1: Modelado conceptual, normalización y diseño visual de esquemas DDL con pgModeler.**
+* **Evaluación práctica: Taller 1: Modelado conceptual, normalización y diseño visual de esquemas DDL con pgModeler.**
 
 
 
 ### Eje 2: motores relacionales espaciales con PostgreSQL y PostGIS (semanas 4 a 7)
 
-* **Semana 4: Implementación física, administración y ecosistema cliente políglota**
+**Semana 4: Implementación física, administración y ecosistema cliente políglota**
+
 * Arquitectura cliente-servidor de PostgreSQL y activación modular de PostGIS.
 * Despliegue del esquema físico a partir de modelos generados en pgModeler e ingeniería inversa (*Reverse Engineering*).
 * Catálogos del sistema y tablas de metadatos: `geometry_columns` y `spatial_ref_sys`.
@@ -101,16 +126,18 @@ Eje 4: Temas emergentes y proyectos finales (Sem 11-16)
 
 
 
-* **Semana 5: Consultas analíticas en Spatial SQL, modelo topológico DE-9IM y vistas espaciales**
+**Semana 5: Consultas analíticas en Spatial SQL, modelo topológico DE-9IM y vistas espaciales**
+
 * Matriz de intersección de 9 dimensiones extendida (DE-9IM) y formulación de predicados espaciales.
 * Predicados topológicos estándar: `ST_Intersects`, `ST_Contains`, `ST_Within`, `ST_Disjoint`, `ST_Touches`, `ST_Crosses`, `ST_Overlaps`.
 * Funciones de análisis, construcción y agregación espacial: `ST_Buffer`, `ST_Intersection`, `ST_Difference`, `ST_Union`, `ST_Centroid`.
 * Creación y registro de vistas espaciales agregadas (`CREATE VIEW`) con identificadores únicos para interoperabilidad con software SIG.
 * Extracción de métricas espaciales hacia DataFrames en Python, R y Julia.
-* **Evaluación práctica:** **Taller 2: Consultas espaciales avanzadas, uniones espaciales (Spatial Joins), vistas y agregación con PostGIS.**
+* **Evaluación práctica: Taller 2: Consultas espaciales avanzadas, uniones espaciales (Spatial Joins), vistas y agregación con PostGIS.**
 
 
-* **Semana 6: Indexación espacial, optimización de consultas y administración avanzada de respaldos**
+**Semana 6: Indexación espacial, optimización de consultas y administración avanzada de respaldos**
+
 * Principios teóricos del árbol R (*R-Tree*) e implementación de índices GiST (*Generalized Search Tree*) y SP-GiST en PostGIS.
 * Índices de rango de bloques (BRIN) aplicados a series de telemetría masiva ordenada.
 * Operadores espaciales optimizados por índice: delimitador de caja envolvente (`&&`) y búsqueda de vecinos más cercanos (*k-NN* vía `<->`).
@@ -118,41 +145,45 @@ Eje 4: Temas emergentes y proyectos finales (Sem 11-16)
 * Estrategias de respaldo y migración: generación de dumps personalizados (`pg_dump -F c`), extracción de esquemas y restauración ordenada mediante tablas de contenido (`pg_restore -l`, `pg_restore -L`).
 
 
-* **Semana 7: Topología vectorial persistente y validación de reglas**
+**Semana 7: Topología vectorial persistente y validación de reglas**
+
 * Fundamento del modelo de nodos, aristas (*edges*) y caras (*faces*) con la extensión `postgis_topology`.
 * Garantía de cobertura continua, eliminación de solapes (*overlaps*) y control de polígonos espurios (*slivers*).
 * Funciones de validación y reparación automática de geometrías (`ST_IsValid`, `ST_IsValidReason`, `ST_MakeValid`).
-* **Evaluación práctica:** **Taller 3: Optimización con índices espaciales, respaldos con TOC, planes de ejecución y topología.**
+* **Evaluación práctica: Taller 3: Optimización con índices espaciales, respaldos con TOC, planes de ejecución y topología.**
 
 
 
 ### Evaluación de medio término y balance pedagógico (semana 8)
 
-* **Semana 8: Examen teórico individual y asesoría de proyectos de investigación**
-* **Evaluación teórica (Semana 8):** Examen individual escrito sobre diseño conceptual, álgebra relacional, normalización, cálculo espacial, optimización en *Spatial SQL* y administración de esquemas.
+**Semana 8: Examen teórico individual y asesoría de proyectos de investigación**
+
+* **Evaluación teórica:** Examen individual escrito sobre diseño conceptual, álgebra relacional, normalización, cálculo espacial, optimización en *Spatial SQL* y administración de esquemas.
 * Sesión de acompañamiento y validación del diseño experimental para los seis equipos del proyecto final.
 
 
 
 ### Eje 3: geodatabases corporativas, diseño y formatos avanzados (semanas 9 a 10)
 
-* **Semana 9: Arquitecturas de geodatabases, diseño guiado por modelos y paradigma moderno**
+**Semana 9: Arquitecturas de geodatabases, diseño guiado por modelos y paradigma moderno**
+
 * Conceptos generales de geodatabases: almacenamiento relacional de objetos espaciales, clases de entidad (*feature classes*), conjuntos de datos (*feature datasets*) y catálogos.
 * Comparación entre geodatabases basadas en archivos (*File Geodatabase*, *GeoPackage*) y geodatabases corporativas multiusuario (*Enterprise Geodatabase* desplegada sobre PostgreSQL).
 * Enfoque guiado por modelos (*Model-Driven Architecture* - MDA) y estándares abiertos: transformación automatizada de modelos conceptuales UML a esquemas de geodatabase mediante **ShapeChange**.
 * Paradigma moderno de diseño y gestión de geodatabases:
-* *Modelado visual integrado (*Data design views*):* Configuración directa e interactiva de campos, subtipos, dominios (rango y valores codificados), valores contingentes y reglas de atributos (*attribute rules* para cálculo, restricción y validación).
+* *Modelado visual integrado (data design views):* Configuración directa e interactiva de campos, subtipos, dominios (rango y valores codificados), valores contingentes y reglas de atributos (*attribute rules* para cálculo, restricción y validación).
 * *Extracción y clonación del esquema:* Exportación de arquitecturas completas mediante documentos de espacio de trabajo XML (*Export XML Workspace Document* de tipo `SCHEMA_ONLY`) para versionamiento en repositorios Git.
 * *Documentación automática del esquema:* Generación del diccionario de datos estructurado en formato Markdown/HTML mediante la herramienta nativa *Generate Geodatabase Schema Report*.
 * Reglas de topología vectorial en geodatabases: tolerancias de agrupamiento, validación y gestión de excepciones.
 
 
-* **Semana 10: Almacenamiento ráster, lógica procedural en servidor y flujos ETL**
+**Semana 10: Almacenamiento ráster, lógica procedural en servidor y flujos ETL**
+
 * Almacenamiento y teselado de datos ráster con la extensión `postgis_raster` y catálogos de mosaico en geodatabases.
 * Álgebra de mapas en base de datos (`ST_MapAlgebra`) y extracción de estadísticas zonales (`ST_SummaryStats`).
 * Funciones almacenadas en PL/pgSQL y disparadores espaciales (*triggers*) para automatización de integridad en servidor.
 * Construcción de pipelines de extracción, transformación y carga (ETL) utilizando librerías geoespaciales (GDAL/OGR en Python).
-* **Evaluación práctica:** **Taller 4: Diseño de geodatabases, reglas de integridad, topología, documentación y flujos ETL.**
+* **Evaluación práctica: Taller 4: Diseño de geodatabases, reglas de integridad, topología, documentación y flujos ETL.**
 
 
 
@@ -167,33 +198,39 @@ El equipo asignado asume la dirección del aula durante la sesión de 2 horas (1
 * **Bloque 3 (15 minutos):** Debate técnico, análisis de limitaciones y retroalimentación docente.
 
 
-* **Semana 11: Proyecto final 01 — Procesamiento analítico columnar y formatos nativos de nube**
+**Semana 11: Proyecto final 01 — Procesamiento analítico columnar y formatos nativos de nube**
+
 * *Tecnología:* DuckDB espacial y GeoParquet.
 * *Enfoque del taller:* Consultas analíticas vectoriales directas sobre almacenamiento en la nube, evaluación de *predicate pushdown* y límites de huella de memoria.
 * *Directores de sesión:* Equipo 01.
 
-* **Semana 12: Proyecto final 02 — Escalabilidad y procesamiento masivo distribuido**
+**Semana 12: Proyecto final 02 — Escalabilidad y procesamiento masivo distribuido**
+
 * *Tecnología:* Apache Sedona y PySpark.
 * *Enfoque del taller:* *Spatial Join* masivo sobre clúster distribuido, particionamiento espacial (*Quad-Tree* / *KDB-Tree*) y análisis del grafo acíclico dirigido (*DAG*).
 * *Directores de sesión:* Equipo 02.
 
-* **Semana 13: Proyecto final 03 — Sistemas de mallas espaciales discretas globales (DGGS)**
+**Semana 13: Proyecto final 03 — Sistemas de mallas espaciales discretas globales (DGGS)**
+
 * *Tecnología:* Mallas jerárquicas Uber H3 y Google S2.
 * *Enfoque del taller:* Agregación espacial de series temporales masivas, reclasificación multi-resolución y evaluación de distorsión métrica frente a índices continuos.
 * *Directores de sesión:* Equipo 03.
 
-* **Semana 14: Proyecto final 04 — Bases de datos espaciales orientadas a grafos y análisis de redes**
+**Semana 14: Proyecto final 04 — Bases de datos espaciales orientadas a grafos y análisis de redes**
+
 * *Tecnología:* Neo4j Spatial frente a pgRouting.
 * *Enfoque del taller:* Construcción de topologías de transporte, ruteo dinámico con Dijkstra / A* y cálculo de isócronas bajo concurrencia.
 * *Directores de sesión:* Equipo 04.
 
 
-* **Semana 15: Proyecto final 05 — Indexación geoespacial en motores NoSQL para telemetría y flujos en tiempo real**
+**Semana 15: Proyecto final 05 — Indexación geoespacial en motores NoSQL para telemetría y flujos en tiempo real**
+
 * *Tecnología:* Elasticsearch / OpenSearch frente a MongoDB espacial.
 * *Enfoque del taller:* Ingestión de eventos de alta frecuencia, consultas concurrentes de *geo-fencing* e indexación con árboles BKD y mallas `2dsphere`.
 * *Directores de sesión:* Equipo 05.
 
-* **Semana 16: Proyecto final 06 — Programación procedural en servidor y extensiones nativas**
+**Semana 16: Proyecto final 06 — Programación procedural en servidor y extensiones nativas**
+
 * *Tecnología:* PL/pgSQL avanzado, PL/Python y extensiones en lenguaje compilado (Rust vía PGRX).
 * *Enfoque del taller:* Evaluación de la sobrecarga de serialización WKB entre cliente y servidor, y *benchmarking* de algoritmos geométricos en extensiones nativas.
 * *Directores de sesión:* Equipo 06.

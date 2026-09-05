@@ -1,27 +1,37 @@
 # Prefacio {.unnumbered}
 
-Bienvenidas y bienvenidos al curso de **Bases de datos espaciales** en el nivel de posgrado. Este documento constituye el material de referencia técnica, metodológica y computacional diseñado para acompañar el desarrollo conceptual y práctico de la asignatura. El propósito central de esta obra es proporcionar una base rigurosa para el modelado formal, la administración, la optimización de consultas y la experimentación con sistemas de gestión de bases de datos espaciales (SGBDE) y arquitecturas analíticas de vanguardia.
+El presente documento constituye el material de referencia técnica, metodológica y computacional del curso de posgrado **Bases de datos espaciales**. El propósito central de esta obra es proporcionar un marco riguroso para el modelado conceptual, la administración de infraestructura, la optimización de consultas (*Spatial SQL*) y la experimentación con sistemas de gestión de bases de datos espaciales (SGBDE) y arquitecturas analíticas contemporáneas.
 
-En el contexto contemporáneo de la geomática y la ciencia de datos espaciales, el crecimiento en volumen y complejidad de la información geográfica exige superar el almacenamiento en archivos planos y la dependencia exclusiva de interfaces gráficas de usuario. El dominio de los motores relacionales espaciales, el diseño estructurado de esquemas y el procesamiento analítico a gran escala constituyen competencias fundamentales para garantizar la integridad topológica, la concurrencia y la reproducibilidad en proyectos de investigación y aplicaciones profesionales avanzadas.
+En el contexto contemporáneo de la geomática y la ciencia de datos espaciales, el crecimiento sostenido en volumen y dimensionalidad de la información geográfica exige superar el almacenamiento en formatos planos desarticulados y la dependencia exclusiva de interfaces de escritorio. El dominio de los motores relacionales espaciales, el diseño normalizado de esquemas y el procesamiento analítico a gran escala constituyen competencias críticas para garantizar la integridad topológica, la concurrencia y la reproducibilidad técnica en flujos de investigación y producción técnica avanzada.
 
 ## Enfoque metodológico y computacional {.unnumbered}
 
-El desarrollo del curso y la estructura del material se fundamentan en los principios de la Ciencia Abierta (*Open Science*), los estándares FAIR (*Findable, Accessible, Interoperable, Reusable*) y la reproducibilidad computacional integral:
+El desarrollo temático de la asignatura y la estructura del material se fundamentan en los principios de la Ciencia Abierta (*Open Science*), las directrices FAIR (*Findable, Accessible, Interoperable, Reusable*) y la reproducibilidad computacional integral:
 
-* **Modelado conceptual y estándares internacionales:** Aplicación de las especificaciones del *Open Geospatial Consortium* (OGC Simple Features for SQL), la norma ISO 19107, normalización relacional y diseño visual de esquemas asistido con pgModeler.
-* **Motores relacionales y Spatial SQL:** Administración avanzada de PostgreSQL/PostGIS, tipado geométrico y geodésico, análisis topológico mediante la matriz DE-9IM, indexación multidimensional (GiST, SP-GiST, BRIN), diagnóstico de planes de ejecución y topología vectorial persistente.
-* **Geodatabases corporativas y flujos ETL:** Arquitecturas basadas en archivos y corporativas, ingeniería guiada por modelos (ShapeChange), vistas de diseño integradas, reglas de atributos, almacenamiento ráster y construcción de flujos de extracción, transformación y carga reproducibles.
-* **Ecosistema de conexión políglota:** Interacción directa mediante la consola nativa (`psql`) y herramientas de administración gráfica (`pgAdmin 4`), combinada con controladores analíticos en Python (`psycopg`, `GeoPandas`), R (`DBI`, `sf`) y Julia (`LibPQ.jl`, `GeoDataFrames.jl`).
-* **Seminario de paradigmas emergentes:** Evaluación experimental de tecnologías de frontera como procesamiento masivo distribuido (Apache Sedona, PySpark), motores analíticos columnares y formatos nativos de nube (DuckDB, GeoParquet), mallas discretas globales (DGGS H3/S2), bases de datos de grafos (Neo4j, pgRouting), motores NoSQL y extensiones compiladas nativas en Rust.
+* **Modelado conceptual y estándares internacionales:** Aplicación de las especificaciones del *Open Geospatial Consortium* (OGC, *Simple Features for SQL*), la norma ISO 19107, normalización relacional formal (1FN, 2FN, 3FN) y diseño visual de esquemas asistido con pgModeler.
+* **Motores relacionales y Spatial SQL:** Administración avanzada de clústeres PostgreSQL y PostGIS, tipado geométrico cartesiano y geodésico, análisis topológico mediante la matriz DE-9IM, indexación multidimensional (GiST, SP-GiST, BRIN), diagnóstico de planes de ejecución y topología vectorial persistente.
+* **Geodatabases corporativas y flujos ETL:** Arquitecturas basadas en archivos y motores multiusuario, ingeniería guiada por modelos (ShapeChange), vistas de diseño integradas (*data design views*), reglas de atributos, almacenamiento de coberturas ráster y construcción de flujos de extracción, transformación y carga reproducibles.
+* **Ecosistema de conexión políglota:** Interacción directa mediante la consola nativa (`psql`) y entornos de administración gráfica (`pgAdmin 4`), complementada con librerías analíticas en Python (`psycopg`, `GeoPandas`), R (`DBI`, `sf`) y Julia (`LibPQ.jl`, `GeoDataFrames.jl`).
+* **Seminario de paradigmas emergentes:** Evaluación experimental de tecnologías analíticas contemporáneas, tales como procesamiento masivo distribuido (Apache Sedona, PySpark), motores columnares y formatos nativos de nube (DuckDB, GeoParquet), mallas espaciales discretas globales (DGGS H3/S2), grafos espaciales (Neo4j, pgRouting), motores NoSQL y extensiones compiladas nativas en Rust.
+
+### Pilares operativos de la práctica computacional {.unnumbered}
+
+El aprendizaje aplicado se consolida mediante tres fases secuenciales de trabajo técnico:
+
+1. **Despliegue y administración del entorno:** Configuración e inicialización de motores de bases de datos espaciales desde la línea de comandos y orquestación en contenedores, garantizando entornos reproducibles e independientes del sistema anfitrión.
+2. **Implementación de esquemas y explotación analítica:** Ejecución de sentencias DDL para la definición de estructuras, manipulación DML para ingestión masiva y resolución de problemas geográficos complejos mediante Spatial SQL y análisis topológico.
+3. **Integración con clientes y flujos analíticos:** Conexión de repositorios espaciales con software SIG de escritorio (QGIS, ArcGIS Pro) y librerías espaciales en ecosistemas de computación científica.
 
 ## Reproducibilidad y entorno de trabajo {.unnumbered}
 
-Todos los talleres prácticos, ejercicios y proyectos de investigación están concebidos para ejecutarse desde la terminal integrada de Visual Studio Code o Positron. La totalidad de los servicios de bases de datos, librerías y entornos de análisis se encuentra orquestada en contenedores **Docker**. Esta arquitectura garantiza un ambiente homogéneo y determinista, aislando las dependencias del sistema anfitrión (*host*) y asegurando que los experimentos y flujos de consulta sean plenamente reproducibles. Para los módulos orientados a geodatabases corporativas y herramientas propietarias complementarias como ArcGIS Pro, se requiere la instalación y licenciamiento respectivo en la estación de trabajo local.
+Los talleres aplicados, ejercicios guiados y proyectos experimentales se encuentran estructurados para ejecutarse desde la terminal integrada de Visual Studio Code o Positron. La totalidad de los servicios de bases de datos relacionales, extensiones espaciales y entornos analíticos políglotas se suministra orquestada mediante contenedores Docker. 
+
+Esta aproximación asegura un ambiente de desarrollo homogéneo, desacoplado de las particularidades del sistema operativo del sistema anfitrión (*host*), lo cual mitiga discrepancias en versiones de dependencias dinámicas (GEOS, PROJ, GDAL). Para los módulos que integran geodatabases corporativas y herramientas propietarias complementarias como ArcGIS Pro, los procedimientos se desarrollan sobre el sistema anfitrión atendiendo a los requerimientos de instalación local correspondientes.
 
 ## Organización de la obra {.unnumbered}
 
-El libro está organizado de manera modular para guiar el aprendizaje teórico y la experimentación aplicada:
+El texto se encuentra organizado de manera modular para articular el rigor conceptual con la instrumentación práctica:
 
-* **Syllabus y lineamientos del curso:** En el capítulo inmediatamente posterior a este prefacio se presentan los objetivos de aprendizaje, la programación detallada de las 16 semanas, las políticas de trabajo y el sistema de evaluación.
-* **Capítulos conceptuales y talleres aplicados:** Guías metodológicas y bloques de código estructurados para el desarrollo de los laboratorios del curso.
-* **Proyectos de investigación experimental:** Capítulos dedicados a la profundización técnica y evaluación de rendimiento de los paradigmas geoespaciales emergentes. Los proyectos integran su respectiva guía metodológica de implementación, el desarrollo experimental y la rúbrica de evaluación.
+* **Syllabus y lineamientos del curso:** Expone las competencias formativas, la programación temática estructurada a lo largo de las 16 semanas académicas, las políticas operativas y los criterios de evaluación.
+* **Capítulos conceptuales y talleres aplicados:** Desarrolla la fundamentación teórica, las directivas procedimentales y los bloques de código auditados para las prácticas de laboratorio.
+* **Proyectos de investigación experimental:** Profundiza en el análisis comparativo, benchmarking y evaluación de desempeño computacional de los paradigmas geoespaciales emergentes, incluyendo su marco metodológico, código reproducible y rúbrica técnica de evaluación.
