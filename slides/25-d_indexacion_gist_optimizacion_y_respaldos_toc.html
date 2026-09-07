@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="es"><head>
-<script src="01-instalacion_entornos_files/libs/clipboard/clipboard.min.js"></script>
-<script src="01-instalacion_entornos_files/libs/quarto-html/tabby.min.js"></script>
-<script src="01-instalacion_entornos_files/libs/quarto-html/popper.min.js"></script>
-<script src="01-instalacion_entornos_files/libs/quarto-html/tippy.umd.min.js"></script>
-<link href="01-instalacion_entornos_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="01-instalacion_entornos_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="01-instalacion_entornos_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
-<link href="01-instalacion_entornos_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+<script src="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/clipboard/clipboard.min.js"></script>
+<script src="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/quarto-html/tabby.min.js"></script>
+<script src="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/quarto-html/popper.min.js"></script>
+<script src="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
+<link href="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.4.550">
 
   <meta name="author" content="Alexys H. Rodríguez-Avellaneda Ph.D.">
-  <meta name="dcterms.date" content="2026-09-05">
-  <title>Infraestructura, instalación y entornos</title>
+  <meta name="dcterms.date" content="2026-09-07">
+  <title>Indexación GiST, desempeño y respaldos avanzados con TOC</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="01-instalacion_entornos_files/libs/revealjs/dist/reset.css">
-  <link rel="stylesheet" href="01-instalacion_entornos_files/libs/revealjs/dist/reveal.css">
+  <link rel="stylesheet" href="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/revealjs/dist/reveal.css">
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -31,13 +31,13 @@
       vertical-align: middle;
     }
   </style>
-  <link rel="stylesheet" href="01-instalacion_entornos_files/libs/revealjs/dist/theme/quarto.css">
-  <link href="01-instalacion_entornos_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
-  <link href="01-instalacion_entornos_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
-  <link href="01-instalacion_entornos_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
-  <link href="01-instalacion_entornos_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
-  <link href="01-instalacion_entornos_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
-  <link href="01-instalacion_entornos_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <link rel="stylesheet" href="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/revealjs/dist/theme/quarto.css">
+  <link href="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
   <style type="text/css">
 
   .callout {
@@ -329,8 +329,8 @@
     <div class="slides">
 
 <section class="quarto-title-block center">
-  <h1 class="title">Infraestructura, instalación y entornos</h1>
-  <p class="subtitle">Configuración del entorno computacional reproducible</p>
+  <h1 class="title">Indexación GiST, desempeño y respaldos avanzados con TOC</h1>
+  <p class="subtitle">Estructuras en árbol R, análisis de planes de ejecución y respaldos estructurados con pg_dump y pg_restore</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -340,157 +340,17 @@ Alexys H. Rodríguez-Avellaneda Ph.D.
 </div>
 </div>
 
-  <p class="date">2026-09-05</p>
+  <p class="date">2026-09-07</p>
 </section><section id="TOC">
 <nav role="doc-toc"> 
 <h2 id="toc-title">Tabla de contenidos</h2>
 <ul>
-<li>Arquitectura híbrida del entorno</li>
-<li>Software requerido en el sistema anfitrión</li>
-<li>Ecosistema de extensiones en Visual Studio Code</li>
-<li>Imágenes y servicios del curso</li>
-<li>Estrategia dual de despliegue</li>
-<li>Catálogo pedagógico sig_db_unal</li>
-<li>Ciclo de vida y gestión de contenedores</li>
-<li>Persistencia y riesgos de volatilidad</li>
-<li>Resolución de red y matriz de puertos</li>
-<li>Referencias y documentación procedimental</li>
+<li></li>
 </ul>
 </nav>
 </section>
 <section class="slide level2">
-<h2>Arquitectura híbrida del entorno</h2>
-<p>El curso articula desarrollo local y ejecución en contenedores para asegurar reproducibilidad:</p>
-<ul>
-<li><strong>Sistema anfitrión (host):</strong> Edición de código, control de versiones, software SIG y motor relacional nativo.</li>
-<li><strong>Entorno contenedorizado (Docker):</strong> Servicios aislados, entornos analíticos políglotas y base de datos estandarizada.</li>
-<li><strong>Interoperabilidad:</strong> Comunicación TCP/IP bidireccional entre el sistema anfitrión y la red virtual de contenedores.</li>
-</ul>
-<p>Documentación: <a href="../chapters/04-introduccion_instalacion_entornos.html">Parte I — Instalación y entornos</a>.</p>
-</section>
-<section class="slide level2">
-<h2>Software requerido en el sistema anfitrión</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p><strong>Control y desarrollo base</strong></p>
-<ul>
-<li><strong>Git:</strong> Control de versiones local.</li>
-<li><strong>Cuenta GitHub:</strong> Acceso a repositorios y asignaciones.</li>
-<li><strong>Docker Desktop:</strong> Motor de virtualización y orquestación.</li>
-<li><strong>Visual Studio Code:</strong> Entorno principal de desarrollo.</li>
-</ul>
-</div><div class="column" style="width:50%;">
-<p><strong>Motores y clientes espaciales</strong></p>
-<ul>
-<li><strong>PostgreSQL 18 + PostGIS 3.6:</strong> Motor físico local (puerto 5432).</li>
-<li><strong>QGIS y ArcGIS Pro:</strong> Clientes SIG de escritorio.</li>
-<li><strong>Binarios en PATH:</strong> Acceso directo a <code>psql</code>, <code>pg_dump</code> y cargadores espaciales (<code>shp2pgsql</code>).</li>
-</ul>
-</div>
-</div>
-<p>Documentación: <a href="../chapters/05-guia_instalacion_vscode_docker.html">Guía de instalación</a> | <a href="../chapters/10-instalacion_postgresql_18_windows.html">PostgreSQL 18 local</a>.</p>
-</section>
-<section class="slide level2">
-<h2>Ecosistema de extensiones en Visual Studio Code</h2>
-<p>La operatividad de VS Code se distribuye en tres niveles de integración:</p>
-<ul>
-<li><strong>Nivel local (anfitrión):</strong> Extensiones base de interfaz y edición (Quarto, GitLens, Markdownlint).</li>
-<li><strong>Nivel de orquestación:</strong> <em>Docker</em> y <em>Dev Containers</em> para enlace con contenedores.</li>
-<li><strong>Nivel diferido / contenedor:</strong> Extensiones analíticas instaladas directamente en el espacio de trabajo remoto (Python, R, Julia).</li>
-</ul>
-<p>Documentación: <a href="../chapters/05-guia_instalacion_vscode_docker.html">Configuración de VS Code y contenedores</a>.</p>
-</section>
-<section class="slide level2">
-<h2>Imágenes y servicios del curso</h2>
-<p>El entorno aprovisiona dos imágenes base mediante Docker Compose:</p>
-<ul>
-<li><strong><code>postgis_unal:v1.12</code>:</strong> Servicio <code>db-postgis</code> con PostgreSQL 18, PostGIS 3.6 y catálogos preconfigurados.</li>
-<li><strong><code>image_sig_unal:v1.11_produccion_final</code>:</strong> Contenedor analítico con dependencias de procesamiento espacial.</li>
-<li><strong>Herramientas en contenedor:</strong> Requiere aprovisionar <code>psql</code> (cliente CLI) y <code>graphviz</code> (generador de diagramas).</li>
-</ul>
-<p>Documentación: <a href="../chapters/13-infraestructura_docker_y_base_datos_espacial.html">Infraestructura Docker</a>.</p>
-</section>
-<section class="slide level2">
-<h2>Estrategia dual de despliegue</h2>
-<p>El flujo técnico admite dos rutas operativas independientes:</p>
-<ul>
-<li><strong>Ruta contenedorizada (predeterminada):</strong> Empleada en los capítulos <code>.qmd</code>; resuelve servicios vía DNS interno (<code>db-postgis</code>).</li>
-<li><strong>Ruta local (alternativa funcional):</strong> Permite realizar todas las prácticas sobre el motor local sin depender de Docker.</li>
-<li><strong>Condición de compilación:</strong> Los <code>.qmd</code> no compilarán en local a menos que se ajusten las variables de conexión (<code>PGHOST</code>, credenciales).</li>
-</ul>
-<p><em>Recomendación:</em> Configurar ambos entornos para validar portabilidad de scripts.</p>
-</section>
-<section class="slide level2">
-<h2>Catálogo pedagógico sig_db_unal</h2>
-<p>La base de datos de estudio integra los esquemas vectoriales <code>base750</code> y <code>divpol</code>:</p>
-<ul>
-<li><strong>Aprovisionamiento en Docker:</strong> Carga declarativa automatizada en el primer arranque sobre el volumen <code>postgis_data_unal</code>.</li>
-<li><strong>Replicación en motor local:</strong> Creación manual del catálogo e inyección del script estructurado <code>init_unal_spatialdb.sql</code>.</li>
-<li><strong>Homogeneidad:</strong> Ambas instancias conservan la misma volumetría, tipos geométricos e índices GiST.</li>
-</ul>
-<p>Documentación: <a href="../chapters/13-infraestructura_docker_y_base_datos_espacial.html#sec-infraestructura-docker">Replicación local de base de datos</a>.</p>
-</section>
-<section class="slide level2">
-<h2>Ciclo de vida y gestión de contenedores</h2>
-<p>Instrucciones de administración desde la raíz del proyecto:</p>
-<ul>
-<li><strong>Arranque en segundo plano:</strong> <code>docker compose up -d</code> (inicializa y monta volúmenes).</li>
-<li><strong>Pausa operativa:</strong> <code>docker compose stop</code> (suspende procesos sin alterar el contenedor).</li>
-<li><strong>Reanudación:</strong> <code>docker compose start</code> (reactiva instancias pausadas).</li>
-<li><strong>Desmontaje completo:</strong> <code>docker compose down</code> (destruye contenedores y redes virtuales).</li>
-</ul>
-<p>Documentación: <a href="../chapters/05-guia_instalacion_vscode_docker.html">Gestión de servicios en Docker</a>.</p>
-</section>
-<section class="slide level2">
-<h2>Persistencia y riesgos de volatilidad</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p><strong>Volumen persistente</strong></p>
-<ul>
-<li>El volumen <code>postgis_data_unal</code> preserva tablas y registros espaciales.</li>
-<li>Resiste ejecuciones de <code>docker compose down</code> mientras no se agregue la bandera <code>-v</code>.</li>
-</ul>
-</div><div class="column" style="width:50%;">
-<p><strong>Riesgos de pérdida</strong></p>
-<ul>
-<li>Herramientas en contenedor (<code>psql</code>, <code>graphviz</code>) se pierden si se recrea el contenedor.</li>
-<li>Limpiadores de temporales del SO o <code>docker system prune</code> pueden purgar capas de almacenamiento de Docker Desktop.</li>
-</ul>
-</div>
-</div>
-<p>Documentación: <a href="../chapters/14-respaldo_y_recuperacion_bd.html">Respaldos y recuperación</a>.</p>
-</section>
-<section class="slide level2">
-<h2>Resolución de red y matriz de puertos</h2>
-<p>Direccionamiento según el contexto de ejecución:</p>
-<ul>
-<li><strong>Host hacia motor local:</strong> <code>localhost:5432</code>.</li>
-<li><strong>Host hacia motor en Docker:</strong> <code>127.0.0.1:5434</code> (vía redirección de puertos).</li>
-<li><strong>Contenedor hacia motor en Docker:</strong> <code>db-postgis:5432</code> (DNS interno).</li>
-<li><strong>Contenedor hacia motor local:</strong> <code>host.docker.internal:5432</code>.</li>
-</ul>
-<p>Documentación: <a href="../chapters/13-infraestructura_docker_y_base_datos_espacial.html">Topología de red y enrutamiento</a>.</p>
-</section>
-<section class="slide level2">
-<h2>Referencias y documentación procedimental</h2>
-<p>Guías técnicas detalladas paso a paso en el libro del curso:</p>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p><strong>Sistemas anfitrión y herramientas</strong></p>
-<ul>
-<li><a href="../chapters/04-introduccion_instalacion_entornos.html">Parte I — Instalación y entornos</a></li>
-<li><a href="../chapters/05-guia_instalacion_vscode_docker.html">Guía de VS Code y Docker</a></li>
-<li><a href="../chapters/10-instalacion_postgresql_18_windows.html">PostgreSQL 18 en Windows</a></li>
-</ul>
-</div><div class="column" style="width:50%;">
-<p><strong>Orquestación y respaldos</strong></p>
-<ul>
-<li><a href="../chapters/13-infraestructura_docker_y_base_datos_espacial.html">Infraestructura Docker y BD</a></li>
-<li><a href="../chapters/14-respaldo_y_recuperacion_bd.html">Respaldo y recuperación</a></li>
-<li><a href="https://github.com/alexyshr/bde2026" target="_blank">Repositorio central (GitHub)</a></li>
-</ul>
-</div>
-</div>
+
 <div class="quarto-auto-generated-content">
 <div class="footer footer-default">
 
@@ -501,20 +361,20 @@ Alexys H. Rodríguez-Avellaneda Ph.D.
   </div>
 
   <script>window.backupDefine = window.define; window.define = undefined;</script>
-  <script src="01-instalacion_entornos_files/libs/revealjs/dist/reveal.js"></script>
+  <script src="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/revealjs/dist/reveal.js"></script>
   <!-- reveal.js plugins -->
-  <script src="01-instalacion_entornos_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
-  <script src="01-instalacion_entornos_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
-  <script src="01-instalacion_entornos_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
-  <script src="01-instalacion_entornos_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
-  <script src="01-instalacion_entornos_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
-  <script src="01-instalacion_entornos_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  <script src="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/revealjs/plugin/quarto-support/support.js"></script>
   
 
-  <script src="01-instalacion_entornos_files/libs/revealjs/plugin/notes/notes.js"></script>
-  <script src="01-instalacion_entornos_files/libs/revealjs/plugin/search/search.js"></script>
-  <script src="01-instalacion_entornos_files/libs/revealjs/plugin/zoom/zoom.js"></script>
-  <script src="01-instalacion_entornos_files/libs/revealjs/plugin/math/math.js"></script>
+  <script src="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="25-d_indexacion_gist_optimizacion_y_respaldos_toc_files/libs/revealjs/plugin/math/math.js"></script>
   <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
 
   <script>

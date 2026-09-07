@@ -1,0 +1,18 @@
+---
+title: "Spatial SQL, cálculo topológico DE-9IM y vistas analíticas"
+subtitle: "Relaciones espaciales en la matriz DE-9IM, agregación geométrica y publicación de vistas para QGIS"
+author: "Alexys H. Rodríguez-Avellaneda Ph.D."
+date: today
+format:
+  revealjs:
+    theme: default
+    slide-number: true
+    hash-type: number
+    preview-links: auto
+    chalkboard: true
+    transition: fade
+    menu: true
+    width: 1280
+    height: 720
+    margin: 0.08
+---

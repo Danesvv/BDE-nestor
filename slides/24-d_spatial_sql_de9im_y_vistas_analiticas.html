@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="es"><head>
-<script src="00-introduccion_files/libs/clipboard/clipboard.min.js"></script>
-<script src="00-introduccion_files/libs/quarto-html/tabby.min.js"></script>
-<script src="00-introduccion_files/libs/quarto-html/popper.min.js"></script>
-<script src="00-introduccion_files/libs/quarto-html/tippy.umd.min.js"></script>
-<link href="00-introduccion_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="00-introduccion_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="00-introduccion_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
-<link href="00-introduccion_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+<script src="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/clipboard/clipboard.min.js"></script>
+<script src="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/quarto-html/tabby.min.js"></script>
+<script src="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/quarto-html/popper.min.js"></script>
+<script src="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
+<link href="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.4.550">
 
   <meta name="author" content="Alexys H. Rodríguez-Avellaneda Ph.D.">
-  <meta name="dcterms.date" content="2026-09-05">
-  <title>Bases de datos espaciales</title>
+  <meta name="dcterms.date" content="2026-09-07">
+  <title>Spatial SQL, cálculo topológico DE-9IM y vistas analíticas</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="00-introduccion_files/libs/revealjs/dist/reset.css">
-  <link rel="stylesheet" href="00-introduccion_files/libs/revealjs/dist/reveal.css">
+  <link rel="stylesheet" href="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/revealjs/dist/reveal.css">
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -31,13 +31,13 @@
       vertical-align: middle;
     }
   </style>
-  <link rel="stylesheet" href="00-introduccion_files/libs/revealjs/dist/theme/quarto.css">
-  <link href="00-introduccion_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
-  <link href="00-introduccion_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
-  <link href="00-introduccion_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
-  <link href="00-introduccion_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
-  <link href="00-introduccion_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
-  <link href="00-introduccion_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <link rel="stylesheet" href="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/revealjs/dist/theme/quarto.css">
+  <link href="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
   <style type="text/css">
 
   .callout {
@@ -329,8 +329,8 @@
     <div class="slides">
 
 <section class="quarto-title-block center">
-  <h1 class="title">Bases de datos espaciales</h1>
-  <p class="subtitle">Introducción general y lineamientos del curso</p>
+  <h1 class="title">Spatial SQL, cálculo topológico DE-9IM y vistas analíticas</h1>
+  <p class="subtitle">Relaciones espaciales en la matriz DE-9IM, agregación geométrica y publicación de vistas para QGIS</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -340,205 +340,17 @@ Alexys H. Rodríguez-Avellaneda Ph.D.
 </div>
 </div>
 
-  <p class="date">2026-09-05</p>
+  <p class="date">2026-09-07</p>
 </section><section id="TOC">
 <nav role="doc-toc"> 
 <h2 id="toc-title">Tabla de contenidos</h2>
 <ul>
-<li>Propósito general y fundamentación</li>
-<li>Competencias del programa</li>
-<li>Pilares de la práctica computacional</li>
-<li>Estructura curricular en cuatro ejes</li>
-<li>Eje 1: fundamentos y diseño conceptual</li>
-<li>Eje 2: motores relacionales con PostgreSQL y PostGIS</li>
-<li>Eje 3: geodatabases corporativas y flujos ETL</li>
-<li>Eje 4: seminario de tecnologías emergentes</li>
-<li>Dinámica del seminario de proyectos</li>
-<li>Infraestructura y entorno computacional</li>
-<li>Sistema de evaluación</li>
-<li>Políticas académicas de entrega</li>
-<li>Referencias y documentación del curso</li>
+<li></li>
 </ul>
 </nav>
 </section>
 <section class="slide level2">
-<h2>Propósito general y fundamentación</h2>
-<p>Diseñar, implementar, administrar y explotar analíticamente sistemas de bases de datos relacionales espaciales y arquitecturas de datos contemporáneas.</p>
-<ul>
-<li><strong>Ciencia abierta y principios FAIR:</strong> Transparencia metodológica y datos reutilizables.</li>
-<li><strong>Reproducibilidad integral:</strong> Despliegue determinista mediante Docker y Git.</li>
-<li><strong>Rigor espacial:</strong> Cumplimiento estricto de estándares OGC e ISO 19107.</li>
-</ul>
-<p>Documentación: <a href="../index.html">Bienvenida y alcance</a> | <a href="../chapters/00-prefacio.html">Prefacio</a>.</p>
-</section>
-<section class="slide level2">
-<h2>Competencias del programa</h2>
-<ul>
-<li><strong>Fundamentación relacional:</strong> Comprensión de motores RDBMS, álgebra relacional y SQL estándar.</li>
-<li><strong>Modelado espacial:</strong> Esquemas normalizados (1FN-3FN) e implementación en PostGIS.</li>
-<li><strong>Ingeniería de datos:</strong> Integración de repositorios espaciales con software SIG y analítica políglota.</li>
-</ul>
-<p>Documentación: <a href="../chapters/01-syllabus.html#propósito-formativo-y-competencias">Propósito formativo y competencias</a>.</p>
-</section>
-<section class="slide level2">
-<h2>Pilares de la práctica computacional</h2>
-<ol type="1">
-<li><strong>Despliegue y administración:</strong> Inicialización de motores por CLI y orquestación en contenedores.</li>
-<li><strong>Modelado y explotación:</strong> Sentencias DDL/DML, Spatial SQL y análisis topológico DE-9IM.</li>
-<li><strong>Integración con clientes:</strong> Conexión con QGIS, ArcGIS Pro, Python, R y Julia.</li>
-</ol>
-<p>Documentación: <a href="../chapters/00-prefacio.html#pilares-operativos-de-la-práctica-computacional">Pilares operativos en el prefacio</a>.</p>
-</section>
-<section class="slide level2">
-<h2>Estructura curricular en cuatro ejes</h2>
-<ul>
-<li><strong>Eje 1 (Sem 1-3):</strong> Fundamentos, modelado conceptual, normalización y estándares OGC.</li>
-<li><strong>Eje 2 (Sem 4-7):</strong> PostgreSQL/PostGIS, Spatial SQL, indexación GiST y topología.</li>
-<li><strong>Evaluación intermedia (Sem 8):</strong> Examen teórico individual y asesoría de proyectos.</li>
-<li><strong>Eje 3 (Sem 9-10):</strong> Geodatabases corporativas, diseño visual y flujos ETL.</li>
-<li><strong>Eje 4 (Sem 11-16):</strong> Seminario de tecnologías emergentes y proyectos finales.</li>
-</ul>
-<p>Documentación: <a href="../chapters/01-syllabus.html#estructura-curricular-articulada-en-cuatro-ejes">Estructura curricular articulada</a>.</p>
-</section>
-<section class="slide level2">
-<h2>Eje 1: fundamentos y diseño conceptual</h2>
-<ul>
-<li><strong>Semana 1:</strong> Arquitectura de SGBDE, estándar OGC SFS e ISO 19107. Tipos vectoriales fundamentales.</li>
-<li><strong>Semana 2:</strong> Diagramas Entidad-Relación espaciales, normalización (1FN-3FN) y sistemas EPSG.</li>
-<li><strong>Semana 3:</strong> Álgebra relacional, sentencias DDL y modelado gráfico con pgModeler.</li>
-<li><strong>Evaluación:</strong> Taller 1 (Modelado conceptual y DDL con pgModeler).</li>
-</ul>
-<p>Documentación: <a href="../chapters/01-syllabus.html#eje-1-fundamentos-de-diseño-modelado-y-arquitecturas-de-datos-semanas-1-a-3">Detalle del eje 1 en el syllabus</a>.</p>
-</section>
-<section class="slide level2">
-<h2>Eje 2: motores relacionales con PostgreSQL y PostGIS</h2>
-<ul>
-<li><strong>Semana 4:</strong> Arquitectura cliente-servidor, CLI (<code>shp2pgsql</code>) y conexión políglota.</li>
-<li><strong>Semana 5:</strong> Spatial SQL, predicados topológicos DE-9IM y vistas espaciales.</li>
-<li><strong>Semana 6:</strong> Índices espaciales (GiST, BRIN), planes <code>EXPLAIN</code> y respaldos con TOC.</li>
-<li><strong>Semana 7:</strong> Topología persistente (<code>postgis_topology</code>) y validación geométrica.</li>
-</ul>
-<p>Documentación: <a href="../chapters/01-syllabus.html#eje-2-motores-relacionales-espaciales-con-postgresql-y-postgis-semanas-4-a-7">Detalle del eje 2 en el syllabus</a>.</p>
-</section>
-<section class="slide level2">
-<h2>Eje 3: geodatabases corporativas y flujos ETL</h2>
-<ul>
-<li><strong>Semana 9:</strong> Arquitecturas corporativas vs.&nbsp;archivo; diseño guiado con ShapeChange.</li>
-<li><strong>Diseño moderno:</strong> Vistas de diseño (<em>data design views</em>), reglas de atributos y esquemas XML.</li>
-<li><strong>Semana 10:</strong> Almacenamiento ráster (<code>postgis_raster</code>), PL/pgSQL y flujos ETL con GDAL.</li>
-<li><strong>Evaluación:</strong> Taller 4 (Diseño de geodatabases, integridad y flujos ETL).</li>
-</ul>
-<p>Documentación: <a href="../chapters/01-syllabus.html#eje-3-geodatabases-corporativas-diseño-y-formatos-avanzados-semanas-9-a-10">Detalle del eje 3 en el syllabus</a>.</p>
-</section>
-<section class="slide level2">
-<h2>Eje 4: seminario de tecnologías emergentes</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<ul>
-<li><strong>Sem 11:</strong> DuckDB espacial y GeoParquet.</li>
-<li><strong>Sem 12:</strong> Apache Sedona y PySpark.</li>
-<li><strong>Sem 13:</strong> DGGS (Uber H3 y Google S2).</li>
-</ul>
-</div><div class="column" style="width:50%;">
-<ul>
-<li><strong>Sem 14:</strong> Neo4j Spatial frente a pgRouting.</li>
-<li><strong>Sem 15:</strong> Elasticsearch frente a MongoDB.</li>
-<li><strong>Sem 16:</strong> Procedimientos en Rust (PGRX).</li>
-</ul>
-</div>
-</div>
-<p>Documentación: <a href="../chapters/proyectos/00-guia_proyecto_final.html">Guía del proyecto final</a>.</p>
-</section>
-<section class="slide level2">
-<h2>Dinámica del seminario de proyectos</h2>
-<p>Sesiones semanales de 120 minutos dirigidas por los equipos de trabajo:</p>
-<ul>
-<li><strong>Bloque 1 (40 min):</strong> Marco conceptual, arquitectura y diseño experimental.</li>
-<li><strong>Bloque 2 (65 min):</strong> Taller práctico guiado en vivo (<em>live coding</em>) con la cohorte.</li>
-<li><strong>Bloque 3 (15 min):</strong> Discusión técnica, análisis de limitaciones y retroalimentación.</li>
-</ul>
-<p>Documentación: <a href="../chapters/01-syllabus.html#eje-4-paradigmas-emergentes-y-seminario-de-proyectos-finales-semanas-11-a-16">Metodología del seminario</a>.</p>
-</section>
-<section class="slide level2">
-<h2>Infraestructura y entorno computacional</h2>
-<ul>
-<li><strong>Sistema anfitrión:</strong> Terminal de VS Code/Positron, Git, Docker Desktop y clientes SIG.</li>
-<li><strong>Contenedores:</strong> PostgreSQL 18, PostGIS 3.5 y dependencias analíticas preconfiguradas.</li>
-<li><strong>Control de versiones:</strong> Repositorios privados asignados vía GitHub Classroom.</li>
-<li><strong>Publicación científica:</strong> Documentación y reportes reproducibles en Quarto.</li>
-</ul>
-<p>Documentación: <a href="../chapters/04-introduccion_instalacion_entornos.html">Parte I — Instalación y entornos</a>.</p>
-</section>
-<section class="slide level2">
-<h2>Sistema de evaluación</h2>
-<table>
-<thead>
-<tr class="header">
-<th>Componente</th>
-<th>Alcance</th>
-<th style="text-align: center;">Porcentaje</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>Talleres guiados</strong></td>
-<td>4 talleres prácticos (7.5% c/u)</td>
-<td style="text-align: center;">30%</td>
-</tr>
-<tr class="even">
-<td><strong>Examen individual</strong></td>
-<td>Prueba escrita sobre Ejes 1 y 2</td>
-<td style="text-align: center;">20%</td>
-</tr>
-<tr class="odd">
-<td><strong>Reporte de proyecto</strong></td>
-<td>Capítulo reproducible en Quarto</td>
-<td style="text-align: center;">20%</td>
-</tr>
-<tr class="even">
-<td><strong>Implementación técnica</strong></td>
-<td>Repositorio GitHub y Dockerfile</td>
-<td style="text-align: center;">15%</td>
-</tr>
-<tr class="odd">
-<td><strong>Dirección de taller</strong></td>
-<td>Liderazgo de la práctica en vivo</td>
-<td style="text-align: center;">15%</td>
-</tr>
-</tbody>
-</table>
-<p>Documentación: <a href="../chapters/01-syllabus.html#tbl-sistema-evaluacion">Tabla de evaluación en el syllabus</a>.</p>
-</section>
-<section class="slide level2">
-<h2>Políticas académicas de entrega</h2>
-<ul>
-<li><strong>Gestión por GitHub:</strong> Recepción formal únicamente en repositorios asignados.</li>
-<li><strong>Trazabilidad:</strong> Historial de <em>commits</em> progresivo (sin entregas consolidadas finales).</li>
-<li><strong>Entregas tardías:</strong> Deducción de 5 puntos por semana de retraso (máximo 2 semanas).</li>
-<li><strong>Asistencia:</strong> Mínimo 80% de asistencia presencial o asistida para aprobar.</li>
-</ul>
-<p>Documentación: <a href="../chapters/01-syllabus.html#políticas-del-curso-entregas-y-régimen-disciplinario">Políticas disciplinarias</a>.</p>
-</section>
-<section class="slide level2">
-<h2>Referencias y documentación del curso</h2>
-<p>Documentación procedimental, comandos de terminal y guías de laboratorio disponibles en el libro:</p>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p><strong>Marco pedagógico</strong></p>
-<ul>
-<li><a href="../index.html">Portada y bienvenida</a></li>
-<li><a href="../chapters/00-prefacio.html">Prefacio y enfoque</a></li>
-<li><a href="../chapters/01-syllabus.html">Syllabus y programación</a></li>
-</ul>
-</div><div class="column" style="width:50%;">
-<p><strong>Entornos y proyectos</strong></p>
-<ul>
-<li><a href="../chapters/04-introduccion_instalacion_entornos.html">Parte I — Instalación y entornos</a></li>
-<li><a href="../chapters/proyectos/00-guia_proyecto_final.html">Guía del proyecto final</a></li>
-<li><a href="https://github.com/alexyshr/bde2026" target="_blank">Repositorio central (GitHub)</a></li>
-</ul>
-</div>
-</div>
+
 <div class="quarto-auto-generated-content">
 <div class="footer footer-default">
 
@@ -549,20 +361,20 @@ Alexys H. Rodríguez-Avellaneda Ph.D.
   </div>
 
   <script>window.backupDefine = window.define; window.define = undefined;</script>
-  <script src="00-introduccion_files/libs/revealjs/dist/reveal.js"></script>
+  <script src="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/revealjs/dist/reveal.js"></script>
   <!-- reveal.js plugins -->
-  <script src="00-introduccion_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
-  <script src="00-introduccion_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
-  <script src="00-introduccion_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
-  <script src="00-introduccion_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
-  <script src="00-introduccion_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
-  <script src="00-introduccion_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  <script src="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/revealjs/plugin/quarto-support/support.js"></script>
   
 
-  <script src="00-introduccion_files/libs/revealjs/plugin/notes/notes.js"></script>
-  <script src="00-introduccion_files/libs/revealjs/plugin/search/search.js"></script>
-  <script src="00-introduccion_files/libs/revealjs/plugin/zoom/zoom.js"></script>
-  <script src="00-introduccion_files/libs/revealjs/plugin/math/math.js"></script>
+  <script src="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="24-d_spatial_sql_de9im_y_vistas_analiticas_files/libs/revealjs/plugin/math/math.js"></script>
   <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
 
   <script>

@@ -1,0 +1,720 @@
+---
+title: "Arquitectura de bases de datos espaciales y estándares OGC"
+subtitle: "Motores relacionales espaciales, especificación Simple Features for SQL y catálogos de metadatos"
+author: "Alexys H. Rodríguez-Avellaneda Ph.D."
+date: today
+format:
+  revealjs:
+    theme: default
+    toc-title: "Tabla de contenidos"
+    slide-number: true
+    hash-type: number
+    preview-links: auto
+    chalkboard: true
+    transition: fade
+    menu: true
+    width: 1280
+    height: 720
+    margin: 0.08
+    include-in-header:
+      text: |
+        <style>
+        /* Contenedor principal de la lista de primer nivel */
+        .reveal #TOC nav > ul,
+        .reveal nav[role="doc-toc"] > ul {
+          display: block !important;
+          width: 100% !important;
+          column-count: 2 !important;
+          column-gap: 3em !important;
+          font-size: 0.73em !important;
+        }
+
+        /* Evitar que una sección se parta entre columnas */
+        .reveal #TOC nav > ul > li,
+        .reveal nav[role="doc-toc"] > ul > li {
+          break-inside: avoid !important;
+          page-break-inside: avoid !important;
+          margin-bottom: 0.8em !important;
+        }
+
+        /* Sublistas de segundo nivel en columna única normal */
+        .reveal #TOC nav > ul > li ul,
+        .reveal nav[role="doc-toc"] > ul > li ul {
+          column-count: 1 !important;
+          display: block !important;
+          font-size: 0.9em !important;
+          margin-left: 1.2em !important;
+        }
+        </style>
+---
+
+# De sistemas de archivos a bases de datos
+
+## Acrónimos y convenciones: arquitectura y estándares
+
+::: {style="font-size: 0.70em; line-height: 1.22;"}
+::: {.columns}
+::: {.column width="50%"}
+**Sistemas gestores y arquitectura**
+
+- **SGBD / DBMS**: Sistema gestor de bases de datos (*database management system*).
+- **SDBMS**: SGBD espacial (*spatial database management system*).
+- **GeoDB**: Repositorio de base de datos espacial o geográfica.
+- **DBA**: Administrador de bases de datos (*database administrator*).
+- **ACID**: Atomicidad, consistencia, aislamiento y durabilidad.
+- **WAL**: Registro previo en bitácora (*write-ahead logging*).
+:::
+
+::: {.column width="50%"}
+**Lenguajes y estándares espaciales**
+
+- **SQL**: Lenguaje de consulta estructurado (*structured query language*).
+- **DDL / DML**: Sublenguajes de definición y manipulación de datos.
+- **OGC**: Consorcio geoespacial abierto (*Open Geospatial Consortium*).
+- **CRS / SRID**: Sistema de referencia de coordenadas e identificador espacial.
+- **WKT / WKB / EWKB**: Serializaciones en texto, binario y binario extendido.
+- **GiST**: Árbol de búsqueda generalizada (*generalized search tree*).
+:::
+:::
+:::
+
+## Acrónimos y convenciones: modelos y analítica avanzada
+
+::: {style="font-size: 0.70em; line-height: 1.22;"}
+::: {.columns}
+::: {.column width="50%"}
+**Modelos, estándares y procesamiento**
+
+- **CODASYL**: Consorcio estandarizador de modelos en red (*Conference on Data Systems Languages*).
+- **OLTP / OLAP**: Procesamiento transaccional / analítico en línea.
+- **ADT**: Tipo de dato abstracto (*abstract data type*).
+- **ISO / IEC**: Organismos internacionales de normalización técnica y electrotécnica.
+- **GQL**: Estándar formal de consultas sobre grafos (*graph query language*, ISO/IEC 39075:2024).
+- **Spark / Flink**: Motores distribuidos para cómputo en memoria y flujos continuos (*streams*).
+:::
+
+::: {.column width="50%"}
+**Indexación, tipos y representaciones**
+
+- **Árbol B / B+**: Estructura jerárquica univariada balanceada (*balanced tree*).
+- **MBR**: Caja envolvente mínima (*minimum bounding box*).
+- **JSONB**: Almacenamiento binario estructurado para JSON en PostgreSQL.
+- **pgvector**: Extensión de PostgreSQL para indexación y búsqueda vectorial.
+- **HNSW**: Grafo navegable jerárquico de mundo pequeño (*hierarchical navigable small world*).
+- **Embeddings**: Representaciones vectoriales densas continuas de alta dimensionalidad.
+:::
+:::
+:::
+
+## Limitaciones del sistema de archivos tradicional
+
+::: {.columns}
+::: {.column width="50%"}
+**Deficiencias estructurales**
+
+- **Redundancia e inconsistencia**: Duplicación descontrolada de archivos sin sincronización.
+- **Aislamiento**: Datos fragmentados en formatos heterogéneos y cerrados.
+- **Acoplamiento rígido**: El cambio de formato exige reescribir las aplicaciones.
+- **Vulnerabilidad transaccional**: Carencia de garantías ACID y riesgo de sobreescritura.
+:::
+
+::: {.column width="50%"}
+**Impacto en proyectos SIG**
+
+- Tablas de atributos dispersas en hojas de cálculo.
+- Geometrías huérfanas en directorios locales.
+- Bloqueos de archivo monousuario.
+- Corrupción por caídas imprevistas de red o energía.
+:::
+:::
+
+## Principio de integración en un SDBMS
+
+Desacoplamiento de la representación lógica frente al almacenamiento físico:
+
+```{dot}
+//| fig-align: center
+//| fig-width: 9
+//| fig-height: 2.8
+//| echo: false
+
+digraph G {
+    graph [rankdir=LR, bgcolor="transparent", nodesep=0.5, ranksep=0.8, fontname="Helvetica"];
+    node [shape=box, style="filled,rounded", fontname="Helvetica", fontsize=11, penwidth=1.0];
+    edge [color="#475569", arrowhead=vee, arrowsize=0.8, fontname="Helvetica", fontsize=9];
+
+    subgraph cluster_clients {
+        label = "Clientes concurrentes";
+        style = "dashed,rounded";
+        color = "#16a34a";
+        fontcolor = "#065f46";
+        bgcolor = "#f0fdf4";
+        c1 [label="SIG escritorio\n(QGIS, ArcGIS)", fillcolor="#dcfce7", color="#16a34a"];
+        c2 [label="Servicios web\n(GeoServer)", fillcolor="#dcfce7", color="#16a34a"];
+        c3 [label="Scripts\n(Python, R, Julia)", fillcolor="#dcfce7", color="#16a34a"];
+    }
+
+    subgraph cluster_sdbms {
+        label = "Repositorio centralizado (SDBMS)";
+        style = "solid,rounded";
+        color = "#0284c7";
+        fontcolor = "#075985";
+        bgcolor = "#f0f9ff";
+        motor [label="Motor SQL espacial\n+ Garantías ACID", fillcolor="#bae6fd", color="#0284c7"];
+        disco [label="Tuplas unificadas en disco\n[ Atributos + GEOMETRY (WKB) ]", fillcolor="#ffffff", color="#64748b"];
+        motor -> disco [label="I/O transaccional"];
+    }
+
+    c1 -> motor [dir=both, label="SQL"];
+    c2 -> motor [dir=both, label="WFS/API"];
+    c3 -> motor [dir=both, label="Conexión nativa"];
+}
+
+```
+
+* **Fuente única de verdad**: Eliminación de discrepancias entre tabla y vector.
+* **Acceso multiusuario seguro**: Control de concurrencia a nivel de tupla.
+
+# Arquitectura y niveles de abstracción
+
+## Arquitectura clásica del motor (Silberschatz)
+
+```{dot}
+//| fig-align: center
+//| fig-width: 9.5
+//| fig-height: 4.8
+//| echo: false
+
+digraph G {
+    graph [rankdir=TB, bgcolor="transparent", nodesep=0.4, ranksep=0.45, fontname="Helvetica"];
+    node [shape=box, style="filled,rounded", fontname="Helvetica", fontsize=10.5, penwidth=1.0];
+    edge [color="#475569", arrowhead=vee, arrowsize=0.75, fontname="Helvetica", fontsize=9];
+
+    // Nivel 1: Usuarios e Interfaces
+    subgraph cluster_users {
+        label = "Capa de usuarios y herramientas de acceso";
+        style = "dashed,rounded";
+        color = "#16a34a";
+        fontcolor = "#065f46";
+        bgcolor = "#f0fdf4";
+
+        u_app [label="Usuarios finales\n(Aplicaciones web / SIG)", fillcolor="#dcfce7", color="#16a34a", width=2.6];
+        u_dba [label="Analistas y DBA\n(Consola psql / DDL / DML)", fillcolor="#dcfce7", color="#16a34a", width=2.6];
+
+        { rank=same; u_app; u_dba; }
+    }
+
+    // Nivel 2: Procesador de Consultas
+    subgraph cluster_qp {
+        label = "1. Procesador de consultas (evaluación y optimización lógica)";
+        style = "solid,rounded";
+        color = "#0284c7";
+        fontcolor = "#075985";
+        bgcolor = "#f0f9ff";
+
+        parser [label="Compilador / Optimizador SQL\n(Traducción a álgebra relacional y plan de costo mínimo)", fillcolor="#bae6fd", color="#0284c7", width=6.2];
+        engine [label="Motor de evaluación de consultas\n(Despacho y ejecución del plan óptimo)", fillcolor="#bae6fd", color="#0284c7", width=6.2];
+
+        parser -> engine [label=" Plan físico ejecutable"];
+    }
+
+    // Nivel 3: Gestor de Almacenamiento
+    subgraph cluster_sm {
+        label = "2. Gestor de almacenamiento (control de memoria y transaccionalidad)";
+        style = "solid,rounded";
+        color = "#0369a1";
+        fontcolor = "#075985";
+        bgcolor = "#f0f9ff";
+
+        sm_ctrl [label="Control transaccional e integridad\n[ Gestor ACID / WAL  |  Autorización ]", fillcolor="#e0f2fe", color="#38bdf8", width=6.2];
+        sm_buf [label="Gestor de búferes y archivos\n[ Paginación RAM  |  Estructuras de bloques ]", fillcolor="#e0f2fe", color="#38bdf8", width=6.2];
+
+        sm_ctrl -> sm_buf [style=dotted, arrowhead=none];
+    }
+
+    // Nivel 4: Almacenamiento en Disco
+    subgraph cluster_disk {
+        label = "3. Almacenamiento persistente en disco";
+        style = "filled,rounded";
+        color = "#94a3b8";
+        fontcolor = "#0f172a";
+        bgcolor = "#f8fafc";
+
+        disk [label="Páginas de disco:\n[ Tablas relacionales  |  Índices (B+ / GiST)  |  Catálogo (Diccionario) ]", fillcolor="#ffffff", color="#64748b", width=6.2];
+    }
+
+    // Flujos entre capas
+    u_app -> parser [label=" Sentencias DML"];
+    u_dba -> parser [label=" Sentencias DDL / SQL"];
+    engine -> sm_ctrl [label=" Solicitud de tuplas"];
+    sm_buf -> disk [dir=both, label=" Transferencia de bloques (I/O)"];
+}
+
+```
+
+
+## Componentes funcionales del motor (Silberschatz)
+
+::: {style="font-size: 0.85em; line-height: 1.35;"}
+::: {.columns}
+::: {.column width="50%"}
+**Procesador de consultas**
+
+- **Compilador y optimizador DML**: Formula el plan de evaluación de costo computacional mínimo.
+- **Intérprete DDL**: Procesa sentencias estructurales (`CREATE`, `ALTER`) y actualiza el diccionario.
+- **Motor de evaluación**: Ejecuta las instrucciones de bajo nivel interactuando con el almacenamiento.
+:::
+
+::: {.column width="50%"}
+**Gestor de almacenamiento**
+
+- **Gestor de búferes**: Controla la transferencia de páginas entre memoria volátil (RAM) y disco.
+- **Gestor de transacciones**: Garantiza el estado consistente del clúster (propiedades ACID vía WAL).
+- **Gestor de archivos e índices**: Asigna bloques físicos en disco y gestiona árboles B+ y GiST.
+:::
+:::
+:::
+
+
+## Niveles de abstracción ANSI/SPARC
+
+::: {.columns}
+::: {.column width="60%"}
+
+```{dot}
+//| fig-align: center
+//| fig-width: 6.5
+//| fig-height: 4.2
+//| echo: false
+
+digraph G {
+    graph [rankdir=TB, bgcolor="transparent", nodesep=0.3, ranksep=0.4, fontname="Helvetica"];
+    node [shape=box, style="filled,rounded", fontname="Helvetica", fontsize=10, penwidth=1.0, width=4.5];
+    edge [color="#475569", fontname="Helvetica", fontsize=9, penwidth=1.0];
+
+    ext [label="Nivel externo (Vistas SQL)\nCapas filtradas por rol, tema o territorio", fillcolor="#e0f2fe", color="#0284c7"];
+    log [label="Nivel conceptual (Esquema lógico global)\nTablas, restricciones, tipos GEOMETRY y SRID", fillcolor="#dcfce7", color="#059669"];
+    fis [label="Nivel interno (Almacenamiento físico)\nPáginas de disco, compresión, codificación WKB e índices GiST", fillcolor="#f1f5f9", color="#475569"];
+
+    ext -> log [dir=both, label="Independencia lógica de datos"];
+    log -> fis [dir=both, label="Independencia física de datos"];
+}
+
+```
+
+:::
+
+::: {.column width="40%"}
+**Garantías operativas**
+
+* **Independencia física**: Se pueden reconstruir índices o cambiar discos sin alterar consultas de las aplicaciones.
+* **Independencia lógica**: Se pueden añadir columnas o capas sin romper vistas en producción.
+:::
+:::
+
+# Modelos de datos y dimensión espacial
+
+## Requerimientos del dato geoespacial
+
+Los motores relacionales clásicos manejan atributos escalares atómicos. El espacio impone:
+
+* **Multidimensionalidad**: Coordenadas $X, Y$, elevación $Z$ y medición lineal $M$.
+
+
+* **Topología continua**: Relaciones espaciales complejas (contención, solape, adyacencia) no reducibles a operadores escalares ($=, <, >$).
+
+
+* **Geometrías compuestas**: Vértices múltiples, límites cerrados y perforaciones internas.
+
+
+* **Fallo del árbol B/B+**: Incapacidad de indexar de forma nativa rangos bidimensionales o cajas envolventes mínimas (*MBR*).
+
+
+# Evolución de modelos de datos
+
+## Taxonomía de modelos de bases de datos
+
+::: {style="font-size: 0.80em; line-height: 1.28;"}
+::: {.columns}
+::: {.column width="50%"}
+**Paradigmas clásicos**
+
+- **Tipo 1 (1950--1960)**: Sistemas de archivos, modelos jerárquicos y en red gestionados mediante punteros físicos en disco (estándar CODASYL).
+- **Tipo 2 (1970+)**: Modelo relacional (Codd); tuplas, álgebra relacional, normalización formal y garantías transaccionales ACID (OLTP).
+- **Tipo 3 (1990+)**: Orientado a objetos (OODBMS) y objeto-relacional (ORDBMS); soporte nativo de tipos abstractos (ADT), herencia e índices extensibles.
+:::
+
+::: {.column width="50%"}
+**Paradigmas contemporáneos**
+
+- **NoSQL (2010+)**: Esquemas flexibles (*schema-on-read*); familias documentales, clave-valor, columnas anchas y grafos (ISO/IEC 39075:2024 GQL).
+- **NewSQL (2012+)**: Álgebra relacional estándar con transaccionalidad ACID global sobre clústeres elásticos distribuidos (Spanner, CockroachDB).
+- **Vectoriales (2020+)**: Indexación y búsqueda de similitud sobre *embeddings* multidimensionales densos mediante grafos HNSW.
+:::
+:::
+:::
+
+## Cronología y convergencia espacial
+
+```{dot}
+//| fig-align: center
+//| fig-width: 9.0
+//| fig-height: 2.0
+//| echo: false
+
+digraph G {
+    graph [rankdir=LR, bgcolor="transparent", nodesep=0.2, ranksep=0.3, fontname="Helvetica"];
+    node [shape=box, style="filled,rounded", fontname="Helvetica", fontsize=8.5, penwidth=1.0, margin="0.1,0.06"];
+    edge [color="#475569", arrowhead=vee, arrowsize=0.65];
+
+    t1 [label="Tipo 1 (1950-60)\nJerárquico / Red", fillcolor="#e2e8f0", color="#94a3b8"];
+    t2 [label="Tipo 2 (1970+)\nRelacional (OLTP)", fillcolor="#cbd5e1", color="#64748b"];
+    t3 [label="Tipo 3 (1990+)\nObjeto-Relacional", fillcolor="#94a3b8", color="#475569"];
+    nosql [label="NoSQL (2010+)\nDocumental / Grafos", fillcolor="#f8fafc", color="#64748b", style="dashed,rounded,filled"];
+    newsql [label="NewSQL (2012+)\nSQL Distribuido", fillcolor="#e0f2fe", color="#0284c7"];
+    vec [label="Vectoriales (2020+)\nEmbeddings / IA", fillcolor="#bae6fd", color="#0369a1"];
+
+    t1 -> t2 -> t3;
+    t2 -> nosql [style=dashed];
+    t2 -> newsql;
+    t3 -> vec;
+    nosql -> vec [style=dashed];
+    newsql -> vec;
+}
+
+```
+
+::: {style="font-size: 0.84em; line-height: 1.3; margin-top: 0.6em;"}
+
+* **El catalizador espacial**: Los límites del modelo relacional plano impulsaron el desarrollo del modelo **objeto-relacional (Tipo 3)** para almacenar geometrías complejas bajo tipos abstractos (ADT) sin desarticular coordenadas.
+
+
+* **Convergencia actual**: Motores relacionales maduros integran almacenamiento semiestructurado (`JSONB`), cómputo geoespacial (PostGIS) e indexación vectorial densa (`pgvector`) en una única instancia.
+
+
+
+:::
+
+
+
+
+
+
+## Precisiones arquitectónicas contemporáneas
+
+::: {style="font-size: 0.75em; line-height: 1.25;"}
+::: {.columns}
+::: {.column width="33%"}
+**PostgreSQL / PostGIS**
+
+- Motor objeto-relacional (Tipo 3) de núcleo extensible.
+- Sustrato convergente: almacena datos relacionales, documentos (`JSONB`), geometrías y vectores densos (`pgvector`).
+:::
+
+::: {.column width="33%"}
+**DuckDB**
+
+- Motor relacional columnar (Tipo 2) con ejecución vectorial en memoria.
+- Arquitectura embebida (*in-process*) sin sobrecarga de red cliente-servidor.
+- Optimizado para procesamiento analítico complejo (OLAP) sobre grandes volúmenes espaciales.
+:::
+
+::: {.column width="33%"}
+**Apache Sedona**
+
+- **No es un SGBD**: carece de almacenamiento persistente propio, bitácora WAL y garantías ACID.
+- Motor de cómputo y procesamiento espacial distribuido en memoria sobre clústeres Apache Spark y Flink.
+:::
+:::
+:::
+
+
+
+
+## Evolución de arquitecturas SIG
+
+::: {style="font-size: 0.76em; line-height: 1.25;"}
+
+| Arquitectura | Componentes | Ventajas | Limitaciones |
+| :--- | :--- | :--- | :--- |
+| **1. Ad-hoc** | Software SIG monousuario con formato binario cerrado. | Alta velocidad y eficiencia en dibujo vectorial local. | Esquema cerrado, nulo soporte concurrente y silos aislados de información. |
+| **2. Dual / híbrida** | SGBD estándar (atributos) + archivos CAD/Shapefile (geometría). | Consultas declarativas SQL sobre la fracción alfanumérica. | Enlace débil por ID, sobrecarga en cliente y riesgo de huérfanos sin ACID conjunto. |
+| **3. Integrada (SDBMS)** | SGBD objeto-relacional (PostGIS) con tipo geométrico nativo. | Consistencia ACID integral, multiusuario y cálculo espacial en servidor. | Exige diseño formal de esquemas relacionales e índices multidimensionales (GiST). |
+
+:::
+
+## Distribución de responsabilidades: SIG y SGBD
+
+::: {.columns}
+::: {.column width="50%"}
+**Aplicación cliente (QGIS / WebSIG)**
+
+* Captura, digitalización y edición vectorial.
+
+
+* Composición cartográfica y simbología.
+
+
+* Interacción visual con el usuario.
+
+
+* Envío de sentencias SQL espaciales declarativas.
+:::
+
+
+
+::: {.column width="50%"}
+**Motor SDBMS (PostgreSQL / PostGIS)**
+
+* Almacenamiento persistente estructurado.
+
+
+* Evaluación de predicados topológicos en servidor.
+
+
+* Filtrado rápido mediante índices espaciales.
+
+
+* Integridad transaccional y copias de seguridad.
+:::
+:::
+
+
+
+# PostgreSQL y la extensión PostGIS
+
+## Motor objeto-relacional y pila geoespacial
+
+PostgreSQL provee extensibilidad para registrar tipos abstractos (ADT), funciones e índices. PostGIS incorpora la pila geoespacial estándar:
+
+```text
+┌────────────────────────────────────────────────────────┐
+│                   PostGIS (SDBMS)                      │
+├─────────────┬─────────────┬──────────────┬─────────────┤
+│    GEOS     │    PROJ     │     GDAL     │   LIBXML2   │
+│ Primitivas  │ Transform.  │ E/S ráster y │ Serializac. │
+│ topológicas │ cartográf.  │  vectorial   │   GML/XML   │
+└─────────────┴─────────────┴──────────────┴─────────────┘
+
+```
+
+* **GEOS**: Algoritmos computacionales (`ST_Intersects`, `ST_Buffer`).
+
+
+* **PROJ**: Conversión geodésica y reproyección de coordenadas.
+
+
+* **Árboles GiST**: Indexación de cajas envolventes mínimas (*Bounding Boxes*).
+
+
+
+## Verificación de PostGIS en el motor
+
+La inspección de dependencias confirma las versiones vinculadas en el clúster:
+
+```sql
+SELECT PostGIS_Full_Version();
+
+```
+
+Resultado estructurado obtenido en el entorno de trabajo:
+
+```text
+POSTGIS="3.6.2" [EXTENSION] PGSQL="180" 
+GEOS="3.14.1dev-CAPI-1.20.4" 
+PROJ="8.2.1" 
+LIBXML="2.12.5" 
+LIBJSON="0.12"
+
+```
+
+*Garantiza compatibilidad completa con funciones OGC y tipado estricto.*
+
+# Estándar OGC Simple Features for SQL
+
+## Jerarquía geométrica OGC (ISO 19125)
+
+```{dot}
+//| fig-align: center
+//| fig-width: 8
+//| fig-height: 3.5
+//| echo: false
+
+digraph G {
+    graph [rankdir=TB, bgcolor="transparent", nodesep=0.3, ranksep=0.4, fontname="Helvetica"];
+    node [shape=box, style="filled,rounded", fontname="Helvetica", fontsize=9, penwidth=1.0];
+    edge [color="#475569", arrowhead=onormal, arrowsize=0.9, penwidth=1.1];
+
+    root [label="Geometry (Abstract)", fillcolor="#f1f5f9", color="#334155"];
+    point [label="Point (0D)", fillcolor="#dbeafe", color="#1d4ed8"];
+    curve [label="Curve (Abstract)", fillcolor="#f8fafc", color="#64748b"];
+    surface [label="Surface (Abstract)", fillcolor="#f8fafc", color="#64748b"];
+    geomcoll [label="GeometryCollection", fillcolor="#fef3c7", color="#d97706"];
+
+    linestring [label="LineString (1D)", fillcolor="#dbeafe", color="#1d4ed8"];
+    polygon [label="Polygon (2D)", fillcolor="#dbeafe", color="#1d4ed8"];
+
+    multipoint [label="MultiPoint", fillcolor="#fed7aa", color="#ea580c"];
+    multilinestring [label="MultiLineString", fillcolor="#fed7aa", color="#ea580c"];
+    multipolygon [label="MultiPolygon", fillcolor="#fed7aa", color="#ea580c"];
+
+    point -> root;
+    curve -> root;
+    surface -> root;
+    geomcoll -> root;
+
+    linestring -> curve;
+    polygon -> surface;
+
+    multipoint -> geomcoll;
+    multilinestring -> geomcoll;
+    multipolygon -> geomcoll;
+}
+
+```
+
+* **Primitivas simples**: `Point`, `LineString`, `Polygon`.
+
+
+* **Colecciones homogéneas**: `MultiPoint`, `MultiLineString`, `MultiPolygon`.
+
+
+
+## Serialización: WKT y WKB / EWKB
+
+::: {.columns}
+::: {.column width="50%"}
+**Well-Known Text (WKT)**
+
+Formato ASCII legible para intercambio:
+
+```text
+POINT(5000000 2000000)
+
+LINESTRING(5000000 2000000, 
+           5010000 2010000)
+
+POLYGON((0 0, 10 0, 10 10, 
+         0 10, 0 0))
+
+```
+
+Soporta componentes 3D/4D: `POINT Z`, `POINT M`, `POINT ZM`.
+:::
+
+::: {.column width="50%"}
+**Well-Known Binary (WKB / EWKB)**
+
+Flujo binario compacto para disco y red:
+
+* Preserva precisión numérica IEEE 754.
+
+
+* Controla orden de bytes (*Endianness*).
+
+
+* **EWKB (PostGIS)**: Embebe el código de proyección (SRID) en la cabecera binaria.
+:::
+:::
+
+
+
+# Catálogos de metadatos espaciales
+
+## Catálogo spatial_ref_sys
+
+::: {style="font-size: 0.78em; line-height: 1.25;"}
+Diccionario canónico de sistemas de referencia de coordenadas (CRS) soportados por el motor:
+
+| Columna clave | Significado técnico |
+| :--- | :--- |
+| `srid` | Identificador entero único (habitualmente código EPSG). |
+| `auth_name` | Organismo normativo de referencia (`'EPSG'`). |
+| `srtext` | Parámetros del elipsoide, datum y proyección en formato WKT CRS. |
+| `proj4text` | Cadena técnica de parámetros consumida por la biblioteca PROJ. |
+
+**Sistemas fundamentales en el contexto colombiano**
+
+- **SRID 4326**: Sistema geográfico global WGS 84 (coordenadas angulares en grados).
+- **SRID 3116**: Proyección MAGNA-SIRGAS / Colombia Bogotá (Gauss-Krüger tradicional).
+- **SRID 9377**: MAGNA-SIRGAS / Origen Nacional Único (Resolución IGAC 471 de 2020).
+:::
+
+## Actualización e idempotencia de EPSG 9377
+
+El catálogo relacional es estático; volcados anteriores carecen de EPSG 9377. Se aprovisiona mediante una operación **UPSERT** con `ON CONFLICT`:
+
+```sql
+INSERT INTO spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text)
+VALUES (
+    9377, 'EPSG', 9377,
+    'PROJCS["MAGNA-SIRGAS / Origen-Nacional", ...]',
+    '+proj=tmerc +lat_0=4 +lon_0=-73 +k=0.9992 +x_0=5000000 +y_0=2000000 ...'
+)
+ON CONFLICT (srid) DO UPDATE 
+SET srtext = EXCLUDED.srtext, proj4text = EXCLUDED.proj4text;
+
+```
+
+* **Propiedad de idempotencia**: Ejecutable $N$ veces sin duplicación ni fallos.
+
+
+* **Requisito operativo**: Si no reside en disco, funciones como `ST_Transform` abortarán.
+
+
+
+## Vista de catálogo geometry_columns
+
+Vista dinámica construida por introspección sobre el diccionario del motor relacional:
+
+```sql
+SELECT f_table_name, f_geometry_column, coord_dimension, srid, type 
+FROM geometry_columns;
+
+```
+
+Campos normalizados bajo la especificación OGC:
+
+* `f_table_name`: Nombre de la tabla espacial persistida.
+
+
+* `f_geometry_column`: Nombre de la columna de geometrías (`geom`).
+
+
+* `coord_dimension`: Dimensión de coordenadas ($2$, $3$ o $4$).
+
+
+* `srid`: Sistema de coordenadas asociado.
+
+
+* `type`: Tipo de entidad geométrica restringida (`POINT`, `POLYGON`, etc.).
+
+
+
+# Verificación práctica en consola
+
+## Ciclo DDL, WKT e introspección
+
+Secuencia completa de persistencia espacial en `sig_db_unal`:
+
+```sql
+-- 1. Creación de tabla pedagógica con tipado estricto
+CREATE TABLE public.infraestructura_referencia (
+    id serial PRIMARY KEY,
+    codigo varchar(10) NOT NULL UNIQUE,
+    descripcion text,
+    geom geometry(Point, 9377) NOT NULL
+);
+
+-- 2. Inserción de entidad puntual mediante WKT en Origen Nacional
+INSERT INTO public.infraestructura_referencia (codigo, descripcion, geom) 
+VALUES ('EST-001', 'Estación central', ST_GeomFromText('POINT(5000000 2000000)', 9377));
+
+-- 3. Auditoría de catalogación dinámica en OGC
+SELECT f_table_name, f_geometry_column, coord_dimension, srid, type 
+FROM geometry_columns 
+WHERE f_table_name = 'infraestructura_referencia';
+
+```
+
+Resultado validado: dimensión $2$, SRID $9377$ y tipo `POINT` expuestos de forma transparente para clientes SIG en red.

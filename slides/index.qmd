@@ -12,8 +12,9 @@ En este apartado se centralizan las presentaciones interactivas utilizadas duran
 
 | Identificador | Sesión / módulo temático | Formato interactivo | Capítulo asociado |
 | :---: | :--- | :---: | :--- |
-| **00** | Introducción general y lineamientos del curso | [Ver diapositivas](00-introduccion.html){target="_blank"} | [Syllabus](../chapters/01-syllabus.html) |
-| **01** | Infraestructura, instalación y entornos | [Ver diapositivas](01-instalacion_entornos.html){target="_blank"} | [Instalación y entornos](../chapters/04-introduccion_instalacion_entornos.html) |
+| **00** | Introducción general y lineamientos del curso | [Ver diapositivas](00-d_introduccion.html){target="_blank"} | [Syllabus](../chapters/01-syllabus.html) |
+| **01** | Infraestructura, instalación y entornos | [Ver diapositivas](01-d_instalacion_entornos.html){target="_blank"} | [Instalación y entornos](../chapters/04-introduccion_instalacion_entornos.html) |
+| **20** | Arquitectura y estándares OGC (Fundamentos y diseño de bases de datos espaciales) | [Ver diapositivas](20-d_arquitectura_y_estandares_ogc.html){target="_blank"} | [Arquitectura y Estándares OGC](../chapters/20-arquitectura_y_estandares_ogc.html) |
 
 : Índice general de presentaciones RevealJS {#tbl-catalogo-slides}
 

@@ -58,9 +58,19 @@ book:
         - chapters/14-respaldo_y_recuperacion_bd.qmd
       #  - chapters/diagramas_mermaid.qmd
       #  - chapters/diagramas_graphviz.qmd
-    #- part: "Fundamentos"        # Segunda parte
+    - part: "Fundamentos y diseño de bases de datos espaciales"
+      chapters:
+        - chapters/20-arquitectura_y_estandares_ogc.qmd
+      #  - chapters/21-modelado_conceptual_y_normalizacion.qmd
+      #  - chapters/22-algebra_relacional_ddl_y_modelado_visual.qmd
+
+    #- part: "PostgreSQL, PostGIS y análisis espacial avanzado"
     #  chapters:
-    #    - chapters/98-errata.qmd
+    #    - chapters/23-implementacion_fisica_cli_y_conexion_poliglota.qmd
+    #    - chapters/24-spatial_sql_de9im_y_vistas_analiticas.qmd
+    #    - chapters/25-indexacion_gist_optimizacion_y_respaldos_toc.qmd
+    #    - chapters/26-topologia_vectorial_persistente_y_pgrouting.qmd
+        
     - part: "Proyectos aplicados"
       chapters:
         - chapters/proyectos/00-guia_proyecto_final.qmd

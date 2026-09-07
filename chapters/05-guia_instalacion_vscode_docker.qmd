@@ -4,7 +4,7 @@
 ::: {.callout-note appearance="simple"}
 ### Diapositivas del módulo
 
-Las diapositivas interactivas correspondientes a la visión de conjunto, arquitectura de software y lineamientos de esta sección se encuentran disponibles en: [Presentación interactiva: Instalación y entornos](../slides/01-instalacion_entornos.html){target="_blank"}.
+Las diapositivas interactivas correspondientes a la visión de conjunto, arquitectura de software y lineamientos de esta sección se encuentran disponibles en: [Presentación interactiva: Instalación y entornos](../slides/01-d_instalacion_entornos.html){target="_blank"}.
 :::
 :::
 

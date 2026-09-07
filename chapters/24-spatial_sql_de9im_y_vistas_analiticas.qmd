@@ -1,0 +1,1 @@
+# Spatial SQL, modelo DE-9IM y vistas analíticas (Taller 2)

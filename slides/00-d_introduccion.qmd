@@ -1,0 +1,161 @@
+---
+title: "Bases de datos espaciales"
+subtitle: "Introducción general y lineamientos del curso"
+author: "Alexys H. Rodríguez-Avellaneda Ph.D."
+date: today
+format:
+  revealjs:
+    theme: default
+    slide-number: true
+    hash-type: number
+    preview-links: auto
+    chalkboard: true
+    transition: fade
+    menu: true
+    width: 1280
+    height: 720
+    margin: 0.08
+---
+
+## Propósito general y fundamentación
+
+Diseñar, implementar, administrar y explotar analíticamente sistemas de bases de datos relacionales espaciales y arquitecturas de datos contemporáneas.
+
+* **Ciencia abierta y principios FAIR:** Transparencia metodológica y datos reutilizables.
+* **Reproducibilidad integral:** Despliegue determinista mediante Docker y Git.
+* **Rigor espacial:** Cumplimiento estricto de estándares OGC e ISO 19107.
+
+Documentación: [Bienvenida y alcance](../index.html) | [Prefacio](../chapters/00-prefacio.html).
+
+## Competencias del programa
+
+* **Fundamentación relacional:** Comprensión de motores RDBMS, álgebra relacional y SQL estándar.
+* **Modelado espacial:** Esquemas normalizados (1FN-3FN) e implementación en PostGIS.
+* **Ingeniería de datos:** Integración de repositorios espaciales con software SIG y analítica políglota.
+
+Documentación: [Propósito formativo y competencias](../chapters/01-syllabus.html#propósito-formativo-y-competencias).
+
+## Pilares de la práctica computacional
+
+1. **Despliegue y administración:** Inicialización de motores por CLI y orquestación en contenedores.
+2. **Modelado y explotación:** Sentencias DDL/DML, Spatial SQL y análisis topológico DE-9IM.
+3. **Integración con clientes:** Conexión con QGIS, ArcGIS Pro, Python, R y Julia.
+
+Documentación: [Pilares operativos en el prefacio](../chapters/00-prefacio.html#pilares-operativos-de-la-práctica-computacional).
+
+## Estructura curricular en cuatro ejes
+
+* **Eje 1 (Sem 1-3):** Fundamentos, modelado conceptual, normalización y estándares OGC.
+* **Eje 2 (Sem 4-7):** PostgreSQL/PostGIS, Spatial SQL, indexación GiST y topología.
+* **Evaluación intermedia (Sem 8):** Examen teórico individual y asesoría de proyectos.
+* **Eje 3 (Sem 9-10):** Geodatabases corporativas, diseño visual y flujos ETL.
+* **Eje 4 (Sem 11-16):** Seminario de tecnologías emergentes y proyectos finales.
+
+Documentación: [Estructura curricular articulada](../chapters/01-syllabus.html#estructura-curricular-articulada-en-cuatro-ejes).
+
+## Eje 1: fundamentos y diseño conceptual
+
+* **Semana 1:** Arquitectura de SGBDE, estándar OGC SFS e ISO 19107. Tipos vectoriales fundamentales.
+* **Semana 2:** Diagramas Entidad-Relación espaciales, normalización (1FN-3FN) y sistemas EPSG.
+* **Semana 3:** Álgebra relacional, sentencias DDL y modelado gráfico con pgModeler.
+* **Evaluación:** Taller 1 (Modelado conceptual y DDL con pgModeler).
+
+Documentación: [Detalle del eje 1 en el syllabus](../chapters/01-syllabus.html#eje-1-fundamentos-de-diseño-modelado-y-arquitecturas-de-datos-semanas-1-a-3).
+
+## Eje 2: motores relacionales con PostgreSQL y PostGIS
+
+* **Semana 4:** Arquitectura cliente-servidor, CLI (`shp2pgsql`) y conexión políglota.
+* **Semana 5:** Spatial SQL, predicados topológicos DE-9IM y vistas espaciales.
+* **Semana 6:** Índices espaciales (GiST, BRIN), planes `EXPLAIN` y respaldos con TOC.
+* **Semana 7:** Topología persistente (`postgis_topology`) y validación geométrica.
+
+Documentación: [Detalle del eje 2 en el syllabus](../chapters/01-syllabus.html#eje-2-motores-relacionales-espaciales-con-postgresql-y-postgis-semanas-4-a-7).
+
+## Eje 3: geodatabases corporativas y flujos ETL
+
+* **Semana 9:** Arquitecturas corporativas vs. archivo; diseño guiado con ShapeChange.
+* **Diseño moderno:** Vistas de diseño (*data design views*), reglas de atributos y esquemas XML.
+* **Semana 10:** Almacenamiento ráster (`postgis_raster`), PL/pgSQL y flujos ETL con GDAL.
+* **Evaluación:** Taller 4 (Diseño de geodatabases, integridad y flujos ETL).
+
+Documentación: [Detalle del eje 3 en el syllabus](../chapters/01-syllabus.html#eje-3-geodatabases-corporativas-diseño-y-formatos-avanzados-semanas-9-a-10).
+
+## Eje 4: seminario de tecnologías emergentes
+
+::: {.columns}
+::: {.column width="50%"}
+* **Sem 11:** DuckDB espacial y GeoParquet.
+* **Sem 12:** Apache Sedona y PySpark.
+* **Sem 13:** DGGS (Uber H3 y Google S2).
+:::
+
+::: {.column width="50%"}
+* **Sem 14:** Neo4j Spatial frente a pgRouting.
+* **Sem 15:** Elasticsearch frente a MongoDB.
+* **Sem 16:** Procedimientos en Rust (PGRX).
+:::
+:::
+
+Documentación: [Guía del proyecto final](../chapters/proyectos/00-guia_proyecto_final.html).
+
+## Dinámica del seminario de proyectos
+
+Sesiones semanales de 120 minutos dirigidas por los equipos de trabajo:
+
+* **Bloque 1 (40 min):** Marco conceptual, arquitectura y diseño experimental.
+* **Bloque 2 (65 min):** Taller práctico guiado en vivo (*live coding*) con la cohorte.
+* **Bloque 3 (15 min):** Discusión técnica, análisis de limitaciones y retroalimentación.
+
+Documentación: [Metodología del seminario](../chapters/01-syllabus.html#eje-4-paradigmas-emergentes-y-seminario-de-proyectos-finales-semanas-11-a-16).
+
+## Infraestructura y entorno computacional
+
+* **Sistema anfitrión:** Terminal de VS Code/Positron, Git, Docker Desktop y clientes SIG.
+* **Contenedores:** PostgreSQL 18, PostGIS 3.5 y dependencias analíticas preconfiguradas.
+* **Control de versiones:** Repositorios privados asignados vía GitHub Classroom.
+* **Publicación científica:** Documentación y reportes reproducibles en Quarto.
+
+Documentación: [Parte I — Instalación y entornos](../chapters/04-introduccion_instalacion_entornos.html).
+
+## Sistema de evaluación
+
+| Componente | Alcance | Porcentaje |
+|---|---|:---:|
+| **Talleres guiados** | 4 talleres prácticos (7.5% c/u) | 30% |
+| **Examen individual** | Prueba escrita sobre Ejes 1 y 2 | 20% |
+| **Reporte de proyecto** | Capítulo reproducible en Quarto | 20% |
+| **Implementación técnica** | Repositorio GitHub y Dockerfile | 15% |
+| **Dirección de taller** | Liderazgo de la práctica en vivo | 15% |
+
+Documentación: [Tabla de evaluación en el syllabus](../chapters/01-syllabus.html#tbl-sistema-evaluacion).
+
+## Políticas académicas de entrega
+
+* **Gestión por GitHub:** Recepción formal únicamente en repositorios asignados.
+* **Trazabilidad:** Historial de *commits* progresivo (sin entregas consolidadas finales).
+* **Entregas tardías:** Deducción de 5 puntos por semana de retraso (máximo 2 semanas).
+* **Asistencia:** Mínimo 80% de asistencia presencial o asistida para aprobar.
+
+Documentación: [Políticas disciplinarias](../chapters/01-syllabus.html#políticas-del-curso-entregas-y-régimen-disciplinario).
+
+## Referencias y documentación del curso
+
+Documentación procedimental, comandos de terminal y guías de laboratorio disponibles en el libro:
+
+::: {.columns}
+::: {.column width="50%"}
+**Marco pedagógico**
+
+* [Portada y bienvenida](../index.html)
+* [Prefacio y enfoque](../chapters/00-prefacio.html)
+* [Syllabus y programación](../chapters/01-syllabus.html)
+:::
+
+::: {.column width="50%"}
+**Entornos y proyectos**
+
+* [Parte I — Instalación y entornos](../chapters/04-introduccion_instalacion_entornos.html)
+* [Guía del proyecto final](../chapters/proyectos/00-guia_proyecto_final.html)
+* [Repositorio central (GitHub)](https://github.com/alexyshr/bde2026){target="_blank"}
+:::
+:::

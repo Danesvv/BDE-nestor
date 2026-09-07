@@ -24,7 +24,7 @@ El material de la clase se distribuye como un proyecto Quarto alojado en el repo
 
 ::: {.content-visible when-format="html"}
 ::: {.callout-note appearance="simple" title="Presentación de la sesión"}
-Las diapositivas interactivas correspondientes a la introducción y lineamientos generales del curso se encuentran disponibles en: [Presentación interactiva: Introducción general](slides/00-introduccion.html){target="_blank"}.
+Las diapositivas interactivas correspondientes a la introducción y lineamientos generales del curso se encuentran disponibles en: [Presentación interactiva: Introducción general](slides/00-d_introduccion.html){target="_blank"}.
 :::
 :::
 

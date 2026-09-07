@@ -1,0 +1,18 @@
+---
+title: "Indexación GiST, desempeño y respaldos avanzados con TOC"
+subtitle: "Estructuras en árbol R, análisis de planes de ejecución y respaldos estructurados con pg_dump y pg_restore"
+author: "Alexys H. Rodríguez-Avellaneda Ph.D."
+date: today
+format:
+  revealjs:
+    theme: default
+    slide-number: true
+    hash-type: number
+    preview-links: auto
+    chalkboard: true
+    transition: fade
+    menu: true
+    width: 1280
+    height: 720
+    margin: 0.08
+---

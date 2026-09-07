@@ -6,7 +6,7 @@ El despliegue de una infraestructura homogénea y reproducible es condición ind
 ::: {.content-visible when-format="html"}
 ::: {.callout-note appearance="simple"}
 ### Presentación de la parte
-Las diapositivas interactivas correspondientes a la visión de conjunto, arquitectura de software y lineamientos de esta sección están disponibles en: [Presentación interactiva: Instalación y entornos](../slides/01-instalacion_entornos.html){target="_blank"}.
+Las diapositivas interactivas correspondientes a la visión de conjunto, arquitectura de software y lineamientos de esta sección están disponibles en: [Presentación interactiva: Instalación y entornos](../slides/01-d_instalacion_entornos.html){target="_blank"}.
 :::
 :::
 

@@ -39,3 +39,5 @@ chapter_groq/
 notebooks/
 scripts/
 00_administracion_curso.qmd
+
+/.quarto/

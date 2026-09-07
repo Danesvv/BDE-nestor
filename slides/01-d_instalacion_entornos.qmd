@@ -1,0 +1,156 @@
+---
+title: "Infraestructura, instalación y entornos"
+subtitle: "Configuración del entorno computacional reproducible"
+author: "Alexys H. Rodríguez-Avellaneda Ph.D."
+date: today
+format:
+  revealjs:
+    theme: default
+    slide-number: true
+    hash-type: number
+    preview-links: auto
+    chalkboard: true
+    transition: fade
+    menu: true
+    width: 1280
+    height: 720
+    margin: 0.08
+---
+
+## Arquitectura híbrida del entorno
+
+El curso articula desarrollo local y ejecución en contenedores para asegurar reproducibilidad:
+
+* **Sistema anfitrión (host):** Edición de código, control de versiones, software SIG y motor relacional nativo.
+* **Entorno contenedorizado (Docker):** Servicios aislados, entornos analíticos políglotas y base de datos estandarizada.
+* **Interoperabilidad:** Comunicación TCP/IP bidireccional entre el sistema anfitrión y la red virtual de contenedores.
+
+Documentación: [Parte I — Instalación y entornos](../chapters/04-introduccion_instalacion_entornos.html).
+
+## Software requerido en el sistema anfitrión
+
+::: {.columns}
+::: {.column width="50%"}
+**Control y desarrollo base**
+
+* **Git:** Control de versiones local.
+* **Cuenta GitHub:** Acceso a repositorios y asignaciones.
+* **Docker Desktop:** Motor de virtualización y orquestación.
+* **Visual Studio Code:** Entorno principal de desarrollo.
+:::
+
+::: {.column width="50%"}
+**Motores y clientes espaciales**
+
+* **PostgreSQL 18 + PostGIS 3.6:** Motor físico local (puerto 5432).
+* **QGIS y ArcGIS Pro:** Clientes SIG de escritorio.
+* **Binarios en PATH:** Acceso directo a `psql`, `pg_dump` y cargadores espaciales (`shp2pgsql`).
+:::
+:::
+
+Documentación: [Guía de instalación](../chapters/05-guia_instalacion_vscode_docker.html) | [PostgreSQL 18 local](../chapters/10-instalacion_postgresql_18_windows.html).
+
+## Ecosistema de extensiones en Visual Studio Code
+
+La operatividad de VS Code se distribuye en tres niveles de integración:
+
+* **Nivel local (anfitrión):** Extensiones base de interfaz y edición (Quarto, GitLens, Markdownlint).
+* **Nivel de orquestación:** *Docker* y *Dev Containers* para enlace con contenedores.
+* **Nivel diferido / contenedor:** Extensiones analíticas instaladas directamente en el espacio de trabajo remoto (Python, R, Julia).
+
+Documentación: [Configuración de VS Code y contenedores](../chapters/05-guia_instalacion_vscode_docker.html).
+
+## Imágenes y servicios del curso
+
+El entorno aprovisiona dos imágenes base mediante Docker Compose:
+
+* **`postgis_unal:v1.12`:** Servicio `db-postgis` con PostgreSQL 18, PostGIS 3.6 y catálogos preconfigurados.
+* **`image_sig_unal:v1.11_produccion_final`:** Contenedor analítico con dependencias de procesamiento espacial.
+* **Herramientas en contenedor:** Requiere aprovisionar `psql` (cliente CLI) y `graphviz` (generador de diagramas).
+
+Documentación: [Infraestructura Docker](../chapters/13-infraestructura_docker_y_base_datos_espacial.html).
+
+## Estrategia dual de despliegue
+
+El flujo técnico admite dos rutas operativas independientes:
+
+* **Ruta contenedorizada (predeterminada):** Empleada en los capítulos `.qmd`; resuelve servicios vía DNS interno (`db-postgis`).
+* **Ruta local (alternativa funcional):** Permite realizar todas las prácticas sobre el motor local sin depender de Docker.
+* **Condición de compilación:** Los `.qmd` no compilarán en local a menos que se ajusten las variables de conexión (`PGHOST`, credenciales).
+
+*Recomendación:* Configurar ambos entornos para validar portabilidad de scripts.
+
+## Catálogo pedagógico sig_db_unal
+
+La base de datos de estudio integra los esquemas vectoriales `base750` y `divpol`:
+
+* **Aprovisionamiento en Docker:** Carga declarativa automatizada en el primer arranque sobre el volumen `postgis_data_unal`.
+* **Replicación en motor local:** Creación manual del catálogo e inyección del script estructurado `init_unal_spatialdb.sql`.
+* **Homogeneidad:** Ambas instancias conservan la misma volumetría, tipos geométricos e índices GiST.
+
+Documentación: [Replicación local de base de datos](../chapters/13-infraestructura_docker_y_base_datos_espacial.html#sec-infraestructura-docker).
+
+## Ciclo de vida y gestión de contenedores
+
+Instrucciones de administración desde la raíz del proyecto:
+
+* **Arranque en segundo plano:** `docker compose up -d` (inicializa y monta volúmenes).
+* **Pausa operativa:** `docker compose stop` (suspende procesos sin alterar el contenedor).
+* **Reanudación:** `docker compose start` (reactiva instancias pausadas).
+* **Desmontaje completo:** `docker compose down` (destruye contenedores y redes virtuales).
+
+Documentación: [Gestión de servicios en Docker](../chapters/05-guia_instalacion_vscode_docker.html).
+
+## Persistencia y riesgos de volatilidad
+
+::: {.columns}
+::: {.column width="50%"}
+**Volumen persistente**
+
+* El volumen `postgis_data_unal` preserva tablas y registros espaciales.
+* Resiste ejecuciones de `docker compose down` mientras no se agregue la bandera `-v`.
+:::
+
+::: {.column width="50%"}
+**Riesgos de pérdida**
+
+* Herramientas en contenedor (`psql`, `graphviz`) se pierden si se recrea el contenedor.
+* Limpiadores de temporales del SO o `docker system prune` pueden purgar capas de almacenamiento de Docker Desktop.
+:::
+:::
+
+Documentación: [Respaldos y recuperación](../chapters/14-respaldo_y_recuperacion_bd.html).
+
+## Resolución de red y matriz de puertos
+
+Direccionamiento según el contexto de ejecución:
+
+* **Host hacia motor local:** `localhost:5432`.
+* **Host hacia motor en Docker:** `127.0.0.1:5434` (vía redirección de puertos).
+* **Contenedor hacia motor en Docker:** `db-postgis:5432` (DNS interno).
+* **Contenedor hacia motor local:** `host.docker.internal:5432`.
+
+Documentación: [Topología de red y enrutamiento](../chapters/13-infraestructura_docker_y_base_datos_espacial.html).
+
+## Referencias y documentación procedimental
+
+Guías técnicas detalladas paso a paso en el libro del curso:
+
+::: {.columns}
+::: {.column width="50%"}
+**Sistemas anfitrión y herramientas**
+
+* [Parte I — Instalación y entornos](../chapters/04-introduccion_instalacion_entornos.html)
+* [Guía de VS Code y Docker](../chapters/05-guia_instalacion_vscode_docker.html)
+* [PostgreSQL 18 en Windows](../chapters/10-instalacion_postgresql_18_windows.html)
+:::
+
+::: {.column width="50%"}
+**Orquestación y respaldos**
+
+* [Infraestructura Docker y BD](../chapters/13-infraestructura_docker_y_base_datos_espacial.html)
+* [Respaldo y recuperación](../chapters/14-respaldo_y_recuperacion_bd.html)
+* [Repositorio central (GitHub)](https://github.com/alexyshr/bde2026){target="_blank"}
+:::
+:::
+
