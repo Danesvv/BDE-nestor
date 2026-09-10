@@ -1,4 +1,4 @@
-# Despliegue docker y verificación de la base de datos {#sec-infraestructura-docker}
+# Despliegue Docker y verificación de la base de datos {#sec-infraestructura-docker}
 
 ```{r}
 #| label: setup-variables-sistema-r
@@ -76,6 +76,7 @@ El catálogo debe listar las siguientes imágenes:
 * `postgis_unal:v1.12`
 * `image_sig_unal:v1.11_produccion_final`
 
+
 ### Despliegue de servicios mediante Docker Compose
 
 Una vez validadas las imágenes, se inicia la infraestructura en segundo plano desde el directorio raíz del proyecto en el sistema anfitrión:
@@ -105,7 +106,6 @@ En la @fig-arquitectura-inicializacion se esquematiza el mecanismo de auto-inici
 %%| fig-cap: "Ciclo de vida y auto-inicialización declarativa del clúster espacial con volumen persistente"
 %%| fig-width: 3
 %%| fig-align: center
-
 
 graph TD
 
@@ -139,15 +139,16 @@ graph TD
 
     B -->|"No: despliegues posteriores"| G
     G --> H
+
 ```
-
-
 
 Este proceso de carga se realiza una única vez; en ejecuciones posteriores, el motor se enlaza directamente a los datos persistidos en el volumen, reduciendo el tiempo de arranque a pocos segundos. Para el desarrollo y compilación del material, se recomienda ejecutar el flujo de trabajo directamente desde la terminal integrada de Visual Studio Code con el contenedor configurado (ver @sec-cargar-contenedores-vscode).
 
-## Configuración del entorno de trabajo y variables de conexión
+## Gestión de variables de entorno y contextos de ejecución {#sec-gestion-variables-entorno}
 
-El flujo de trabajo contempla la coexistencia de dos instancias independientes del motor de bases de datos:
+El flujo de trabajo técnico del curso contempla la coexistencia de dos motores de base de datos independientes, junto con dos modos diferenciados de ejecución: la compilación documental desatendida mediante Quarto/Knitr y la interacción manual interactiva desde la terminal integrada.
+
+Las instancias del motor corresponden a:
 
 1. **Instancia en el equipo local:** Instalada directamente sobre el sistema anfitrión (*host*). Las credenciales de acceso (usuario, contraseña, puerto) corresponden a las establecidas durante su aprovisionamiento local.
 2. **Instancia en el contenedor (`db-postgis`):** Aprovisionada de forma estandarizada dentro de la imagen `postgis_unal:v1.12`. Las credenciales son homogéneas para fines pedagógicos.
@@ -187,8 +188,8 @@ graph LR
     VSCodeHost -->|"127.0.0.1:5434 (port forwarding)"| PostGISCont
     DevCont -->|"host.docker.internal:5432"| LocalPG
     DevCont -->|"db-postgis:5432 (DNS interno)"| PostGISCont
-```
 
+```
 
 ### Mecanismo de autenticación libpq y gestión de credenciales
 
@@ -212,19 +213,14 @@ Las utilidades cliente de PostgreSQL (`psql`, `pg_dump`, `pg_restore`) y los car
 
 Para consultar el desglose detallado de modificadores, su equivalencia con variables de entorno y las utilidades compatibles, ver @sec-anexo-parametros-cli (o consultar la @tbl-banderas-cli).
 
-### Asignación de variables en la terminal integrada
+### Dualidad operativa: compilación documental vs terminal interactiva
 
-El protocolo de conexión de PostgreSQL opera sobre la biblioteca cliente `libpq`, la cual implementa un mecanismo de resolución de parámetros en cascada. Cuando una utilidad cliente (`psql`, `pg_dump`, `pg_restore`) o una librería geoespacial vinculada a controladores nativos (como GDAL/OGR o `sf`) se invoca sin modificadores explícitos de línea de comandos (`-h`, `-p`, `-U`, `-d`), el motor recurre automáticamente a las variables de entorno estándar identificadas con el prefijo `PG*`.
+La ejecución de sentencias en este libro opera bajo dos contextos técnicos que resuelven las variables de conexión de manera diferente:
 
-La jerarquía de precedencia opera bajo el siguiente orden:
+1. **Contexto de compilación reproducible (Knitr/Quarto):** Cada bloque de código ejecutable `{bash}` se procesa en una subshell aislada y efímera. Las variables exportadas mediante `export VAR=valor` dentro de un bloque mueren al finalizar dicho bloque y no son heredadas por los bloques siguientes. Para asegurar que todos los bloques del capítulo compartan los mismos parámetros de red sin fallos, el documento inyecta las variables en la tabla del proceso padre mediante `Sys.setenv()` en un bloque inicial de R (`setup-variables-sistema-r`). Cada subshell hija generada por Knitr hereda automáticamente estas variables del sistema.
+2. **Contexto de ejecución interactiva (terminal de Visual Studio Code):** Cuando el estudiante ejecuta comandos directamente en la consola interactiva (ya sea dentro del contenedor de desarrollo o en el sistema anfitrión), no existe un proceso R intermediario. En este escenario, es obligatorio exportar las variables de entorno (`export PG*`) en la propia sesión de la shell para que `psql` y las herramientas clientes consuman automáticamente las credenciales sin requerir parámetros redundantes en cada instrucción.
 
-* **Modificadores explícitos de consola:** Tienen máxima prioridad y sobrescriben cualquier configuración de sesión (ej. `-h db-postgis -p 5432`).
-* **Variables estándar de entorno (`PG*`):** Si se omiten las banderas, el cliente consume directamente los valores de `PGHOST`, `PGPORT`, `PGUSER`, `PGPASSWORD` y `PGDATABASE`.
-* **Valores predeterminados del compilador:** En ausencia de banderas y variables de entorno, se asumen los sockets locales del sistema, el puerto `5432` y el usuario del sistema anfitrión.
-
-Para facilitar la ejecución desatendida de consultas sin requerir la especificación manual y redundante de parámetros en cada instrucción, se declaran variables dedicadas para cada instancia (`LOCAL_*` y `DOCKER_*`), y simultáneamente se definen las variables estándar `PG*` apuntando por defecto al clúster activo.
-
-Como se ilustra en la @fig-jerarquia-resolucion-libpq, el cliente interactivo evalúa los parámetros bajo un esquema jerárquico que prioriza los modificadores directos sobre las variables de entorno activas.
+La biblioteca `libpq` evalúa los parámetros bajo el esquema de precedencia jerárquico presentado en la @fig-jerarquia-resolucion-libpq.
 
 ```{mermaid}
 %%| label: fig-jerarquia-resolucion-libpq
@@ -247,8 +243,10 @@ graph TD
     C --> G["Establecimiento de sesión contra el catálogo"]:::final
     E --> G
     F --> G
+
 ```
 
+Para sesiones interactivas en la terminal, se deben cargar los parámetros copiando el siguiente bloque de inicialización:
 
 ```{bash}
 #| label: setup-variables-conexion-bash
@@ -262,7 +260,6 @@ export LOCAL_PGPORT="5432"
 export LOCAL_PGUSER="postgres"
 
 # Nota para el estudiante: Reemplace 'geomatica2025' por la contraseña de su instalación local.
-# Se emplean comillas simples para evitar la expansión de caracteres especiales en la consola.
 export LOCAL_PGPASSWORD='geomatica2025'
 export LOCAL_PGDATABASE="postgres"
 
@@ -288,70 +285,52 @@ export PGDATABASE="${DOCKER_PGDATABASE}"
 # 4. Verificación de las variables asignadas en la sesión
 # ==============================================================================
 echo "--- Instancia local (host) ---"
-echo "Host: ${LOCAL_PGHOST}:${LOCAL_PGPORT} | Usuario: ${LOCAL_PGUSER} | BD: ${LOCAL_PGDATABASE}"
+echo "Host: ${LOCAL_PGHOST}:${LOCAL_PGPORT} | Usuario: ${LOCAL_PGUSER} \vert{} BD:${LOCAL_PGDATABASE}"
 
 echo "--- Instancia dockerizada ---"
-echo "Host: ${DOCKER_PGHOST}:${DOCKER_PGPORT} | Usuario: ${DOCKER_PGUSER} | BD: ${DOCKER_PGDATABASE}"
+echo "Host: ${DOCKER_PGHOST}:${DOCKER_PGPORT} | Usuario: ${DOCKER_PGUSER} \vert{} BD:${DOCKER_PGDATABASE}"
 
 echo "--- Variables estándar activas (libpq) ---"
 echo "Destino por defecto: ${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}"
 
 ```
 
-::: {.callout-note title="Persistencia de variables en subprocesos"}
-Las variables exportadas dentro de un bloque `{bash}` durante la compilación residen exclusivamente en la memoria volátil de esa subshell efímera y se destruyen al concluir dicha ejecución. Dado que el procesamiento del documento es orquestado por el motor Knitr, la persistencia de estos parámetros a lo largo de todos los subprocesos se garantiza mediante la inyección en la tabla de entorno del proceso principal en el bloque `setup-variables-sistema-r`. Si se requiere disponer de estas variables para interactuar de forma manual durante la sesión de trabajo, el bloque de comandos debe copiarse y ejecutarse directamente en la terminal integrada de Visual Studio Code.
-:::
-
 ::: {.callout-note title="Nomenclatura canónica de conexión (usuario@host:puerto/base_de_datos)"}
 La estructura compuesta `${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}` (por ejemplo, `profe_unal@db-postgis:5432/sig_db_unal`) corresponde a la notación canónica para la identificación unívoca de un extremo de conexión (*target endpoint*), fundamentada en el estándar de URI (*Uniform Resource Identifier*) de PostgreSQL (RFC 3986) y cadenas DSN (*Data Source Name*). Este descriptor unifica los tres planos funcionales requeridos:
 
 * **Identidad del rol autenticado (`profe_unal@`):** Determina las credenciales y los privilegios de ejecución DDL/DML.
-
-
 * **Dirección y puerto del socket de red (`db-postgis:5432`):** Especifica la ruta de enrutamiento hacia la instancia.
-
-
 * **Catálogo relacional objetivo (`/sig_db_unal`):** Define la base de datos relacional y espacial vinculada a la sesión.
 :::
 
 ## Verificación de versiones y extensiones espaciales
 
-Para asegurar la correcta vinculación entre el motor relacional y las bibliotecas de cálculo geométrico y geodésico (GEOS, PROJ, GDAL), se asigna la credencial del contenedor a la variable activa `PGPASSWORD` y se ejecutan las consultas de diagnóstico contra el clúster activo:
+Para asegurar la disponibilidad operativa del clúster y validar la correcta habilitación de la extensión espacial, se asigna la credencial del contenedor a la variable activa `PGPASSWORD` y se ejecutan las consultas de diagnóstico preliminar.
 
+::: {.callout-note title="Modificadores de línea de comandos para control de formato en psql"}
+Las salidas tabulares emitidas por `psql` para funciones de introspección del sistema suelen superar el ancho del área imprimible en documentos PDF o generar barras de desplazamiento horizontal innecesarias en HTML. Para garantizar legibilidad y evitar desbordamientos, se emplean los modificadores estandarizados de la utilidad:
+
+* `-x` (`--expanded`): Activa la visualización expandida vertical (pares atributo-valor por registro), idónea para inspeccionar tuplas únicas con campos de texto extensos.
+* `-P format=wrapped`: Habilita la envoltura y división automática de líneas dentro de las celdas tabulares.
+* `-P columns=90`: Delimita el ancho máximo del renderizado a 90 caracteres, forzando el corte dentro de los márgenes tipográficos de la página.
+
+Para consultar el inventario general de parámetros, modificadores y equivalencias con variables de entorno de `libpq`, ver la @tbl-banderas-cli en la @sec-anexo-parametros-cli.
+:::
 
 ```{bash}
-#| label: audit-verificacion-versiones-postgis
+#| label: audit-smoke-test-postgis
 #| eval: true
 #| echo: true
 export PGPASSWORD="${DOCKER_PGPASSWORD}"
 
-# 1. Versión del motor relacional PostgreSQL
-psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -x -P format=wrapped -P columns=90 -c "SELECT version();"
+# 1. Versión del motor relacional PostgreSQL (modo expandido y ajuste a 90 columnas)
+psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} \
+  -x -P format=wrapped -P columns=90 \
+  -c "SELECT version();"
 
-# 2. Versiones granulares de PostGIS y librerías geoespaciales
-query_versiones="
-SELECT 
-    postgis_lib_version() AS version_postgis,
-    postgis_geos_version() AS version_geos,
-    postgis_proj_version() AS version_proj,
-    postgis_gdal_version() AS version_gdal,
-    postgis_libxml_version() AS version_libxml;
-"
-
-psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -x -P format=wrapped -P columns=90 -c "${query_versiones}"
-
-
-# 3. Versión de PostGIS y dependencias geoespaciales
-psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -x -P format=wrapped -P columns=90 -c "SELECT postgis_full_version();"
-
-# 4. Alternativamente: Segmentación de la firma completa de PostGIS por componente.
-#    (partir los componentes por cada espacio: no es muy legible)
-query_full="
-SELECT regexp_split_to_table(postgis_full_version(), ' ') AS componentes_postgis;
-"
-
-psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -c "${query_full}"
-
+# 2. Comprobación básica de operatividad de la extensión PostGIS
+psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} \
+  -c "SELECT PostGIS_Version();"
 ```
 
 ## Auditoría de catálogos y bases de datos
@@ -384,72 +363,55 @@ psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGD
 
 La base de datos pedagógica `sig_db_unal` contiene los esquemas modulares preparados para los talleres prácticos del curso.
 
-La organización interna del catálogo relacional se detalla en la @fig-arquitectura-catalogo-espacial, destacando la articulación entre las librerías de cálculo espacial, las vistas de metadatos OGC y los esquemas cartográficos temáticos.
+La organización física del catálogo relacional se detalla en la @fig-estructura-base-datos-pedagogica, ilustrando la articulación entre las extensiones espaciales habilitadas y los esquemas temáticos cartográficos.
 
 ```{mermaid}
-%%| label: fig-arquitectura-catalogo-espacial
-%%| fig-cap: "Estructura modular, extensiones y registro de metadatos OGC en la base de datos pedagógica"
+%%| label: fig-estructura-base-datos-pedagogica
+%%| fig-cap: "Organización física de esquemas, capas vectoriales e índices espaciales en la base de datos de estudio"
 %%| fig-width: 6.5
 %%| fig-align: center
 
 graph TD
 
+    classDef database fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,color:#000
     classDef extension fill:#e8f4f8,stroke:#0dcaf0,stroke-width:2px,color:#000
-    classDef metadato fill:#fff3cd,stroke:#e6b800,stroke-width:2px,color:#000
+    classDef esquema fill:#fff3cd,stroke:#e6b800,stroke-width:2px,color:#000
     classDef tabla fill:#d4edda,stroke:#28a745,stroke-width:2px,color:#000
     classDef indice fill:#e2e3e5,stroke:#343a40,stroke-width:2px,color:#000
 
-    subgraph DB ["Base de datos relacional: sig_db_unal (Owner: profe_unal)"]
+    subgraph DB ["Base de datos pedagógica: sig_db_unal"]
 
-        subgraph Ext ["Extensiones espaciales habilitadas"]
+        subgraph Ext ["Módulos espaciales habilitados"]
             direction LR
             E1["postgis"]:::extension
             E2["postgis_topology"]:::extension
             E3["postgis_raster"]:::extension
         end
 
-        subgraph Meta ["Catálogo estándar OGC"]
-            M1["geometry_columns<br/>(vista de metadatos)"]:::metadato
-            M2["spatial_ref_sys<br/>(Sistemas de Referencia / SRID)"]:::metadato
-        end
-
-        subgraph Base ["base750 (Cartografía base)"]
-            T1["Capas vectoriales<br/>(columnas geometry)"]:::tabla
+        subgraph Base ["Esquema: base750"]
+            T1["Capas vectoriales de referencia<br/>(geometría cartográfica básica)"]:::tabla
             I1["Índices espaciales GiST"]:::indice
         end
 
-        subgraph Divpol ["divpol (División político-administrativa)"]
-            T2["Capas vectoriales<br/>(columnas geometry)"]:::tabla
+        subgraph Divpol ["Esquema: divpol"]
+            T2["Capas político-administrativas<br/>(departamentos, municipios)"]:::tabla
             I2["Índices espaciales GiST"]:::indice
         end
 
     end
-    
+
     style DB fill:#f8f9fa
     style Ext fill:#e9ecef
-    style Meta fill:#e9ecef
     style Base fill:#e9ecef
     style Divpol fill:#e9ecef
-
-    E1 --> M1
-    E2 --> M1
-    E3 --> M1
-
-    T1 -.->|"Registro de metadatos"| M1
-    T2 -.->|"Registro de metadatos"| M1
-
-    M1 -->|"srid"| M2
 
     T1 --> I1
     T2 --> I2
 
-    %% Fuerza el orden vertical real: Meta encima de Base, Base encima de Divpol
-    %% (sin esto, dagre puede colocar Base y Divpol al mismo nivel, lado a lado)
-    Meta ~~~ Base
+    Ext ~~~ Base
     Base ~~~ Divpol
+
 ```
-
-
 
 ### Esquemas y tablas espaciales
 
@@ -478,9 +440,9 @@ psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGD
 
 ```
 
-### Registro en el catálogo de metadatos geométricos
+### Validación de capas vectoriales en el clúster
 
-Conforme al estándar OGC *Simple Features for SQL*, toda capa vectorial espacialmente habilitada debe encontrarse registrada en la vista `geometry_columns`. Se consulta la dimensionalidad, el identificador espacial (SRID) y el tipo geométrico:
+Para verificar que las capas vectoriales cargadas en los esquemas temáticos disponen de tipado geométrico y asignación de identificador de referencia espacial (SRID), se consulta la vista `geometry_columns`:
 
 ```{bash}
 #| label: query-metadatos-geometry-columns
@@ -525,13 +487,7 @@ FROM pg_indexes
 WHERE schemaname IN ('base750', 'divpol') AND indexname LIKE '%gist%' 
 ORDER BY schemaname, tablename;
 "
-# Se desborda en el pdf:
-#psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -x -c "${query_indices}"
 
-# Se usa -x (par: valor), pero sigue habiendo desborde (menor) en el pdf
-#psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -x -c "${query_indices}"
-
-# Usamos -P para evitar el desborde
 psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -P format=wrapped -P columns=90 -c "${query_indices}"
 
 ```
@@ -628,4 +584,3 @@ psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d sig_db_unal -c 
 ```
 
 Con este procedimiento, la base de datos queda completamente operativa y sincronizada tanto en el contenedor como en la instalación física local.
-

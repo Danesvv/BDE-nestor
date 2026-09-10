@@ -6,6 +6,8 @@ date: today
 format:
   revealjs:
     theme: default
+    toc: true
+    toc-title: "Tabla de contenidos"
     slide-number: true
     hash-type: number
     preview-links: auto
@@ -15,7 +17,39 @@ format:
     width: 1280
     height: 720
     margin: 0.08
+    include-in-header:
+      text: |
+        <style>
+        /* Contenedor principal de la lista de primer nivel */
+        .reveal #TOC nav > ul,
+        .reveal nav[role="doc-toc"] > ul {
+          display: block !important;
+          width: 100% !important;
+          column-count: 2 !important;
+          column-gap: 3em !important;
+          font-size: 0.73em !important;
+        }
+
+        /* Evitar que una sección se parta entre columnas */
+        .reveal #TOC nav > ul > li,
+        .reveal nav[role="doc-toc"] > ul > li {
+          break-inside: avoid !important;
+          page-break-inside: avoid !important;
+          margin-bottom: 0.8em !important;
+        }
+
+        /* Sublistas de segundo nivel en columna única normal */
+        .reveal #TOC nav > ul > li ul,
+        .reveal nav[role="doc-toc"] > ul > li ul {
+          column-count: 1 !important;
+          display: block !important;
+          font-size: 0.9em !important;
+          margin-left: 1.2em !important;
+        }
+        </style>
 ---
+
+
 
 ## Propósito general y fundamentación
 

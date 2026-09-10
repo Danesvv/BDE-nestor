@@ -1,0 +1,6 @@
+/* Escalar diagramas Graphviz embebidos en contenedores específicos */
+.diagrama-ancho svg {
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100% !important;
+}

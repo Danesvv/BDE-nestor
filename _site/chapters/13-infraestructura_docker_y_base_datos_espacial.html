@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Bases de datos espaciales - 4&nbsp; Despliegue docker y verificación de la base de datos</title>
+<title>Bases de datos espaciales - 4&nbsp; Despliegue Docker y verificación de la base de datos</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -107,6 +107,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
+<link rel="stylesheet" href="../styles.css">
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
@@ -146,7 +147,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/04-introduccion_instalacion_entornos.html">Instalación y entornos</a></li><li class="breadcrumb-item"><a href="../chapters/13-infraestructura_docker_y_base_datos_espacial.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Despliegue docker y verificación de la base de datos</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/04-introduccion_instalacion_entornos.html">Instalación y entornos</a></li><li class="breadcrumb-item"><a href="../chapters/13-infraestructura_docker_y_base_datos_espacial.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Despliegue Docker y verificación de la base de datos</span></a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -200,7 +201,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/13-infraestructura_docker_y_base_datos_espacial.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Despliegue docker y verificación de la base de datos</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Despliegue Docker y verificación de la base de datos</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -344,19 +345,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#verificación-del-servicio-y-catálogo-de-imágenes" id="toc-verificación-del-servicio-y-catálogo-de-imágenes" class="nav-link" data-scroll-target="#verificación-del-servicio-y-catálogo-de-imágenes">Verificación del servicio y catálogo de imágenes</a></li>
   <li><a href="#despliegue-de-servicios-mediante-docker-compose" id="toc-despliegue-de-servicios-mediante-docker-compose" class="nav-link" data-scroll-target="#despliegue-de-servicios-mediante-docker-compose">Despliegue de servicios mediante Docker Compose</a></li>
   </ul></li>
-  <li><a href="#configuración-del-entorno-de-trabajo-y-variables-de-conexión" id="toc-configuración-del-entorno-de-trabajo-y-variables-de-conexión" class="nav-link" data-scroll-target="#configuración-del-entorno-de-trabajo-y-variables-de-conexión"><span class="header-section-number">4.3</span> Configuración del entorno de trabajo y variables de conexión</a>
+  <li><a href="#sec-gestion-variables-entorno" id="toc-sec-gestion-variables-entorno" class="nav-link" data-scroll-target="#sec-gestion-variables-entorno"><span class="header-section-number">4.3</span> Gestión de variables de entorno y contextos de ejecución</a>
   <ul class="collapse">
   <li><a href="#coexistencia-de-clústeres-y-topología-de-puertos-según-el-contexto-de-ejecución" id="toc-coexistencia-de-clústeres-y-topología-de-puertos-según-el-contexto-de-ejecución" class="nav-link" data-scroll-target="#coexistencia-de-clústeres-y-topología-de-puertos-según-el-contexto-de-ejecución">Coexistencia de clústeres y topología de puertos según el contexto de ejecución</a></li>
   <li><a href="#mecanismo-de-autenticación-libpq-y-gestión-de-credenciales" id="toc-mecanismo-de-autenticación-libpq-y-gestión-de-credenciales" class="nav-link" data-scroll-target="#mecanismo-de-autenticación-libpq-y-gestión-de-credenciales">Mecanismo de autenticación libpq y gestión de credenciales</a></li>
   <li><a href="#parámetros-de-línea-de-comandos-en-herramientas-postgresql" id="toc-parámetros-de-línea-de-comandos-en-herramientas-postgresql" class="nav-link" data-scroll-target="#parámetros-de-línea-de-comandos-en-herramientas-postgresql">Parámetros de línea de comandos en herramientas PostgreSQL</a></li>
-  <li><a href="#asignación-de-variables-en-la-terminal-integrada" id="toc-asignación-de-variables-en-la-terminal-integrada" class="nav-link" data-scroll-target="#asignación-de-variables-en-la-terminal-integrada">Asignación de variables en la terminal integrada</a></li>
+  <li><a href="#dualidad-operativa-compilación-documental-vs-terminal-interactiva" id="toc-dualidad-operativa-compilación-documental-vs-terminal-interactiva" class="nav-link" data-scroll-target="#dualidad-operativa-compilación-documental-vs-terminal-interactiva">Dualidad operativa: compilación documental vs terminal interactiva</a></li>
   </ul></li>
   <li><a href="#verificación-de-versiones-y-extensiones-espaciales" id="toc-verificación-de-versiones-y-extensiones-espaciales" class="nav-link" data-scroll-target="#verificación-de-versiones-y-extensiones-espaciales"><span class="header-section-number">4.4</span> Verificación de versiones y extensiones espaciales</a></li>
   <li><a href="#auditoría-de-catálogos-y-bases-de-datos" id="toc-auditoría-de-catálogos-y-bases-de-datos" class="nav-link" data-scroll-target="#auditoría-de-catálogos-y-bases-de-datos"><span class="header-section-number">4.5</span> Auditoría de catálogos y bases de datos</a></li>
   <li><a href="#inspección-estructural-de-la-base-de-datos-de-estudio" id="toc-inspección-estructural-de-la-base-de-datos-de-estudio" class="nav-link" data-scroll-target="#inspección-estructural-de-la-base-de-datos-de-estudio"><span class="header-section-number">4.6</span> Inspección estructural de la base de datos de estudio</a>
   <ul class="collapse">
   <li><a href="#esquemas-y-tablas-espaciales" id="toc-esquemas-y-tablas-espaciales" class="nav-link" data-scroll-target="#esquemas-y-tablas-espaciales">Esquemas y tablas espaciales</a></li>
-  <li><a href="#registro-en-el-catálogo-de-metadatos-geométricos" id="toc-registro-en-el-catálogo-de-metadatos-geométricos" class="nav-link" data-scroll-target="#registro-en-el-catálogo-de-metadatos-geométricos">Registro en el catálogo de metadatos geométricos</a></li>
+  <li><a href="#validación-de-capas-vectoriales-en-el-clúster" id="toc-validación-de-capas-vectoriales-en-el-clúster" class="nav-link" data-scroll-target="#validación-de-capas-vectoriales-en-el-clúster">Validación de capas vectoriales en el clúster</a></li>
   <li><a href="#verificación-de-índices-espaciales" id="toc-verificación-de-índices-espaciales" class="nav-link" data-scroll-target="#verificación-de-índices-espaciales">Verificación de índices espaciales</a></li>
   </ul></li>
   <li><a href="#replicación-de-la-base-de-datos-en-una-instalación-local-nativa" id="toc-replicación-de-la-base-de-datos-en-una-instalación-local-nativa" class="nav-link" data-scroll-target="#replicación-de-la-base-de-datos-en-una-instalación-local-nativa"><span class="header-section-number">4.7</span> Replicación de la base de datos en una instalación local nativa</a>
@@ -371,9 +372,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/04-introduccion_instalacion_entornos.html">Instalación y entornos</a></li><li class="breadcrumb-item"><a href="../chapters/13-infraestructura_docker_y_base_datos_espacial.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Despliegue docker y verificación de la base de datos</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/04-introduccion_instalacion_entornos.html">Instalación y entornos</a></li><li class="breadcrumb-item"><a href="../chapters/13-infraestructura_docker_y_base_datos_espacial.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Despliegue Docker y verificación de la base de datos</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span id="sec-infraestructura-docker" class="quarto-section-identifier"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Despliegue docker y verificación de la base de datos</span></span></h1>
+<h1 class="title"><span id="sec-infraestructura-docker" class="quarto-section-identifier"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Despliegue Docker y verificación de la base de datos</span></span></h1>
 </div>
 
 
@@ -478,6 +479,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
     B --&gt;|"No: despliegues posteriores"| G
     G --&gt; H
+
 </pre>
 </div>
 </div>
@@ -491,9 +493,10 @@ Figura&nbsp;4.1: Ciclo de vida y auto-inicialización declarativa del clúster e
 <p>Este proceso de carga se realiza una única vez; en ejecuciones posteriores, el motor se enlaza directamente a los datos persistidos en el volumen, reduciendo el tiempo de arranque a pocos segundos. Para el desarrollo y compilación del material, se recomienda ejecutar el flujo de trabajo directamente desde la terminal integrada de Visual Studio Code con el contenedor configurado (ver <a href="83-docker.html#sec-cargar-contenedores-vscode" class="quarto-xref"><span>Sección B.8</span></a>).</p>
 </section>
 </section>
-<section id="configuración-del-entorno-de-trabajo-y-variables-de-conexión" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="configuración-del-entorno-de-trabajo-y-variables-de-conexión"><span class="header-section-number">4.3</span> Configuración del entorno de trabajo y variables de conexión</h2>
-<p>El flujo de trabajo contempla la coexistencia de dos instancias independientes del motor de bases de datos:</p>
+<section id="sec-gestion-variables-entorno" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="sec-gestion-variables-entorno"><span class="header-section-number">4.3</span> Gestión de variables de entorno y contextos de ejecución</h2>
+<p>El flujo de trabajo técnico del curso contempla la coexistencia de dos motores de base de datos independientes, junto con dos modos diferenciados de ejecución: la compilación documental desatendida mediante Quarto/Knitr y la interacción manual interactiva desde la terminal integrada.</p>
+<p>Las instancias del motor corresponden a:</p>
 <ol type="1">
 <li><strong>Instancia en el equipo local:</strong> Instalada directamente sobre el sistema anfitrión (<em>host</em>). Las credenciales de acceso (usuario, contraseña, puerto) corresponden a las establecidas durante su aprovisionamiento local.</li>
 <li><strong>Instancia en el contenedor (<code>db-postgis</code>):</strong> Aprovisionada de forma estandarizada dentro de la imagen <code>postgis_unal:v1.12</code>. Las credenciales son homogéneas para fines pedagógicos.</li>
@@ -531,6 +534,7 @@ Figura&nbsp;4.1: Ciclo de vida y auto-inicialización declarativa del clúster e
     VSCodeHost --&gt;|"127.0.0.1:5434 (port forwarding)"| PostGISCont
     DevCont --&gt;|"host.docker.internal:5432"| LocalPG
     DevCont --&gt;|"db-postgis:5432 (DNS interno)"| PostGISCont
+
 </pre>
 </div>
 </div>
@@ -609,17 +613,14 @@ Tabla&nbsp;4.1: Especificaciones de conexión para clústeres local y dockerizad
 <p>Las utilidades cliente de PostgreSQL (<code>psql</code>, <code>pg_dump</code>, <code>pg_restore</code>) y los cargadores espaciales de PostGIS (<code>shp2pgsql</code>, <code>raster2pgsql</code>) comparten un conjunto estandarizado de modificadores de línea de comandos gestionados por la biblioteca <code>libpq</code>.</p>
 <p>Para consultar el desglose detallado de modificadores, su equivalencia con variables de entorno y las utilidades compatibles, ver <a href="93-postgresql.html#sec-anexo-parametros-cli" class="quarto-xref"><span>Sección G.1.2</span></a> (o consultar la <a href="93-postgresql.html#tbl-banderas-cli" class="quarto-xref">Tabla&nbsp;<span>G.2</span></a>).</p>
 </section>
-<section id="asignación-de-variables-en-la-terminal-integrada" class="level3">
-<h3 class="anchored" data-anchor-id="asignación-de-variables-en-la-terminal-integrada">Asignación de variables en la terminal integrada</h3>
-<p>El protocolo de conexión de PostgreSQL opera sobre la biblioteca cliente <code>libpq</code>, la cual implementa un mecanismo de resolución de parámetros en cascada. Cuando una utilidad cliente (<code>psql</code>, <code>pg_dump</code>, <code>pg_restore</code>) o una librería geoespacial vinculada a controladores nativos (como GDAL/OGR o <code>sf</code>) se invoca sin modificadores explícitos de línea de comandos (<code>-h</code>, <code>-p</code>, <code>-U</code>, <code>-d</code>), el motor recurre automáticamente a las variables de entorno estándar identificadas con el prefijo <code>PG*</code>.</p>
-<p>La jerarquía de precedencia opera bajo el siguiente orden:</p>
-<ul>
-<li><strong>Modificadores explícitos de consola:</strong> Tienen máxima prioridad y sobrescriben cualquier configuración de sesión (ej. <code>-h db-postgis -p 5432</code>).</li>
-<li><strong>Variables estándar de entorno (<code>PG*</code>):</strong> Si se omiten las banderas, el cliente consume directamente los valores de <code>PGHOST</code>, <code>PGPORT</code>, <code>PGUSER</code>, <code>PGPASSWORD</code> y <code>PGDATABASE</code>.</li>
-<li><strong>Valores predeterminados del compilador:</strong> En ausencia de banderas y variables de entorno, se asumen los sockets locales del sistema, el puerto <code>5432</code> y el usuario del sistema anfitrión.</li>
-</ul>
-<p>Para facilitar la ejecución desatendida de consultas sin requerir la especificación manual y redundante de parámetros en cada instrucción, se declaran variables dedicadas para cada instancia (<code>LOCAL_*</code> y <code>DOCKER_*</code>), y simultáneamente se definen las variables estándar <code>PG*</code> apuntando por defecto al clúster activo.</p>
-<p>Como se ilustra en la <a href="#fig-jerarquia-resolucion-libpq" class="quarto-xref">Figura&nbsp;<span>4.3</span></a>, el cliente interactivo evalúa los parámetros bajo un esquema jerárquico que prioriza los modificadores directos sobre las variables de entorno activas.</p>
+<section id="dualidad-operativa-compilación-documental-vs-terminal-interactiva" class="level3">
+<h3 class="anchored" data-anchor-id="dualidad-operativa-compilación-documental-vs-terminal-interactiva">Dualidad operativa: compilación documental vs terminal interactiva</h3>
+<p>La ejecución de sentencias en este libro opera bajo dos contextos técnicos que resuelven las variables de conexión de manera diferente:</p>
+<ol type="1">
+<li><strong>Contexto de compilación reproducible (Knitr/Quarto):</strong> Cada bloque de código ejecutable <code>{bash}</code> se procesa en una subshell aislada y efímera. Las variables exportadas mediante <code>export VAR=valor</code> dentro de un bloque mueren al finalizar dicho bloque y no son heredadas por los bloques siguientes. Para asegurar que todos los bloques del capítulo compartan los mismos parámetros de red sin fallos, el documento inyecta las variables en la tabla del proceso padre mediante <code>Sys.setenv()</code> en un bloque inicial de R (<code>setup-variables-sistema-r</code>). Cada subshell hija generada por Knitr hereda automáticamente estas variables del sistema.</li>
+<li><strong>Contexto de ejecución interactiva (terminal de Visual Studio Code):</strong> Cuando el estudiante ejecuta comandos directamente en la consola interactiva (ya sea dentro del contenedor de desarrollo o en el sistema anfitrión), no existe un proceso R intermediario. En este escenario, es obligatorio exportar las variables de entorno (<code>export PG*</code>) en la propia sesión de la shell para que <code>psql</code> y las herramientas clientes consuman automáticamente las credenciales sin requerir parámetros redundantes en cada instrucción.</li>
+</ol>
+<p>La biblioteca <code>libpq</code> evalúa los parámetros bajo el esquema de precedencia jerárquico presentado en la <a href="#fig-jerarquia-resolucion-libpq" class="quarto-xref">Figura&nbsp;<span>4.3</span></a>.</p>
 <div class="cell" data-fig-width="6.5" data-layout-align="center">
 <div class="cell-output-display">
 <div id="fig-jerarquia-resolucion-libpq" class="quarto-figure quarto-figure-center quarto-float anchored">
@@ -642,6 +643,7 @@ graph TD
     C --&gt; G["Establecimiento de sesión contra el catálogo"]:::final
     E --&gt; G
     F --&gt; G
+
 </pre>
 </div>
 </div>
@@ -652,6 +654,7 @@ Figura&nbsp;4.3: Jerarquía de resolución en cascada de parámetros de conexió
 </div>
 </div>
 </div>
+<p>Para sesiones interactivas en la terminal, se deben cargar los parámetros copiando el siguiente bloque de inicialización:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Parámetros de conexión: Instancia física en el equipo local (desde contenedor)</span></span>
@@ -661,59 +664,45 @@ Figura&nbsp;4.3: Jerarquía de resolución en cascada de parámetros de conexió
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LOCAL_PGUSER</span><span class="op">=</span><span class="st">"postgres"</span></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Nota para el estudiante: Reemplace 'geomatica2025' por la contraseña de su instalación local.</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Se emplean comillas simples para evitar la expansión de caracteres especiales en la consola.</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LOCAL_PGPASSWORD</span><span class="op">=</span><span class="st">'geomatica2025'</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LOCAL_PGDATABASE</span><span class="op">=</span><span class="st">"postgres"</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Parámetros de conexión: Clúster espacial en el contenedor (db-postgis)</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">DOCKER_PGHOST</span><span class="op">=</span><span class="st">"db-postgis"</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">DOCKER_PGPORT</span><span class="op">=</span><span class="st">"5432"</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">DOCKER_PGUSER</span><span class="op">=</span><span class="st">"profe_unal"</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">DOCKER_PGPASSWORD</span><span class="op">=</span><span class="st">'geomatica2025'</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">DOCKER_PGDATABASE</span><span class="op">=</span><span class="st">"sig_db_unal"</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Variables estándar activas para libpq (consumo automático por defecto)</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGHOST</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGHOST}</span><span class="st">"</span></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPORT</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGPORT}</span><span class="st">"</span></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGUSER</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGUSER}</span><span class="st">"</span></span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGPASSWORD}</span><span class="st">"</span></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGDATABASE</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGDATABASE}</span><span class="st">"</span></span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Verificación de las variables asignadas en la sesión</span></span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"--- Instancia local (host) ---"</span></span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Host: </span><span class="va">${LOCAL_PGHOST}</span><span class="st">:</span><span class="va">${LOCAL_PGPORT}</span><span class="st"> | Usuario: </span><span class="va">${LOCAL_PGUSER}</span><span class="st"> | BD: </span><span class="va">${LOCAL_PGDATABASE}</span><span class="st">"</span></span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"--- Instancia dockerizada ---"</span></span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Host: </span><span class="va">${DOCKER_PGHOST}</span><span class="st">:</span><span class="va">${DOCKER_PGPORT}</span><span class="st"> | Usuario: </span><span class="va">${DOCKER_PGUSER}</span><span class="st"> | BD: </span><span class="va">${DOCKER_PGDATABASE}</span><span class="st">"</span></span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"--- Variables estándar activas (libpq) ---"</span></span>
-<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Destino por defecto: </span><span class="va">${PGUSER}</span><span class="st">@</span><span class="va">${PGHOST}</span><span class="st">:</span><span class="va">${PGPORT}</span><span class="st">/</span><span class="va">${PGDATABASE}</span><span class="st">"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LOCAL_PGPASSWORD</span><span class="op">=</span><span class="st">'geomatica2025'</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LOCAL_PGDATABASE</span><span class="op">=</span><span class="st">"postgres"</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Parámetros de conexión: Clúster espacial en el contenedor (db-postgis)</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">DOCKER_PGHOST</span><span class="op">=</span><span class="st">"db-postgis"</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">DOCKER_PGPORT</span><span class="op">=</span><span class="st">"5432"</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">DOCKER_PGUSER</span><span class="op">=</span><span class="st">"profe_unal"</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">DOCKER_PGPASSWORD</span><span class="op">=</span><span class="st">'geomatica2025'</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">DOCKER_PGDATABASE</span><span class="op">=</span><span class="st">"sig_db_unal"</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Variables estándar activas para libpq (consumo automático por defecto)</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGHOST</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGHOST}</span><span class="st">"</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPORT</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGPORT}</span><span class="st">"</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGUSER</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGUSER}</span><span class="st">"</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGPASSWORD}</span><span class="st">"</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGDATABASE</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGDATABASE}</span><span class="st">"</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Verificación de las variables asignadas en la sesión</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"--- Instancia local (host) ---"</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Host: </span><span class="va">${LOCAL_PGHOST}</span><span class="st">:</span><span class="va">${LOCAL_PGPORT}</span><span class="st"> | Usuario: </span><span class="va">${LOCAL_PGUSER}</span><span class="st"> \vert{} BD:</span><span class="va">${LOCAL_PGDATABASE}</span><span class="st">"</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"--- Instancia dockerizada ---"</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Host: </span><span class="va">${DOCKER_PGHOST}</span><span class="st">:</span><span class="va">${DOCKER_PGPORT}</span><span class="st"> | Usuario: </span><span class="va">${DOCKER_PGUSER}</span><span class="st"> \vert{} BD:</span><span class="va">${DOCKER_PGDATABASE}</span><span class="st">"</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"--- Variables estándar activas (libpq) ---"</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Destino por defecto: </span><span class="va">${PGUSER}</span><span class="st">@</span><span class="va">${PGHOST}</span><span class="st">:</span><span class="va">${PGPORT}</span><span class="st">/</span><span class="va">${PGDATABASE}</span><span class="st">"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>--- Instancia local (host) ---
-Host: host.docker.internal:5432 | Usuario: postgres | BD: postgres
+Host: host.docker.internal:5432 | Usuario: postgres \vert{} BD:postgres
 --- Instancia dockerizada ---
-Host: db-postgis:5432 | Usuario: profe_unal | BD: sig_db_unal
+Host: db-postgis:5432 | Usuario: profe_unal \vert{} BD:sig_db_unal
 --- Variables estándar activas (libpq) ---
 Destino por defecto: profe_unal@db-postgis:5432/sig_db_unal</code></pre>
-</div>
-</div>
-<div class="callout callout-style-default callout-note callout-titled" title="Persistencia de variables en subprocesos">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Persistencia de variables en subprocesos
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Las variables exportadas dentro de un bloque <code>{bash}</code> durante la compilación residen exclusivamente en la memoria volátil de esa subshell efímera y se destruyen al concluir dicha ejecución. Dado que el procesamiento del documento es orquestado por el motor Knitr, la persistencia de estos parámetros a lo largo de todos los subprocesos se garantiza mediante la inyección en la tabla de entorno del proceso principal en el bloque <code>setup-variables-sistema-r</code>. Si se requiere disponer de estas variables para interactuar de forma manual durante la sesión de trabajo, el bloque de comandos debe copiarse y ejecutarse directamente en la terminal integrada de Visual Studio Code.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled" title="Nomenclatura canónica de conexión (usuario@host:puerto/base_de_datos)">
@@ -728,9 +717,9 @@ Nomenclatura canónica de conexión (usuario@host:puerto/base_de_datos)
 <div class="callout-body-container callout-body">
 <p>La estructura compuesta <code>${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}</code> (por ejemplo, <code>profe_unal@db-postgis:5432/sig_db_unal</code>) corresponde a la notación canónica para la identificación unívoca de un extremo de conexión (<em>target endpoint</em>), fundamentada en el estándar de URI (<em>Uniform Resource Identifier</em>) de PostgreSQL (RFC 3986) y cadenas DSN (<em>Data Source Name</em>). Este descriptor unifica los tres planos funcionales requeridos:</p>
 <ul>
-<li><p><strong>Identidad del rol autenticado (<code>profe_unal@</code>):</strong> Determina las credenciales y los privilegios de ejecución DDL/DML.</p></li>
-<li><p><strong>Dirección y puerto del socket de red (<code>db-postgis:5432</code>):</strong> Especifica la ruta de enrutamiento hacia la instancia.</p></li>
-<li><p><strong>Catálogo relacional objetivo (<code>/sig_db_unal</code>):</strong> Define la base de datos relacional y espacial vinculada a la sesión.</p></li>
+<li><strong>Identidad del rol autenticado (<code>profe_unal@</code>):</strong> Determina las credenciales y los privilegios de ejecución DDL/DML.</li>
+<li><strong>Dirección y puerto del socket de red (<code>db-postgis:5432</code>):</strong> Especifica la ruta de enrutamiento hacia la instancia.</li>
+<li><strong>Catálogo relacional objetivo (<code>/sig_db_unal</code>):</strong> Define la base de datos relacional y espacial vinculada a la sesión.</li>
 </ul>
 </div>
 </div>
@@ -738,87 +727,46 @@ Nomenclatura canónica de conexión (usuario@host:puerto/base_de_datos)
 </section>
 <section id="verificación-de-versiones-y-extensiones-espaciales" class="level2" data-number="4.4">
 <h2 data-number="4.4" class="anchored" data-anchor-id="verificación-de-versiones-y-extensiones-espaciales"><span class="header-section-number">4.4</span> Verificación de versiones y extensiones espaciales</h2>
-<p>Para asegurar la correcta vinculación entre el motor relacional y las bibliotecas de cálculo geométrico y geodésico (GEOS, PROJ, GDAL), se asigna la credencial del contenedor a la variable activa <code>PGPASSWORD</code> y se ejecutan las consultas de diagnóstico contra el clúster activo:</p>
+<p>Para asegurar la disponibilidad operativa del clúster y validar la correcta habilitación de la extensión espacial, se asigna la credencial del contenedor a la variable activa <code>PGPASSWORD</code> y se ejecutan las consultas de diagnóstico preliminar.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Modificadores de línea de comandos para control de formato en psql">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Modificadores de línea de comandos para control de formato en psql
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Las salidas tabulares emitidas por <code>psql</code> para funciones de introspección del sistema suelen superar el ancho del área imprimible en documentos PDF o generar barras de desplazamiento horizontal innecesarias en HTML. Para garantizar legibilidad y evitar desbordamientos, se emplean los modificadores estandarizados de la utilidad:</p>
+<ul>
+<li><code>-x</code> (<code>--expanded</code>): Activa la visualización expandida vertical (pares atributo-valor por registro), idónea para inspeccionar tuplas únicas con campos de texto extensos.</li>
+<li><code>-P format=wrapped</code>: Habilita la envoltura y división automática de líneas dentro de las celdas tabulares.</li>
+<li><code>-P columns=90</code>: Delimita el ancho máximo del renderizado a 90 caracteres, forzando el corte dentro de los márgenes tipográficos de la página.</li>
+</ul>
+<p>Para consultar el inventario general de parámetros, modificadores y equivalencias con variables de entorno de <code>libpq</code>, ver la <a href="93-postgresql.html#tbl-banderas-cli" class="quarto-xref">Tabla&nbsp;<span>G.2</span></a> en la <a href="93-postgresql.html#sec-anexo-parametros-cli" class="quarto-xref"><span>Sección G.1.2</span></a>.</p>
+</div>
+</div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGPASSWORD}</span><span class="st">"</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Versión del motor relacional PostgreSQL</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${DOCKER_PGHOST}</span> <span class="at">-p</span> <span class="va">${DOCKER_PGPORT}</span> <span class="at">-U</span> <span class="va">${DOCKER_PGUSER}</span> <span class="at">-d</span> <span class="va">${DOCKER_PGDATABASE}</span> <span class="at">-x</span> <span class="at">-P</span> format=wrapped <span class="at">-P</span> columns=90 <span class="at">-c</span> <span class="st">"SELECT version();"</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Versiones granulares de PostGIS y librerías geoespaciales</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="va">query_versiones</span><span class="op">=</span><span class="st">"</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT </span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="st">    postgis_lib_version() AS version_postgis,</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="st">    postgis_geos_version() AS version_geos,</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="st">    postgis_proj_version() AS version_proj,</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="st">    postgis_gdal_version() AS version_gdal,</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="st">    postgis_libxml_version() AS version_libxml;</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${DOCKER_PGHOST}</span> <span class="at">-p</span> <span class="va">${DOCKER_PGPORT}</span> <span class="at">-U</span> <span class="va">${DOCKER_PGUSER}</span> <span class="at">-d</span> <span class="va">${DOCKER_PGDATABASE}</span> <span class="at">-x</span> <span class="at">-P</span> format=wrapped <span class="at">-P</span> columns=90 <span class="at">-c</span> <span class="st">"</span><span class="va">${query_versiones}</span><span class="st">"</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Versión de PostGIS y dependencias geoespaciales</span></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${DOCKER_PGHOST}</span> <span class="at">-p</span> <span class="va">${DOCKER_PGPORT}</span> <span class="at">-U</span> <span class="va">${DOCKER_PGUSER}</span> <span class="at">-d</span> <span class="va">${DOCKER_PGDATABASE}</span> <span class="at">-x</span> <span class="at">-P</span> format=wrapped <span class="at">-P</span> columns=90 <span class="at">-c</span> <span class="st">"SELECT postgis_full_version();"</span></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Alternativamente: Segmentación de la firma completa de PostGIS por componente.</span></span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="co">#    (partir los componentes por cada espacio: no es muy legible)</span></span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="va">query_full</span><span class="op">=</span><span class="st">"</span></span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT regexp_split_to_table(postgis_full_version(), ' ') AS componentes_postgis;</span></span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${DOCKER_PGHOST}</span> <span class="at">-p</span> <span class="va">${DOCKER_PGPORT}</span> <span class="at">-U</span> <span class="va">${DOCKER_PGUSER}</span> <span class="at">-d</span> <span class="va">${DOCKER_PGDATABASE}</span> <span class="at">-c</span> <span class="st">"</span><span class="va">${query_full}</span><span class="st">"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Versión del motor relacional PostgreSQL (modo expandido y ajuste a 90 columnas)</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${DOCKER_PGHOST}</span> <span class="at">-p</span> <span class="va">${DOCKER_PGPORT}</span> <span class="at">-U</span> <span class="va">${DOCKER_PGUSER}</span> <span class="at">-d</span> <span class="va">${DOCKER_PGDATABASE}</span> <span class="dt">\</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">-x</span> <span class="at">-P</span> format=wrapped <span class="at">-P</span> columns=90 <span class="dt">\</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">-c</span> <span class="st">"SELECT version();"</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Comprobación básica de operatividad de la extensión PostGIS</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${DOCKER_PGHOST}</span> <span class="at">-p</span> <span class="va">${DOCKER_PGPORT}</span> <span class="at">-U</span> <span class="va">${DOCKER_PGUSER}</span> <span class="at">-d</span> <span class="va">${DOCKER_PGDATABASE}</span> <span class="dt">\</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">-c</span> <span class="st">"SELECT PostGIS_Version();"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>-[ RECORD 1 ]----------------------------------------------------------------------------
 version | PostgreSQL 18.1 (Debian 18.1-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gc.
         |.c (Debian 14.2.0-19) 14.2.0, 64-bit
 
--[ RECORD 1 ]---+------------------------------------------------------------------------
-version_postgis | 3.6.1
-version_geos    | 3.13.1-CAPI-1.19.2
-version_proj    | 9.6.0 NETWORK_ENABLED=OFF URL_ENDPOINT=https://cdn.proj.org USER_WRITAB.
-                |.LE_DIRECTORY=/var/lib/postgresql/.local/share/proj DATABASE_PATH=/usr/s.
-                |.hare/proj/proj.db
-version_gdal    | GDAL 3.10.3, released 2025/04/01
-version_libxml  | 2.9.14
-
--[ RECORD 1 ]--------+-------------------------------------------------------------------
-postgis_full_version | POSTGIS="3.6.1 f533623" [EXTENSION] PGSQL="180" GEOS="3.13.1-CAPI-.
-                     |.1.19.2" PROJ="9.6.0 NETWORK_ENABLED=OFF URL_ENDPOINT=https://cdn.p.
-                     |.roj.org USER_WRITABLE_DIRECTORY=/var/lib/postgresql/.local/share/p.
-                     |.roj DATABASE_PATH=/usr/share/proj/proj.db" (compiled against PROJ .
-                     |.9.6.0) GDAL="GDAL 3.10.3, released 2025/04/01" LIBXML="2.9.14" LIB.
-                     |.JSON="0.18" LIBPROTOBUF="1.5.1" WAGYU="0.5.0 (Internal)" TOPOLOGY .
-                     |.RASTER
-
-                      componentes_postgis                      
----------------------------------------------------------------
- POSTGIS="3.6.1
- f533623"
- [EXTENSION]
- PGSQL="180"
- GEOS="3.13.1-CAPI-1.19.2"
- PROJ="9.6.0
- NETWORK_ENABLED=OFF
- URL_ENDPOINT=https://cdn.proj.org
- USER_WRITABLE_DIRECTORY=/var/lib/postgresql/.local/share/proj
- DATABASE_PATH=/usr/share/proj/proj.db"
- (compiled
- against
- PROJ
- 9.6.0)
- GDAL="GDAL
- 3.10.3,
- released
- 2025/04/01"
- LIBXML="2.9.14"
- LIBJSON="0.18"
- LIBPROTOBUF="1.5.1"
- WAGYU="0.5.0
- (Internal)"
- TOPOLOGY
- RASTER
-(25 rows)</code></pre>
+            postgis_version            
+---------------------------------------
+ 3.6 USE_GEOS=1 USE_PROJ=1 USE_STATS=1
+(1 row)</code></pre>
 </div>
 </div>
 </section>
@@ -853,73 +801,58 @@ postgis_full_version | POSTGIS="3.6.1 f533623" [EXTENSION] PGSQL="180" GEOS="3.1
 <section id="inspección-estructural-de-la-base-de-datos-de-estudio" class="level2" data-number="4.6">
 <h2 data-number="4.6" class="anchored" data-anchor-id="inspección-estructural-de-la-base-de-datos-de-estudio"><span class="header-section-number">4.6</span> Inspección estructural de la base de datos de estudio</h2>
 <p>La base de datos pedagógica <code>sig_db_unal</code> contiene los esquemas modulares preparados para los talleres prácticos del curso.</p>
-<p>La organización interna del catálogo relacional se detalla en la <a href="#fig-arquitectura-catalogo-espacial" class="quarto-xref">Figura&nbsp;<span>4.4</span></a>, destacando la articulación entre las librerías de cálculo espacial, las vistas de metadatos OGC y los esquemas cartográficos temáticos.</p>
+<p>La organización física del catálogo relacional se detalla en la <a href="#fig-estructura-base-datos-pedagogica" class="quarto-xref">Figura&nbsp;<span>4.4</span></a>, ilustrando la articulación entre las extensiones espaciales habilitadas y los esquemas temáticos cartográficos.</p>
 <div class="cell" data-fig-width="6.5" data-layout-align="center">
 <div class="cell-output-display">
-<div id="fig-arquitectura-catalogo-espacial" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-estructura-base-datos-pedagogica" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-arquitectura-catalogo-espacial-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div aria-describedby="fig-estructura-base-datos-pedagogica-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div>
-<pre class="mermaid mermaid-js" data-label="fig-arquitectura-catalogo-espacial">graph TD
+<pre class="mermaid mermaid-js" data-label="fig-estructura-base-datos-pedagogica">graph TD
 
+    classDef database fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,color:#000
     classDef extension fill:#e8f4f8,stroke:#0dcaf0,stroke-width:2px,color:#000
-    classDef metadato fill:#fff3cd,stroke:#e6b800,stroke-width:2px,color:#000
+    classDef esquema fill:#fff3cd,stroke:#e6b800,stroke-width:2px,color:#000
     classDef tabla fill:#d4edda,stroke:#28a745,stroke-width:2px,color:#000
     classDef indice fill:#e2e3e5,stroke:#343a40,stroke-width:2px,color:#000
 
-    subgraph DB ["Base de datos relacional: sig_db_unal (Owner: profe_unal)"]
+    subgraph DB ["Base de datos pedagógica: sig_db_unal"]
 
-        subgraph Ext ["Extensiones espaciales habilitadas"]
+        subgraph Ext ["Módulos espaciales habilitados"]
             direction LR
             E1["postgis"]:::extension
             E2["postgis_topology"]:::extension
             E3["postgis_raster"]:::extension
         end
 
-        subgraph Meta ["Catálogo estándar OGC"]
-            M1["geometry_columns&lt;br/&gt;(vista de metadatos)"]:::metadato
-            M2["spatial_ref_sys&lt;br/&gt;(Sistemas de Referencia / SRID)"]:::metadato
-        end
-
-        subgraph Base ["base750 (Cartografía base)"]
-            T1["Capas vectoriales&lt;br/&gt;(columnas geometry)"]:::tabla
+        subgraph Base ["Esquema: base750"]
+            T1["Capas vectoriales de referencia&lt;br/&gt;(geometría cartográfica básica)"]:::tabla
             I1["Índices espaciales GiST"]:::indice
         end
 
-        subgraph Divpol ["divpol (División político-administrativa)"]
-            T2["Capas vectoriales&lt;br/&gt;(columnas geometry)"]:::tabla
+        subgraph Divpol ["Esquema: divpol"]
+            T2["Capas político-administrativas&lt;br/&gt;(departamentos, municipios)"]:::tabla
             I2["Índices espaciales GiST"]:::indice
         end
 
     end
-    
+
     style DB fill:#f8f9fa
     style Ext fill:#e9ecef
-    style Meta fill:#e9ecef
     style Base fill:#e9ecef
     style Divpol fill:#e9ecef
-
-    E1 --&gt; M1
-    E2 --&gt; M1
-    E3 --&gt; M1
-
-    T1 -.-&gt;|"Registro de metadatos"| M1
-    T2 -.-&gt;|"Registro de metadatos"| M1
-
-    M1 --&gt;|"srid"| M2
 
     T1 --&gt; I1
     T2 --&gt; I2
 
-    %% Fuerza el orden vertical real: Meta encima de Base, Base encima de Divpol
-    %% (sin esto, dagre puede colocar Base y Divpol al mismo nivel, lado a lado)
-    Meta ~~~ Base
+    Ext ~~~ Base
     Base ~~~ Divpol
+
 </pre>
 </div>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-arquitectura-catalogo-espacial-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figura&nbsp;4.4: Estructura modular, extensiones y registro de metadatos OGC en la base de datos pedagógica
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-estructura-base-datos-pedagogica-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;4.4: Organización física de esquemas, capas vectoriales e índices espaciales en la base de datos de estudio
 </figcaption>
 </figure>
 </div>
@@ -969,9 +902,9 @@ Figura&nbsp;4.4: Estructura modular, extensiones y registro de metadatos OGC en 
 </div>
 </div>
 </section>
-<section id="registro-en-el-catálogo-de-metadatos-geométricos" class="level3">
-<h3 class="anchored" data-anchor-id="registro-en-el-catálogo-de-metadatos-geométricos">Registro en el catálogo de metadatos geométricos</h3>
-<p>Conforme al estándar OGC <em>Simple Features for SQL</em>, toda capa vectorial espacialmente habilitada debe encontrarse registrada en la vista <code>geometry_columns</code>. Se consulta la dimensionalidad, el identificador espacial (SRID) y el tipo geométrico:</p>
+<section id="validación-de-capas-vectoriales-en-el-clúster" class="level3">
+<h3 class="anchored" data-anchor-id="validación-de-capas-vectoriales-en-el-clúster">Validación de capas vectoriales en el clúster</h3>
+<p>Para verificar que las capas vectoriales cargadas en los esquemas temáticos disponen de tipado geométrico y asignación de identificador de referencia espacial (SRID), se consulta la vista <code>geometry_columns</code>:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGPASSWORD}</span><span class="st">"</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -1020,14 +953,8 @@ Figura&nbsp;4.4: Estructura modular, extensiones y registro de metadatos OGC en 
 <span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="st">WHERE schemaname IN ('base750', 'divpol') AND indexname LIKE '%gist%' </span></span>
 <span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="st">ORDER BY schemaname, tablename;</span></span>
 <span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Se desborda en el pdf:</span></span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co">#psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -x -c "${query_indices}"</span></span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Se usa -x (par: valor), pero sigue habiendo desborde (menor) en el pdf</span></span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="co">#psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} -x -c "${query_indices}"</span></span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Usamos -P para evitar el desborde</span></span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${DOCKER_PGHOST}</span> <span class="at">-p</span> <span class="va">${DOCKER_PGPORT}</span> <span class="at">-U</span> <span class="va">${DOCKER_PGUSER}</span> <span class="at">-d</span> <span class="va">${DOCKER_PGDATABASE}</span> <span class="at">-P</span> format=wrapped <span class="at">-P</span> columns=90 <span class="at">-c</span> <span class="st">"</span><span class="va">${query_indices}</span><span class="st">"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="ex">psql</span> <span class="at">-h</span> <span class="va">${DOCKER_PGHOST}</span> <span class="at">-p</span> <span class="va">${DOCKER_PGPORT}</span> <span class="at">-U</span> <span class="va">${DOCKER_PGUSER}</span> <span class="at">-d</span> <span class="va">${DOCKER_PGDATABASE}</span> <span class="at">-P</span> format=wrapped <span class="at">-P</span> columns=90 <span class="at">-c</span> <span class="st">"</span><span class="va">${query_indices}</span><span class="st">"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> esquema |    tabla     |       nombre_indice       |             definicion              
 ---------+--------------+---------------------------+-------------------------------------
@@ -1145,8 +1072,8 @@ Figura&nbsp;4.4: Estructura modular, extensiones y registro de metadatos OGC en 
  base750 | vias_lineas        | the_geom     | 21892 | GEOMETRY
  base750 | vias_puntos        | the_geom     | 21892 | ST_Point
  base750 | vias_texto         | the_geom     | 21892 | ST_Point
- divpol  | capa_departamentos | the_geom     |     0 | GEOMETRY
- divpol  | capa_municipios    | the_geom     |     0 | GEOMETRY
+ divpol  | capa_departamentos | the_geom     | 21892 | GEOMETRY
+ divpol  | capa_municipios    | the_geom     | 21892 | GEOMETRY
  divpol  | departamentos      | the_geom     | 21892 | GEOMETRY
  divpol  | municipios         | the_geom     | 21892 | GEOMETRY
 (8 rows)</code></pre>

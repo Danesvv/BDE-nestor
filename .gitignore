@@ -1,8 +1,8 @@
 # Compilación y artefactos de Quarto
 .quarto/
-_site/
+# _site/
 _freeze/
-*_files/
+# *_files/
 
 # Subproductos temporales de compilación LaTeX / PDF
 *.aux

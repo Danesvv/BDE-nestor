@@ -1,6 +1,18 @@
 # Arquitectura de bases de datos espaciales y estándares OGC
 
 ::: {.content-visible when-format="html"}
+```{=html}
+<style>
+.diagrama-ancho svg {
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100% !important;
+}
+</style>
+```
+:::
+
+::: {.content-visible when-format="html"}
 ::: {.callout-note appearance="simple" title="Presentación de la sesión"}
 Las diapositivas interactivas correspondientes al presente capítulo se encuentran disponibles en: [Presentación interactiva: Arquitectura y estándares OGC](../slides/20-d_arquitectura_y_estandares_ogc.html){target="_blank"}.
 :::
@@ -13,7 +25,7 @@ Las diapositivas interactivas correspondientes al presente capítulo se encuentr
 
 # Registro de variables en el proceso padre para persistencia y herencia en Knitr
 Sys.setenv(
-  # Instancia física en el sistema anfitrión (Windows accesible desde el contenedor)
+  # Instancia física en el sistema anfitrión (accesible desde el contenedor)
   LOCAL_PGHOST = "host.docker.internal",
   LOCAL_PGPORT = "5432",
   LOCAL_PGUSER = "postgres",
@@ -27,7 +39,7 @@ Sys.setenv(
   DOCKER_PGPASSWORD = "geomatica2025",
   DOCKER_PGDATABASE = "sig_db_unal",
   
-  # Parámetros por defecto para el cliente interactivo libpq (apuntando al host Windows)
+  # Parámetros por defecto para el cliente interactivo libpq (apuntando al host local)
   PGHOST = "host.docker.internal",
   PGPORT = "5432",
   PGUSER = "postgres",
@@ -37,56 +49,35 @@ Sys.setenv(
 
 ```
 
-::: {.callout-note collapse="true" title="Configuración preliminar del entorno de conexión (Windows / contenedor)"}
-Si interactúa de forma interactiva desde la terminal integrada de Visual Studio Code dentro del contenedor analítico apuntando al servicio PostgreSQL en el sistema anfitrión Windows, copie y ejecute el siguiente bloque para exportar las variables de sesión requeridas por la biblioteca `libpq`:
+::: {.content-visible when-format="html"}
+::: {.callout-note collapse="true" title="Variables de sesión para la terminal integrada"}
+Para ejecutar las consultas de este capítulo de forma interactiva en la terminal integrada de Visual Studio Code, inicialice las variables de entorno de la sesión (ver el fundamento técnico en la @sec-gestion-variables-entorno):
 
 ```{bash}
-#| label: setup-variables-conexion-bash
-#| eval: true
+#| label: setup-variables-sesion-bash-html
+#| eval: false
 #| echo: true
 
-# ==============================================================================
-# 1. Parámetros de conexión: Instancia física en el equipo anfitrión (Windows)
-# ==============================================================================
-export LOCAL_PGHOST="host.docker.internal"
-export LOCAL_PGPORT="5432"
-export LOCAL_PGUSER="postgres"
+# Parámetros de conexión a la base de datos pedagógica (host anfitrión)
+export PGHOST="host.docker.internal"
+export PGPORT="5432"
+export PGUSER="postgres"
+export PGPASSWORD='geomatica2025'
+export PGDATABASE="sig_db_unal"
 
-# Nota para el estudiante: Reemplace 'geomatica2025' por la contraseña configurada localmente.
-export LOCAL_PGPASSWORD='geomatica2025'
-export LOCAL_PGDATABASE="sig_db_unal"
-
-# ==============================================================================
-# 2. Parámetros de conexión: Clúster espacial en el contenedor (db-postgis)
-# ==============================================================================
-export DOCKER_PGHOST="db-postgis"
-export DOCKER_PGPORT="5432"
-export DOCKER_PGUSER="profe_unal"
-export DOCKER_PGPASSWORD='geomatica2025'
-export DOCKER_PGDATABASE="sig_db_unal"
-
-# ==============================================================================
-# 3. Variables estándar activas para libpq (destino por defecto: Windows)
-# ==============================================================================
-export PGHOST="${LOCAL_PGHOST}"
-export PGPORT="${LOCAL_PGPORT}"
-export PGUSER="${LOCAL_PGUSER}"
-export PGPASSWORD="${LOCAL_PGPASSWORD}"
-export PGDATABASE="${LOCAL_PGDATABASE}"
-
-# ==============================================================================
-# 4. Verificación de las variables asignadas en la sesión
-# ==============================================================================
-echo "--- Instancia local anfitrión (Windows) ---"
-echo "Host: ${LOCAL_PGHOST}:${LOCAL_PGPORT} | Usuario: ${LOCAL_PGUSER} | BD: ${LOCAL_PGDATABASE}"
-
-echo "--- Variables activas en libpq ---"
-echo "Destino por defecto: ${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}"
+# Verificación de endpoint activo
+echo "Sesión vinculada a: ${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}"
 
 ```
 
 :::
+:::
 
+::: {.content-visible when-format="pdf"}
+::: {.callout-note appearance="simple"}
+**Entorno de ejecución interactivo:** Las consultas y sentencias DDL/DML de este capítulo asumen que la sesión de terminal dispone de las variables de conexión estándar de `libpq` debidamente configuradas. Si ejecuta los bloques de forma manual en la consola, verifique la asignación de parámetros descrita en la @sec-gestion-variables-entorno.
+:::
+:::
 
 ## Objetivos del capítulo
 
@@ -94,6 +85,8 @@ echo "Destino por defecto: ${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}"
 * Comprender la arquitectura funcional, los niveles de abstracción y los subsistemas operativos de un sistema gestor de bases de datos (SGBD).
 * Determinar el modelo de datos y la arquitectura de integración óptimos para soportar aplicaciones de sistemas de información geográfica (SIG).
 * Examinar la implementación de los estándares internacionales del Open Geospatial Consortium (OGC) e ISO en motores relacionales extendidos.
+
+
 
 ## De sistemas de archivos a bases de datos relacionales
 
@@ -106,6 +99,7 @@ Un sistema de archivos tradicional almacena los datos en estructuras cerradas de
 * **Dependencia programa-datos**: Las aplicaciones se acoplan rígidamente a la estructura física de almacenamiento, lo que exige reescribir el software de consumo ante cualquier cambio en el formato de los archivos.
 * **Vulnerabilidad transaccional y concurrencia deficiente**: Carencia de mecanismos ACID (Atomicidad, Consistencia, Aislamiento y Durabilidad), lo que provoca condiciones de carrera, sobreescritura destructiva y corrupción de datos ante fallos del sistema o accesos simultáneos.
 * **Costos elevados de mantenimiento y gobierno**: La ausencia de esquemas y catálogos normalizados fragmenta las políticas de seguridad, integridad y respaldo.
+
 
 Frente a estas restricciones, una **base de datos** se define como una colección integrada, estructurada y no redundante de datos almacenados en soporte persistente, accesible concurrentemente por múltiples usuarios y aplicaciones mediante una estricta separación entre la representación lógica y la implementación física. Por su parte, el **SGBD** constituye la infraestructura de software responsable de proveer las interfaces y mecanismos para la definición, manipulación, optimización, persistencia y administración integral de dicha información.
 
@@ -129,12 +123,14 @@ En este texto se emplean de manera indistinta los términos **base de datos geog
 
 Como se sintetiza en la @fig-integracion-geodb-dot, el principio fundamental de una base de datos espacial radica en la **integración y centralización de esquemas**: el motor gestor consolida en un repositorio común atributos descriptivos, geometrías vectoriales tipadas y metadatos de referencia espacial, gobernados por un catálogo centralizado y un subsistema de integridad transaccional accesible por múltiples clientes en red.
 
+::: {.diagrama-ancho}
 ```{dot}
 //| label: fig-integracion-geodb-dot
 //| fig-cap: "Centralización e integración de datos espaciales y alfanuméricos en un SDBMS."
 //| fig-align: center
 //| fig-width: 6.5
 //| fig-height: 5
+//| out-width: 100%
 //| echo: false
 
 digraph G {
@@ -211,6 +207,8 @@ digraph G {
 
 ```
 
+:::
+
 Esta organización desacopla la representación lógica de la implementación física y resuelve las deficiencias de los sistemas de archivos:
 
 * **Unicidad de la fuente**: Se elimina la redundancia derivada de mantener tablas de atributos dispersas en hojas de cálculo y geometrías en archivos vectoriales independientes.
@@ -239,7 +237,6 @@ En la @fig-silberschatz-dbms se presenta la arquitectura clásica funcional de u
 * **Gestor de transacciones**: Garantiza que la base de datos permanezca en un estado consistente a pesar de fallos del sistema, coordinando la ejecución concurrente sin interferencias.
 * **Gestor de archivos**: Asigna y gestiona el espacio en el almacenamiento secundario y las estructuras de datos usadas para representar los registros.
 * **Gestor de búfer**: Controla la transferencia de páginas entre la memoria volátil intermedia (*buffer pool*) y el almacenamiento en disco persistente.
-
 
 **Estructuras de almacenamiento en disco**:
 
@@ -304,12 +301,13 @@ Dentro de este ecosistema, el **administrador de bases de datos (DBA)** represen
 
 Un sistema gestor de bases de datos abstrae la complejidad del almacenamiento secundario para presentar una representación simplificada de la información. La arquitectura estándar de tres niveles (ANSI/SPARC) formaliza este principio mediante capas operativas independientes, como se ilustra en la @fig-niveles-abstraccion-dot.
 
+::: {.diagrama-ancho}
 ```{dot}
 //| label: fig-niveles-abstraccion-dot
 //| fig-cap: "Arquitectura ANSI/SPARC de tres niveles y correspondencias de independencia de datos."
 //| fig-align: center
 //| fig-width: 6.5
-//| fig-height: 4
+//| fig-height: 4.5
 //| echo: false
 
 digraph G {
@@ -367,6 +365,8 @@ digraph G {
 
 ```
 
+:::
+
 Las tres capas estructuran responsabilidades específicas:
 
 1. **Nivel físico o interno**: Describe la organización técnica en que los registros se estructuran en el disco: distribución de páginas de datos, métodos de compresión, rutas de acceso físicas y estructuras de indexación secundarias (árboles B+ o árboles R/GiST en contextos espaciales).
@@ -400,12 +400,14 @@ A lo largo del desarrollo de los sistemas de información, los modelos de bases 
 
 En la @fig-evolucion-modelos-dot se resume la trayectoria evolutiva de estos paradigmas, destacando la bifurcación entre sistemas orientados a transacciones ACID y soluciones diseñadas para escalabilidad distribuida o cómputo multidimensional.
 
+::: {.diagrama-ancho}
+
 ```{dot}
 //| label: fig-evolucion-modelos-dot
 //| fig-cap: "Cronología de modelos de bases de datos con alineación temporal formal."
 //| fig-align: center
 //| fig-width: 6.5
-//| fig-height: 4
+//| fig-height: 5
 //| echo: false
 
 digraph G {
@@ -489,6 +491,9 @@ digraph G {
 
 ```
 
+:::
+
+
 En la @tbl-dbms-modelos-ejemplos se sistematizan los motores de bases de datos representativos de la disciplina, estructurados conforme a los paradigmas arquitectónicos presentados.
 
 | Modelo arquitectónico | Época / Taxonomía | Sistemas y motores representativos | Mecanismo de estructuración predominante |
@@ -521,6 +526,7 @@ La adopción de modelos de bases de datos en geomática estuvo condicionada por 
 
 Como se sintetiza en la @fig-tipos-datos-modelos, la evolución arquitectónica respondió a la necesidad de gestionar simultáneamente atributos escalares simples y geometrías dotadas de comportamiento topológico.
 
+::: {.diagrama-ancho}
 ```{dot}
 //| label: fig-tipos-datos-modelos
 //| fig-cap: "Convergencia de requerimientos de datos hacia el modelo objeto-relacional."
@@ -581,6 +587,8 @@ digraph G {
 
 ```
 
+:::
+
 El modelo relacional tradicional garantizaba integridad referencial, consistencia transaccional y optimización sobre atributos atómicos escalares, pero carecía de mecanismos nativos para operar geometrías complejas sin desarticularlas en colecciones de coordenadas normalizadas. Por su parte, los sistemas orientados a objetos (OODBMS) permitían modelar geometrías y operadores topológicos como métodos de clase, pero sacrificaban la madurez del álgebra relacional, el lenguaje declarativo SQL y la eficiencia de los optimizadores basados en costos.
 
 El modelo objeto-relacional resolvió esta encrucijada al extender el motor relacional con tipos de datos abstractos (ADT), índices espaciales multidimensionales (árboles R sobre infraestructura GiST) y predicados topológicos evaluables dentro del planificador de consultas.
@@ -599,6 +607,7 @@ Históricamente, la vinculación entre los sistemas de información geográfica 
 
 En la @fig-arquitecturas-sig-dbms se ilustra la evolución conceptual desde esquemas propietarios aislados hasta la centralización transaccional en motores espaciales integrados.
 
+::: {.diagrama-ancho}
 ```{dot}
 //| label: fig-arquitecturas-sig-dbms
 //| fig-cap: "Evolución de las arquitecturas de integración entre SIG y bases de datos."
@@ -673,6 +682,8 @@ digraph G {
 
 ```
 
+:::
+
 ### Arquitectura ad-hoc
 
 En esta configuración inicial, los paquetes de software SIG implementan formatos binarios cerrados y algoritmos propietarios de cálculo geométrico ejecutados directamente sobre el sistema de archivos:
@@ -699,6 +710,7 @@ Representa el estándar contemporáneo, donde el sistema gestor de bases de dato
 
 La adopción de una arquitectura integrada formaliza un esquema multicapa donde se dividen estrictamente las tareas entre la aplicación cliente y el motor gestor de bases de datos, tal como se esquematiza en la @fig-rol-sgbd-sig.
 
+::: {.diagrama-ancho}
 ```{dot}
 //| label: fig-rol-sgbd-sig
 //| fig-cap: "Distribución de capas y responsabilidades entre el software SIG y el SGBD objeto-relacional."
@@ -761,6 +773,8 @@ digraph G {
 
 ```
 
+:::
+
 Bajo este modelo de distribución operativa se derivan ventajas determinantes:
 
 * **Descarga computacional de la aplicación cliente**: Al incorporar un **módulo espacial** (*spatial extension* o *cartridge*) directamente acoplado al núcleo del motor, los algoritmos geométricos computacionalmente intensivos (cálculo de áreas, uniones espaciales, generación de zonas de influencia o evaluación de relaciones topológicas) se procesan dentro del servidor.
@@ -790,20 +804,15 @@ Para asegurar que las utilidades de línea de comandos (`psql`, `pg_dump`, `pg_r
 
 ### Verificación de PostGIS en el sistema anfitrión (Windows)
 
-Para comprobar que el entorno espacial se encuentra habilitado y operativo en la base de datos de trabajo `sig_db_unal`, se consulta la versión del motor relacional y la firma completa de dependencias compiladas:
+Para comprobar que el entorno espacial se encuentra habilitado y operativo en la base de datos de trabajo `sig_db_unal`, se consulta la firma completa de dependencias compiladas contra el motor relacional:
 
 ```{bash}
-#| label: verificacion-postgis-host
+#| label: audit-verificacion-postgis-host
 #| eval: true
 #| echo: true
 export PGPASSWORD="${LOCAL_PGPASSWORD}"
 
-# 1. Versión del motor PostgreSQL en el sistema anfitrión
-psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATABASE} \
-  -x -P format=wrapped -P columns=90 \
-  -c "SELECT version();"
-
-# 2. Versión de PostGIS y dependencias geoespaciales
+# Inspección de versión y librerías geoespaciales vinculadas a PostGIS
 psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATABASE} \
   -x -P format=wrapped -P columns=90 \
   -c "SELECT postgis_full_version();"
@@ -825,6 +834,7 @@ El Open Geospatial Consortium (OGC) y la Organización Internacional de Normaliz
 
 El estándar define una jerarquía orientada a objetos donde la clase raíz abstracta es `Geometry`. En la @fig-jerarquia-ogc-dot se ilustra el árbol de herencia para las primitivas simples y las agrupaciones espaciales.
 
+::: {.diagrama-ancho}
 ```{dot}
 //| label: fig-jerarquia-ogc-dot
 //| fig-cap: "Jerarquía de tipos de datos geométricos según la norma OGC SFS / ISO 19125."
@@ -873,6 +883,8 @@ digraph G {
 }
 
 ```
+
+:::
 
 En la @tbl-tipos-ogc se detallan las características topológicas y dimensionales de los tipos definidos en la norma.
 
@@ -992,7 +1004,7 @@ Aunque el tipado declarativo de PostgreSQL permite crear columnas con `geometry(
 Como labor fundamental de administración de bases de datos (DBA), el registro oficial debe ser incorporado al catálogo. **Esta instrucción DML solo requiere ejecutarse una única vez en la base de datos**, pues la cláusula `ON CONFLICT` garantiza su persistencia permanente sin duplicación:
 
 ```{bash}
-#| label: insert-crs-9377
+#| label: dml-insert-crs-9377
 #| eval: true
 #| echo: true
 export PGPASSWORD="${LOCAL_PGPASSWORD}"
@@ -1048,6 +1060,8 @@ Entre estos identificadores fundamentales destacan:
 * **SRID 4326**: Sistema geográfico global WGS 84 (coordenadas angulares en grados decimales de latitud y longitud).
 * **SRID 3116**: Proyección MAGNA-SIRGAS / Colombia Bogotá (proyección conforme Gauss-Krüger sobre meridiano central $74^\circ 04' 39.0285''\text{ W}$, con falso este de $1\,000\,000\text{ m}$ y falso norte de $1\,000\,000\text{ m}$).
 * **SRID 9377**: Proyección MAGNA-SIRGAS / Origen Nacional Único (sistema oficial conforme a la Resolución IGAC 471 de 2020, con origen en $4^\circ\text{ N}, 73^\circ\text{ W}$, factor de escala $k_0 = 0.9992$, falso este de $5\,000\,000\text{ m}$ y falso norte de $2\,000\,000\text{ m}$).
+
+
 
 ### La vista de catálogo geometry_columns
 
@@ -1109,6 +1123,90 @@ psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATAB
 
 ```
 
+
+### Asignación de identificador espacial en las vistas del esquema
+
+Al examinar los resultados de la consulta cruzada anterior, se constata que las relaciones `capa_departamentos` y `capa_municipios` del esquema `divpol` reportan `srid: 0`. Esto ocurre porque ambos objetos son vistas relacionales (consultas almacenadas) en las que la columna geométrica fue proyectada sin un identificador de referencia explícito, lo que ocasiona que los clientes SIG interpreten la proyección como indefinida.
+
+Aunque los fundamentos formales de DDL y DML para el diseño avanzado de vistas espaciales se estudiarán detalladamente en capítulos posteriores, es indispensable regularizar el catálogo desde esta primera sesión. La solución consiste en redefinir ambas vistas forzando la conversión explícita de la columna geométrica al sistema de coordenadas de la cartografía base del curso (`EPSG:21892`, MAGNA-SIRGAS / Colombia Bogotá):
+
+```{bash}
+#| label: ddl-remediacion-vistas-divpol
+#| eval: true
+#| echo: true
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+# Redefinición de vistas con asignación explícita de SRID 21892
+query_recreacion_vistas="
+DROP VIEW IF EXISTS divpol.capa_departamentos;
+CREATE VIEW divpol.capa_departamentos AS
+SELECT 
+    d.gid,
+    d.gid AS oid,
+    d.dep_id AS id_dane,
+    d.dep_nombre AS departamento,
+    d.the_geom::geometry(Geometry, 21892) AS the_geom
+FROM divpol.departamentos d
+WHERE d.the_geom IS NOT NULL
+ORDER BY d.dep_id;
+
+DROP VIEW IF EXISTS divpol.capa_municipios;
+CREATE VIEW divpol.capa_municipios AS
+SELECT 
+    m.gid,
+    m.gid AS oid,
+    m.mun_id AS id_dane,
+    d.dep_id AS dep_codigo_dane,
+    initcap(d.dep_nombre::text) AS departamento,
+    m.mun_nombre AS municipio,
+    m.the_geom::geometry(Geometry, 21892) AS the_geom
+FROM divpol.municipios m
+LEFT JOIN divpol.departamentos d ON d.dep_id::text = m.dep_id::text
+WHERE m.the_geom IS NOT NULL
+ORDER BY m.mun_id;
+"
+
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATABASE} \
+  -c "${query_recreacion_vistas}"
+
+```
+
+Tras la ejecución del bloque anterior, se audita nuevamente el catálogo `geometry_columns` para validar la correcta inscripción del identificador espacial:
+
+```{bash}
+#| label: audit-verificacion-vistas-srid
+#| eval: true
+#| echo: true
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+query_verif_vistas="
+SELECT 
+    f_table_schema, 
+    f_table_name, 
+    f_geometry_column, 
+    coord_dimension, 
+    srid, 
+    type 
+FROM geometry_columns 
+WHERE f_table_schema = 'divpol' 
+  AND f_table_name IN ('capa_departamentos', 'capa_municipios');
+"
+
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATABASE} \
+  -P format=wrapped -P columns=90 \
+  -c "${query_verif_vistas}"
+
+```
+
+El catálogo reporta ahora el identificador `21892`, garantizando la interoperabilidad con clientes de escritorio y servicios web.
+
+::: {.callout-tip title="Persistencia del catálogo mediante respaldo"}
+Tras incorporar el sistema `EPSG:9377` en el catálogo `spatial_ref_sys` y corregir el tipado de las vistas del esquema `divpol`, el catálogo relacional alcanza un estado consistente con el estándar OGC.  
+
+Para preservar estas modificaciones frente a eventuales destrucciones del volumen persistente, fallos del contenedor o reinicializaciones del clúster local, se recomienda generar un nuevo respaldo de la base de datos `sig_db_unal` aplicando los procedimientos documentados en la @sec-respaldo-recuperacion-bd. Disponer de un archivo de volcado actualizado (en formato SQL plano o binario personalizado .dump) permite reconstruir la base de datos con las definiciones espaciales saneadas, eliminando la necesidad de reejecutar manualmente las sentencias de remediación en futuras restauraciones.
+:::
+
+
 ## Verificación práctica en la consola integrada
 
 A continuación se demuestra la secuencia operativa para comprobar la disponibilidad de la extensión espacial, aprovisionar una tabla pedagógica con tipado geométrico estricto, insertar una entidad mediante sintaxis WKT y auditar su catalogación automática:
@@ -1160,3 +1258,4 @@ psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATAB
 ```
 
 La consulta a `geometry_columns` reporta de forma automática la dimensión $2$, el SRID $9377$ y el tipo de dato `POINT`, validando la interoperabilidad del clúster con clientes SIG externos.
+

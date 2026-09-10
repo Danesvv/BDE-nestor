@@ -115,6 +115,7 @@ format:
   # FORMATO HTML (para web)
   html:
     theme: cosmo                 # Tema visual para HTML
+    css: styles.css
     toc: true                    # Tabla de contenidos: activada
     toc-depth: 3                 # Profundidad del TOC: hasta nivel 3 (###)
     #number-sections: true        # Numeración automática de secciones
