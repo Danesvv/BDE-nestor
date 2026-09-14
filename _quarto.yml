@@ -86,6 +86,7 @@ book:
     - chapters/86-windows.qmd             # Información sobre Windows
     - chapters/87-linux_ubuntu.qmd        # Información sobre Linux Ubuntu
     - chapters/93-postgresql.qmd          # Información sobre PostgreSQL + PostGIS
+    - chapters/97-glosario.qmd            # Glosario y acrónimos técnicos
     - chapters/98-errata.qmd              # Erratas
     - chapters/99-referencias.qmd         # Referencias bibliográficas
     # IMPORTANTE: Este archivo crea la sección de referencias al final
