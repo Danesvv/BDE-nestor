@@ -1,7 +1,7 @@
 # Docker: gestión de contenedores e imágenes {#sec-anexo-docker}
 
 ```{r}
-#| label: j_eval_j_plot
+#| label: setup-j-eval-j-plot
 #| code-fold: true
 #| include: false
 source("../j_eval_j_plot.r")

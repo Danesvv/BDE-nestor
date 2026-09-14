@@ -11,7 +11,7 @@
   <meta name="generator" content="quarto-1.4.550">
 
   <meta name="author" content="Alexys H. Rodríguez-Avellaneda Ph.D.">
-  <meta name="dcterms.date" content="2026-09-10">
+  <meta name="dcterms.date" content="2026-09-14">
   <title>Arquitectura de bases de datos espaciales y estándares OGC</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -415,6 +415,12 @@
     font-size: 0.9em !important;
     margin-left: 1.2em !important;
   }
+
+  .diagrama-slide svg {
+  width: 100% !important;
+  height: auto !important;
+  max-height: 540px !important;
+  }
   </style>
 </head>
 <body class="quarto-light">
@@ -433,56 +439,20 @@ Alexys H. Rodríguez-Avellaneda Ph.D.
 </div>
 </div>
 
-  <p class="date">2026-09-10</p>
+  <p class="date">2026-09-14</p>
 </section><section id="TOC">
 <nav role="doc-toc"> 
 <h2 id="toc-title">Tabla de contenidos</h2>
 <ul>
-<li>De sistemas de archivos a bases de datos
-<ul>
-<li>Acrónimos y convenciones: arquitectura y estándares</li>
-<li>Acrónimos y convenciones: modelos y analítica avanzada</li>
-<li>Limitaciones del sistema de archivos tradicional</li>
-<li>Principio de integración en un SDBMS</li>
-</ul></li>
-<li>Arquitectura y niveles de abstracción
-<ul>
-<li>Arquitectura clásica del motor (Silberschatz)</li>
-<li>Componentes funcionales del motor (Silberschatz)</li>
-<li>Niveles de abstracción ANSI/SPARC</li>
-</ul></li>
-<li>Modelos de datos y dimensión espacial
-<ul>
-<li>Requerimientos del dato geoespacial</li>
-</ul></li>
-<li>Evolución de modelos de datos
-<ul>
-<li>Taxonomía de modelos de bases de datos</li>
-<li>Cronología y convergencia espacial</li>
-<li>Precisiones arquitectónicas contemporáneas</li>
-<li>Evolución de arquitecturas SIG</li>
-<li>Distribución de responsabilidades: SIG y SGBD</li>
-</ul></li>
-<li>PostgreSQL y la extensión PostGIS
-<ul>
-<li>Motor objeto-relacional y pila geoespacial</li>
-<li>Verificación de PostGIS en el motor</li>
-</ul></li>
-<li>Estándar OGC Simple Features for SQL
-<ul>
-<li>Jerarquía geométrica OGC (ISO 19125)</li>
-<li>Serialización: WKT y WKB / EWKB</li>
-</ul></li>
-<li>Catálogos de metadatos espaciales
-<ul>
-<li>Catálogo spatial_ref_sys</li>
-<li>Actualización e idempotencia de EPSG 9377</li>
-<li>Vista de catálogo geometry_columns</li>
-</ul></li>
-<li>Verificación práctica en consola
-<ul>
-<li>Ciclo DDL, WKT e introspección</li>
-</ul></li>
+<li>De sistemas de archivos a bases de datos</li>
+<li>Arquitectura y niveles de abstracción</li>
+<li>Modelos de datos y dimensión espacial</li>
+<li>Topologías de despliegue y arquitecturas SIG</li>
+<li>PostgreSQL y la extensión PostGIS</li>
+<li>Estándar OGC Simple Features for SQL</li>
+<li>Catálogos de metadatos espaciales</li>
+<li>Verificación práctica en consola y scripts</li>
+<li>Articulación con los proyectos de investigación</li>
 </ul>
 </nav>
 </section>
@@ -537,7 +507,7 @@ Alexys H. Rodríguez-Avellaneda Ph.D.
 <p><strong>Indexación, tipos y representaciones</strong></p>
 <ul>
 <li><strong>Árbol B / B+</strong>: Estructura jerárquica univariada balanceada (<em>balanced tree</em>).</li>
-<li><strong>MBR</strong>: Caja envolvente mínima (<em>minimum bounding box</em>).</li>
+<li><strong>MBR</strong>: Rectángulo delimitador mínimo (<em>minimum bounding rectangle</em>).</li>
 <li><strong>JSONB</strong>: Almacenamiento binario estructurado para JSON en PostgreSQL.</li>
 <li><strong>pgvector</strong>: Extensión de PostgreSQL para indexación y búsqueda vectorial.</li>
 <li><strong>HNSW</strong>: Grafo navegable jerárquico de mundo pequeño (<em>hierarchical navigable small world</em>).</li>
@@ -549,123 +519,123 @@ Alexys H. Rodríguez-Avellaneda Ph.D.
 </section>
 <section class="slide level2">
 <h2>Limitaciones del sistema de archivos tradicional</h2>
+<div style="font-size: 0.74em; line-height: 1.25;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <p><strong>Deficiencias estructurales</strong></p>
 <ul>
 <li><strong>Redundancia e inconsistencia</strong>: Duplicación descontrolada de archivos sin sincronización.</li>
 <li><strong>Aislamiento</strong>: Datos fragmentados en formatos heterogéneos y cerrados.</li>
-<li><strong>Acoplamiento rígido</strong>: El cambio de formato exige reescribir las aplicaciones.</li>
-<li><strong>Vulnerabilidad transaccional</strong>: Carencia de garantías ACID y riesgo de sobreescritura.</li>
+<li><strong>Acoplamiento rígido</strong>: El cambio de formato exige reescribir las aplicaciones consumidoras.</li>
+<li><strong>Vulnerabilidad transaccional</strong>: Carencia de garantías ACID y riesgo de sobreescritura destructiva.</li>
 </ul>
 </div><div class="column" style="width:50%;">
 <p><strong>Impacto en proyectos SIG</strong></p>
 <ul>
-<li>Tablas de atributos dispersas en hojas de cálculo.</li>
-<li>Geometrías huérfanas en directorios locales.</li>
-<li>Bloqueos de archivo monousuario.</li>
-<li>Corrupción por caídas imprevistas de red o energía.</li>
+<li>Tablas de atributos dispersas en hojas de cálculo desvinculadas.</li>
+<li>Geometrías huérfanas en directorios locales sin validación referencial.</li>
+<li>Bloqueos de archivo monousuario que impiden la edición concurrente.</li>
+<li>Corrupción por caídas imprevistas de red o fallos eléctricos sin bitácora.</li>
 </ul>
+</div>
 </div>
 </div>
 </section>
 <section class="slide level2">
 <h2>Principio de integración en un SDBMS</h2>
-<p>Desacoplamiento de la representación lógica frente al almacenamiento físico:</p>
-<div class="cell" data-fig-width="9" data-fig-height="2.8" data-layout-align="center">
+<p>Desacoplamiento estricto de la representación lógica frente al almacenamiento físico:</p>
+<div class="cell" data-fig-width="9.2" data-fig-height="2.8" data-layout-align="center">
 <div class="cell-output-display">
+<div id="dot-integracion-sdbms">
 <div>
-<p></p><figure class=""><p></p>
-<div>
-<svg width="864" height="269" viewbox="0.00 0.00 710.59 245.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<svg width="883" height="269" viewbox="0.00 0.00 731.31 245.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 241)">
 <title>G</title>
 <g id="clust1" class="cluster">
 <title>cluster_clients</title>
-<path fill="#f0fdf4" stroke="#16a34a" stroke-dasharray="5,2" d="M12,-8C12,-8 139.36,-8 139.36,-8 145.36,-8 151.36,-14 151.36,-20 151.36,-20 151.36,-217 151.36,-217 151.36,-223 145.36,-229 139.36,-229 139.36,-229 12,-229 12,-229 6,-229 0,-223 0,-217 0,-217 0,-20 0,-20 0,-14 6,-8 12,-8"></path>
-<text text-anchor="middle" x="75.68" y="-212.4" font-family="Helvetica,sans-Serif" font-size="14.00" fill="#065f46">Clientes concurrentes</text>
+<path fill="#f0fdf4" stroke="#16a34a" stroke-dasharray="5,2" d="M12,-8C12,-8 138.57,-8 138.57,-8 144.57,-8 150.57,-14 150.57,-20 150.57,-20 150.57,-217 150.57,-217 150.57,-223 144.57,-229 138.57,-229 138.57,-229 12,-229 12,-229 6,-229 0,-223 0,-217 0,-217 0,-20 0,-20 0,-14 6,-8 12,-8"></path>
+<text text-anchor="middle" x="75.28" y="-212.4" font-family="Helvetica,sans-Serif" font-size="14.00" fill="#065f46">Clientes concurrentes</text>
 </g>
 <g id="clust2" class="cluster">
 <title>cluster_sdbms</title>
-<path fill="#f0f9ff" stroke="#0284c7" d="M269.9,-69C269.9,-69 682.59,-69 682.59,-69 688.59,-69 694.59,-75 694.59,-81 694.59,-81 694.59,-145 694.59,-145 694.59,-151 688.59,-157 682.59,-157 682.59,-157 269.9,-157 269.9,-157 263.9,-157 257.9,-151 257.9,-145 257.9,-145 257.9,-81 257.9,-81 257.9,-75 263.9,-69 269.9,-69"></path>
-<text text-anchor="middle" x="476.25" y="-140.4" font-family="Helvetica,sans-Serif" font-size="14.00" fill="#075985">Repositorio centralizado (SDBMS)</text>
+<path fill="#f0f9ff" stroke="#0284c7" d="M290.62,-69C290.62,-69 703.31,-69 703.31,-69 709.31,-69 715.31,-75 715.31,-81 715.31,-81 715.31,-145 715.31,-145 715.31,-151 709.31,-157 703.31,-157 703.31,-157 290.62,-157 290.62,-157 284.62,-157 278.62,-151 278.62,-145 278.62,-145 278.62,-81 278.62,-81 278.62,-75 284.62,-69 290.62,-69"></path>
+<text text-anchor="middle" x="496.96" y="-140.4" font-family="Helvetica,sans-Serif" font-size="14.00" fill="#075985">Repositorio centralizado integrado (SDBMS)</text>
 </g>
 <!-- c1 -->
 <g id="node1" class="node">
 <title>c1</title>
-<path fill="#dcfce7" stroke="#16a34a" d="M109.58,-196C109.58,-196 40.79,-196 40.79,-196 34.79,-196 28.79,-190 28.79,-184 28.79,-184 28.79,-172 28.79,-172 28.79,-166 34.79,-160 40.79,-160 40.79,-160 109.58,-160 109.58,-160 115.58,-160 121.58,-166 121.58,-172 121.58,-172 121.58,-184 121.58,-184 121.58,-190 115.58,-196 109.58,-196"></path>
-<text text-anchor="middle" x="75.18" y="-181.3" font-family="Helvetica,sans-Serif" font-size="11.00">SIG escritorio</text>
-<text text-anchor="middle" x="75.18" y="-168.1" font-family="Helvetica,sans-Serif" font-size="11.00">(QGIS, ArcGIS)</text>
+<path fill="#dcfce7" stroke="#16a34a" d="M119.35,-196C119.35,-196 31.22,-196 31.22,-196 25.22,-196 19.22,-190 19.22,-184 19.22,-184 19.22,-172 19.22,-172 19.22,-166 25.22,-160 31.22,-160 31.22,-160 119.35,-160 119.35,-160 125.35,-160 131.35,-166 131.35,-172 131.35,-172 131.35,-184 131.35,-184 131.35,-190 125.35,-196 119.35,-196"></path>
+<text text-anchor="middle" x="75.28" y="-181.3" font-family="Helvetica,sans-Serif" font-size="11.00">SIG escritorio</text>
+<text text-anchor="middle" x="75.28" y="-168.1" font-family="Helvetica,sans-Serif" font-size="11.00">(QGIS, ArcGIS Pro)</text>
 </g>
 <!-- motor -->
 <g id="node4" class="node">
 <title>motor</title>
-<path fill="#bae6fd" stroke="#0284c7" d="M366.3,-124C366.3,-124 278.1,-124 278.1,-124 272.1,-124 266.1,-118 266.1,-112 266.1,-112 266.1,-100 266.1,-100 266.1,-94 272.1,-88 278.1,-88 278.1,-88 366.3,-88 366.3,-88 372.3,-88 378.3,-94 378.3,-100 378.3,-100 378.3,-112 378.3,-112 378.3,-118 372.3,-124 366.3,-124"></path>
-<text text-anchor="middle" x="322.2" y="-109.3" font-family="Helvetica,sans-Serif" font-size="11.00">Motor SQL espacial</text>
-<text text-anchor="middle" x="322.2" y="-96.1" font-family="Helvetica,sans-Serif" font-size="11.00">+ Garantías ACID</text>
+<path fill="#bae6fd" stroke="#0284c7" d="M387.02,-124C387.02,-124 298.82,-124 298.82,-124 292.82,-124 286.82,-118 286.82,-112 286.82,-112 286.82,-100 286.82,-100 286.82,-94 292.82,-88 298.82,-88 298.82,-88 387.02,-88 387.02,-88 393.02,-88 399.02,-94 399.02,-100 399.02,-100 399.02,-112 399.02,-112 399.02,-118 393.02,-124 387.02,-124"></path>
+<text text-anchor="middle" x="342.92" y="-109.3" font-family="Helvetica,sans-Serif" font-size="11.00">Motor SQL espacial</text>
+<text text-anchor="middle" x="342.92" y="-96.1" font-family="Helvetica,sans-Serif" font-size="11.00">+ Garantías ACID</text>
 </g>
 <!-- c1&#45;&gt;motor -->
 <g id="edge2" class="edge">
 <title>c1-&gt;motor</title>
-<path fill="none" stroke="#475569" d="M129.27,-162.4C167.13,-151.28 218.17,-136.28 258.11,-124.54"></path>
-<polygon fill="#475569" stroke="#475569" points="128.29,-159.77 121.41,-164.71 129.87,-165.14 128.29,-159.77"></polygon>
-<polygon fill="#475569" stroke="#475569" points="265.94,-122.24 259.28,-127.95 262.1,-123.37 258.26,-124.49 258.26,-124.49 258.26,-124.49 262.1,-123.37 257.25,-121.04 265.94,-122.24 265.94,-122.24"></polygon>
-<text text-anchor="middle" x="204.63" y="-150.7" font-family="Helvetica,sans-Serif" font-size="9.00">SQL</text>
+<path fill="none" stroke="#475569" d="M139.54,-160.85C181.6,-149.45 236.61,-134.54 278.67,-123.14"></path>
+<polygon fill="#475569" stroke="#475569" points="138.64,-158.2 131.65,-162.99 140.1,-163.6 138.64,-158.2"></polygon>
+<polygon fill="#475569" stroke="#475569" points="286.63,-120.99 279.85,-126.55 282.77,-122.03 278.91,-123.08 278.91,-123.08 278.91,-123.08 282.77,-122.03 277.97,-119.6 286.63,-120.99 286.63,-120.99"></polygon>
+<text text-anchor="middle" x="214.59" y="-152.7" font-family="Helvetica,sans-Serif" font-size="9.00">SQL</text>
 </g>
 <!-- c2 -->
 <g id="node2" class="node">
 <title>c2</title>
-<path fill="#dcfce7" stroke="#16a34a" d="M105.04,-124C105.04,-124 45.32,-124 45.32,-124 39.32,-124 33.32,-118 33.32,-112 33.32,-112 33.32,-100 33.32,-100 33.32,-94 39.32,-88 45.32,-88 45.32,-88 105.04,-88 105.04,-88 111.04,-88 117.04,-94 117.04,-100 117.04,-100 117.04,-112 117.04,-112 117.04,-118 111.04,-124 105.04,-124"></path>
-<text text-anchor="middle" x="75.18" y="-109.3" font-family="Helvetica,sans-Serif" font-size="11.00">Servicios web</text>
-<text text-anchor="middle" x="75.18" y="-96.1" font-family="Helvetica,sans-Serif" font-size="11.00">(GeoServer)</text>
+<path fill="#dcfce7" stroke="#16a34a" d="M116.14,-124C116.14,-124 34.42,-124 34.42,-124 28.42,-124 22.42,-118 22.42,-112 22.42,-112 22.42,-100 22.42,-100 22.42,-94 28.42,-88 34.42,-88 34.42,-88 116.14,-88 116.14,-88 122.14,-88 128.14,-94 128.14,-100 128.14,-100 128.14,-112 128.14,-112 128.14,-118 122.14,-124 116.14,-124"></path>
+<text text-anchor="middle" x="75.28" y="-109.3" font-family="Helvetica,sans-Serif" font-size="11.00">Servicios web</text>
+<text text-anchor="middle" x="75.28" y="-96.1" font-family="Helvetica,sans-Serif" font-size="11.00">(GeoServer, APIs)</text>
 </g>
 <!-- c2&#45;&gt;motor -->
 <g id="edge3" class="edge">
 <title>c2-&gt;motor</title>
-<path fill="none" stroke="#475569" d="M125.33,-106C163.4,-106 216.43,-106 257.71,-106"></path>
-<polygon fill="#475569" stroke="#475569" points="125.19,-103.2 117.19,-106 125.19,-108.8 125.19,-103.2"></polygon>
-<polygon fill="#475569" stroke="#475569" points="265.8,-106 257.8,-109.6 261.8,-106 257.8,-106 257.8,-106 257.8,-106 261.8,-106 257.8,-102.4 265.8,-106 265.8,-106"></polygon>
-<text text-anchor="middle" x="204.63" y="-108.7" font-family="Helvetica,sans-Serif" font-size="9.00">WFS/API</text>
+<path fill="none" stroke="#475569" d="M136.67,-106C179.02,-106 235.53,-106 278.53,-106"></path>
+<polygon fill="#475569" stroke="#475569" points="136.45,-103.2 128.45,-106 136.45,-108.8 136.45,-103.2"></polygon>
+<polygon fill="#475569" stroke="#475569" points="286.67,-106 278.67,-109.6 282.67,-106 278.67,-106 278.67,-106 278.67,-106 282.67,-106 278.67,-102.4 286.67,-106 286.67,-106"></polygon>
+<text text-anchor="middle" x="214.59" y="-108.7" font-family="Helvetica,sans-Serif" font-size="9.00">WFS / OGC API</text>
 </g>
 <!-- c3 -->
 <g id="node3" class="node">
 <title>c3</title>
-<path fill="#dcfce7" stroke="#16a34a" d="M113.55,-52C113.55,-52 36.82,-52 36.82,-52 30.82,-52 24.82,-46 24.82,-40 24.82,-40 24.82,-28 24.82,-28 24.82,-22 30.82,-16 36.82,-16 36.82,-16 113.55,-16 113.55,-16 119.55,-16 125.55,-22 125.55,-28 125.55,-28 125.55,-40 125.55,-40 125.55,-46 119.55,-52 113.55,-52"></path>
-<text text-anchor="middle" x="75.18" y="-37.3" font-family="Helvetica,sans-Serif" font-size="11.00">Scripts</text>
-<text text-anchor="middle" x="75.18" y="-24.1" font-family="Helvetica,sans-Serif" font-size="11.00">(Python, R, Julia)</text>
+<path fill="#dcfce7" stroke="#16a34a" d="M114.48,-52C114.48,-52 36.08,-52 36.08,-52 30.08,-52 24.08,-46 24.08,-40 24.08,-40 24.08,-28 24.08,-28 24.08,-22 30.08,-16 36.08,-16 36.08,-16 114.48,-16 114.48,-16 120.48,-16 126.48,-22 126.48,-28 126.48,-28 126.48,-40 126.48,-40 126.48,-46 120.48,-52 114.48,-52"></path>
+<text text-anchor="middle" x="75.28" y="-37.3" font-family="Helvetica,sans-Serif" font-size="11.00">Scripts analíticos</text>
+<text text-anchor="middle" x="75.28" y="-24.1" font-family="Helvetica,sans-Serif" font-size="11.00">(Python, R, Julia)</text>
 </g>
 <!-- c3&#45;&gt;motor -->
 <g id="edge4" class="edge">
 <title>c3-&gt;motor</title>
-<path fill="none" stroke="#475569" d="M133.29,-50.78C170.63,-61.75 219.44,-76.1 257.96,-87.42"></path>
-<polygon fill="#475569" stroke="#475569" points="133.94,-48.05 125.47,-48.48 132.36,-53.43 133.94,-48.05"></polygon>
-<polygon fill="#475569" stroke="#475569" points="266.01,-89.78 257.32,-90.98 262.17,-88.65 258.34,-87.53 258.34,-87.53 258.34,-87.53 262.17,-88.65 259.35,-84.07 266.01,-89.78 266.01,-89.78"></polygon>
-<text text-anchor="middle" x="204.63" y="-82.7" font-family="Helvetica,sans-Serif" font-size="9.00">Conexión nativa</text>
+<path fill="none" stroke="#475569" d="M134.53,-49.79C177.28,-61.38 235.29,-77.1 279.08,-88.97"></path>
+<polygon fill="#475569" stroke="#475569" points="135.01,-47.02 126.56,-47.63 133.55,-52.42 135.01,-47.02"></polygon>
+<polygon fill="#475569" stroke="#475569" points="286.81,-91.06 278.15,-92.44 282.95,-90.02 279.09,-88.97 279.09,-88.97 279.09,-88.97 282.95,-90.02 280.03,-85.49 286.81,-91.06 286.81,-91.06"></polygon>
+<text text-anchor="middle" x="214.59" y="-84.7" font-family="Helvetica,sans-Serif" font-size="9.00">Conexión nativa libpq</text>
 </g>
 <!-- disco -->
 <g id="node5" class="node">
 <title>disco</title>
-<path fill="#ffffff" stroke="#64748b" d="M674.37,-124C674.37,-124 516.25,-124 516.25,-124 510.25,-124 504.25,-118 504.25,-112 504.25,-112 504.25,-100 504.25,-100 504.25,-94 510.25,-88 516.25,-88 516.25,-88 674.37,-88 674.37,-88 680.37,-88 686.37,-94 686.37,-100 686.37,-100 686.37,-112 686.37,-112 686.37,-118 680.37,-124 674.37,-124"></path>
-<text text-anchor="middle" x="595.31" y="-109.3" font-family="Helvetica,sans-Serif" font-size="11.00">Tuplas unificadas en disco</text>
-<text text-anchor="middle" x="595.31" y="-96.1" font-family="Helvetica,sans-Serif" font-size="11.00">[ Atributos + GEOMETRY (WKB) ]</text>
+<path fill="#ffffff" stroke="#64748b" d="M695.09,-124C695.09,-124 536.97,-124 536.97,-124 530.97,-124 524.97,-118 524.97,-112 524.97,-112 524.97,-100 524.97,-100 524.97,-94 530.97,-88 536.97,-88 536.97,-88 695.09,-88 695.09,-88 701.09,-88 707.09,-94 707.09,-100 707.09,-100 707.09,-112 707.09,-112 707.09,-118 701.09,-124 695.09,-124"></path>
+<text text-anchor="middle" x="616.03" y="-109.3" font-family="Helvetica,sans-Serif" font-size="11.00">Tuplas unificadas en disco</text>
+<text text-anchor="middle" x="616.03" y="-96.1" font-family="Helvetica,sans-Serif" font-size="11.00">[ Atributos + GEOMETRY (WKB) ]</text>
 </g>
 <!-- motor&#45;&gt;disco -->
 <g id="edge1" class="edge">
 <title>motor-&gt;disco</title>
-<path fill="none" stroke="#475569" d="M378.39,-106C412.14,-106 456.29,-106 495.87,-106"></path>
-<polygon fill="#475569" stroke="#475569" points="504.24,-106 496.24,-109.6 500.24,-106 496.24,-106 496.24,-106 496.24,-106 500.24,-106 496.24,-102.4 504.24,-106 504.24,-106"></polygon>
-<text text-anchor="middle" x="441.27" y="-108.7" font-family="Helvetica,sans-Serif" font-size="9.00">I/O transaccional</text>
+<path fill="none" stroke="#475569" d="M399.11,-106C432.86,-106 477.01,-106 516.59,-106"></path>
+<polygon fill="#475569" stroke="#475569" points="524.96,-106 516.96,-109.6 520.96,-106 516.96,-106 516.96,-106 516.96,-106 520.96,-106 516.96,-102.4 524.96,-106 524.96,-106"></polygon>
+<text text-anchor="middle" x="461.99" y="-108.7" font-family="Helvetica,sans-Serif" font-size="9.00">I/O transaccional</text>
 </g>
 </g>
 </svg>
 </div>
-<p></p></figure><p></p>
 </div>
 </div>
 </div>
 <ul>
-<li><strong>Fuente única de verdad</strong>: Eliminación de discrepancias entre tabla y vector.</li>
-<li><strong>Acceso multiusuario seguro</strong>: Control de concurrencia a nivel de tupla.</li>
+<li><strong>Fuente única de verdad</strong>: Unificación de la geometría como objeto de primera clase dentro del núcleo relacional.</li>
+<li><strong>Acceso multiusuario gobernado</strong>: Control de concurrencia a nivel de tupla sin bloqueos de archivo completo.</li>
 </ul>
 </section></section>
 <section>
@@ -675,128 +645,128 @@ Alexys H. Rodríguez-Avellaneda Ph.D.
 </section>
 <section class="slide level2">
 <h2>Arquitectura clásica del motor (Silberschatz)</h2>
-<div class="cell" data-fig-width="9.5" data-fig-height="4.8" data-layout-align="center">
+<div class="diagrama-slide">
+<div class="cell" data-fig-width="9.5" data-fig-height="7" data-layout-align="center">
 <div class="cell-output-display">
+<div id="dot-arquitectura-silberschatz">
 <div>
-<p></p><figure class=""><p></p>
-<div>
-<svg width="912" height="461" viewbox="0.00 0.00 486.00 559.40" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<svg width="912" height="672" viewbox="0.00 0.00 565.00 559.40" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 555.4)">
 <title>G</title>
+<g id="clust5" class="cluster">
+<title>cluster_disk</title>
+<path fill="#94a3b8" stroke="#94a3b8" d="M20,-8C20,-8 480,-8 480,-8 486,-8 492,-14 492,-20 492,-20 492,-72.8 492,-72.8 492,-78.8 486,-84.8 480,-84.8 480,-84.8 20,-84.8 20,-84.8 14,-84.8 8,-78.8 8,-72.8 8,-72.8 8,-20 8,-20 8,-14 14,-8 20,-8"></path>
+<text text-anchor="middle" x="250" y="-68.2" font-family="Helvetica,sans-Serif" font-size="14.00" fill="#0f172a">3. Almacenamiento persistente en disco</text>
+</g>
 <g id="clust4" class="cluster">
 <title>cluster_sm</title>
-<path fill="#f0f9ff" stroke="#0369a1" d="M20,-111.6C20,-111.6 458,-111.6 458,-111.6 464,-111.6 470,-117.6 470,-123.6 470,-123.6 470,-245.4 470,-245.4 470,-251.4 464,-257.4 458,-257.4 458,-257.4 20,-257.4 20,-257.4 14,-257.4 8,-251.4 8,-245.4 8,-245.4 8,-123.6 8,-123.6 8,-117.6 14,-111.6 20,-111.6"></path>
-<text text-anchor="middle" x="239" y="-240.8" font-family="Helvetica,sans-Serif" font-size="14.00" fill="#075985">2. Gestor de almacenamiento (control de memoria y transaccionalidad)</text>
+<path fill="#f0f9ff" stroke="#0369a1" d="M20,-111.6C20,-111.6 480,-111.6 480,-111.6 486,-111.6 492,-117.6 492,-123.6 492,-123.6 492,-245.4 492,-245.4 492,-251.4 486,-257.4 480,-257.4 480,-257.4 20,-257.4 20,-257.4 14,-257.4 8,-251.4 8,-245.4 8,-245.4 8,-123.6 8,-123.6 8,-117.6 14,-111.6 20,-111.6"></path>
+<text text-anchor="middle" x="250" y="-240.8" font-family="Helvetica,sans-Serif" font-size="14.00" fill="#075985">2. Gestor de almacenamiento (control de memoria y transaccionalidad)</text>
 </g>
 <g id="clust1" class="cluster">
 <title>cluster_users</title>
-<path fill="#f0fdf4" stroke="#16a34a" stroke-dasharray="5,2" d="M44,-466.6C44,-466.6 440,-466.6 440,-466.6 446,-466.6 452,-472.6 452,-478.6 452,-478.6 452,-531.4 452,-531.4 452,-537.4 446,-543.4 440,-543.4 440,-543.4 44,-543.4 44,-543.4 38,-543.4 32,-537.4 32,-531.4 32,-531.4 32,-478.6 32,-478.6 32,-472.6 38,-466.6 44,-466.6"></path>
-<text text-anchor="middle" x="242" y="-526.8" font-family="Helvetica,sans-Serif" font-size="14.00" fill="#065f46">Capa de usuarios y herramientas de acceso</text>
-</g>
-<g id="clust5" class="cluster">
-<title>cluster_disk</title>
-<path fill="#94a3b8" stroke="#94a3b8" d="M20,-8C20,-8 458,-8 458,-8 464,-8 470,-14 470,-20 470,-20 470,-72.8 470,-72.8 470,-78.8 464,-84.8 458,-84.8 458,-84.8 20,-84.8 20,-84.8 14,-84.8 8,-78.8 8,-72.8 8,-72.8 8,-20 8,-20 8,-14 14,-8 20,-8"></path>
-<text text-anchor="middle" x="239" y="-68.2" font-family="Helvetica,sans-Serif" font-size="14.00" fill="#0f172a">3. Almacenamiento persistente en disco</text>
+<path fill="#f0fdf4" stroke="#16a34a" stroke-dasharray="5,2" d="M84,-466.6C84,-466.6 537,-466.6 537,-466.6 543,-466.6 549,-472.6 549,-478.6 549,-478.6 549,-531.4 549,-531.4 549,-537.4 543,-543.4 537,-543.4 537,-543.4 84,-543.4 84,-543.4 78,-543.4 72,-537.4 72,-531.4 72,-531.4 72,-478.6 72,-478.6 72,-472.6 78,-466.6 84,-466.6"></path>
+<text text-anchor="middle" x="310.5" y="-526.8" font-family="Helvetica,sans-Serif" font-size="14.00" fill="#065f46">Capa de usuarios y herramientas de acceso</text>
 </g>
 <g id="clust3" class="cluster">
 <title>cluster_qp</title>
-<path fill="#f0f9ff" stroke="#0284c7" d="M20,-284.2C20,-284.2 458,-284.2 458,-284.2 464,-284.2 470,-290.2 470,-296.2 470,-296.2 470,-427.8 470,-427.8 470,-433.8 464,-439.8 458,-439.8 458,-439.8 20,-439.8 20,-439.8 14,-439.8 8,-433.8 8,-427.8 8,-427.8 8,-296.2 8,-296.2 8,-290.2 14,-284.2 20,-284.2"></path>
-<text text-anchor="middle" x="239" y="-423.2" font-family="Helvetica,sans-Serif" font-size="14.00" fill="#075985">1. Procesador de consultas (evaluación y optimización lógica)</text>
+<path fill="#f0f9ff" stroke="#0284c7" d="M20,-284.2C20,-284.2 480,-284.2 480,-284.2 486,-284.2 492,-290.2 492,-296.2 492,-296.2 492,-427.8 492,-427.8 492,-433.8 486,-439.8 480,-439.8 480,-439.8 20,-439.8 20,-439.8 14,-439.8 8,-433.8 8,-427.8 8,-427.8 8,-296.2 8,-296.2 8,-290.2 14,-284.2 20,-284.2"></path>
+<text text-anchor="middle" x="250" y="-423.2" font-family="Helvetica,sans-Serif" font-size="14.00" fill="#075985">1. Procesador de consultas (evaluación y optimización lógica)</text>
 </g>
 <!-- u_app -->
 <g id="node1" class="node">
 <title>u_app</title>
-<path fill="#dcfce7" stroke="#16a34a" d="M215.5,-510.6C215.5,-510.6 52.5,-510.6 52.5,-510.6 46.5,-510.6 40.5,-504.6 40.5,-498.6 40.5,-498.6 40.5,-486.6 40.5,-486.6 40.5,-480.6 46.5,-474.6 52.5,-474.6 52.5,-474.6 215.5,-474.6 215.5,-474.6 221.5,-474.6 227.5,-480.6 227.5,-486.6 227.5,-486.6 227.5,-498.6 227.5,-498.6 227.5,-504.6 221.5,-510.6 215.5,-510.6"></path>
-<text text-anchor="middle" x="134" y="-495.75" font-family="Helvetica,sans-Serif" font-size="10.50">Usuarios finales</text>
-<text text-anchor="middle" x="134" y="-483.15" font-family="Helvetica,sans-Serif" font-size="10.50">(Aplicaciones web / SIG)</text>
+<path fill="#dcfce7" stroke="#16a34a" d="M284,-510.6C284,-510.6 92,-510.6 92,-510.6 86,-510.6 80,-504.6 80,-498.6 80,-498.6 80,-486.6 80,-486.6 80,-480.6 86,-474.6 92,-474.6 92,-474.6 284,-474.6 284,-474.6 290,-474.6 296,-480.6 296,-486.6 296,-486.6 296,-498.6 296,-498.6 296,-504.6 290,-510.6 284,-510.6"></path>
+<text text-anchor="middle" x="188" y="-495.75" font-family="Helvetica,sans-Serif" font-size="10.50">Usuarios y aplicaciones</text>
+<text text-anchor="middle" x="188" y="-483.15" font-family="Helvetica,sans-Serif" font-size="10.50">(QGIS / WebSIG / Pipelines)</text>
 </g>
 <!-- parser -->
 <g id="node3" class="node">
 <title>parser</title>
-<path fill="#bae6fd" stroke="#0284c7" d="M450,-407C450,-407 28,-407 28,-407 22,-407 16,-401 16,-395 16,-395 16,-383 16,-383 16,-377 22,-371 28,-371 28,-371 450,-371 450,-371 456,-371 462,-377 462,-383 462,-383 462,-395 462,-395 462,-401 456,-407 450,-407"></path>
-<text text-anchor="middle" x="239" y="-392.15" font-family="Helvetica,sans-Serif" font-size="10.50">Compilador / Optimizador SQL</text>
-<text text-anchor="middle" x="239" y="-379.55" font-family="Helvetica,sans-Serif" font-size="10.50">(Traducción a álgebra relacional y plan de costo mínimo)</text>
+<path fill="#bae6fd" stroke="#0284c7" d="M472,-407C472,-407 28,-407 28,-407 22,-407 16,-401 16,-395 16,-395 16,-383 16,-383 16,-377 22,-371 28,-371 28,-371 472,-371 472,-371 478,-371 484,-377 484,-383 484,-383 484,-395 484,-395 484,-401 478,-407 472,-407"></path>
+<text text-anchor="middle" x="250" y="-392.15" font-family="Helvetica,sans-Serif" font-size="10.50">Compilador / Optimizador basado en costos (CBO)</text>
+<text text-anchor="middle" x="250" y="-379.55" font-family="Helvetica,sans-Serif" font-size="10.50">(Traducción a álgebra relacional y selección del plan óptimo)</text>
 </g>
 <!-- u_app&#45;&gt;parser -->
 <g id="edge3" class="edge">
 <title>u_app-&gt;parser</title>
-<path fill="none" stroke="#475569" d="M138.16,-474.53C140.9,-465.86 145.16,-455.55 151.47,-447.8 163.64,-432.85 180.72,-420.38 196.56,-410.89"></path>
-<polygon fill="#475569" stroke="#475569" points="203.25,-407.01 198.46,-413.69 200.01,-408.89 196.76,-410.77 196.76,-410.77 196.76,-410.77 200.01,-408.89 195.07,-407.85 203.25,-407.01 203.25,-407.01"></polygon>
-<text text-anchor="middle" x="186.27" y="-450.5" font-family="Helvetica,sans-Serif" font-size="9.00"> Sentencias DML</text>
+<path fill="none" stroke="#475569" d="M190.12,-474.27C191.64,-465.92 194.2,-455.98 198.47,-447.8 205.18,-434.95 215.38,-422.67 224.94,-412.76"></path>
+<polygon fill="#475569" stroke="#475569" points="230.46,-407.21 227.56,-414.91 227.82,-409.87 225.17,-412.53 225.17,-412.53 225.17,-412.53 227.82,-409.87 222.78,-410.15 230.46,-407.21 230.46,-407.21"></polygon>
+<text text-anchor="middle" x="233.27" y="-450.5" font-family="Helvetica,sans-Serif" font-size="9.00"> Sentencias DML</text>
 </g>
 <!-- u_dba -->
 <g id="node2" class="node">
 <title>u_dba</title>
-<path fill="#dcfce7" stroke="#16a34a" d="M431.5,-510.6C431.5,-510.6 268.5,-510.6 268.5,-510.6 262.5,-510.6 256.5,-504.6 256.5,-498.6 256.5,-498.6 256.5,-486.6 256.5,-486.6 256.5,-480.6 262.5,-474.6 268.5,-474.6 268.5,-474.6 431.5,-474.6 431.5,-474.6 437.5,-474.6 443.5,-480.6 443.5,-486.6 443.5,-486.6 443.5,-498.6 443.5,-498.6 443.5,-504.6 437.5,-510.6 431.5,-510.6"></path>
-<text text-anchor="middle" x="350" y="-495.75" font-family="Helvetica,sans-Serif" font-size="10.50">Analistas y DBA</text>
-<text text-anchor="middle" x="350" y="-483.15" font-family="Helvetica,sans-Serif" font-size="10.50">(Consola psql / DDL / DML)</text>
+<path fill="#dcfce7" stroke="#16a34a" d="M529,-510.6C529,-510.6 337,-510.6 337,-510.6 331,-510.6 325,-504.6 325,-498.6 325,-498.6 325,-486.6 325,-486.6 325,-480.6 331,-474.6 337,-474.6 337,-474.6 529,-474.6 529,-474.6 535,-474.6 541,-480.6 541,-486.6 541,-486.6 541,-498.6 541,-498.6 541,-504.6 535,-510.6 529,-510.6"></path>
+<text text-anchor="middle" x="433" y="-495.75" font-family="Helvetica,sans-Serif" font-size="10.50">Analistas y DBA</text>
+<text text-anchor="middle" x="433" y="-483.15" font-family="Helvetica,sans-Serif" font-size="10.50">(Consola psql / Scripts DDL/DML)</text>
 </g>
 <!-- u_dba&#45;&gt;parser -->
 <g id="edge4" class="edge">
 <title>u_dba-&gt;parser</title>
-<path fill="none" stroke="#475569" d="M331.42,-474.59C312.69,-457.45 283.7,-430.91 263.18,-412.14"></path>
-<polygon fill="#475569" stroke="#475569" points="257.64,-407.06 265.45,-409.64 260.41,-409.59 263.17,-412.12 263.17,-412.12 263.17,-412.12 260.41,-409.59 260.89,-414.61 257.64,-407.06 257.64,-407.06"></polygon>
-<text text-anchor="middle" x="356.52" y="-450.5" font-family="Helvetica,sans-Serif" font-size="9.00"> Sentencias DDL / SQL</text>
+<path fill="none" stroke="#475569" d="M402.37,-474.59C370.7,-457.01 321.23,-429.54 287.3,-410.71"></path>
+<polygon fill="#475569" stroke="#475569" points="280.73,-407.06 288.93,-407.75 284.01,-408.88 287.29,-410.7 287.29,-410.7 287.29,-410.7 284.01,-408.88 285.65,-413.65 280.73,-407.06 280.73,-407.06"></polygon>
+<text text-anchor="middle" x="414.52" y="-450.5" font-family="Helvetica,sans-Serif" font-size="9.00"> Sentencias DDL / SQL</text>
 </g>
 <!-- engine -->
 <g id="node4" class="node">
 <title>engine</title>
-<path fill="#bae6fd" stroke="#0284c7" d="M450,-328.2C450,-328.2 28,-328.2 28,-328.2 22,-328.2 16,-322.2 16,-316.2 16,-316.2 16,-304.2 16,-304.2 16,-298.2 22,-292.2 28,-292.2 28,-292.2 450,-292.2 450,-292.2 456,-292.2 462,-298.2 462,-304.2 462,-304.2 462,-316.2 462,-316.2 462,-322.2 456,-328.2 450,-328.2"></path>
-<text text-anchor="middle" x="239" y="-313.35" font-family="Helvetica,sans-Serif" font-size="10.50">Motor de evaluación de consultas</text>
-<text text-anchor="middle" x="239" y="-300.75" font-family="Helvetica,sans-Serif" font-size="10.50">(Despacho y ejecución del plan óptimo)</text>
+<path fill="#bae6fd" stroke="#0284c7" d="M472,-328.2C472,-328.2 28,-328.2 28,-328.2 22,-328.2 16,-322.2 16,-316.2 16,-316.2 16,-304.2 16,-304.2 16,-298.2 22,-292.2 28,-292.2 28,-292.2 472,-292.2 472,-292.2 478,-292.2 484,-298.2 484,-304.2 484,-304.2 484,-316.2 484,-316.2 484,-322.2 478,-328.2 472,-328.2"></path>
+<text text-anchor="middle" x="250" y="-313.35" font-family="Helvetica,sans-Serif" font-size="10.50">Motor de evaluación de consultas</text>
+<text text-anchor="middle" x="250" y="-300.75" font-family="Helvetica,sans-Serif" font-size="10.50">(Despacho y ejecución de operadores algebraicos)</text>
 </g>
 <!-- parser&#45;&gt;engine -->
 <g id="edge1" class="edge">
 <title>parser-&gt;engine</title>
-<path fill="none" stroke="#475569" d="M239,-370.96C239,-360.69 239,-347.43 239,-336.01"></path>
-<polygon fill="#475569" stroke="#475569" points="239,-328.46 242.38,-335.96 239,-332.21 239,-335.96 239,-335.96 239,-335.96 239,-332.21 235.63,-335.96 239,-328.46 239,-328.46"></polygon>
-<text text-anchor="middle" x="284.03" y="-346.9" font-family="Helvetica,sans-Serif" font-size="9.00"> Plan físico ejecutable</text>
+<path fill="none" stroke="#475569" d="M250,-370.96C250,-360.69 250,-347.43 250,-336.01"></path>
+<polygon fill="#475569" stroke="#475569" points="250,-328.46 253.38,-335.96 250,-332.21 250,-335.96 250,-335.96 250,-335.96 250,-332.21 246.63,-335.96 250,-328.46 250,-328.46"></polygon>
+<text text-anchor="middle" x="295.03" y="-346.9" font-family="Helvetica,sans-Serif" font-size="9.00"> Plan físico ejecutable</text>
 </g>
 <!-- sm_ctrl -->
 <g id="node5" class="node">
 <title>sm_ctrl</title>
-<path fill="#e0f2fe" stroke="#38bdf8" d="M450,-224.6C450,-224.6 28,-224.6 28,-224.6 22,-224.6 16,-218.6 16,-212.6 16,-212.6 16,-200.6 16,-200.6 16,-194.6 22,-188.6 28,-188.6 28,-188.6 450,-188.6 450,-188.6 456,-188.6 462,-194.6 462,-200.6 462,-200.6 462,-212.6 462,-212.6 462,-218.6 456,-224.6 450,-224.6"></path>
-<text text-anchor="middle" x="239" y="-209.75" font-family="Helvetica,sans-Serif" font-size="10.50">Control transaccional e integridad</text>
-<text text-anchor="middle" x="239" y="-197.15" font-family="Helvetica,sans-Serif" font-size="10.50">[ Gestor ACID / WAL &nbsp;| &nbsp;Autorización ]</text>
+<path fill="#e0f2fe" stroke="#38bdf8" d="M472,-224.6C472,-224.6 28,-224.6 28,-224.6 22,-224.6 16,-218.6 16,-212.6 16,-212.6 16,-200.6 16,-200.6 16,-194.6 22,-188.6 28,-188.6 28,-188.6 472,-188.6 472,-188.6 478,-188.6 484,-194.6 484,-200.6 484,-200.6 484,-212.6 484,-212.6 484,-218.6 478,-224.6 472,-224.6"></path>
+<text text-anchor="middle" x="250" y="-209.75" font-family="Helvetica,sans-Serif" font-size="10.50">Control transaccional e integridad</text>
+<text text-anchor="middle" x="250" y="-197.15" font-family="Helvetica,sans-Serif" font-size="10.50">[ Gestor ACID / Bitácora WAL &nbsp;| &nbsp;Gestor de integridad y permisos ]</text>
 </g>
 <!-- engine&#45;&gt;sm_ctrl -->
 <g id="edge5" class="edge">
 <title>engine-&gt;sm_ctrl</title>
-<path fill="none" stroke="#475569" d="M239,-291.96C239,-275.76 239,-251.32 239,-232.9"></path>
-<polygon fill="#475569" stroke="#475569" points="239,-224.92 242.38,-232.42 239,-228.67 239,-232.42 239,-232.42 239,-232.42 239,-228.67 235.63,-232.42 239,-224.92 239,-224.92"></polygon>
-<text text-anchor="middle" x="276.77" y="-268.1" font-family="Helvetica,sans-Serif" font-size="9.00"> Solicitud de tuplas</text>
+<path fill="none" stroke="#475569" d="M250,-291.96C250,-275.76 250,-251.32 250,-232.9"></path>
+<polygon fill="#475569" stroke="#475569" points="250,-224.92 253.38,-232.42 250,-228.67 250,-232.42 250,-232.42 250,-232.42 250,-228.67 246.63,-232.42 250,-224.92 250,-224.92"></polygon>
+<text text-anchor="middle" x="287.77" y="-268.1" font-family="Helvetica,sans-Serif" font-size="9.00"> Solicitud de tuplas</text>
 </g>
 <!-- sm_buf -->
 <g id="node6" class="node">
 <title>sm_buf</title>
-<path fill="#e0f2fe" stroke="#38bdf8" d="M450,-155.6C450,-155.6 28,-155.6 28,-155.6 22,-155.6 16,-149.6 16,-143.6 16,-143.6 16,-131.6 16,-131.6 16,-125.6 22,-119.6 28,-119.6 28,-119.6 450,-119.6 450,-119.6 456,-119.6 462,-125.6 462,-131.6 462,-131.6 462,-143.6 462,-143.6 462,-149.6 456,-155.6 450,-155.6"></path>
-<text text-anchor="middle" x="239" y="-140.75" font-family="Helvetica,sans-Serif" font-size="10.50">Gestor de búferes y archivos</text>
-<text text-anchor="middle" x="239" y="-128.15" font-family="Helvetica,sans-Serif" font-size="10.50">[ Paginación RAM &nbsp;| &nbsp;Estructuras de bloques ]</text>
+<path fill="#e0f2fe" stroke="#38bdf8" d="M472,-155.6C472,-155.6 28,-155.6 28,-155.6 22,-155.6 16,-149.6 16,-143.6 16,-143.6 16,-131.6 16,-131.6 16,-125.6 22,-119.6 28,-119.6 28,-119.6 472,-119.6 472,-119.6 478,-119.6 484,-125.6 484,-131.6 484,-131.6 484,-143.6 484,-143.6 484,-149.6 478,-155.6 472,-155.6"></path>
+<text text-anchor="middle" x="250" y="-140.75" font-family="Helvetica,sans-Serif" font-size="10.50">Gestor de búferes y archivos</text>
+<text text-anchor="middle" x="250" y="-128.15" font-family="Helvetica,sans-Serif" font-size="10.50">[ Búfer pool en memoria RAM &nbsp;| &nbsp;Paginación y direccionamiento ]</text>
 </g>
 <!-- sm_ctrl&#45;&gt;sm_buf -->
 <g id="edge2" class="edge">
 <title>sm_ctrl-&gt;sm_buf</title>
-<path fill="none" stroke="#475569" stroke-dasharray="1,5" d="M239,-188.35C239,-178.42 239,-165.98 239,-156.03"></path>
+<path fill="none" stroke="#475569" stroke-dasharray="1,5" d="M250,-188.35C250,-178.42 250,-165.98 250,-156.03"></path>
 </g>
 <!-- disk -->
 <g id="node7" class="node">
 <title>disk</title>
-<path fill="#ffffff" stroke="#64748b" d="M450,-52C450,-52 28,-52 28,-52 22,-52 16,-46 16,-40 16,-40 16,-28 16,-28 16,-22 22,-16 28,-16 28,-16 450,-16 450,-16 456,-16 462,-22 462,-28 462,-28 462,-40 462,-40 462,-46 456,-52 450,-52"></path>
-<text text-anchor="middle" x="239" y="-37.15" font-family="Helvetica,sans-Serif" font-size="10.50">Páginas de disco:</text>
-<text text-anchor="middle" x="239" y="-24.55" font-family="Helvetica,sans-Serif" font-size="10.50">[ Tablas relacionales &nbsp;| &nbsp;Índices (B+ / GiST) &nbsp;| &nbsp;Catálogo (Diccionario) ]</text>
+<path fill="#ffffff" stroke="#64748b" d="M472,-52C472,-52 28,-52 28,-52 22,-52 16,-46 16,-40 16,-40 16,-28 16,-28 16,-22 22,-16 28,-16 28,-16 472,-16 472,-16 478,-16 484,-22 484,-28 484,-28 484,-40 484,-40 484,-46 478,-52 472,-52"></path>
+<text text-anchor="middle" x="250" y="-37.15" font-family="Helvetica,sans-Serif" font-size="10.50">Páginas de almacenamiento físico (8 KB):</text>
+<text text-anchor="middle" x="250" y="-24.55" font-family="Helvetica,sans-Serif" font-size="10.50">[ Tablas relacionales &nbsp;| &nbsp;Índices (B+ / GiST) &nbsp;| &nbsp;Diccionario de datos &nbsp;| &nbsp;Estadísticas ]</text>
 </g>
 <!-- sm_buf&#45;&gt;disk -->
 <g id="edge6" class="edge">
 <title>sm_buf-&gt;disk</title>
-<path fill="none" stroke="#475569" d="M239,-111.39C239,-95.73 239,-75.68 239,-60.04"></path>
-<polygon fill="#475569" stroke="#475569" points="236.38,-111.86 239,-119.36 241.63,-111.86 236.38,-111.86"></polygon>
-<polygon fill="#475569" stroke="#475569" points="239,-52.32 242.38,-59.82 239,-56.07 239,-59.82 239,-59.82 239,-59.82 239,-56.07 235.63,-59.82 239,-52.32 239,-52.32"></polygon>
-<text text-anchor="middle" x="301.28" y="-95.5" font-family="Helvetica,sans-Serif" font-size="9.00"> Transferencia de bloques (I/O)</text>
+<path fill="none" stroke="#475569" d="M250,-111.39C250,-95.73 250,-75.68 250,-60.04"></path>
+<polygon fill="#475569" stroke="#475569" points="247.38,-111.86 250,-119.36 252.63,-111.86 247.38,-111.86"></polygon>
+<polygon fill="#475569" stroke="#475569" points="250,-52.32 253.38,-59.82 250,-56.07 250,-59.82 250,-59.82 250,-59.82 250,-56.07 246.63,-59.82 250,-52.32 250,-52.32"></polygon>
+<text text-anchor="middle" x="309.28" y="-95.5" font-family="Helvetica,sans-Serif" font-size="9.00"> Transferencia de bloques I/O</text>
 </g>
 </g>
 </svg>
 </div>
-<p></p></figure><p></p>
+</div>
 </div>
 </div>
 </div>
@@ -902,173 +872,200 @@ Alexys H. Rodríguez-Avellaneda Ph.D.
 <li><p><strong>Geometrías compuestas</strong>: Vértices múltiples, límites cerrados y perforaciones internas.</p></li>
 <li><p><strong>Fallo del árbol B/B+</strong>: Incapacidad de indexar de forma nativa rangos bidimensionales o cajas envolventes mínimas (<em>MBR</em>).</p></li>
 </ul>
-</section></section>
-<section>
-<section class="title-slide slide level1 center">
-<h1>Evolución de modelos de datos</h1>
-
 </section>
 <section class="slide level2">
-<h2>Taxonomía de modelos de bases de datos</h2>
-<div style="font-size: 0.80em; line-height: 1.28;">
-<div class="columns">
-<div class="column" style="width:50%;">
-<p><strong>Paradigmas clásicos</strong></p>
-<ul>
-<li><strong>Tipo 1 (1950–1960)</strong>: Sistemas de archivos, modelos jerárquicos y en red gestionados mediante punteros físicos en disco (estándar CODASYL).</li>
-<li><strong>Tipo 2 (1970+)</strong>: Modelo relacional (Codd); tuplas, álgebra relacional, normalización formal y garantías transaccionales ACID (OLTP).</li>
-<li><strong>Tipo 3 (1990+)</strong>: Orientado a objetos (OODBMS) y objeto-relacional (ORDBMS); soporte nativo de tipos abstractos (ADT), herencia e índices extensibles.</li>
-</ul>
-</div><div class="column" style="width:50%;">
-<p><strong>Paradigmas contemporáneos</strong></p>
-<ul>
-<li><strong>NoSQL (2010+)</strong>: Esquemas flexibles (<em>schema-on-read</em>); familias documentales, clave-valor, columnas anchas y grafos (ISO/IEC 39075:2024 GQL).</li>
-<li><strong>NewSQL (2012+)</strong>: Álgebra relacional estándar con transaccionalidad ACID global sobre clústeres elásticos distribuidos (Spanner, CockroachDB).</li>
-<li><strong>Vectoriales (2020+)</strong>: Indexación y búsqueda de similitud sobre <em>embeddings</em> multidimensionales densos mediante grafos HNSW.</li>
-</ul>
-</div>
-</div>
+<h2>Taxonomía de modelos y arquitectura de despliegue: paradigmas clásicos y relacionales</h2>
+<div style="font-size: 0.70em; line-height: 1.22;">
+<p>Los modelos algebraicos iniciales y transaccionales se vinculan a topologías de acceso físico o servicios en red:</p>
+<table>
+<caption>Paradigmas clásicos y objeto-relacionales frente al sistema operativo.</caption>
+<colgroup>
+<col style="width: 22%">
+<col style="width: 33%">
+<col style="width: 44%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Modelo de datos</th>
+<th style="text-align: left;">Paradigma representativo</th>
+<th style="text-align: left;">Topología de despliegue predominante</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Tipo 1 (1950–1960)</strong></td>
+<td style="text-align: left;">Jerárquico (IMS) y en red (CODASYL).</td>
+<td style="text-align: left;"><strong>Local / Monolítica</strong>: Punteros directos a sectores de disco en un único equipo.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Tipo 2 (1970+)</strong></td>
+<td style="text-align: left;">Relacional OLTP (System R, Ingres, MySQL).</td>
+<td style="text-align: left;"><strong>Cliente-servidor</strong>: Proceso demonio aislado (<code>mysqld</code>) accesible por red TCP.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Tipo 2 Columnar (2019+)</strong></td>
+<td style="text-align: left;">Relacional analítico OLAP (DuckDB, MonetDB).</td>
+<td style="text-align: left;"><strong>Embebida (<em>in-process</em>)</strong>: Biblioteca C/C++ en el mismo espacio de memoria del cliente.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Tipo 3 (1990+)</strong></td>
+<td style="text-align: left;">Objeto-relacional / ORDBMS (PostgreSQL/PostGIS).</td>
+<td style="text-align: left;"><strong>Cliente-servidor</strong>: Demonio multiusuario (<code>postgres</code>) con tipos abstractos (ADT).</td>
+</tr>
+</tbody>
+</table>
 </div>
 </section>
 <section class="slide level2">
-<h2>Cronología y convergencia espacial</h2>
-<div class="cell" data-fig-width="9" data-fig-height="2" data-layout-align="center">
+<h2>Taxonomía de modelos y arquitectura de despliegue: paradigmas contemporáneos</h2>
+<div style="font-size: 0.70em; line-height: 1.22;">
+<p>Los esquemas analíticos de frontera distribuyen el cómputo en clústeres elásticos o espacios métricos:</p>
+<table>
+<caption>Paradigmas distribuidos, no relacionales y vectoriales frente al sistema operativo.</caption>
+<colgroup>
+<col style="width: 22%">
+<col style="width: 33%">
+<col style="width: 44%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Modelo de datos</th>
+<th style="text-align: left;">Paradigma representativo</th>
+<th style="text-align: left;">Topología de despliegue predominante</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>NoSQL / Grafos (2010+)</strong></td>
+<td style="text-align: left;">Documental (Mongo), Grafos (Neo4j, ISO GQL).</td>
+<td style="text-align: left;"><strong>Cliente-servidor y distribuida</strong>: Clústeres con esquemas dinámicos (<em>schema-on-read</em>).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>NewSQL (2012+)</strong></td>
+<td style="text-align: left;">Relacional distribuido elástico (Spanner, Cockroach).</td>
+<td style="text-align: left;"><strong>Distribuida en clúster</strong>: Nodos coordinados por consenso (Raft/Paxos) con ACID global.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Vectoriales (2020+)</strong></td>
+<td style="text-align: left;">Indexación métrica HNSW (Milvus, pgvector).</td>
+<td style="text-align: left;"><strong>Híbrida</strong>: Motores dedicados cliente-servidor o extensiones sobre ORDBMS.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section class="slide level2">
+<h2>Cronología y convergencia hacia el modelo objeto-relacional</h2>
+<div class="cell" data-fig-width="10" data-fig-height="2.6" data-out-width="100%" data-layout-align="center">
 <div class="cell-output-display">
+<div id="dot-cronologia-modelos">
 <div>
-<p></p><figure class=""><p></p>
-<div>
-<svg width="864" height="192" viewbox="0.00 0.00 414.65 144.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 140)">
+<svg width="960" height="250" viewbox="0.00 0.00 698.66 187.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<g id="graph0" class="graph" transform="scale(0.958974 0.958974) rotate(0) translate(4 191)">
 <title>G</title>
 <!-- t1 -->
 <g id="node1" class="node">
 <title>t1</title>
-<path fill="#e2e8f0" stroke="#94a3b8" d="M64.76,-86C64.76,-86 12.08,-86 12.08,-86 6.08,-86 0.08,-80 0.08,-74 0.08,-74 0.08,-62 0.08,-62 0.08,-56 6.08,-50 12.08,-50 12.08,-50 64.76,-50 64.76,-50 70.76,-50 76.76,-56 76.76,-62 76.76,-62 76.76,-74 76.76,-74 76.76,-80 70.76,-86 64.76,-86"></path>
-<text text-anchor="middle" x="38.42" y="-70.55" font-family="Helvetica,sans-Serif" font-size="8.50">Tipo 1 (1950-60)</text>
-<text text-anchor="middle" x="38.42" y="-60.35" font-family="Helvetica,sans-Serif" font-size="8.50">Jerárquico / Red</text>
+<path fill="#e2e8f0" stroke="#94a3b8" d="M93.79,-111.38C93.79,-111.38 29.32,-111.38 29.32,-111.38 23.32,-111.38 17.32,-105.38 17.32,-99.38 17.32,-99.38 17.32,-87.38 17.32,-87.38 17.32,-81.38 23.32,-75.38 29.32,-75.38 29.32,-75.38 93.79,-75.38 93.79,-75.38 99.79,-75.38 105.79,-81.38 105.79,-87.38 105.79,-87.38 105.79,-99.38 105.79,-99.38 105.79,-105.38 99.79,-111.38 93.79,-111.38"></path>
+<text text-anchor="middle" x="61.55" y="-96.23" font-family="Helvetica,sans-Serif" font-size="9.50">Tipo 1 (1950-60)</text>
+<text text-anchor="middle" x="61.55" y="-84.83" font-family="Helvetica,sans-Serif" font-size="9.50">Jerárquico / Red</text>
 </g>
 <!-- t2 -->
 <g id="node2" class="node">
 <title>t2</title>
-<path fill="#cbd5e1" stroke="#64748b" d="M170.71,-86C170.71,-86 110.88,-86 110.88,-86 104.88,-86 98.88,-80 98.88,-74 98.88,-74 98.88,-62 98.88,-62 98.88,-56 104.88,-50 110.88,-50 110.88,-50 170.71,-50 170.71,-50 176.71,-50 182.71,-56 182.71,-62 182.71,-62 182.71,-74 182.71,-74 182.71,-80 176.71,-86 170.71,-86"></path>
-<text text-anchor="middle" x="140.8" y="-70.55" font-family="Helvetica,sans-Serif" font-size="8.50">Tipo 2 (1970+)</text>
-<text text-anchor="middle" x="140.8" y="-60.35" font-family="Helvetica,sans-Serif" font-size="8.50">Relacional (OLTP)</text>
+<path fill="#cbd5e1" stroke="#64748b" d="M309.46,-111.38C309.46,-111.38 203.65,-111.38 203.65,-111.38 197.65,-111.38 191.65,-105.38 191.65,-99.38 191.65,-99.38 191.65,-87.38 191.65,-87.38 191.65,-81.38 197.65,-75.38 203.65,-75.38 203.65,-75.38 309.46,-75.38 309.46,-75.38 315.46,-75.38 321.46,-81.38 321.46,-87.38 321.46,-87.38 321.46,-99.38 321.46,-99.38 321.46,-105.38 315.46,-111.38 309.46,-111.38"></path>
+<text text-anchor="middle" x="256.55" y="-96.23" font-family="Helvetica,sans-Serif" font-size="9.50">Tipo 2 (1970+)</text>
+<text text-anchor="middle" x="256.55" y="-84.83" font-family="Helvetica,sans-Serif" font-size="9.50">Relacional (OLTP / OLAP)</text>
 </g>
 <!-- t1&#45;&gt;t2 -->
 <g id="edge1" class="edge">
 <title>t1-&gt;t2</title>
-<path fill="none" stroke="#475569" d="M76.8,-68C81.81,-68 87.01,-68 92.18,-68"></path>
-<polygon fill="#475569" stroke="#475569" points="98.68,-68 92.18,-70.93 95.43,-68 92.18,-68 92.18,-68 92.18,-68 95.43,-68 92.18,-65.08 98.68,-68 98.68,-68"></polygon>
+<path fill="none" stroke="#475569" d="M105.87,-93.38C128.83,-93.38 157.63,-93.38 183.82,-93.38"></path>
+<polygon fill="#475569" stroke="#475569" points="191.5,-93.38 184,-96.75 187.75,-93.38 184,-93.38 184,-93.38 184,-93.38 187.75,-93.38 184,-90 191.5,-93.38 191.5,-93.38"></polygon>
 </g>
 <!-- t3 -->
 <g id="node3" class="node">
 <title>t3</title>
-<path fill="#94a3b8" stroke="#475569" d="M279.29,-136C279.29,-136 222.16,-136 222.16,-136 216.16,-136 210.16,-130 210.16,-124 210.16,-124 210.16,-112 210.16,-112 210.16,-106 216.16,-100 222.16,-100 222.16,-100 279.29,-100 279.29,-100 285.29,-100 291.29,-106 291.29,-112 291.29,-112 291.29,-124 291.29,-124 291.29,-130 285.29,-136 279.29,-136"></path>
-<text text-anchor="middle" x="250.73" y="-120.55" font-family="Helvetica,sans-Serif" font-size="8.50">Tipo 3 (1990+)</text>
-<text text-anchor="middle" x="250.73" y="-110.35" font-family="Helvetica,sans-Serif" font-size="8.50">Objeto-Relacional</text>
+<path fill="#94a3b8" stroke="#475569" d="M498.07,-181.38C498.07,-181.38 429.04,-181.38 429.04,-181.38 423.04,-181.38 417.04,-175.38 417.04,-169.38 417.04,-169.38 417.04,-157.38 417.04,-157.38 417.04,-151.38 423.04,-145.38 429.04,-145.38 429.04,-145.38 498.07,-145.38 498.07,-145.38 504.07,-145.38 510.07,-151.38 510.07,-157.38 510.07,-157.38 510.07,-169.38 510.07,-169.38 510.07,-175.38 504.07,-181.38 498.07,-181.38"></path>
+<text text-anchor="middle" x="463.55" y="-166.22" font-family="Helvetica,sans-Serif" font-size="9.50">Tipo 3 (1990+)</text>
+<text text-anchor="middle" x="463.55" y="-154.82" font-family="Helvetica,sans-Serif" font-size="9.50">Objeto-Relacional</text>
 </g>
 <!-- t2&#45;&gt;t3 -->
 <g id="edge2" class="edge">
 <title>t2-&gt;t3</title>
-<path fill="none" stroke="#475569" d="M180.76,-86.05C188.56,-89.66 196.81,-93.48 204.78,-97.18"></path>
-<polygon fill="#475569" stroke="#475569" points="210.82,-99.98 203.69,-99.9 207.87,-98.61 204.92,-97.24 204.92,-97.24 204.92,-97.24 207.87,-98.61 206.15,-94.59 210.82,-99.98 210.82,-99.98"></polygon>
+<path fill="none" stroke="#475569" d="M310.34,-111.4C340.88,-121.83 379.17,-134.9 409.71,-145.33"></path>
+<polygon fill="#475569" stroke="#475569" points="416.9,-147.79 408.71,-148.56 413.35,-146.57 409.8,-145.36 409.8,-145.36 409.8,-145.36 413.35,-146.57 410.89,-142.17 416.9,-147.79 416.9,-147.79"></polygon>
 </g>
 <!-- nosql -->
 <g id="node4" class="node">
 <title>nosql</title>
-<path fill="#f8fafc" stroke="#64748b" stroke-dasharray="5,2" d="M284.68,-86C284.68,-86 216.78,-86 216.78,-86 210.78,-86 204.78,-80 204.78,-74 204.78,-74 204.78,-62 204.78,-62 204.78,-56 210.78,-50 216.78,-50 216.78,-50 284.68,-50 284.68,-50 290.68,-50 296.68,-56 296.68,-62 296.68,-62 296.68,-74 296.68,-74 296.68,-80 290.68,-86 284.68,-86"></path>
-<text text-anchor="middle" x="250.73" y="-70.55" font-family="Helvetica,sans-Serif" font-size="8.50">NoSQL (2010+)</text>
-<text text-anchor="middle" x="250.73" y="-60.35" font-family="Helvetica,sans-Serif" font-size="8.50">Documental / Grafos</text>
+<path fill="#f8fafc" stroke="#64748b" stroke-dasharray="5,2" d="M504.17,-111.38C504.17,-111.38 422.93,-111.38 422.93,-111.38 416.93,-111.38 410.93,-105.38 410.93,-99.38 410.93,-99.38 410.93,-87.38 410.93,-87.38 410.93,-81.38 416.93,-75.38 422.93,-75.38 422.93,-75.38 504.17,-75.38 504.17,-75.38 510.17,-75.38 516.17,-81.38 516.17,-87.38 516.17,-87.38 516.17,-99.38 516.17,-99.38 516.17,-105.38 510.17,-111.38 504.17,-111.38"></path>
+<text text-anchor="middle" x="463.55" y="-96.23" font-family="Helvetica,sans-Serif" font-size="9.50">NoSQL (2010+)</text>
+<text text-anchor="middle" x="463.55" y="-84.83" font-family="Helvetica,sans-Serif" font-size="9.50">Documental / Grafos</text>
 </g>
 <!-- t2&#45;&gt;nosql -->
 <g id="edge3" class="edge">
 <title>t2-&gt;nosql</title>
-<path fill="none" stroke="#475569" stroke-dasharray="5,2" d="M182.91,-68C187.82,-68 192.89,-68 197.93,-68"></path>
-<polygon fill="#475569" stroke="#475569" points="204.77,-68 198.27,-70.93 201.52,-68 198.27,-68 198.27,-68 198.27,-68 201.52,-68 198.27,-65.08 204.77,-68 204.77,-68"></polygon>
+<path fill="none" stroke="#475569" stroke-dasharray="5,2" d="M321.29,-93.38C347.39,-93.38 377.42,-93.38 403.06,-93.38"></path>
+<polygon fill="#475569" stroke="#475569" points="410.87,-93.38 403.37,-96.75 407.12,-93.38 403.37,-93.38 403.37,-93.38 403.37,-93.38 407.12,-93.38 403.37,-90 410.87,-93.38 410.87,-93.38"></polygon>
 </g>
 <!-- newsql -->
 <g id="node5" class="node">
 <title>newsql</title>
-<path fill="#e0f2fe" stroke="#0284c7" d="M278.64,-36C278.64,-36 222.82,-36 222.82,-36 216.82,-36 210.82,-30 210.82,-24 210.82,-24 210.82,-12 210.82,-12 210.82,-6 216.82,0 222.82,0 222.82,0 278.64,0 278.64,0 284.64,0 290.64,-6 290.64,-12 290.64,-12 290.64,-24 290.64,-24 290.64,-30 284.64,-36 278.64,-36"></path>
-<text text-anchor="middle" x="250.73" y="-20.55" font-family="Helvetica,sans-Serif" font-size="8.50">NewSQL (2012+)</text>
-<text text-anchor="middle" x="250.73" y="-10.35" font-family="Helvetica,sans-Serif" font-size="8.50">SQL Distribuido</text>
+<path fill="#e0f2fe" stroke="#0284c7" d="M497.21,-41.38C497.21,-41.38 429.89,-41.38 429.89,-41.38 423.89,-41.38 417.89,-35.38 417.89,-29.38 417.89,-29.38 417.89,-17.37 417.89,-17.37 417.89,-11.38 423.89,-5.38 429.89,-5.38 429.89,-5.38 497.21,-5.38 497.21,-5.38 503.21,-5.38 509.21,-11.38 509.21,-17.38 509.21,-17.38 509.21,-29.38 509.21,-29.38 509.21,-35.38 503.21,-41.38 497.21,-41.38"></path>
+<text text-anchor="middle" x="463.55" y="-26.22" font-family="Helvetica,sans-Serif" font-size="9.50">NewSQL (2012+)</text>
+<text text-anchor="middle" x="463.55" y="-14.82" font-family="Helvetica,sans-Serif" font-size="9.50">SQL Distribuido</text>
 </g>
 <!-- t2&#45;&gt;newsql -->
 <g id="edge4" class="edge">
 <title>t2-&gt;newsql</title>
-<path fill="none" stroke="#475569" d="M180.76,-49.95C188.56,-46.34 196.81,-42.52 204.78,-38.82"></path>
-<polygon fill="#475569" stroke="#475569" points="210.82,-36.02 206.15,-41.41 207.87,-37.39 204.92,-38.76 204.92,-38.76 204.92,-38.76 207.87,-37.39 203.69,-36.1 210.82,-36.02 210.82,-36.02"></polygon>
+<path fill="none" stroke="#475569" d="M310.34,-75.35C341.1,-64.85 379.72,-51.66 410.37,-41.19"></path>
+<polygon fill="#475569" stroke="#475569" points="417.58,-38.73 411.57,-44.35 414.03,-39.94 410.48,-41.16 410.48,-41.16 410.48,-41.16 414.03,-39.94 409.39,-37.96 417.58,-38.73 417.58,-38.73"></polygon>
 </g>
 <!-- vec -->
 <g id="node6" class="node">
 <title>vec</title>
-<path fill="#bae6fd" stroke="#0369a1" d="M394.62,-86C394.62,-86 330.73,-86 330.73,-86 324.73,-86 318.73,-80 318.73,-74 318.73,-74 318.73,-62 318.73,-62 318.73,-56 324.73,-50 330.73,-50 330.73,-50 394.62,-50 394.62,-50 400.62,-50 406.62,-56 406.62,-62 406.62,-62 406.62,-74 406.62,-74 406.62,-80 400.62,-86 394.62,-86"></path>
-<text text-anchor="middle" x="362.67" y="-70.55" font-family="Helvetica,sans-Serif" font-size="8.50">Vectoriales (2020+)</text>
-<text text-anchor="middle" x="362.67" y="-60.35" font-family="Helvetica,sans-Serif" font-size="8.50">Embeddings / IA</text>
+<path fill="#bae6fd" stroke="#0369a1" d="M688.7,-111.38C688.7,-111.38 612.41,-111.38 612.41,-111.38 606.41,-111.38 600.41,-105.38 600.41,-99.38 600.41,-99.38 600.41,-87.38 600.41,-87.38 600.41,-81.38 606.41,-75.38 612.41,-75.38 612.41,-75.38 688.7,-75.38 688.7,-75.38 694.7,-75.38 700.7,-81.38 700.7,-87.38 700.7,-87.38 700.7,-99.38 700.7,-99.38 700.7,-105.38 694.7,-111.38 688.7,-111.38"></path>
+<text text-anchor="middle" x="650.55" y="-96.23" font-family="Helvetica,sans-Serif" font-size="9.50">Vectoriales (2020+)</text>
+<text text-anchor="middle" x="650.55" y="-84.83" font-family="Helvetica,sans-Serif" font-size="9.50">Embeddings / IA</text>
 </g>
 <!-- t3&#45;&gt;vec -->
 <g id="edge5" class="edge">
 <title>t3-&gt;vec</title>
-<path fill="none" stroke="#475569" d="M291.42,-99.95C299.36,-96.34 307.76,-92.52 315.89,-88.82"></path>
-<polygon fill="#475569" stroke="#475569" points="322.04,-86.02 317.33,-91.38 319.08,-87.37 316.12,-88.72 316.12,-88.72 316.12,-88.72 319.08,-87.37 314.91,-86.05 322.04,-86.02 322.04,-86.02"></polygon>
+<path fill="none" stroke="#475569" d="M510.28,-146.07C535.82,-136.41 567.81,-124.3 594.69,-114.13"></path>
+<polygon fill="#475569" stroke="#475569" points="601.77,-111.46 595.95,-117.27 598.26,-112.78 594.75,-114.11 594.75,-114.11 594.75,-114.11 598.26,-112.78 593.56,-110.95 601.77,-111.46 601.77,-111.46"></polygon>
 </g>
 <!-- nosql&#45;&gt;vec -->
 <g id="edge6" class="edge">
 <title>nosql-&gt;vec</title>
-<path fill="none" stroke="#475569" stroke-dasharray="5,2" d="M296.77,-68C301.74,-68 306.83,-68 311.85,-68"></path>
-<polygon fill="#475569" stroke="#475569" points="318.66,-68 312.16,-70.93 315.41,-68 312.16,-68 312.16,-68 312.16,-68 315.41,-68 312.16,-65.08 318.66,-68 318.66,-68"></polygon>
+<path fill="none" stroke="#475569" stroke-dasharray="5,2" d="M516.58,-93.38C540.2,-93.38 568.22,-93.38 592.43,-93.38"></path>
+<polygon fill="#475569" stroke="#475569" points="600.14,-93.38 592.64,-96.75 596.39,-93.38 592.64,-93.38 592.64,-93.38 592.64,-93.38 596.39,-93.38 592.64,-90 600.14,-93.38 600.14,-93.38"></polygon>
 </g>
 <!-- newsql&#45;&gt;vec -->
 <g id="edge7" class="edge">
 <title>newsql-&gt;vec</title>
-<path fill="none" stroke="#475569" d="M290.8,-35.77C298.87,-39.44 307.43,-43.33 315.72,-47.1"></path>
-<polygon fill="#475569" stroke="#475569" points="321.99,-49.95 314.86,-49.92 319.03,-48.61 316.07,-47.26 316.07,-47.26 316.07,-47.26 319.03,-48.61 317.28,-44.6 321.99,-49.95 321.99,-49.95"></polygon>
+<path fill="none" stroke="#475569" d="M509.34,-40.32C535.05,-50.05 567.55,-62.35 594.78,-72.65"></path>
+<polygon fill="#475569" stroke="#475569" points="601.95,-75.36 593.74,-75.86 598.44,-74.04 594.93,-72.71 594.93,-72.71 594.93,-72.71 598.44,-74.04 596.13,-69.55 601.95,-75.36 601.95,-75.36"></polygon>
 </g>
 </g>
 </svg>
 </div>
-<p></p></figure><p></p>
 </div>
 </div>
 </div>
-<div style="font-size: 0.84em; line-height: 1.3; margin-top: 0.6em;">
+<div style="font-size: 0.80em; line-height: 1.25; margin-top: 0.4em;">
 <ul>
-<li><p><strong>El catalizador espacial</strong>: Los límites del modelo relacional plano impulsaron el desarrollo del modelo <strong>objeto-relacional (Tipo 3)</strong> para almacenar geometrías complejas bajo tipos abstractos (ADT) sin desarticular coordenadas.</p></li>
-<li><p><strong>Convergencia actual</strong>: Motores relacionales maduros integran almacenamiento semiestructurado (<code>JSONB</code>), cómputo geoespacial (PostGIS) e indexación vectorial densa (<code>pgvector</code>) en una única instancia.</p></li>
+<li><strong>El catalizador espacial</strong>: Los límites del modelo relacional plano impulsaron el desarrollo del modelo <strong>objeto-relacional (Tipo 3)</strong> para almacenar geometrías complejas bajo tipos abstractos (ADT) sin desarticular coordenadas.</li>
+<li><strong>Bifurcación analítica y convergencia</strong>: El modelo relacional consolidó motores orientados a transacciones (OLTP) y escaneos columnares masivos (OLAP). Paralelamente, los motores maduros integran datos semiestructurados (<code>JSONB</code>), cómputo geoespacial (PostGIS) e indexación vectorial densa (<code>pgvector</code>) en una única instancia.</li>
 </ul>
 </div>
 </section>
 <section class="slide level2">
-<h2>Precisiones arquitectónicas contemporáneas</h2>
-<div style="font-size: 0.75em; line-height: 1.25;">
-<div class="columns">
-<div class="column" style="width:33%;">
-<p><strong>PostgreSQL / PostGIS</strong></p>
-<ul>
-<li>Motor objeto-relacional (Tipo 3) de núcleo extensible.</li>
-<li>Sustrato convergente: almacena datos relacionales, documentos (<code>JSONB</code>), geometrías y vectores densos (<code>pgvector</code>).</li>
-</ul>
-</div><div class="column" style="width:33%;">
-<p><strong>DuckDB</strong></p>
-<ul>
-<li>Motor relacional columnar (Tipo 2) con ejecución vectorial en memoria.</li>
-<li>Arquitectura embebida (<em>in-process</em>) sin sobrecarga de red cliente-servidor.</li>
-<li>Optimizado para procesamiento analítico complejo (OLAP) sobre grandes volúmenes espaciales.</li>
-</ul>
-</div><div class="column" style="width:33%;">
-<p><strong>Apache Sedona</strong></p>
-<ul>
-<li><strong>No es un SGBD</strong>: carece de almacenamiento persistente propio, bitácora WAL y garantías ACID.</li>
-<li>Motor de cómputo y procesamiento espacial distribuido en memoria sobre clústeres Apache Spark y Flink.</li>
-</ul>
-</div>
-</div>
-</div>
-</section>
-<section class="slide level2">
-<h2>Evolución de arquitecturas SIG</h2>
-<div style="font-size: 0.76em; line-height: 1.25;">
+<h2>Persistencia políglota: modelos operacionales y analíticos</h2>
+<div style="font-size: 0.66em; line-height: 1.18;">
+<p>La persistencia políglota establece el uso del motor idóneo según la carga:</p>
 <table>
+<caption>Paradigmas operacionales y analíticos en el ecosistema geoespacial.</caption>
 <colgroup>
 <col style="width: 25%">
 <col style="width: 25%">
@@ -1077,30 +1074,224 @@ Alexys H. Rodríguez-Avellaneda Ph.D.
 </colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: left;">Arquitectura</th>
-<th style="text-align: left;">Componentes</th>
-<th style="text-align: left;">Ventajas</th>
-<th style="text-align: left;">Limitaciones</th>
+<th>Paradigma</th>
+<th>Objetivo operativo</th>
+<th>Compromiso (<em>trade-off</em>)</th>
+<th>Rol vigente en geomática</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;"><strong>1. Ad-hoc</strong></td>
-<td style="text-align: left;">Software SIG monousuario con formato binario cerrado.</td>
-<td style="text-align: left;">Alta velocidad y eficiencia en dibujo vectorial local.</td>
-<td style="text-align: left;">Esquema cerrado, nulo soporte concurrente y silos aislados de información.</td>
+<td><strong>ORDBMS (PostGIS)</strong></td>
+<td>Integridad ACID, esquemas normalizados y SQL espacial.</td>
+<td>Sobrecarga de sincronización de páginas en disco y red.</td>
+<td><strong>Núcleo institucional</strong>: Catastro, registro predial y redes de infraestructura.</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><strong>2. Dual / híbrida</strong></td>
-<td style="text-align: left;">SGBD estándar (atributos) + archivos CAD/Shapefile (geometría).</td>
-<td style="text-align: left;">Consultas declarativas SQL sobre la fracción alfanumérica.</td>
-<td style="text-align: left;">Enlace débil por ID, sobrecarga en cliente y riesgo de huérfanos sin ACID conjunto.</td>
+<td><strong>Relacional OLAP (DuckDB)</strong></td>
+<td>Escaneos masivos, agregaciones y formato columnar.</td>
+<td>Ineficiente para mutaciones fila a fila; concurrencia monoproceso.</td>
+<td><strong>Analítica local y cubos</strong>: Series temporales y archivos GeoParquet.</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;"><strong>3. Integrada (SDBMS)</strong></td>
-<td style="text-align: left;">SGBD objeto-relacional (PostGIS) con tipo geométrico nativo.</td>
-<td style="text-align: left;">Consistencia ACID integral, multiusuario y cálculo espacial en servidor.</td>
-<td style="text-align: left;">Exige diseño formal de esquemas relacionales e índices multidimensionales (GiST).</td>
+<td><strong>NoSQL (Documental/KV)</strong></td>
+<td>Muy baja latencia y esquemas dinámicos (<em>schema-on-read</em>).</td>
+<td>Consistencia eventual (BASE) y ausencia de uniones relacionales.</td>
+<td><strong>Caché y microservicios</strong>: Catálogos GeoJSON y caché de teselas web (Redis/Mongo).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section class="slide level2">
+<h2>Persistencia políglota: modelos topológicos y vectoriales</h2>
+<div style="font-size: 0.66em; line-height: 1.18;">
+<p>Modelos no convencionales para problemas de alta dimensionalidad o conectividad:</p>
+<table>
+<caption>Paradigmas de conectividad topológica y representación latente.</caption>
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Paradigma</th>
+<th>Objetivo operativo</th>
+<th>Compromiso (<em>trade-off</em>)</th>
+<th>Rol vigente en geomática</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Grafos (Neo4j)</strong></td>
+<td>Recorrido recursivo sin combinaciones (<em>index-free adjacency</em>).</td>
+<td>Ineficiente para escaneos tabulares globales sobre escalares.</td>
+<td><strong>Topología y redes</strong>: Flujos en cuencas hidrográficas y ruteo sobre mallas.</td>
+</tr>
+<tr class="even">
+<td><strong>Vectoriales (pgvector)</strong></td>
+<td>Búsqueda aproximada (ANN) sobre espacios densos continuos.</td>
+<td>No resuelven predicados topológicos exactos sobre geometrías OGC.</td>
+<td><strong>Búsqueda semántica</strong>: Recuperación de teselas por similitud espectral (<em>embeddings</em>).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section class="slide level2">
+<h2>Precisiones arquitectónicas contemporáneas</h2>
+<div style="font-size: 0.73em; line-height: 1.25;">
+<div class="columns">
+<div class="column" style="width:33%;">
+<p><strong>PostgreSQL / PostGIS</strong></p>
+<ul>
+<li>Motor objeto-relacional (Tipo 3) de núcleo extensible.</li>
+<li>Despliegue <strong>cliente-servidor</strong>: proceso demonio <code>postgres</code> aislado en memoria.</li>
+<li>Comunicaciones reguladas por la pila OSI y control estricto de concurrencia ACID.</li>
+</ul>
+</div><div class="column" style="width:33%;">
+<p><strong>DuckDB</strong></p>
+<ul>
+<li>Motor relacional columnar (Tipo 2) con ejecución vectorial en CPU (SIMD).</li>
+<li>Despliegue <strong>embebido (<em>in-process</em>)</strong>: reside en la memoria del ejecutable cliente.</li>
+<li>Suprime por completo los sockets TCP, las llamadas de red y la serialización a WKB.</li>
+</ul>
+</div><div class="column" style="width:33%;">
+<p><strong>Apache Sedona</strong></p>
+<ul>
+<li><strong>No es un SGBD</strong>: carece de almacenamiento persistente propio y bitácora WAL.</li>
+<li>Motor de <strong>cómputo espacial distribuido</strong> en memoria sobre Apache Spark y Flink.</li>
+<li>Particiona geometrías entre múltiples nodos para resolver cruces masivos (<em>shuffling</em>).</li>
+</ul>
+</div>
+</div>
+</div>
+</section></section>
+<section>
+<section class="title-slide slide level1 center">
+<h1>Topologías de despliegue y arquitecturas SIG</h1>
+
+</section>
+<section class="slide level2">
+<h2>Topología cliente-servidor: capas de aplicación y datos</h2>
+<div style="font-size: 0.70em; line-height: 1.22;">
+<p>En un ORDBMS (PostgreSQL), la separación de procesos impone atravesar la pila OSI:</p>
+<table>
+<caption>Capas superiores orientadas a la sintaxis y representación de datos.</caption>
+<colgroup>
+<col style="width: 16%">
+<col style="width: 33%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Capa OSI</th>
+<th>Función en el SDBMS</th>
+<th>Manifestación en PostGIS / PostgreSQL</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>7. Aplicación</strong></td>
+<td>Protocolo de alto nivel de base de datos.</td>
+<td>Protocolo <em>Frontend/Backend v3.0</em> de PostgreSQL o HTTP/REST (OGC API).</td>
+</tr>
+<tr class="even">
+<td><strong>6. Presentación</strong></td>
+<td>Serialización y codificación de datos.</td>
+<td>Traducción bidireccional GEOS <span class="math inline">\(\leftrightarrow\)</span> WKB/EWKB, <em>endianness</em> y UTF-8.</td>
+</tr>
+<tr class="odd">
+<td><strong>5. Sesión</strong></td>
+<td>Control de conexión y estado.</td>
+<td>Autenticación criptográfica (<code>SCRAM-SHA-256</code>), variables y <code>search_path</code>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section class="slide level2">
+<h2>Topología cliente-servidor: transporte y red física</h2>
+<div style="font-size: 0.67em; line-height: 1.18;">
+<p>Transferencia binaria y aislamiento a través de la infraestructura de red:</p>
+<table>
+<caption>Capas inferiores de transporte, direccionamiento y enlace físico.</caption>
+<colgroup>
+<col style="width: 14%">
+<col style="width: 42%">
+<col style="width: 42%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Capa OSI</th>
+<th>Función en el SDBMS</th>
+<th>Manifestación en PostGIS / PostgreSQL</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>4. Transporte</strong></td>
+<td>Segmentación y entrega confiable.</td>
+<td>Protocolo <strong>TCP</strong>, control de flujo, confirmaciones (ACK) y puerto <strong>5432</strong>.</td>
+</tr>
+<tr class="even">
+<td><strong>3. Red</strong></td>
+<td>Direccionamiento lógico y enrutamiento.</td>
+<td>Datagramas <strong>IP</strong>, subredes corporativas o puente virtual Docker (<code>db-postgis</code>).</td>
+</tr>
+<tr class="odd">
+<td><strong>2. Enlace</strong></td>
+<td>Transmisión por tramas locales.</td>
+<td>Tramas Ethernet, direcciones físicas MAC o adaptador de bucle invertido (<code>127.0.0.1</code>).</td>
+</tr>
+<tr class="even">
+<td><strong>1. Física</strong></td>
+<td>Transmisión de señales binarias.</td>
+<td>Medio físico guiado (fibra/cobre) o bus interno de memoria en el anfitrión.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section class="slide level2">
+<h2>Evolución de arquitecturas SIG</h2>
+<div style="font-size: 0.68em; line-height: 1.22;">
+<table>
+<caption>Evolución histórica de la integración entre SIG y gestores de bases de datos.</caption>
+<colgroup>
+<col style="width: 10%">
+<col style="width: 30%">
+<col style="width: 30%">
+<col style="width: 30%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Arquitectura</th>
+<th>Componentes</th>
+<th>Ventajas</th>
+<th>Limitaciones</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>1. Ad-hoc</strong></td>
+<td>Software SIG monousuario con formato binario cerrado en disco.</td>
+<td>Alta velocidad y eficiencia en renderizado vectorial local.</td>
+<td>Esquema cerrado, nula concurrencia y proliferación de silos redundantes.</td>
+</tr>
+<tr class="even">
+<td><strong>2. Dual / híbrida</strong></td>
+<td>SGBD estándar (atributos) + archivos CAD/Shapefile (geometría).</td>
+<td>Consultas declarativas SQL sobre la fracción alfanumérica.</td>
+<td>Enlace débil por ID, sobrecarga en memoria cliente y riesgo de huérfanos sin ACID.</td>
+</tr>
+<tr class="odd">
+<td><strong>3. Integrada (SDBMS)</strong></td>
+<td>SGBD objeto-relacional (PostGIS) con tipo geométrico nativo.</td>
+<td>Consistencia ACID integral, concurrencia multiusuario y cómputo en servidor.</td>
+<td>Demanda diseño formal de esquemas relacionales, índices GiST y afinamiento DBA.</td>
 </tr>
 </tbody>
 </table>
@@ -1135,7 +1326,10 @@ Alexys H. Rodríguez-Avellaneda Ph.D.
 </section>
 <section class="slide level2">
 <h2>Motor objeto-relacional y pila geoespacial</h2>
-<p>PostgreSQL provee extensibilidad para registrar tipos abstractos (ADT), funciones e índices. PostGIS incorpora la pila geoespacial estándar:</p>
+<div style="font-size: 0.72em; line-height: 1.25;">
+<p>PostgreSQL provee las interfaces de extensibilidad para registrar tipos abstractos (ADT), funciones e índices. PostGIS acopla al núcleo la biblioteca geoespacial:</p>
+<div class="columns">
+<div class="column" style="width:46%;">
 <div class="sourceCode" id="cb1"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb1-1"><a href=""></a>┌────────────────────────────────────────────────────────┐</span>
 <span id="cb1-2"><a href=""></a>│                   PostGIS (SDBMS)                      │</span>
 <span id="cb1-3"><a href=""></a>├─────────────┬─────────────┬──────────────┬─────────────┤</span>
@@ -1143,23 +1337,62 @@ Alexys H. Rodríguez-Avellaneda Ph.D.
 <span id="cb1-5"><a href=""></a>│ Primitivas  │ Transform.  │ E/S ráster y │ Serializac. │</span>
 <span id="cb1-6"><a href=""></a>│ topológicas │ cartográf.  │  vectorial   │   GML/XML   │</span>
 <span id="cb1-7"><a href=""></a>└─────────────┴─────────────┴──────────────┴─────────────┘</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column" style="width:54%;">
 <ul>
-<li><p><strong>GEOS</strong>: Algoritmos computacionales (<code>ST_Intersects</code>, <code>ST_Buffer</code>).</p></li>
-<li><p><strong>PROJ</strong>: Conversión geodésica y reproyección de coordenadas.</p></li>
-<li><p><strong>Árboles GiST</strong>: Indexación de cajas envolventes mínimas (<em>Bounding Boxes</em>).</p></li>
+<li><strong>GEOS</strong>: Primitivas y predicados topológicos (<code>ST_Intersects</code>, <code>ST_Buffer</code>).</li>
+<li><strong>PROJ</strong>: Conversiones geodésicas y transformaciones cartográficas de datum.</li>
+<li><strong>GDAL</strong>: Traducción de formatos vectoriales y matriciales ráster.</li>
+<li><strong>Árboles GiST</strong>: Indexación multidimensional sobre cajas envolventes mínimas (<em>MBR</em>).</li>
 </ul>
+</div>
+</div>
+</div>
 </section>
 <section class="slide level2">
-<h2>Verificación de PostGIS en el motor</h2>
-<p>La inspección de dependencias confirma las versiones vinculadas en el clúster:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb2-1"><a href=""></a><span class="kw">SELECT</span> PostGIS_Full_Version();</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Resultado estructurado obtenido en el entorno de trabajo:</p>
+<h2>Verificación de dependencias y PostGIS</h2>
+<p>La inspección de dependencias compiladas confirma la operatividad del motor espacial:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb2-1"><a href=""></a><span class="kw">SELECT</span> postgis_full_version();</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Salida estructurada capturada en la instancia de trabajo:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb3-1"><a href=""></a>POSTGIS="3.6.2" [EXTENSION] PGSQL="180" </span>
 <span id="cb3-2"><a href=""></a>GEOS="3.14.1dev-CAPI-1.20.4" </span>
 <span id="cb3-3"><a href=""></a>PROJ="8.2.1" </span>
 <span id="cb3-4"><a href=""></a>LIBXML="2.12.5" </span>
 <span id="cb3-5"><a href=""></a>LIBJSON="0.12"</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><em>Garantiza compatibilidad completa con funciones OGC y tipado estricto.</em></p>
+<p><em>Valida la disponibilidad de los algoritmos OGC, el tipado estricto y las librerías de enlace dinámico.</em></p>
+</section>
+<section class="slide level2">
+<h2>Entorno de ejecución: terminal y ecosistema Python</h2>
+<div style="font-size: 0.78em; line-height: 1.25;">
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>Terminal integrada (<code>psql</code>)</strong></p>
+<p>Variables de entorno estándar de <code>libpq</code>:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href=""></a><span class="co"># Conexión por defecto a la instancia anfitriona</span></span>
+<span id="cb4-2"><a href=""></a><span class="bu">export</span> <span class="va">PGHOST</span><span class="op">=</span><span class="st">"host.docker.internal"</span></span>
+<span id="cb4-3"><a href=""></a><span class="bu">export</span> <span class="va">PGPORT</span><span class="op">=</span><span class="st">"5432"</span></span>
+<span id="cb4-4"><a href=""></a><span class="bu">export</span> <span class="va">PGUSER</span><span class="op">=</span><span class="st">"postgres"</span></span>
+<span id="cb4-5"><a href=""></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">'geomatica2025'</span></span>
+<span id="cb4-6"><a href=""></a><span class="bu">export</span> <span class="va">PGDATABASE</span><span class="op">=</span><span class="st">"sig_db_unal"</span></span>
+<span id="cb4-7"><a href=""></a></span>
+<span id="cb4-8"><a href=""></a><span class="ex">psql</span> <span class="at">-c</span> <span class="st">"SELECT postgis_version();"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Interacción interactiva de bajo nivel, despacho DDL directo y administración del servidor.</p>
+</div><div class="column" style="width:50%;">
+<p><strong>Pila Python (SQLAlchemy / GeoPandas)</strong></p>
+<p>Instanciación global de motores desacoplados:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href=""></a><span class="im">from</span> sqlalchemy <span class="im">import</span> create_engine, text</span>
+<span id="cb5-2"><a href=""></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
+<span id="cb5-3"><a href=""></a></span>
+<span id="cb5-4"><a href=""></a><span class="co"># Motores instanciados al inicio del capítulo</span></span>
+<span id="cb5-5"><a href=""></a>engine_local <span class="op">=</span> create_engine(cadena_local)</span>
+<span id="cb5-6"><a href=""></a>engine_docker <span class="op">=</span> create_engine(cadena_docker)</span>
+<span id="cb5-7"><a href=""></a></span>
+<span id="cb5-8"><a href=""></a><span class="co"># Extracción directa a GeoDataFrame</span></span>
+<span id="cb5-9"><a href=""></a>query <span class="op">=</span> text(<span class="st">"SELECT orden, nombre, geom FROM public.muestras_geometrias_ogc;"</span>)</span>
+<span id="cb5-10"><a href=""></a><span class="cf">with</span> engine_local.<span class="ex">connect</span>() <span class="im">as</span> conn:</span>
+<span id="cb5-11"><a href=""></a>    gdf <span class="op">=</span> gpd.read_postgis(query, con<span class="op">=</span>conn, geom_col<span class="op">=</span><span class="st">"geom"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
 </section></section>
 <section>
 <section class="title-slide slide level1 center">
@@ -1168,12 +1401,11 @@ Alexys H. Rodríguez-Avellaneda Ph.D.
 </section>
 <section class="slide level2">
 <h2>Jerarquía geométrica OGC (ISO 19125)</h2>
-<div class="cell" data-fig-width="8" data-fig-height="3.5" data-layout-align="center">
+<div class="cell" data-fig-width="8.5" data-fig-height="3.5" data-layout-align="center">
 <div class="cell-output-display">
+<div id="dot-jerarquia-ogc">
 <div>
-<p></p><figure class=""><p></p>
-<div>
-<svg width="768" height="336" viewbox="0.00 0.00 528.02 174.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<svg width="816" height="336" viewbox="0.00 0.00 588.02 174.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 170)">
 <title>G</title>
 <!-- root -->
@@ -1221,14 +1453,14 @@ Alexys H. Rodríguez-Avellaneda Ph.D.
 <!-- geomcoll -->
 <g id="node5" class="node">
 <title>geomcoll</title>
-<path fill="#fef3c7" stroke="#d97706" d="M401.79,-101C401.79,-101 330.73,-101 330.73,-101 324.73,-101 318.73,-95 318.73,-89 318.73,-89 318.73,-77 318.73,-77 318.73,-71 324.73,-65 330.73,-65 330.73,-65 401.79,-65 401.79,-65 407.79,-65 413.79,-71 413.79,-77 413.79,-77 413.79,-89 413.79,-89 413.79,-95 407.79,-101 401.79,-101"></path>
-<text text-anchor="middle" x="366.26" y="-80.3" font-family="Helvetica,sans-Serif" font-size="9.00">GeometryCollection</text>
+<path fill="#fef3c7" stroke="#d97706" d="M413.79,-101C413.79,-101 342.73,-101 342.73,-101 336.73,-101 330.73,-95 330.73,-89 330.73,-89 330.73,-77 330.73,-77 330.73,-71 336.73,-65 342.73,-65 342.73,-65 413.79,-65 413.79,-65 419.79,-65 425.79,-71 425.79,-77 425.79,-77 425.79,-89 425.79,-89 425.79,-95 419.79,-101 413.79,-101"></path>
+<text text-anchor="middle" x="378.26" y="-80.3" font-family="Helvetica,sans-Serif" font-size="9.00">GeometryCollection</text>
 </g>
 <!-- geomcoll&#45;&gt;root -->
 <g id="edge4" class="edge">
 <title>geomcoll-&gt;root</title>
-<path fill="none" stroke="#475569" stroke-width="1.1" d="M318.3,-66.43C291.46,-57.71 257.81,-46.78 229.58,-37.62"></path>
-<polygon fill="none" stroke="#475569" stroke-width="1.1" points="230.54,-34.62 221.01,-34.83 228.59,-40.61 230.54,-34.62"></polygon>
+<path fill="none" stroke="#475569" stroke-width="1.1" d="M330.74,-67.47C300.65,-58.27 261.57,-46.31 229.74,-36.58"></path>
+<polygon fill="none" stroke="#475569" stroke-width="1.1" points="230.49,-33.52 220.97,-33.9 228.65,-39.54 230.49,-33.52"></polygon>
 </g>
 <!-- linestring -->
 <g id="node6" class="node">
@@ -1257,72 +1489,158 @@ Alexys H. Rodríguez-Avellaneda Ph.D.
 <!-- multipoint -->
 <g id="node8" class="node">
 <title>multipoint</title>
-<path fill="#fed7aa" stroke="#ea580c" d="M319.77,-166C319.77,-166 288.74,-166 288.74,-166 282.74,-166 276.74,-160 276.74,-154 276.74,-154 276.74,-142 276.74,-142 276.74,-136 282.74,-130 288.74,-130 288.74,-130 319.77,-130 319.77,-130 325.77,-130 331.77,-136 331.77,-142 331.77,-142 331.77,-154 331.77,-154 331.77,-160 325.77,-166 319.77,-166"></path>
-<text text-anchor="middle" x="304.26" y="-145.3" font-family="Helvetica,sans-Serif" font-size="9.00">MultiPoint</text>
+<path fill="#fed7aa" stroke="#ea580c" d="M339.77,-166C339.77,-166 288.74,-166 288.74,-166 282.74,-166 276.74,-160 276.74,-154 276.74,-154 276.74,-142 276.74,-142 276.74,-136 282.74,-130 288.74,-130 288.74,-130 339.77,-130 339.77,-130 345.77,-130 351.77,-136 351.77,-142 351.77,-142 351.77,-154 351.77,-154 351.77,-160 345.77,-166 339.77,-166"></path>
+<text text-anchor="middle" x="314.26" y="-145.3" font-family="Helvetica,sans-Serif" font-size="9.00">MultiPoint (0D)</text>
 </g>
 <!-- multipoint&#45;&gt;geomcoll -->
 <g id="edge7" class="edge">
 <title>multipoint-&gt;geomcoll</title>
-<path fill="none" stroke="#475569" stroke-width="1.1" d="M321.2,-129.78C327.9,-122.98 335.71,-115.04 342.92,-107.71"></path>
-<polygon fill="none" stroke="#475569" stroke-width="1.1" points="345.27,-109.82 349.34,-101.19 340.78,-105.4 345.27,-109.82"></polygon>
+<path fill="none" stroke="#475569" stroke-width="1.1" d="M331.74,-129.78C338.66,-122.98 346.72,-115.04 354.17,-107.71"></path>
+<polygon fill="none" stroke="#475569" stroke-width="1.1" points="356.59,-109.75 360.79,-101.19 352.17,-105.26 356.59,-109.75"></polygon>
 </g>
 <!-- multilinestring -->
 <g id="node9" class="node">
 <title>multilinestring</title>
-<path fill="#fed7aa" stroke="#ea580c" d="M417.79,-166C417.79,-166 366.73,-166 366.73,-166 360.73,-166 354.73,-160 354.73,-154 354.73,-154 354.73,-142 354.73,-142 354.73,-136 360.73,-130 366.73,-130 366.73,-130 417.79,-130 417.79,-130 423.79,-130 429.79,-136 429.79,-142 429.79,-142 429.79,-154 429.79,-154 429.79,-160 423.79,-166 417.79,-166"></path>
-<text text-anchor="middle" x="392.26" y="-145.3" font-family="Helvetica,sans-Serif" font-size="9.00">MultiLineString</text>
+<path fill="#fed7aa" stroke="#ea580c" d="M457.79,-166C457.79,-166 386.73,-166 386.73,-166 380.73,-166 374.73,-160 374.73,-154 374.73,-154 374.73,-142 374.73,-142 374.73,-136 380.73,-130 386.73,-130 386.73,-130 457.79,-130 457.79,-130 463.79,-130 469.79,-136 469.79,-142 469.79,-142 469.79,-154 469.79,-154 469.79,-160 463.79,-166 457.79,-166"></path>
+<text text-anchor="middle" x="422.26" y="-145.3" font-family="Helvetica,sans-Serif" font-size="9.00">MultiLineString (1D)</text>
 </g>
 <!-- multilinestring&#45;&gt;geomcoll -->
 <g id="edge8" class="edge">
 <title>multilinestring-&gt;geomcoll</title>
-<path fill="none" stroke="#475569" stroke-width="1.1" d="M385.15,-129.78C382.57,-123.53 379.6,-116.33 376.79,-109.52"></path>
-<polygon fill="none" stroke="#475569" stroke-width="1.1" points="379.7,-108.31 373.35,-101.19 373.87,-110.72 379.7,-108.31"></polygon>
+<path fill="none" stroke="#475569" stroke-width="1.1" d="M410.23,-129.78C405.67,-123.26 400.39,-115.69 395.45,-108.61"></path>
+<polygon fill="none" stroke="#475569" stroke-width="1.1" points="398,-106.77 390.27,-101.19 392.84,-110.38 398,-106.77"></polygon>
 </g>
 <!-- multipolygon -->
 <g id="node10" class="node">
 <title>multipolygon</title>
-<path fill="#fed7aa" stroke="#ea580c" d="M507.78,-166C507.78,-166 464.73,-166 464.73,-166 458.73,-166 452.73,-160 452.73,-154 452.73,-154 452.73,-142 452.73,-142 452.73,-136 458.73,-130 464.73,-130 464.73,-130 507.78,-130 507.78,-130 513.78,-130 519.78,-136 519.78,-142 519.78,-142 519.78,-154 519.78,-154 519.78,-160 513.78,-166 507.78,-166"></path>
-<text text-anchor="middle" x="486.26" y="-145.3" font-family="Helvetica,sans-Serif" font-size="9.00">MultiPolygon</text>
+<path fill="#fed7aa" stroke="#ea580c" d="M567.78,-166C567.78,-166 504.73,-166 504.73,-166 498.73,-166 492.73,-160 492.73,-154 492.73,-154 492.73,-142 492.73,-142 492.73,-136 498.73,-130 504.73,-130 504.73,-130 567.78,-130 567.78,-130 573.78,-130 579.78,-136 579.78,-142 579.78,-142 579.78,-154 579.78,-154 579.78,-160 573.78,-166 567.78,-166"></path>
+<text text-anchor="middle" x="536.26" y="-145.3" font-family="Helvetica,sans-Serif" font-size="9.00">MultiPolygon (2D)</text>
 </g>
 <!-- multipolygon&#45;&gt;geomcoll -->
 <g id="edge9" class="edge">
 <title>multipolygon-&gt;geomcoll</title>
-<path fill="none" stroke="#475569" stroke-width="1.1" d="M453.78,-129.95C439.38,-122.39 422.27,-113.4 407.01,-105.4"></path>
-<polygon fill="none" stroke="#475569" stroke-width="1.1" points="408.19,-102.46 398.76,-101.06 405.26,-108.03 408.19,-102.46"></polygon>
+<path fill="none" stroke="#475569" stroke-width="1.1" d="M493.5,-129.95C473.74,-122.07 450.12,-112.65 429.42,-104.4"></path>
+<polygon fill="none" stroke="#475569" stroke-width="1.1" points="430.57,-101.47 421.05,-101.06 428.24,-107.32 430.57,-101.47"></polygon>
 </g>
 </g>
 </svg>
 </div>
-<p></p></figure><p></p>
 </div>
 </div>
 </div>
 <ul>
-<li><p><strong>Primitivas simples</strong>: <code>Point</code>, <code>LineString</code>, <code>Polygon</code>.</p></li>
-<li><p><strong>Colecciones homogéneas</strong>: <code>MultiPoint</code>, <code>MultiLineString</code>, <code>MultiPolygon</code>.</p></li>
+<li><strong>Primitivas simples concretas</strong>: <code>Point</code>, <code>LineString</code>, <code>Polygon</code>.</li>
+<li><strong>Colecciones homogéneas</strong>: <code>MultiPoint</code>, <code>MultiLineString</code>, <code>MultiPolygon</code>.</li>
+<li><strong>Colección heterogénea</strong>: <code>GeometryCollection</code> (admite entidades de dimensionalidad mixta).</li>
 </ul>
+</section>
+<section class="slide level2">
+<h2>Morfología de primitivas geométricas OGC</h2>
+<div style="font-size: 0.70em; line-height: 1.22;">
+<p>Entidades geométricas fundamentales definidas bajo la norma ISO 19125 / OGC SFA:</p>
+<table>
+<caption>Características dimensionales de las primitivas geométricas del estándar OGC.</caption>
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 60%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tipo geométrico</th>
+<th>Dimensión</th>
+<th>Signatura morfológica formal OGC</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Point</code></td>
+<td>0</td>
+<td>Par ordenado singular de coordenadas <span class="math inline">\((X, Y)\)</span>.</td>
+</tr>
+<tr class="even">
+<td><code>LineString</code></td>
+<td>1</td>
+<td>Curva interpolada linealmente entre dos o más vértices discretos.</td>
+</tr>
+<tr class="odd">
+<td><code>LinearRing</code></td>
+<td>1</td>
+<td>Curva <code>LineString</code> cerrada y no autosecante (define anillos poligonales).</td>
+</tr>
+<tr class="even">
+<td><code>Polygon</code></td>
+<td>2</td>
+<td>Superficie delimitada por un anillo exterior y cero o más anillos interiores (huecos).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section class="slide level2">
+<h2>Morfología de colecciones geométricas OGC</h2>
+<div style="font-size: 0.70em; line-height: 1.22;">
+<p>Agrupaciones homogéneas y heterogéneas según el estándar ISO 19125 / OGC SFA:</p>
+<table>
+<caption>Características dimensionales de las colecciones geométricas del estándar OGC.</caption>
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 60%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tipo geométrico</th>
+<th>Dimensión</th>
+<th>Signatura morfológica formal OGC</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>MultiPoint</code></td>
+<td>0</td>
+<td>Agrupación no conexa de vértices independientes.</td>
+</tr>
+<tr class="even">
+<td><code>MultiLineString</code></td>
+<td>1</td>
+<td>Colección de cadenas lineales que pueden cruzarse o ser disyuntas.</td>
+</tr>
+<tr class="odd">
+<td><code>MultiPolygon</code></td>
+<td>2</td>
+<td>Conjunto conexo o disyunto de polígonos independientes.</td>
+</tr>
+<tr class="even">
+<td><code>GeometryCollection</code></td>
+<td>Variable</td>
+<td>Agrupación arbitraria y heterogénea de cualquier tipo geométrico.</td>
+</tr>
+</tbody>
+</table>
+</div>
 </section>
 <section class="slide level2">
 <h2>Serialización: WKT y WKB / EWKB</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
 <p><strong>Well-Known Text (WKT)</strong></p>
-<p>Formato ASCII legible para intercambio:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb4-1"><a href=""></a>POINT(5000000 2000000)</span>
-<span id="cb4-2"><a href=""></a></span>
-<span id="cb4-3"><a href=""></a>LINESTRING(5000000 2000000, </span>
-<span id="cb4-4"><a href=""></a>           5010000 2010000)</span>
-<span id="cb4-5"><a href=""></a></span>
-<span id="cb4-6"><a href=""></a>POLYGON((0 0, 10 0, 10 10, </span>
-<span id="cb4-7"><a href=""></a>         0 10, 0 0))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Formato ASCII legible para diseño e intercambio:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb6-1"><a href=""></a>POINT(5000000 2000000)</span>
+<span id="cb6-2"><a href=""></a></span>
+<span id="cb6-3"><a href=""></a>LINESTRING(5000000 2000000, </span>
+<span id="cb6-4"><a href=""></a>           5010000 2010000)</span>
+<span id="cb6-5"><a href=""></a></span>
+<span id="cb6-6"><a href=""></a>POLYGON((0 0, 10 0, 10 10, </span>
+<span id="cb6-7"><a href=""></a>         0 10, 0 0))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Soporta componentes 3D/4D: <code>POINT Z</code>, <code>POINT M</code>, <code>POINT ZM</code>.</p>
 </div><div class="column" style="width:50%;">
 <p><strong>Well-Known Binary (WKB / EWKB)</strong></p>
-<p>Flujo binario compacto para disco y red:</p>
+<p>Flujo binario estructurado para almacenamiento y red:</p>
 <ul>
-<li><p>Preserva precisión numérica IEEE 754.</p></li>
-<li><p>Controla orden de bytes (<em>Endianness</em>).</p></li>
-<li><p><strong>EWKB (PostGIS)</strong>: Embebe el código de proyección (SRID) en la cabecera binaria.</p></li>
+<li>Preserva precisión en coma flotante IEEE 754.</li>
+<li>Controla ordenación de bytes (<em>Endianness</em>).</li>
+<li><strong>EWKB (PostGIS)</strong>: Embebe directamente el identificador espacial (SRID) en la cabecera binaria del objeto.</li>
 </ul>
 </div>
 </div>
@@ -1333,58 +1651,68 @@ Alexys H. Rodríguez-Avellaneda Ph.D.
 
 </section>
 <section class="slide level2">
-<h2>Catálogo spatial_ref_sys</h2>
-<div style="font-size: 0.78em; line-height: 1.25;">
-<p>Diccionario canónico de sistemas de referencia de coordenadas (CRS) soportados por el motor:</p>
+<h2>Estructura del catálogo spatial_ref_sys</h2>
+<div style="font-size: 0.70em; line-height: 1.20;">
+<p>Diccionario canónico de sistemas de referencia de coordenadas (CRS) en disco:</p>
 <table>
+<caption>Estructura relacional del catálogo de sistemas de referencia de coordenadas.</caption>
 <colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
+<col style="width: 25%">
+<col style="width: 75%">
 </colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: left;">Columna clave</th>
-<th style="text-align: left;">Significado técnico</th>
+<th>Columna clave</th>
+<th>Significado técnico</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;"><code>srid</code></td>
-<td style="text-align: left;">Identificador entero único (habitualmente código EPSG).</td>
+<td><code>srid</code></td>
+<td>Identificador entero único (habitualmente código EPSG).</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><code>auth_name</code></td>
-<td style="text-align: left;">Organismo normativo de referencia (<code>'EPSG'</code>).</td>
+<td><code>auth_name</code></td>
+<td>Organismo normativo de referencia (<code>'EPSG'</code>).</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;"><code>srtext</code></td>
-<td style="text-align: left;">Parámetros del elipsoide, datum y proyección en formato WKT CRS.</td>
+<td><code>auth_srid</code></td>
+<td>Código numérico asignado por la autoridad cartográfica.</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><code>proj4text</code></td>
-<td style="text-align: left;">Cadena técnica de parámetros consumida por la biblioteca PROJ.</td>
+<td><code>srtext</code></td>
+<td>Parámetros del elipsoide, datum y proyección en formato WKT CRS.</td>
+</tr>
+<tr class="odd">
+<td><code>proj4text</code></td>
+<td>Cadena técnica de inicialización consumida por la biblioteca PROJ.</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Sistemas fundamentales en el contexto colombiano</strong></p>
+</div>
+</section>
+<section class="slide level2">
+<h2>Sistemas de referencia fundamentales en Colombia</h2>
+<div style="font-size: 0.74em; line-height: 1.25;">
+<p>Marcos geodésicos y proyecciones oficiales registrados en <code>spatial_ref_sys</code>:</p>
 <ul>
-<li><strong>SRID 4326</strong>: Sistema geográfico global WGS 84 (coordenadas angulares en grados).</li>
-<li><strong>SRID 3116</strong>: Proyección MAGNA-SIRGAS / Colombia Bogotá (Gauss-Krüger tradicional).</li>
-<li><strong>SRID 9377</strong>: MAGNA-SIRGAS / Origen Nacional Único (Resolución IGAC 471 de 2020).</li>
+<li><strong>SRID 4326 (WGS 84)</strong>: Sistema geográfico global no proyectado; coordenadas angulares en grados decimales de latitud y longitud.</li>
+<li><strong>SRID 3116 (MAGNA-SIRGAS / Colombia Bogotá)</strong>: Proyección conforme Gauss-Krüger con meridiano central en <span class="math inline">\(74^\circ 04' 39.0285''\text{ W}\)</span> y origen <span class="math inline">\((1\,000\,000\text{ m E}, 1\,000\,000\text{ m N})\)</span>.</li>
+<li><strong>SRID 9377 (MAGNA-SIRGAS / Origen Nacional Único)</strong>: Sistema oficial según Resolución IGAC 471 de 2020; origen central en <span class="math inline">\(4^\circ\text{ N}, 73^\circ\text{ W}\)</span>, factor de escala <span class="math inline">\(k_0 = 0.9992\)</span>, falso este de <span class="math inline">\(5\,000\,000\text{ m}\)</span> y falso norte de <span class="math inline">\(2\,000\,000\text{ m}\)</span>.</li>
 </ul>
 </div>
 </section>
 <section class="slide level2">
 <h2>Actualización e idempotencia de EPSG 9377</h2>
 <p>El catálogo relacional es estático; volcados anteriores carecen de EPSG 9377. Se aprovisiona mediante una operación <strong>UPSERT</strong> con <code>ON CONFLICT</code>:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><a href=""></a><span class="kw">INSERT</span> <span class="kw">INTO</span> spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text)</span>
-<span id="cb5-2"><a href=""></a><span class="kw">VALUES</span> (</span>
-<span id="cb5-3"><a href=""></a>    <span class="dv">9377</span>, <span class="st">'EPSG'</span>, <span class="dv">9377</span>,</span>
-<span id="cb5-4"><a href=""></a>    <span class="st">'PROJCS["MAGNA-SIRGAS / Origen-Nacional", ...]'</span>,</span>
-<span id="cb5-5"><a href=""></a>    <span class="st">'+proj=tmerc +lat_0=4 +lon_0=-73 +k=0.9992 +x_0=5000000 +y_0=2000000 ...'</span></span>
-<span id="cb5-6"><a href=""></a>)</span>
-<span id="cb5-7"><a href=""></a><span class="kw">ON</span> CONFLICT (srid) DO <span class="kw">UPDATE</span> </span>
-<span id="cb5-8"><a href=""></a><span class="kw">SET</span> srtext <span class="op">=</span> EXCLUDED.srtext, proj4text <span class="op">=</span> EXCLUDED.proj4text;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb7-1"><a href=""></a><span class="kw">INSERT</span> <span class="kw">INTO</span> spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text)</span>
+<span id="cb7-2"><a href=""></a><span class="kw">VALUES</span> (</span>
+<span id="cb7-3"><a href=""></a>    <span class="dv">9377</span>, <span class="st">'EPSG'</span>, <span class="dv">9377</span>,</span>
+<span id="cb7-4"><a href=""></a>    <span class="st">'PROJCS["MAGNA-SIRGAS / Origen-Nacional", ...]'</span>,</span>
+<span id="cb7-5"><a href=""></a>    <span class="st">'+proj=tmerc +lat_0=4 +lon_0=-73 +k=0.9992 +x_0=5000000 +y_0=2000000 ...'</span></span>
+<span id="cb7-6"><a href=""></a>)</span>
+<span id="cb7-7"><a href=""></a><span class="kw">ON</span> CONFLICT (srid) DO <span class="kw">UPDATE</span> </span>
+<span id="cb7-8"><a href=""></a><span class="kw">SET</span> srtext <span class="op">=</span> EXCLUDED.srtext, proj4text <span class="op">=</span> EXCLUDED.proj4text;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
 <li><p><strong>Propiedad de idempotencia</strong>: Ejecutable <span class="math inline">\(N\)</span> veces sin duplicación ni fallos.</p></li>
 <li><p><strong>Requisito operativo</strong>: Si no reside en disco, funciones como <code>ST_Transform</code> abortarán.</p></li>
@@ -1393,8 +1721,8 @@ Alexys H. Rodríguez-Avellaneda Ph.D.
 <section class="slide level2">
 <h2>Vista de catálogo geometry_columns</h2>
 <p>Vista dinámica construida por introspección sobre el diccionario del motor relacional:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb6-1"><a href=""></a><span class="kw">SELECT</span> f_table_name, f_geometry_column, coord_dimension, srid, <span class="kw">type</span> </span>
-<span id="cb6-2"><a href=""></a><span class="kw">FROM</span> geometry_columns;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb8-1"><a href=""></a><span class="kw">SELECT</span> f_table_name, f_geometry_column, coord_dimension, srid, <span class="kw">type</span> </span>
+<span id="cb8-2"><a href=""></a><span class="kw">FROM</span> geometry_columns;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Campos normalizados bajo la especificación OGC:</p>
 <ul>
 <li><p><code>f_table_name</code>: Nombre de la tabla espacial persistida.</p></li>
@@ -1403,32 +1731,183 @@ Alexys H. Rodríguez-Avellaneda Ph.D.
 <li><p><code>srid</code>: Sistema de coordenadas asociado.</p></li>
 <li><p><code>type</code>: Tipo de entidad geométrica restringida (<code>POINT</code>, <code>POLYGON</code>, etc.).</p></li>
 </ul>
+</section>
+<section class="slide level2">
+<h2>Auditoría y remediación de vistas del esquema</h2>
+<div style="font-size: 0.78em; line-height: 1.25;">
+<p>Al inspeccionar vistas como <code>divpol.capa_departamentos</code>, el catálogo reporta inicialmente <code>srid: 0</code>:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb9-1"><a href=""></a><span class="co">-- Causa: Consultas almacenadas sin modificador de tipo espacial explícito (typmod)</span></span>
+<span id="cb9-2"><a href=""></a><span class="kw">SELECT</span> f_table_name, srid, <span class="kw">type</span> <span class="kw">FROM</span> geometry_columns <span class="kw">WHERE</span> f_table_schema <span class="op">=</span> <span class="st">'divpol'</span>;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Remediación mediante casteo explícito (DDL)</strong>:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb10-1"><a href=""></a><span class="co">-- Redefinición atómica asegurando SRID 21892 (Bogotá 1975)</span></span>
+<span id="cb10-2"><a href=""></a><span class="kw">DROP</span> <span class="kw">VIEW</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> divpol.capa_departamentos;</span>
+<span id="cb10-3"><a href=""></a><span class="kw">CREATE</span> <span class="kw">VIEW</span> divpol.capa_departamentos <span class="kw">AS</span></span>
+<span id="cb10-4"><a href=""></a><span class="kw">SELECT</span> </span>
+<span id="cb10-5"><a href=""></a>    d.gid, d.dep_id <span class="kw">AS</span> id_dane, d.dep_nombre <span class="kw">AS</span> departamento,</span>
+<span id="cb10-6"><a href=""></a>    d.the_geom:<span class="ch">:geometry</span>(Geometry, <span class="dv">21892</span>) <span class="kw">AS</span> the_geom</span>
+<span id="cb10-7"><a href=""></a><span class="kw">FROM</span> divpol.departamentos d</span>
+<span id="cb10-8"><a href=""></a><span class="kw">WHERE</span> d.the_geom <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span>;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><em>Restablece la introspección automática en el catálogo, garantizando la interoperabilidad con clientes SIG y servicios web.</em></p>
+</div>
 </section></section>
 <section>
 <section class="title-slide slide level1 center">
-<h1>Verificación práctica en consola</h1>
+<h1>Verificación práctica en consola y scripts</h1>
 
 </section>
 <section class="slide level2">
-<h2>Ciclo DDL, WKT e introspección</h2>
+<h2>Ciclo DDL, WKT e introspección en psql</h2>
 <p>Secuencia completa de persistencia espacial en <code>sig_db_unal</code>:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb7-1"><a href=""></a><span class="co">-- 1. Creación de tabla pedagógica con tipado estricto</span></span>
-<span id="cb7-2"><a href=""></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="kw">public</span>.infraestructura_referencia (</span>
-<span id="cb7-3"><a href=""></a>    <span class="kw">id</span> serial <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
-<span id="cb7-4"><a href=""></a>    codigo <span class="dt">varchar</span>(<span class="dv">10</span>) <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">UNIQUE</span>,</span>
-<span id="cb7-5"><a href=""></a>    descripcion text,</span>
-<span id="cb7-6"><a href=""></a>    geom geometry(Point, <span class="dv">9377</span>) <span class="kw">NOT</span> <span class="kw">NULL</span></span>
-<span id="cb7-7"><a href=""></a>);</span>
-<span id="cb7-8"><a href=""></a></span>
-<span id="cb7-9"><a href=""></a><span class="co">-- 2. Inserción de entidad puntual mediante WKT en Origen Nacional</span></span>
-<span id="cb7-10"><a href=""></a><span class="kw">INSERT</span> <span class="kw">INTO</span> <span class="kw">public</span>.infraestructura_referencia (codigo, descripcion, geom) </span>
-<span id="cb7-11"><a href=""></a><span class="kw">VALUES</span> (<span class="st">'EST-001'</span>, <span class="st">'Estación central'</span>, ST_GeomFromText(<span class="st">'POINT(5000000 2000000)'</span>, <span class="dv">9377</span>));</span>
-<span id="cb7-12"><a href=""></a></span>
-<span id="cb7-13"><a href=""></a><span class="co">-- 3. Auditoría de catalogación dinámica en OGC</span></span>
-<span id="cb7-14"><a href=""></a><span class="kw">SELECT</span> f_table_name, f_geometry_column, coord_dimension, srid, <span class="kw">type</span> </span>
-<span id="cb7-15"><a href=""></a><span class="kw">FROM</span> geometry_columns </span>
-<span id="cb7-16"><a href=""></a><span class="kw">WHERE</span> f_table_name <span class="op">=</span> <span class="st">'infraestructura_referencia'</span>;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb11-1"><a href=""></a><span class="co">-- 1. Creación de tabla pedagógica con tipado estricto (typmod)</span></span>
+<span id="cb11-2"><a href=""></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="kw">public</span>.infraestructura_referencia (</span>
+<span id="cb11-3"><a href=""></a>    <span class="kw">id</span> serial <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb11-4"><a href=""></a>    codigo <span class="dt">varchar</span>(<span class="dv">10</span>) <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">UNIQUE</span>,</span>
+<span id="cb11-5"><a href=""></a>    descripcion text,</span>
+<span id="cb11-6"><a href=""></a>    geom geometry(Point, <span class="dv">9377</span>) <span class="kw">NOT</span> <span class="kw">NULL</span></span>
+<span id="cb11-7"><a href=""></a>);</span>
+<span id="cb11-8"><a href=""></a></span>
+<span id="cb11-9"><a href=""></a><span class="co">-- 2. Inserción de entidad puntual mediante WKT en Origen Nacional</span></span>
+<span id="cb11-10"><a href=""></a><span class="kw">INSERT</span> <span class="kw">INTO</span> <span class="kw">public</span>.infraestructura_referencia (codigo, descripcion, geom) </span>
+<span id="cb11-11"><a href=""></a><span class="kw">VALUES</span> (<span class="st">'EST-001'</span>, <span class="st">'Estación central'</span>, ST_GeomFromText(<span class="st">'POINT(5000000 2000000)'</span>, <span class="dv">9377</span>));</span>
+<span id="cb11-12"><a href=""></a></span>
+<span id="cb11-13"><a href=""></a><span class="co">-- 3. Auditoría de catalogación dinámica en OGC</span></span>
+<span id="cb11-14"><a href=""></a><span class="kw">SELECT</span> f_table_name, f_geometry_column, coord_dimension, srid, <span class="kw">type</span> </span>
+<span id="cb11-15"><a href=""></a><span class="kw">FROM</span> geometry_columns </span>
+<span id="cb11-16"><a href=""></a><span class="kw">WHERE</span> f_table_name <span class="op">=</span> <span class="st">'infraestructura_referencia'</span>;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Resultado validado: dimensión <span class="math inline">\(2\)</span>, SRID <span class="math inline">\(9377\)</span> y tipo <code>POINT</code> expuestos de forma transparente para clientes SIG en red.</p>
+</section>
+<section class="slide level2">
+<h2>Extracción e inspección con SQLAlchemy y GeoPandas</h2>
+<div style="font-size: 0.70em; line-height: 1.22;">
+<div class="columns">
+<div class="column" style="width:58%;">
+<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href=""></a><span class="im">from</span> sqlalchemy <span class="im">import</span> text</span>
+<span id="cb12-2"><a href=""></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
+<span id="cb12-3"><a href=""></a></span>
+<span id="cb12-4"><a href=""></a>query <span class="op">=</span> text(<span class="st">"""</span></span>
+<span id="cb12-5"><a href=""></a><span class="st">SELECT id, codigo, descripcion, geom </span></span>
+<span id="cb12-6"><a href=""></a><span class="st">FROM public.infraestructura_referencia;</span></span>
+<span id="cb12-7"><a href=""></a><span class="st">"""</span>)</span>
+<span id="cb12-8"><a href=""></a></span>
+<span id="cb12-9"><a href=""></a><span class="cf">with</span> engine_local.<span class="ex">connect</span>() <span class="im">as</span> conn:</span>
+<span id="cb12-10"><a href=""></a>    gdf <span class="op">=</span> gpd.read_postgis(query, con<span class="op">=</span>conn, geom_col<span class="op">=</span><span class="st">"geom"</span>)</span>
+<span id="cb12-11"><a href=""></a></span>
+<span id="cb12-12"><a href=""></a><span class="bu">print</span>(gdf[[<span class="st">"codigo"</span>, <span class="st">"descripcion"</span>, <span class="st">"geom"</span>]])</span>
+<span id="cb12-13"><a href=""></a><span class="bu">print</span>(<span class="ss">f"CRS detectado: </span><span class="sc">{</span>gdf<span class="sc">.</span>crs<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column" style="width:42%;">
+<p><strong>Puntos clave del flujo</strong></p>
+<ul>
+<li><code>read_postgis</code> delega la consulta al motor mediante SQLAlchemy 2.0.</li>
+<li>La deserialización de flujos binarios WKB/EWKB se ejecuta en memoria hacia objetos Shapely.</li>
+<li>PostGIS expone el SRID directamente a la estructura <code>GeoDataFrame</code>.</li>
+</ul>
+</div>
+</div>
+</div>
+</section></section>
+<section>
+<section class="title-slide slide level1 center">
+<h1>Articulación con los proyectos de investigación</h1>
+
+</section>
+<section class="slide level2">
+<h2>Matriz de articulación conceptual: temas 01 a 03 (Eje 4)</h2>
+<div style="font-size: 0.67em; line-height: 1.20;">
+<p>Los fundamentos del capítulo sustentan las hipótesis de investigación de frontera:</p>
+<table>
+<caption>Articulación entre fundamentos del capítulo y proyectos de investigación (Parte 1).</caption>
+<colgroup>
+<col style="width: 16%">
+<col style="width: 33%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Proyecto (Eje 4)</th>
+<th>Fundamento conceptual del capítulo</th>
+<th>Tensión arquitectónica evaluada</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Tema 01: DuckDB y GeoParquet</strong></td>
+<td>Topología cliente-servidor y almacenamiento columnar (OLAP).</td>
+<td>Sobrecarga de red por sockets TCP/IP y llamadas al sistema frente al modelo embebido (<em>in-process</em>).</td>
+</tr>
+<tr class="even">
+<td><strong>Tema 02: Apache Sedona y PySpark</strong></td>
+<td>SGBD acoplado frente a motor de cómputo espacial distribuido.</td>
+<td>Límite de escalabilidad vertical del <em>buffer pool</em> local en cruces espaciales masivos (<em>data shuffling</em>).</td>
+</tr>
+<tr class="odd">
+<td><strong>Tema 03: Mallas discretas (H3 / S2)</strong></td>
+<td>Indexación multidimensional continua (GiST / R-Tree) y cajas MBR.</td>
+<td>Ineficiencia y solapamiento de árboles espaciales continuos frente a telemetría masiva de alta densidad.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section class="slide level2">
+<h2>Matriz de articulación conceptual: temas 04 a 06 (Eje 4)</h2>
+<div style="font-size: 0.67em; line-height: 1.20;">
+<p>Continuación de la articulación con tecnologías emergentes de persistencia:</p>
+<table>
+<caption>Articulación entre fundamentos del capítulo y proyectos de investigación (Parte 2).</caption>
+<colgroup>
+<col style="width: 16%">
+<col style="width: 33%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Proyecto (Eje 4)</th>
+<th>Fundamento conceptual del capítulo</th>
+<th>Tensión arquitectónica evaluada</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Tema 04: Neo4j frente a pgRouting</strong></td>
+<td>Grafos de propiedades (ISO GQL) frente al modelo relacional.</td>
+<td>Costo algorítmico de evaluar relaciones topológicas continuas mediante operaciones de combinación (<em>joins</em>) indexadas.</td>
+</tr>
+<tr class="even">
+<td><strong>Tema 05: Elasticsearch frente a MongoDB</strong></td>
+<td>Esquemas flexibles (<em>schema-on-read</em>) frente a garantías ACID relacionales.</td>
+<td>Ingestión masiva concurrente y filtrado geoespacial (<em>geo-fencing</em>) ante telemetría IoT desestructurada.</td>
+</tr>
+<tr class="odd">
+<td><strong>Tema 06: Rutinas nativas en Rust (PGRX)</strong></td>
+<td>Serialización WKB y extensibilidad en el motor relacional.</td>
+<td>Penalización de latencia al deserializar flujos binarios entre el núcleo gestor y lenguajes interpretados externos.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section class="slide level2">
+<h2>Síntesis de tensiones arquitectónicas (Eje 4)</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>El motor relacional espacial (PostGIS)</strong></p>
+<ul>
+<li>Repositorio maestro institucional transaccional con garantías ACID.</li>
+<li>Salvaguarda la integridad jurídica, referencial y topológica.</li>
+<li>Interfaz declarativa SQL estándar para aplicaciones cliente concurrentes.</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<p><strong>Arquitecturas especializadas</strong></p>
+<ul>
+<li>No buscan sustituir al motor relacional transaccional.</li>
+<li>Resuelven cuellos de botella específicos de latencia, cómputo distribuido o volumen masivo.</li>
+<li>Operan de forma articulada bajo el paradigma de <strong>persistencia políglota</strong>.</li>
+</ul>
+</div>
+</div>
+<div style="margin-top: 1.2em; font-size: 0.82em; text-align: center;">
+<p><em>Para la consulta detallada de términos técnicos y acrónimos, remitirse al <strong><strong>?@sec-anexo-glosario</strong></strong>.</em></p>
+</div>
 <div class="quarto-auto-generated-content">
 <div class="footer footer-default">
 

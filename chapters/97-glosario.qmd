@@ -1,0 +1,579 @@
+# Lista de acrónimos y glosario de conceptos técnicos {#sec-anexo-glosario}
+
+## Lista de acrónimos
+
+En la @tbl-lista-acronimos se compilan las siglas y acrónimos técnicos empleados a lo largo del capítulo, indicando su equivalencia en inglés y su ámbito operativo.
+
+| Acrónimo | Denominación formal en español | Término original en inglés | Ámbito funcional |
+| --- | --- | --- | --- |
+| **ACID** | Atomicidad, consistencia, aislamiento y durabilidad | *Atomicity, Consistency, Isolation, Durability* | Transaccionalidad en motores de bases de datos. |
+| **ADT** | Tipo abstracto de datos | *Abstract Data Type* | Tipado extensible en modelos objeto-relacionales. |
+| **AIO** | Entrada/salida asíncrona | *Asynchronous Input/Output* | Subsistema de almacenamiento del motor gestor. |
+| **ANN** | Vecinos más cercanos aproximados | *Approximate Nearest Neighbors* | Algoritmia de búsqueda en espacios vectoriales. |
+| **CBO** | Optimizador basado en costos | *Cost-Based Optimizer* | Planificación y optimización de consultas SQL. |
+| **CRS** | Sistema de referencia de coordenadas | *Coordinate Reference System* | Georreferenciación y geodesia computacional. |
+| **DBA** | Administrador de base de datos | *Database Administrator* | Gestión y gobierno de la infraestructura del motor. |
+| **DDL** | Lenguaje de definición de datos | *Data Definition Language* | Subconjunto SQL para definición de esquemas. |
+| **DML** | Lenguaje de manipulación de datos | *Data Manipulation Language* | Subconjunto SQL para consulta y edición de tuplas. |
+| **ECEF** | Centrado en la Tierra, fijo a la Tierra | *Earth-Centered, Earth-Fixed* | Sistema cartesiano tridimensional geocéntrico. |
+| **EPSG** | Grupo europeo de prospección petrolífera | *European Petroleum Survey Group* | Registro canónico de parámetros geodésicos. |
+| **EWKB** | Binario extendido bien conocido | *Extended Well-Known Binary* | Serialización binaria de geometrías con SRID. |
+| **GiST** | Árbol de búsqueda generalizado | *Generalized Search Tree* | Estructura de indexación para dominios no escalares. |
+| **GQL** | Lenguaje de consulta de grafos | *Graph Query Language* | Estándar formal ISO/IEC 39075 para bases de datos de grafos. |
+| **HNSW** | Grafos jerárquicos navegables de mundo pequeño | *Hierarchical Navigable Small World* | Estructura de indexación y búsqueda aproximada de vectores. |
+| **IGAC** | Instituto Geográfico Agustín Codazzi | — | Autoridad cartográfica y geodésica de Colombia. |
+| **LSM** | Árbol estructurado por fusión de registros | *Log-Structured Merge-tree* | Estructura de almacenamiento en motores de columnas anchas. |
+| **MBR** | Rectángulo delimitador mínimo | *Minimum Bounding Rectangle* | Aproximación ortogonal planar de geometrías vectoriales. |
+| **MVCC** | Control de concurrencia multiversión | *Multi-Version Concurrency Control* | Aislamiento transaccional sin bloqueos de lectura. |
+| **OGC** | Consorcio geoespacial abierto | *Open Geospatial Consortium* | Organización de estandarización geoespacial internacional. |
+| **OLAP** | Procesamiento analítico en línea | *Online Analytical Processing* | Cargas analíticas masivas y procesamiento columnar. |
+| **OLTP** | Procesamiento de transacciones en línea | *Online Transaction Processing* | Transaccionalidad de alta concurrencia orientada a filas. |
+| **ORDBMS** | Sistema gestor de bases de datos objeto-relacional | *Object-Relational Database Management System* | Modelo que combina álgebra relacional y tipos abstractos. |
+| **RBAC** | Control de acceso basado en roles | *Role-Based Access Control* | Modelo de seguridad y asignación de privilegios en el motor. |
+| **SFS** | Geometrías simples para SQL | *Simple Features for SQL* | Estándar OGC / ISO 19125 para tipos espaciales vectoriales. |
+| **SGBD** | Sistema gestor de bases de datos | *Database Management System* (DBMS) | Infraestructura de software para administración de datos. |
+| **SGBD espacial** | Sistema gestor de bases de datos espaciales | *Spatial Database Management System* (SDBMS) | Motor relacional extendido para geometrías y topología. |
+| **SIG** | Sistema de información geográfica | *Geographic Information System* (GIS) | Software para captura, edición y análisis cartográfico. |
+| **SIMD** | Instrucción única, datos múltiples | *Single Instruction, Multiple Data* | Procesamiento vectorial a nivel de registros de la CPU. |
+| **SQL** | Lenguaje de consulta estructurado | *Structured Query Language* | Estándar declarativo relacional internacional. |
+| **SQL/PGQ** | Consultas de grafos de propiedades en SQL | *SQL/Property Graph Queries* | Parte 16 del estándar ISO SQL:2023. |
+| **SRID** | Identificador del sistema de referencia espacial | *Spatial Reference Identifier* | Clave numérica para identificación unívoca de CRS. |
+| **SSI** | Aislamiento de instantáneas serializables | *Serializable Snapshot Isolation* | Implementación de serializabilidad transaccional sin bloqueos. |
+| **TOAST** | Técnica de almacenamiento de atributos sobredimensionados | *The Oversized-Attribute Storage Technique* | Mecanismo de compresión y desborde de páginas en PostgreSQL. |
+| **WAL** | Bitácora de registro previo | *Write-Ahead Logging* | Mecanismo de persistencia y durabilidad transaccional. |
+| **WKB** | Binario bien conocido | *Well-Known Binary* | Representación binaria estándar OGC para geometrías. |
+| **WKT** | Texto bien conocido | *Well-Known Text* | Representación textual estándar OGC para geometrías y CRS. |
+
+: Catálogo de acrónimos y siglas técnicas normalizadas. {#tbl-lista-acronimos}
+
+
+## Glosario de conceptos técnicos
+
+* **Arquitectura canónica**: Modelo de referencia formal, teórico y universalmente aceptado en la literatura científica y los estándares internacionales para describir la estructura conceptual, la división de subsistemas y los principios operativos de una tecnología, con independencia de soluciones comerciales o implementaciones de código abierto particulares.
+
+* **Atributo (o campo)**: Unidad atómica nominada que define una característica, propiedad o dimensión de una entidad dentro de un dominio específico en el esquema relacional.
+
+* **Atributo atómico frente a dato no atómico**: En el diseño relacional formal, clasifica los valores según su capacidad de descomposición estructural:
+    * **Atributo atómico**: Valor escalar indivisible que carece de subestructuras con significado independiente dentro del modelo de datos (requisito indispensable de la primera forma normal o 1NF). Ejemplos: un código numérico `srid`, una marca temporal o un identificador entero.
+    * **Dato no atómico**: Estructura compuesta, multivaluada o jerárquica cuyos componentes internos pueden descomponerse, direccionarse o evaluarse de forma individual sin alterar la validez del objeto. Ejemplos: arreglos (`ARRAY`), objetos semiestructurados (`JSONB`), tipos compuestos o entidades geométricas (`geometry`), conformadas internamente por secuencias ordenadas de pares o tripletas de coordenadas ($X, Y, Z, M$) y anillos topológicos.
+
+* **Base de datos espacial (GeoDB)**: Colección integrada y estructurada de datos geométricos, geodésicos y alfanuméricos persistidos bajo un esquema unificado, accesible de forma concurrente, con soporte de transaccionalidad ACID y gobernada por catálogos de referencia cartográfica.
+
+* **Base de datos vectorial**: Sistema gestor de persistencia e indexación diseñado para almacenar coordenadas de alta dimensionalidad (*embeddings* en $\mathbb{R}^d$) y resolver consultas de afinidad mediante métricas formales de distancia (euclidiana, coseno o producto escalar) estructuradas sobre algoritmos de búsqueda aproximada de vecinos más cercanos (ANN).
+
+* **Búsqueda por similitud semántica**: Método de recuperación de información que evalúa la afinidad conceptual entre entidades no estructuradas proyectadas hacia un espacio métrico latente continuo mediante modelos de aprendizaje profundo, sustituyendo la coincidencia léxica exacta por cálculo de proximidad geométrica multidimensional.
+
+* **Cartucho de datos (*cartridge*) o extensión**: Paquete de software desacoplado que se acopla a las interfaces de extensibilidad de un motor objeto-relacional para dotarlo de soporte nativo hacia un dominio específico (por ejemplo, tipos espaciales, clases de operadores GiST y funciones OGC provistas por la extensión `postgis`), sin requerir modificaciones ni recompilación en el código fuente nuclear del gestor.
+
+* **Codificador (*encoder*) y representación densa (*embedding*)**:
+    * **Codificador (*encoder*)**: Función de mapeo $f: \mathcal{X} \to \mathbb{R}^d$ implementada mediante una red neuronal profunda que transforma una entidad de entrada no estructurada desde un espacio disperso hacia un vector numérico denso en un espacio continuo de dimensión fija $d$.
+    * **Representación densa (*embedding*)**: Vector numérico resultante de la inferencia del codificador, donde la proximidad métrica relativa entre vectores condensa equivalencia o similitud semántica.
+
+* **Código objeto**: Es la traducción en lenguaje de máquina binario (archivos .o o .obj) generada por el compilador a partir del código fuente. Contiene instrucciones comprensibles por la CPU, pero aún no tiene enlazadas las librerías del sistema ni los controladores externos.
+
+* **Código objeto ejecutable**: Es el binario final compilado y enlazado (por ejemplo, un archivo binario ELF en Linux o un ejecutable .exe en Windows). El enlazador (linker) toma el código objeto de la aplicación y lo fusiona con las librerías de ejecución del cliente de base de datos (como libpq o las bibliotecas en tiempo de ejecución del SGBD).
+
+
+* **Cómputo espacial distribuido en lagos de datos (*spatial lakehouse engine*)**: Arquitectura analítica fundamentada en el desacoplamiento estricto entre el motor de ejecución y el sustrato de persistencia física, delegando el almacenamiento a formatos columnares abiertos (como GeoParquet o GeoArrow en repositorios de objetos) y el procesamiento algebraico a grafos acíclicos dirigidos (DAG) en la memoria volátil de un clúster. A diferencia de los SGBD relacionales —cuyo optimizador opera sobre páginas físicas locales y estructuras de indexación ligadas al disco (árboles GiST)—, este paradigma estructura la evaluación de consultas mediante **particionamiento espacial multidimensional distribuido** (*Quad-Tree*, *KDB-Tree* o *R-Tree* global), optimizando la distribución de teselas o entidades entre nodos de trabajo (*workers*) para mitigar el cuello de botella derivado de la transferencia masiva de datos por red (*data shuffling*).
+
+    La articulación de este modelo dentro de la disciplina responde a la necesidad de superar los límites de escalabilidad vertical (*scale-up*) propios de las instancias objeto-relacionales cuando se procesan volúmenes masivos de datos geográficos (telemetría continua, mallas de sensores o coberturas continentales). Al implementar formalmente la especificación OGC *Simple Feature Access* mediante sintaxis *Spatial SQL* sobre estructuras paralelas (DataFrames distribuidos), este enfoque faculta la comparación metodológica entre la resolución de predicados topológicos (`ST_Intersects`, `ST_Within`, `ST_Buffer`) gobernada por un gestor transaccional centralizado frente a su cómputo particionado sobre memoria distribuida elástica.
+
+
+* **Consistencia transaccional en sistemas distribuidos elásticos**: Garantía formal de cumplimiento determinista de las propiedades ACID y equivalencia secuencial estricta (*serializability* o *linearizability*) sobre datos particionados y distribuidos en múltiples nodos del clúster. Se fundamenta en algoritmos de consenso formal (Raft o Multi-Paxos) para la persistencia por quórum en bitácoras no volátiles (WAL), protocolos de compromiso en dos fases (2PC) para transacciones multinodo y sincronización temporal coordinada (relojes lógicos híbridos o tiempo físico acotado), asegurando un estado global válido e inalterable durante eventos de particionamiento autónomo, migración de rangos y escalado horizontal.
+
+* **Control de acceso basado en roles** (Role-Based Access Control, RBAC): es un modelo de seguridad donde los privilegios sobre los recursos del sistema (conexión, lectura, escritura, ejecución de funciones o definición de esquemas) se asignan a entidades abstractas denominadas roles, y no de forma individual a cada cuenta de usuario. Los usuarios finales obtienen sus autorizaciones al ser vinculados como miembros de uno o varios roles predefinidos.
+
+* **Ejecución vectorial (*vectorized execution*)**: Paradigma de diseño del procesador de consultas en motores analíticos (OLAP) que sustituye el modelo iterador tupla a tupla por la evaluación de bloques homogéneos contiguos de valores de una misma columna en la memoria intermedia, permitiendo al compilador emitir instrucciones de hardware **SIMD** a nivel de registros de CPU.
+
+* **Embeddings frente a análisis de componentes principales (PCA)**: Enfoques de reducción de dimensionalidad orientados a proyectar entidades desde espacios de alta dimensionalidad ($\mathbb{R}^D$) hacia subespacios densos y continuos de menor dimensión ($\mathbb{R}^d$, con $d \ll D$). Mientras que el análisis de componentes principales (PCA) constituye una transformación lineal y ortogonal determinista que maximiza la varianza global proyectada mediante descomposición espectral o en valores singulares (SVD), los *embeddings* representan un mapeo no lineal aprendido mediante redes neuronales profundas que preserva vecindades locales y relaciones semánticas sobre variedades topológicas complejas (*manifolds*).
+
+    | Dimensión analítica | Análisis de componentes principales (PCA) | Representaciones densas (*embeddings*) |
+    | --- | --- | --- |
+    | **Naturaleza del mapeo** | Transformación estrictamente lineal y ortogonal. | Mapeo continuo no lineal parametrizado por funciones de activación. |
+    | **Método de resolución** | Determinista y cerrado (descomposición espectral de la matriz de covarianza o SVD). | Iterativo y estocástico (optimización por descenso de gradiente sobre redes neuronales). |
+    | **Criterio de optimización** | Maximización de la varianza proyectada y minimización del error de reconstrucción cuadrático medio. | Minimización de funciones de pérdida contrastivas, tripletas o de entropía cruzada. |
+    | **Estructura de las dimensiones** | Ejes ortogonales ordenados jerárquicamente de forma decreciente según la varianza explicada. | Dimensiones continuas no jerárquicas con semántica distribuida (la información reside en la dirección y distancia angular o métrica). |
+    | **Captura de variedades (*manifolds*)** | Proyecta sobre hiperplanos planos; no desenrolla curvaturas ni topologías no lineales en los datos. | Modela geometrías intrincadas y relaciones de vecindad no euclidianas en el espacio latente. |
+    | **Supervisión y contexto** | Técnica no supervisada orientada exclusivamente a la dispersión numérica de los datos de entrada. | Aprendizaje autosupervisado o supervisado guiado por tareas específicas (coocurrencia, similitud semántica o grafos). |
+    | **Ámbito operativo en SGBD** | Compresión de variables, decorrelación previa y reducción de dimensionalidad tabular. | Almacenamiento e indexación en bases de datos vectoriales mediante algoritmos ANN (HNSW, IVF-PQ) para búsqueda por proximidad semántica. |
+
+    : Comparación técnica y matemática entre PCA y modelos de embeddings. {#tbl-comparacion-pca-embeddings}
+
+* **Encapsulamiento** (modelo objeto-relacional o Tipo 3): es el principio que agrupa la estructura interna y física de un dato complejo junto con la lógica algorítmica que lo manipula, ocultando la representación física en disco (arreglos binarios, compensaciones de memoria o índices internos) y exponiendo exclusivamente una interfaz declarativa de funciones estandarizadas. 
+
+    En PostgreSQL y PostGIS, una columna de tipo `geometry` implementa este principio: el motor almacena internamente una estructura binaria de bajo nivel (`GSERIALIZED`) que integra coordenadas, dimensiones, caja envolvente (MBR) y SRID. El analista no accede a los *offsets* de bytes en disco, sino que opera el objeto a través de constructores y métodos conformes a los estándares OGC e ISO:
+
+```{sql}
+--| label: ddl-encapsulamiento-tipo-geometry
+--| eval: false
+--| echo: true
+
+-- 1. Definición del tipo abstracto: la estructura física queda encapsulada
+CREATE TABLE public.zonas_reserva (
+    id serial PRIMARY KEY,
+    nombre varchar(50) NOT NULL,
+    geom geometry(Polygon, 9377) NOT NULL
+);
+
+-- 2. Manipulación mediante constructor formal OGC (oculta la codificación binaria)
+INSERT INTO public.zonas_reserva (nombre, geom)
+VALUES (
+    'Parque Ecológico',
+    ST_GeomFromText('POLYGON((5000000 2000000, 5001000 2000000, 5001000 2001000, 5000000 2001000, 5000000 2000000))', 9377)
+);
+
+-- 3. Invocación de métodos y predicados: evaluación sin deserialización manual
+SELECT 
+    nombre,
+    ST_Area(geom) AS area_m2,
+    ST_AsText(geom) AS wkt_serializado
+FROM public.zonas_reserva;
+
+```
+
+* **Encoder (codificador frente a filtrado espacial clásico en teledetección)**: Modelo de extracción y reducción dimensional que sustituye la convolución planar analítica por representaciones latentes profundas. Mientras que el procesamiento digital de imágenes (PDI) aplica núcleos invariantes estáticos ($K$, ej. Sobel $3 \times 3$) sobre una matriz monocanal ($H \times W$) para generar un ráster derivado que preserva la correspondencia biyectiva celda a celda ($H \times W \times 1$, persistido como GeoTIFF/COG para álgebra de mapas), un *encoder* procesa el tensor multiespectral continuo completo ($H \times W \times B$). Mediante bancos convolucionales jerárquicos ($W$) optimizados por retropropagación y acoplados a activaciones no lineales, el codificador contrae progresivamente la resolución topológica de la escena mientras expande la profundidad semántica de los canales ($C_1 < C_2 < C_3$). Finalmente, suprime la grilla planar mediante agregación global (*Global Average Pooling*) para condensar la tesela en un único vector denso latente (*embedding* $1 \times d$, $\mathbf{z} \in \mathbb{R}^d$), estructurado para indexación métrica y recuperación por similitud ($k$-NN mediante índices HNSW) en bases de datos vectoriales como PostgreSQL con `pgvector`.
+
+    En la @fig-comparacion-pdi-encoders-dot se esquematiza el paralelo operativo entre la convolución analítica superficial de PDI y la transformación jerárquica profunda del codificador neuronal hacia el espacio latente.
+
+::: {.diagrama-ancho}
+
+```{dot}
+//| label: fig-comparacion-pdi-encoders-dot
+//| fig-cap: "Representación matricial y dimensional del filtrado espacial clásico frente a la extracción de embeddings mediante encoders."
+//| fig-align: center
+//| fig-width: 6.5
+//| fig-height: 9
+//| out-width: 100%
+//| echo: false
+
+digraph G {
+    graph [rankdir=TB, splines=ortho, nodesep=0.8, ranksep=0.75, fontname="Helvetica", bgcolor="white"];
+    node [shape=plaintext, fontname="Helvetica", fontsize=10];
+    edge [fontname="Helvetica", fontsize=9, color="#4A5568", penwidth=1.2];
+
+    // Nodo de entrada: Tensor 3D estructurado
+    input_raster [label=<
+        <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="6" COLOR="#2B6CB0" BGCOLOR="#EBF8FF" STYLE="ROUNDED">
+            <TR>
+                <TD COLSPAN="2" ALIGN="CENTER">
+                    <B>Tesela ráster multiespectral de entrada (I)</B><BR/>
+                    <FONT POINT-SIZE="8" COLOR="#4A5568">Tensor 3D continuo: H × W × B (5 × 5 celdas × B bandas)</FONT>
+                </TD>
+            </TR>
+            <TR>
+                <TD ALIGN="CENTER"><FONT POINT-SIZE="8" COLOR="#2B6CB0"><B>Resolución planar (H × W: 5 × 5)</B></FONT></TD>
+                <TD ALIGN="CENTER"><FONT POINT-SIZE="8" COLOR="#2B6CB0"><B>Profundidad espectral (B)</B></FONT></TD>
+            </TR>
+            <TR>
+                <TD ALIGN="CENTER">
+                    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" COLOR="#3182CE">
+                        <TR>
+                            <TD WIDTH="12" HEIGHT="12" BGCOLOR="#BEE3F8"></TD>
+                            <TD WIDTH="12" HEIGHT="12" BGCOLOR="#BEE3F8"></TD>
+                            <TD WIDTH="12" HEIGHT="12" BGCOLOR="#BEE3F8"></TD>
+                            <TD WIDTH="12" HEIGHT="12" BGCOLOR="#BEE3F8"></TD>
+                            <TD WIDTH="12" HEIGHT="12" BGCOLOR="#BEE3F8"></TD>
+                        </TR>
+                        <TR>
+                            <TD WIDTH="12" HEIGHT="12" BGCOLOR="#BEE3F8"></TD>
+                            <TD WIDTH="12" HEIGHT="12" BGCOLOR="#90CDF4"></TD>
+                            <TD WIDTH="12" HEIGHT="12" BGCOLOR="#90CDF4"></TD>
+                            <TD WIDTH="12" HEIGHT="12" BGCOLOR="#90CDF4"></TD>
+                            <TD WIDTH="12" HEIGHT="12" BGCOLOR="#BEE3F8"></TD>
+                        </TR>
+                        <TR>
+                            <TD WIDTH="12" HEIGHT="12" BGCOLOR="#BEE3F8"></TD>
+                            <TD WIDTH="12" HEIGHT="12" BGCOLOR="#90CDF4"></TD>
+                            <TD WIDTH="12" HEIGHT="12" BGCOLOR="#63B3ED"></TD>
+                            <TD WIDTH="12" HEIGHT="12" BGCOLOR="#90CDF4"></TD>
+                            <TD WIDTH="12" HEIGHT="12" BGCOLOR="#BEE3F8"></TD>
+                        </TR>
+                        <TR>
+                            <TD WIDTH="12" HEIGHT="12" BGCOLOR="#BEE3F8"></TD>
+                            <TD WIDTH="12" HEIGHT="12" BGCOLOR="#90CDF4"></TD>
+                            <TD WIDTH="12" HEIGHT="12" BGCOLOR="#90CDF4"></TD>
+                            <TD WIDTH="12" HEIGHT="12" BGCOLOR="#90CDF4"></TD>
+                            <TD WIDTH="12" HEIGHT="12" BGCOLOR="#BEE3F8"></TD>
+                        </TR>
+                        <TR>
+                            <TD WIDTH="12" HEIGHT="12" BGCOLOR="#BEE3F8"></TD>
+                            <TD WIDTH="12" HEIGHT="12" BGCOLOR="#BEE3F8"></TD>
+                            <TD WIDTH="12" HEIGHT="12" BGCOLOR="#BEE3F8"></TD>
+                            <TD WIDTH="12" HEIGHT="12" BGCOLOR="#BEE3F8"></TD>
+                            <TD WIDTH="12" HEIGHT="12" BGCOLOR="#BEE3F8"></TD>
+                        </TR>
+                    </TABLE>
+                </TD>
+                <TD ALIGN="CENTER">
+                    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="2" COLOR="#4A5568">
+                        <TR><TD BGCOLOR="#63B3ED" WIDTH="95" HEIGHT="13" ALIGN="CENTER"><FONT POINT-SIZE="7" COLOR="WHITE"><B>Banda 1 (Azul)</B></FONT></TD></TR>
+                        <TR><TD BGCOLOR="#48BB78" WIDTH="95" HEIGHT="13" ALIGN="CENTER"><FONT POINT-SIZE="7" COLOR="WHITE"><B>Banda 2 (Verde / NIR)</B></FONT></TD></TR>
+                        <TR><TD BGCOLOR="#CBD5E0" WIDTH="95" HEIGHT="11" ALIGN="CENTER"><FONT POINT-SIZE="7" COLOR="#718096">...</FONT></TD></TR>
+                        <TR><TD BGCOLOR="#4A5568" WIDTH="95" HEIGHT="13" ALIGN="CENTER"><FONT POINT-SIZE="7" COLOR="WHITE"><B>Banda B (SWIR)</B></FONT></TD></TR>
+                    </TABLE>
+                </TD>
+            </TR>
+            <TR>
+                <TD ALIGN="CENTER"><FONT POINT-SIZE="7" COLOR="#718096">Coordenadas espaciales (i, j)</FONT></TD>
+                <TD ALIGN="CENTER"><FONT POINT-SIZE="7" COLOR="#718096">Canales radiométricos</FONT></TD>
+            </TR>
+        </TABLE>
+    >];
+
+    // Rama 1: Filtrado espacial clasico
+    subgraph cluster_pdi {
+        label = "1. Filtrado espacial clásico (PDI / Teledetección)";
+        style = "dashed,rounded";
+        color = "#DD6B20";
+        bgcolor = "#FFFAF0";
+        fontcolor = "#C05621";
+        fontsize = 11;
+
+        kernel [label=<
+            <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#DD6B20" BGCOLOR="#FEEBC8" STYLE="ROUNDED">
+                <TR><TD ALIGN="CENTER"><B>Núcleo estático analítico (K)</B><BR/><FONT POINT-SIZE="8" COLOR="#7B341E">Operador diferencial fijo 3 × 3 (ej. Sobel)</FONT></TD></TR>
+                <TR><TD ALIGN="CENTER">
+                    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="1" COLOR="#C05621">
+                        <TR><TD WIDTH="18" HEIGHT="16" BGCOLOR="#FFFFFF">-1</TD><TD WIDTH="18" BGCOLOR="#FFFFFF">0</TD><TD WIDTH="18" BGCOLOR="#FFFFFF">+1</TD></TR>
+                        <TR><TD HEIGHT="16" BGCOLOR="#FFFFFF">-2</TD><TD BGCOLOR="#FFFFFF">0</TD><TD BGCOLOR="#FFFFFF">+2</TD></TR>
+                        <TR><TD HEIGHT="16" BGCOLOR="#FFFFFF">-1</TD><TD BGCOLOR="#FFFFFF">0</TD><TD BGCOLOR="#FFFFFF">+1</TD></TR>
+                    </TABLE>
+                </TD></TR>
+                <TR><TD ALIGN="CENTER"><FONT POINT-SIZE="7" COLOR="#7B341E">Coeficientes invariantes sin optimización</FONT></TD></TR>
+            </TABLE>
+        >];
+
+        conv_op [label=<
+            <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#DD6B20" BGCOLOR="#FFFFFF" STYLE="ROUNDED">
+                <TR><TD ALIGN="CENTER"><B>Convolución 2D homogénea</B><BR/><FONT POINT-SIZE="8">S(i, j) = ∑∑ I(i-m, j-n) K(m, n)</FONT><BR/><FONT POINT-SIZE="8" COLOR="#7B341E">Desplazamiento planar sobre ventana local</FONT></TD></TR>
+            </TABLE>
+        >];
+
+        raster_out [label=<
+            <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#DD6B20" BGCOLOR="#FEEBC8" STYLE="ROUNDED">
+                <TR><TD ALIGN="CENTER"><B>Ráster filtrado planar (S)</B><BR/><FONT POINT-SIZE="8">Dimensión espacial preservada: H × W × 1 (5 × 5)</FONT></TD></TR>
+                <TR><TD ALIGN="CENTER">
+                    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" COLOR="#DD6B20">
+                        <TR><TD WIDTH="12" HEIGHT="12" BGCOLOR="#FBD38D"></TD><TD WIDTH="12" HEIGHT="12" BGCOLOR="#FBD38D"></TD><TD WIDTH="12" HEIGHT="12" BGCOLOR="#ED8936"></TD><TD WIDTH="12" HEIGHT="12" BGCOLOR="#FBD38D"></TD><TD WIDTH="12" HEIGHT="12" BGCOLOR="#FBD38D"></TD></TR>
+                        <TR><TD HEIGHT="12" BGCOLOR="#FBD38D"></TD><TD BGCOLOR="#FBD38D"></TD><TD BGCOLOR="#DD6B20"></TD><TD BGCOLOR="#FBD38D"></TD><TD BGCOLOR="#FBD38D"></TD></TR>
+                        <TR><TD HEIGHT="12" BGCOLOR="#FBD38D"></TD><TD BGCOLOR="#FBD38D"></TD><TD BGCOLOR="#C05621"></TD><TD BGCOLOR="#FBD38D"></TD><TD BGCOLOR="#FBD38D"></TD></TR>
+                        <TR><TD HEIGHT="12" BGCOLOR="#FBD38D"></TD><TD BGCOLOR="#FBD38D"></TD><TD BGCOLOR="#DD6B20"></TD><TD BGCOLOR="#FBD38D"></TD><TD BGCOLOR="#FBD38D"></TD></TR>
+                        <TR><TD HEIGHT="12" BGCOLOR="#FBD38D"></TD><TD BGCOLOR="#FBD38D"></TD><TD BGCOLOR="#ED8936"></TD><TD BGCOLOR="#FBD38D"></TD><TD BGCOLOR="#FBD38D"></TD></TR>
+                    </TABLE>
+                </TD></TR>
+                <TR><TD ALIGN="CENTER"><FONT POINT-SIZE="8" COLOR="#7B341E">Correspondencia biyectiva celda a celda</FONT></TD></TR>
+            </TABLE>
+        >];
+
+        storage_pdi [label=<
+            <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#C05621" BGCOLOR="#FFFFFF" STYLE="ROUNDED">
+                <TR><TD ALIGN="CENTER"><B>Persistencia matricial continua</B><BR/><FONT COLOR="#4A5568">GeoTIFF / Cloud Optimized GeoTIFF (COG)</FONT><BR/><FONT POINT-SIZE="8" COLOR="#7B341E">Uso: Visualización cartográfica y álgebra de mapas</FONT></TD></TR>
+            </TABLE>
+        >];
+    }
+
+    // Rama 2: Codificador neuronal profundo
+    subgraph cluster_dl {
+        label = "2. Codificador profundo y representaciones densas (Encoder)";
+        style = "dashed,rounded";
+        color = "#3182CE";
+        bgcolor = "#F7FAFC";
+        fontcolor = "#2B6CB0";
+        fontsize = 11;
+
+        pyramid [label=<
+            <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#3182CE" BGCOLOR="#EBF8FF" STYLE="ROUNDED">
+                <TR><TD ALIGN="CENTER"><B>Bancos convolucionales multiescala jerárquicos (W)</B><BR/><FONT POINT-SIZE="8" COLOR="#2B6CB0">W optimizados vía retropropagación + activación no lineal (ReLU/GELU)</FONT></TD></TR>
+                <TR><TD ALIGN="CENTER">
+                    <TABLE BORDER="0" CELLSPACING="2" CELLPADDING="3">
+                        <TR><TD BGCOLOR="#BEE3F8" BORDER="1" COLOR="#3182CE"><FONT POINT-SIZE="8">[H/2 × W/2 × C<SUB>1</SUB>] - Primitivas locales (bordes / texturas simples)</FONT></TD></TR>
+                        <TR><TD BGCOLOR="#90CDF4" BORDER="1" COLOR="#3182CE"><FONT POINT-SIZE="8">[H/4 × W/4 × C<SUB>2</SUB>] - Patrones espaciales y motivos estructurales</FONT></TD></TR>
+                        <TR><TD BGCOLOR="#63B3ED" BORDER="1" COLOR="#3182CE"><FONT POINT-SIZE="8">[H/8 × W/8 × C<SUB>3</SUB>] - Semántica y contexto espacial global</FONT></TD></TR>
+                    </TABLE>
+                </TD></TR>
+                <TR><TD ALIGN="CENTER"><FONT POINT-SIZE="8" COLOR="#2B6CB0">Contracción topológica (H/8) vs. expansión semántica (C<SUB>1</SUB> &lt; C<SUB>2</SUB> &lt; C<SUB>3</SUB>)</FONT></TD></TR>
+            </TABLE>
+        >];
+
+        pooling [label=<
+            <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#3182CE" BGCOLOR="#FFFFFF" STYLE="ROUNDED">
+                <TR><TD ALIGN="CENTER"><B>Colapso espacial final (Global Average Pooling)</B><BR/><FONT POINT-SIZE="8">Promedia dimensiones espaciales suprimiendo la grilla 2D</FONT><BR/><FONT POINT-SIZE="8" COLOR="#2B6CB0">[H<SUB>f</SUB> × W<SUB>f</SUB> × C<SUB>f</SUB>] = [H/8 × W/8 × C<SUB>3</SUB>] → Vector [1 × C<SUB>3</SUB>]</FONT></TD></TR>
+            </TABLE>
+        >];
+
+        vector_out [label=<
+            <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="3" COLOR="#3182CE" BGCOLOR="#EBF8FF" STYLE="ROUNDED">
+                <TR>
+                    <TD ALIGN="CENTER"><B>Vector latente denso (Embedding)</B></TD>
+                </TR>
+                <TR>
+                    <TD ALIGN="CENTER"><FONT POINT-SIZE="8" COLOR="#4A5568">Dimensión vectorial: 1 &times; d (donde d = C&#8323; o proyectado)</FONT></TD>
+                </TR>
+                <TR>
+                    <TD ALIGN="CENTER">
+                        <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" COLOR="#3182CE">
+                            <TR>
+                                <TD WIDTH="22" HEIGHT="16" BGCOLOR="#BEE3F8"><FONT POINT-SIZE="8">z&#8321;</FONT></TD>
+                                <TD WIDTH="22" HEIGHT="16" BGCOLOR="#BEE3F8"><FONT POINT-SIZE="8">z&#8322;</FONT></TD>
+                                <TD WIDTH="22" HEIGHT="16" BGCOLOR="#BEE3F8"><FONT POINT-SIZE="8">z&#8323;</FONT></TD>
+                                <TD WIDTH="22" HEIGHT="16" BGCOLOR="#E2E8F0"><FONT POINT-SIZE="8">...</FONT></TD>
+                                <TD WIDTH="22" HEIGHT="16" BGCOLOR="#BEE3F8"><FONT POINT-SIZE="8">z<SUB>d</SUB></FONT></TD>
+                            </TR>
+                        </TABLE>
+                    </TD>
+                </TR>
+                <TR>
+                    <TD ALIGN="CENTER"><FONT POINT-SIZE="7" COLOR="#2B6CB0">Un solo punto métrico en el espacio latente para toda la tesela I</FONT></TD>
+                </TR>
+            </TABLE>
+        >];
+
+        storage_dl [label=<
+            <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#2B6CB0" BGCOLOR="#FFFFFF" STYLE="ROUNDED">
+                <TR><TD ALIGN="CENTER"><B>Persistencia e indexación métrica</B><BR/><FONT COLOR="#4A5568">PostgreSQL + pgvector / Milvus / Qdrant</FONT><BR/><FONT POINT-SIZE="8" COLOR="#2B6CB0">Uso: Búsqueda k-NN por similitud coseno (Índice HNSW)</FONT></TD></TR>
+            </TABLE>
+        >];
+    }
+
+    // Conexiones estructurales
+    input_raster -> kernel [label=" Extracción monocanal\n (Matriz 2D: 5 × 5)"];
+    input_raster -> pyramid [label=" Ingesta tensorial completa (5 × 5 × B)\n Optimización de pesos W vía\n retropropagación del gradiente"];
+
+    kernel -> conv_op;
+    conv_op -> raster_out [label=" Deslizamiento de ventana\n (Padding: H' = H = 5, W' = W = 5)"];
+    raster_out -> storage_pdi;
+
+    pyramid -> pooling [label=" Agregación espacial global\n (sobre el tensor final de etapa 3)"];
+    pooling -> vector_out [label=" Proyección métrica unidimensional\n (1 vector por tesela)"];
+    vector_out -> storage_dl;
+}
+
+```
+
+:::
+
+
+
+* **Esquema de base de datos**: Definición estructural, lógica y semántica de las relaciones, tipos de datos, restricciones de dominio, claves y reglas de integridad que gobiernan un repositorio relacional, expresada formalmente mediante sentencias DDL.
+
+* **Esquema en lectura (*schema-on-read*)**: Paradigma de persistencia (característico de motores NoSQL documentales) donde los datos se almacenan sin someterse a una validación estructural previa contra un esquema DDL formal. El motor o la aplicación compila e interpreta la estructura, los tipos de datos y la jerarquía en el momento exacto de evaluar la consulta, contrastando con el esquema rígido en escritura (*schema-on-write*) propio de los sistemas relacionales.
+
+* **Garantías ACID**: Conjunto de propiedades operativas que gobiernan el procesamiento transaccional en un SGBD:
+    * **Atomicidad (*Atomicity*)**: Garantía de indivisibilidad operativa; una transacción se consolida en su totalidad o revierte todas sus modificaciones mediante el uso coordinado del registro previo en bitácora (WAL) y registros de reversión (*rollback*).
+    * **Consistencia (*Consistency*)**: Preservación del estado válido del catálogo relacional; el motor invalida y aborta cualquier transacción que transgreda restricciones declarativas (`PRIMARY KEY`, `FOREIGN KEY`, `CHECK`) o disparadores.
+    * **Aislamiento (*Isolation*)**: Ejecución concurrente protegida contra anomalías; el gestor de transacciones aísla las modificaciones simultáneas valiéndose de control de concurrencia multiversión (MVCC) o protocolos de bloqueo.
+    * **Durabilidad (*Durability*)**: Garantía de persistencia no volátil; el motor asegura que, una vez confirmado el `COMMIT`, los cambios residan en disco persistente mediante sincronización del WAL (`fsync`), permitiendo su recuperación ante fallos del kernel o cortes eléctricos.
+
+* **Grafos de mundo pequeño navegables y jerárquicos (HNSW)**: Estructura de *indexación* basada en grafos multicapa superpuestos que optimiza la *búsqueda* aproximada de vecinos más cercanos (ANN) en espacios vectoriales continuos, logrando una complejidad temporal de escala logarítmica $O(\log N)$ mediante un recorrido voraz (*greedy routing*) descendente.
+
+* **Herencia de tablas (en SGBD objeto-relacionales)**: Mecanismo estructural del modelo relacional extendido que permite a una relación subordinada (tabla hija) adquirir automáticamente la totalidad de las columnas, tipos de datos y restricciones declaradas en una o más relaciones base (tablas padre) mediante la cláusula `INHERITS`. Las consultas de agregación o escaneo ejecutadas sobre la relación padre acceden de forma polimórfica y transparente a las tuplas de todas sus tablas descendientes, a menos que se limite el alcance a la relación superior mediante la cláusula declarativa `ONLY`.
+
+    En bases de datos espaciales, este mecanismo formaliza taxonomías geográficas jerárquicas (por ejemplo, derivar redes de acueducto o elementos de transporte a partir de una entidad abstracta con geometría común):
+
+```{sql}
+--| label: ddl-herencia-tablas-postgis
+--| eval: false
+--| echo: true
+
+-- 1. Definición de la relación padre (esquema y geometría común)
+CREATE TABLE public.elemento_red (
+    id serial PRIMARY KEY,
+    codigo varchar(20) NOT NULL UNIQUE,
+    estado_operativo varchar(15) DEFAULT 'ACTIVO',
+    geom geometry(Geometry, 9377) NOT NULL
+);
+
+-- 2. Creación de relaciones hijas mediante la cláusula INHERITS
+CREATE TABLE public.valvula (
+    diametro_pulgadas numeric(4, 2) NOT NULL,
+    presion_nominal_psi integer NOT NULL
+) INHERITS (public.elemento_red);
+
+CREATE TABLE public.tuberia (
+    material varchar(30) NOT NULL,
+    rugosidad_coef numeric(5, 4) NOT NULL
+) INHERITS (public.elemento_red);
+
+-- 3. Inserción de tuplas en las relaciones especializadas
+INSERT INTO public.valvula (codigo, estado_operativo, geom, diametro_pulgadas, presion_nominal_psi)
+VALUES ('VAL-01', 'ACTIVO', ST_GeomFromText('POINT(5000000 2000000)', 9377), 4.0, 150);
+
+INSERT INTO public.tuberia (codigo, estado_operativo, geom, material, rugosidad_coef)
+VALUES ('TUB-01', 'ACTIVO', ST_GeomFromText('LINESTRING(5000000 2000000, 5000200 2000000)', 9377), 'PVC', 0.0090);
+
+-- 4. Consulta polimórfica (recupera todas las hijas) frente a consulta restringida (ONLY)
+SELECT codigo, ST_GeometryType(geom) AS tipo_geom FROM public.elemento_red;
+SELECT codigo, ST_GeometryType(geom) AS tipo_geom FROM ONLY public.elemento_red;
+
+```
+
+* **Invariantes del modelo**: En teoría de bases de datos y diseño formal de sistemas, un invariante es una condición lógica o predicado que debe cumplirse y permanecer verdadero en todo momento, a través de cualquier transición de estado del sistema. Si una transacción intenta ejecutar una modificación que vulnere dicha condición, el motor aborta la operación y ejecuta una reversión (rollback) para impedir que la base de datos entre en un estado inconsistente. Ejemplos: Integridad de entidad (unicidad y no nulidad, ej: llave primaria); integridad referencial (llave foránea), integridad de dominio (check), validez topológica, homogeneidad de referencia espacial (SRID), consistencia dimensional). El diccionario de datos almacena estas especificaciones para que el gestor de integridad pueda contrastar cualquier operación DML contra ellas antes de permitir su persistencia física en las páginas de almacenamiento en disco.
+
+
+* **Método de clase**: Función vinculada a la definición formal del tipo abstracto de datos (clase) y no al estado de un objeto particular en memoria o disco. Opera habitualmente como constructor o método de fábrica (*factory method*) para instanciar nuevos objetos espaciales a partir de argumentos escalares o serializaciones externas (WKT, WKB, coordenadas numéricas):
+
+```{sql}
+--| label: sql-ejemplo-metodo-clase
+--| eval: false
+--| echo: true
+
+-- Invocación del constructor sin requerir una entidad preexistente en la base de datos
+SELECT ST_GeomFromText('POINT(5000000 2000000)', 9377) AS nueva_geometria;
+
+```
+
+* **Método de instancia**: Función asociada a un objeto específico ya materializado en el motor, la cual opera accediendo a su estado interno encapsulado (secuencias de coordenadas, dimensiones, vértices o anillos topológicos) para calcular métricas, evaluar predicados espaciales o derivar propiedades:
+
+```{sql}
+--| label: sql-ejemplo-metodo-instancia
+--| eval: false
+--| echo: true
+
+-- Invocación sobre los atributos geométricos encapsulados de una tupla persistida
+SELECT 
+    codigo,
+    ST_Area(geom) AS area_m2,
+    ST_GeometryType(geom) AS tipo_geometria
+FROM public.predios;
+
+```
+
+
+* **Modelo de despliegue embebido (*in-process*)**: Arquitectura donde el motor de base de datos se vincula como biblioteca de ejecución dentro del mismo proceso y espacio de memoria de la aplicación anfitriona (DuckDB o SQLite), eliminando la comunicación por red y la sobrecarga de sockets propia del esquema cliente-servidor.
+
+* **OID (identificador de objeto y principio de identidad)**: Valor numérico único, global e inmutable asignado automáticamente por el motor gestor en modelos orientados a objetos y objeto-relacionales que confiere distinción unívoca a cada entidad, con independencia del estado o valores contenidos en sus atributos (desacoplamiento entre identidad y estado). A diferencia del modelo relacional estricto —donde la unicidad depende de los valores escalares de una clave primaria—, dos objetos con atributos descriptivos y geometrías idénticas constituyen instancias independientes en memoria y disco al portar OID distintos:
+
+```{sql}
+--| label: ddl-glosario-identidad-oid
+--| eval: false
+--| echo: true
+
+-- Relación con entidades de idéntico estado espacial y temático
+CREATE TABLE public.muestras_duplicadas (
+    fid serial PRIMARY KEY, -- Identificador subrogado equivalente al OID
+    sensor varchar(20) NOT NULL,
+    geom geometry(Point, 9377) NOT NULL
+);
+
+-- Inserción de tuplas con valores y geometría idénticos
+INSERT INTO public.muestras_duplicadas (sensor, geom) VALUES
+('TERM-01', ST_GeomFromText('POINT(5000000 2000000)', 9377)),
+('TERM-01', ST_GeomFromText('POINT(5000000 2000000)', 9377));
+
+-- Estado idéntico preservando identidades independientes por identificador
+SELECT fid AS oid_objeto, sensor, ST_AsText(geom) AS wkt 
+FROM public.muestras_duplicadas;
+
+```
+
+* **OLTP frente a OLAP como paradigmas arquitectónicos**: Patrones conceptuales de diseño, estructuración física del almacenamiento y optimización de ejecución que delimitan el perfil operativo de un motor de bases de datos. El procesamiento transaccional en línea (**OLTP**) prioriza la atomicidad ACID, alta concurrencia y baja latencia en operaciones puntuales de lectura/escritura sobre esquemas normalizados orientados a filas (*heap/row-oriented*); en contraste, el procesamiento analítico en línea (**OLAP**) maximiza el rendimiento en escaneos masivos, agregaciones complejas y proyecciones de atributos específicos sobre esquemas desnormalizados orientados a columnas (*columnar storage*).
+
+    | Dimensión arquitectónica | Procesamiento transaccional (OLTP) | Procesamiento analítico (OLAP) |
+    | --- | --- | --- |
+    | **Objetivo operativo** | Transacciones concurrentes atómicas en tiempo real. | Consultas complejas, analítica histórica y agregaciones masivas. |
+    | **Disposición física** | Orientada a filas (*heap storage*, páginas de 8 KB). | Orientada a columnas (*columnar blocks* contiguos por atributo). |
+    | **Patrón de acceso** | Lecturas y mutaciones atómicas (`INSERT`, `UPDATE`) de registros individuales. | Escaneos secuenciales masivos proyectando pocas columnas. |
+    | **Esquema de datos** | Normalizado (3NF/BCNF) para suprimir redundancias y anomalías de escritura. | Desnormalizado (esquemas en estrella, copo de nieve o tablas anchas). |
+    | **Mecanismo de cómputo** | Procesamiento transaccional de baja latencia con aislamiento ACID. | Paralelismo interprocesos, ejecución vectorial en CPU (SIMD) y alta compresión. |
+
+    : Comparación técnica entre paradigmas arquitectónicos OLTP y OLAP. {#tbl-oltp-vs-olap}
+
+    Aunque PostgreSQL fue concebido en su núcleo como un motor relacional **OLTP** basado en páginas físicas orientadas a filas (*heap storage* de 8 KB), su diseño extensible permite ejecutar cargas de trabajo analíticas de perfil **OLAP**. Esta convergencia se logra combinando la API *Table Access Method* (TAM) para almacenamiento y compresión columnar (`citus`, `hydra`), optimizaciones nativas del motor de ejecución (procesamiento paralelo, compilación JIT vía LLVM y poda dinámica de particiones), aceleración por hardware con instrucciones SIMD y la delegación de cómputo (*pushdown*) hacia formatos columnares o lagos de datos externos (como Apache Parquet) mediante *Foreign Data Wrappers* (FDW).
+
+
+* **Modelo OSI (*Open Systems Interconnection*)**: Marco arquitectónico y conceptual de referencia estandarizado por la Organización Internacional de Normalización (ISO/IEC 7498-1) que descompone el proceso de comunicación e interoperabilidad en redes de datos en siete capas funcionales jerárquicas e independientes (Física, Enlace de datos, Red, Transporte, Sesión, Presentación y Aplicación). Cada estrato abstrae un conjunto específico de responsabilidades mediante interfaces bien definidas, prestando servicios a la capa superior e interactuando con la inferior mediante encapsulamiento sucesivo de cabeceras y unidades de datos de protocolo (PDU).
+
+    En la arquitectura de sistemas gestores de bases de datos objeto-relacionales (ORDBMS), este modelo formaliza el costo computacional de la topología cliente-servidor: cada consulta SQL y cada conjunto de geometrías transmitidas deben franquear la pila completa desde el protocolo de aplicación en el espacio de usuario (Capa 7), resolviendo la serialización binaria de objetos geométricos (Capa 6), la sesión autenticada (Capa 5) y la segmentación TCP en un puerto asignado como el 5432 (Capa 4), hasta el direccionamiento IP (Capa 3) y la transmisión de tramas sobre interfaces de red o adaptadores virtuales de bucle invertido (*loopback*).
+
+* **Persistencia de clases (en bases de datos orientadas a objetos y objeto-relacionales)**: Mecanismo arquitectónico que permite a las instancias de una clase (u objetos en memoria con identidad propia mediante OID, atributos complejos y comportamiento asociado) almacenarse de forma directa y no volátil en disco, sobreviviendo a la terminación del proceso que las creó sin requerir su descomposición forzada en múltiples tablas relacionales normalizadas (mitigación del desajuste de impedancia objeto-relacional). En motores objeto-relacionales, se materializa mediante tipos compuestos definidos por el usuario (`CREATE TYPE`) o tablas tipadas estructuradas a partir de tipos de datos abstractos:
+
+```{sql}
+--| label: ddl-ejemplo-persistencia-clases
+--| eval: false
+--| echo: true
+
+-- 1. Definición del tipo compuesto estructurado (equivalente a la clase en memoria)
+CREATE TYPE public.tipo_estacion_meteo AS (
+    identificador varchar(15),
+    altitud_msnm numeric(6, 2),
+    sensores text[],
+    ubicacion geometry(Point, 9377)
+);
+
+-- 2. Persistencia directa de instancias del tipo abstracto dentro de una relación
+CREATE TABLE public.red_hidrometeorologica (
+    id serial PRIMARY KEY,
+    cuenca varchar(50) NOT NULL,
+    estacion public.tipo_estacion_meteo NOT NULL
+);
+
+-- 3. Instanciación y almacenamiento del objeto preservando su estructura integral
+INSERT INTO public.red_hidrometeorologica (cuenca, estacion)
+VALUES (
+    'Cuenca Alta Río Bogotá',
+    ROW('EST-SABANA-01', 2550.00, ARRAY['Pluviómetro', 'Anemómetro'], ST_GeomFromText('POINT(5000000 2000000)', 9377))
+);
+
+-- 4. Acceso directo a los miembros y geometrías del objeto persistido
+SELECT 
+    cuenca,
+    (estacion).identificador AS codigo_estacion,
+    (estacion).altitud_msnm AS elevacion,
+    ST_AsText((estacion).ubicacion) AS wkt_posicion
+FROM public.red_hidrometeorologica;
+
+```
+
+
+* **Polimorfismo (en SGBD objeto-relacionales)**: Principio arquitectónico que faculta a una misma interfaz, operador o función para procesar argumentos de distintos tipos concretos pertenecientes a una misma jerarquía de herencia (`Geometry`), ejecutando en tiempo de ejecución (*runtime*) la rutina algorítmica específica según la signatura morfológica del objeto (despacho dinámico). En esquemas relacionales, habilita la definición de columnas espaciales genéricas capaces de alojar simultáneamente entidades de distinta dimensión topológica (`Point`, `LineString`, `Polygon`) bajo una misma relación:
+
+```{sql}
+--| label: ddl-ejemplo-polimorfismo-glosario
+--| eval: false
+--| echo: true
+
+-- 1. Definición de columna espacial polimórfica (acepta cualquier subtipo OGC)
+CREATE TABLE public.infraestructura_multitipo (
+    id serial PRIMARY KEY,
+    nombre varchar(50) NOT NULL,
+    geom geometry(Geometry, 9377) NOT NULL
+);
+
+-- 2. Inserción de primitivas heterogéneas en la misma relación
+INSERT INTO public.infraestructura_multitipo (nombre, geom) VALUES
+('Punto de control', ST_GeomFromText('POINT(5000000 2000000)', 9377)),
+('Línea de conducción', ST_GeomFromText('LINESTRING(5000000 2000000, 5000500 2000500)', 9377)),
+('Predio operativo', ST_GeomFromText('POLYGON((5000000 2000000, 5000200 2000000, 5000200 2000200, 5000000 2000200, 5000000 2000000))', 9377));
+
+-- 3. Despacho dinámico: ST_Area y ST_Length resuelven según la morfología del registro
+SELECT 
+    nombre,
+    ST_GeometryType(geom) AS subtipo,
+    ST_Length(geom) AS longitud_m,
+    ST_Area(geom) AS area_m2
+FROM public.infraestructura_multitipo;
+
+```
+
+
+* **Propiedad tipada**: Atributo, campo o par clave-valor asociado a una entidad (en esquemas relacionales, objeto-relacionales o grafos de propiedades) cuyo dominio de valores admisibles, representación física en memoria/disco y operadores válidos están formalmente restringidos por un tipo de dato explícito (primitivo, estructurado o abstracto). Su declaración impone validación de integridad semántica en tiempo de escritura (*schema-on-write*), previene anomalías por incoherencia de dominios y permite al motor de base de datos asignar métodos de acceso indexados y optimizadores algebraicos especializados (tales como predicados topológicos sobre columnas espaciales).
+
+* **Relación (o tabla)**: Estructura lógica bidimensional fundamental del modelo relacional, formalizada matemáticamente como un subconjunto no ordenado del producto cartesiano de los dominios de sus atributos, consistente con un esquema formal y compuesta por tuplas homogéneas.
+
+* **Serialización**: Concepto con doble acepción en sistemas gestores de bases de datos:
+    * **Serializabilidad transaccional**: Nivel supremo de aislamiento (`SERIALIZABLE`) que asegura que el resultado final de transacciones concurrentes sea equivalente a una ejecución estrictamente secuencial, previniendo anomalías complejas como el sesgo de escritura (*write skew*).
+    * **Serialización de datos**: Proceso algorítmico de codificación que transforma estructuras dinámicas en memoria RAM (objetos C, topologías o grafos) en secuencias contiguas de bytes (como WKB/EWKB) o representaciones textuales (como WKT o GeoJSON) para su persistencia física o transporte en red.
+
+* **Serialización SQL**: Transformación de objetos y estructuras de datos en sentencias o literales textuales interpretables por la gramática de SQL (como sentencias DML o llamadas a constructores tipo `ST_GeomFromText`) para su persistencia en scripts o transferencia en el motor.
+
+* **Serializaciones XML/GML**: Codificación jerárquica basada en etiquetas de texto bajo el estándar OGC *Geography Markup Language* (ISO 19136), orientada al intercambio e interoperabilidad de entidades geográficas y sus atributos a través de servicios web (como OGC WFS).
+
+* **Sistema distribuido elástico**: Arquitectura de base de datos compuesta por un clúster de nodos interconectados que opera ante el cliente como una única instancia lógica, con capacidad para aprovisionar (*scale-out*) o liberar (*scale-in*) recursos de procesamiento y almacenamiento de forma dinámica y automática según la demanda transaccional, sin degradación ni caída del servicio (*zero downtime*). En motores NewSQL y SQL distribuido, se fundamenta en el particionamiento horizontal autónomo (*auto-sharding*), la migración transparente de fragmentos de datos y la preservación de transaccionalidad ACID global mediante protocolos de consenso (Raft o Paxos).
+
+* **Solución *ad-hoc***: Implementación técnica construida a la medida para resolver una demanda analítica o de almacenamiento puntual, caracterizada por la ausencia de un marco arquitectónico reutilizable, carencia de esquemas formales y acoplamiento dependiente del formato local.
+
+* **Tipo abstracto de datos (ADT)**: Tipo de dato formal definido por el usuario o una extensión cuya estructura interna y métodos de serialización están encapsulados, operando en el motor como un tipo de dato nativo.
+
+* **Tipo de dato `geography`**: Tipo abstracto de datos especializado en PostGIS para la persistencia y cómputo de relaciones topológicas sobre un elipsoide geodésico de referencia (comúnmente WGS 84, EPSG:4326). Opera bajo trigonometría esférica/elipsoidal, emitiendo resultados métricos en metros sin requerir transformaciones cartográficas planas intermedias, con una sobrecarga de cálculo superior al tipo plano `geometry`.
+
+* **Tupla (registro o fila)**: Unidad estructural elemental en una relación relacional que representa una instancia o entidad discreta del dominio, conformada por una colección finita de valores correspondientes a los atributos declarados en el esquema.

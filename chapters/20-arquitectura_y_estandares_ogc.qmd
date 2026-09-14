@@ -1,6 +1,27 @@
 # Arquitectura de bases de datos espaciales y estándares OGC
 
+```{r}
+#| label: setup-j-eval-j-plot
+#| code-fold: true
+#| include: false
+source("../j_eval_j_plot.r")
+```
+
+```{r}
+#| label: setup-variables-sistema-r-1
+#| include: false
+
+# 1. Registro de variables en el proceso padre para persistencia y herencia en Knitr
+Sys.setenv(
+  # Directorio relativo de almacenamiento de respaldos (resuelto desde chapters/)
+  PLOTS_DIR = "../plots"
+)
+
+```
+
+
 ::: {.content-visible when-format="html"}
+
 ```{=html}
 <style>
 .diagrama-ancho svg {
@@ -9,18 +30,20 @@
   max-width: 100% !important;
 }
 </style>
+
 ```
+
 :::
+
 
 ::: {.content-visible when-format="html"}
 ::: {.callout-note appearance="simple" title="Presentación de la sesión"}
-Las diapositivas interactivas correspondientes al presente capítulo se encuentran disponibles en: [Presentación interactiva: Arquitectura y estándares OGC](../slides/20-d_arquitectura_y_estandares_ogc.html){target="_blank"}.
+Las diapositivas interactivas correspondientes al presente capítulo se encuentran disponibles en: [Presentación interactiva: Arquitectura y estándares OGC](https://www.google.com/search?q=../slides/20-d_arquitectura_y_estandares_ogc.html){target="_blank"}.
 :::
 :::
-
 
 ```{r}
-#| label: setup-variables-sistema-r
+#| label: setup-variables-sistema-r-2
 #| include: false
 
 # Registro de variables en el proceso padre para persistencia y herencia en Knitr
@@ -46,51 +69,126 @@ Sys.setenv(
   PGPASSWORD = "geomatica2025",
   PGDATABASE = "sig_db_unal"
 )
-
 ```
 
-::: {.content-visible when-format="html"}
-::: {.callout-note collapse="true" title="Variables de sesión para la terminal integrada"}
-Para ejecutar las consultas de este capítulo de forma interactiva en la terminal integrada de Visual Studio Code, inicialice las variables de entorno de la sesión (ver el fundamento técnico en la @sec-gestion-variables-entorno):
+::: {.panel-tabset}
+
+### Terminal integrada (psql)
+
+Para la interacción interactiva mediante la consola de comandos o la terminal integrada de Visual Studio Code, se configuran las variables de entorno estándar de `libpq` para apuntar al clúster correspondiente. Ver el fundamento técnico en la @sec-gestion-variables-entorno.
 
 ```{bash}
 #| label: setup-variables-sesion-bash-html
-#| eval: false
+#| eval: true
 #| echo: true
 
-# Parámetros de conexión a la base de datos pedagógica (host anfitrión)
-export PGHOST="host.docker.internal"
-export PGPORT="5432"
-export PGUSER="postgres"
-export PGPASSWORD='geomatica2025'
-export PGDATABASE="sig_db_unal"
+# 1. Parámetros para la instancia física en el sistema anfitrión (host local)
+export LOCAL_PGHOST="host.docker.internal"
+export LOCAL_PGPORT="5432"
+export LOCAL_PGUSER="postgres"
+export LOCAL_PGPASSWORD='geomatica2025'
+export LOCAL_PGDATABASE="sig_db_unal"
 
-# Verificación de endpoint activo
-echo "Sesión vinculada a: ${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}"
+# 2. Parámetros para la instancia dockerizada (red bridge interna)
+export DOCKER_PGHOST="db-postgis"
+export DOCKER_PGPORT="5432"
+export DOCKER_PGUSER="profe_unal"
+export DOCKER_PGPASSWORD='geomatica2025'
+export DOCKER_PGDATABASE="sig_db_unal"
+
+# 3. Asignación de variables estándar de libpq por defecto (apuntando al host local)
+export PGHOST="${LOCAL_PGHOST}"
+export PGPORT="${LOCAL_PGPORT}"
+export PGUSER="${LOCAL_PGUSER}"
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+export PGDATABASE="${LOCAL_PGDATABASE}"
+
+# 4. Verificación de endpoints configurados en la sesión
+echo "Endpoint anfitrión (host):   ${LOCAL_PGUSER}@${LOCAL_PGHOST}:${LOCAL_PGPORT}/${LOCAL_PGDATABASE}"
+echo "Endpoint contenedor (docker): ${DOCKER_PGUSER}@${DOCKER_PGHOST}:${DOCKER_PGPORT}/${DOCKER_PGDATABASE}"
+echo "Sesión vinculada por defecto: ${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}"
 
 ```
 
-:::
+
+### Python (SQLAlchemy, Pandas y GeoPandas)
+
+**Aprovisionamiento del entorno virtual en Conda:**
+
+Para la gestión de conexiones relacionales, ejecución de consultas SQL y manipulación de DataFrames alfanuméricos y espaciales en Python, se requiere las siguientes librerías disponibles en el contenedor del curso:
+
+* **`sqlalchemy`**: Capa de abstracción de base de datos para la gestión de motores y grupos de conexiones (*connection pooling*).
+* **`psycopg2`**: Controlador nativo (*driver*) en C para la comunicación bajo el protocolo cliente-servidor de PostgreSQL.
+* **`pandas`**: Procesamiento y visualización de tuplas y metadatos tabulares relacionales.
+* **`geopandas`**: Extensión geoespacial de Pandas que deserializa geometrías en WKB/WKT hacia estructuras `GeoSeries` y `GeoDataFrame`.
+* **`ipython-sql`**: Extensión mágica (`%sql`, `%%sql`) para la ejecución declarativa directa de bloques SQL en celdas interactivas.
+
+**Instanciación global de motores y cadenas de conexión:**
+
+```{python}
+#| label: setup-conexiones-motores-python
+#| echo: true
+#| eval: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+import os
+from sqlalchemy import create_engine
+
+# 1. Parámetros y motor para la instancia anfitriona (host local)
+host_local = os.getenv("LOCAL_PGHOST", "host.docker.internal")
+port_local = os.getenv("LOCAL_PGPORT", "5432")
+user_local = os.getenv("LOCAL_PGUSER", "postgres")
+pass_local = os.getenv("LOCAL_PGPASSWORD", "geomatica2025")
+db_local   = os.getenv("LOCAL_PGDATABASE", "sig_db_unal")
+
+cadena_local = f"postgresql+psycopg2://{user_local}:{pass_local}@{host_local}:{port_local}/{db_local}"
+engine_local = create_engine(cadena_local)
+
+# 2. Parámetros y motor para la instancia en red interna (Docker)
+host_docker = os.getenv("DOCKER_PGHOST", "db-postgis")
+port_docker = os.getenv("DOCKER_PGPORT", "5432")
+user_docker = os.getenv("DOCKER_PGUSER", "profe_unal")
+pass_docker = os.getenv("DOCKER_PGPASSWORD", "geomatica2025")
+db_docker   = os.getenv("DOCKER_PGDATABASE", "sig_db_unal")
+
+cadena_docker = f"postgresql+psycopg2://{user_docker}:{pass_docker}@{host_docker}:{port_docker}/{db_docker}"
+engine_docker = create_engine(cadena_docker)
+
+# Verificación de endpoints sin credenciales enmascaradas
+print(
+    "Motor local instanciado:\n  "
+    f"{engine_local.url.render_as_string(hide_password=False)}"
+)
+print(
+    "Motor docker instanciado:\n  "
+    f"{engine_docker.url.render_as_string(hide_password=False)}"
+)
+
+```
+
+###  pgAdmin 4
+
 :::
 
 ::: {.content-visible when-format="pdf"}
 ::: {.callout-note appearance="simple"}
-**Entorno de ejecución interactivo:** Las consultas y sentencias DDL/DML de este capítulo asumen que la sesión de terminal dispone de las variables de conexión estándar de `libpq` debidamente configuradas. Si ejecuta los bloques de forma manual en la consola, verifique la asignación de parámetros descrita en la @sec-gestion-variables-entorno.
+**Entorno de ejecución interactivo:** Las consultas y sentencias DDL/DML de este capítulo asumen que la sesión de terminal o el entorno de ejecución de Python disponen de las variables de conexión estándar debidamente configuradas. Si ejecuta los bloques de forma manual en la consola, verifique la asignación de parámetros descrita en la @sec-gestion-variables-entorno.
 :::
 :::
+
 
 ## Objetivos del capítulo
 
-* Analizar los fundamentos conceptuales de las bases de datos y evaluar sus ventajas determinantes frente a los sistemas de archivos tradicionales.
-* Comprender la arquitectura funcional, los niveles de abstracción y los subsistemas operativos de un sistema gestor de bases de datos (SGBD).
-* Determinar el modelo de datos y la arquitectura de integración óptimos para soportar aplicaciones de sistemas de información geográfica (SIG).
-* Examinar la implementación de los estándares internacionales del Open Geospatial Consortium (OGC) e ISO en motores relacionales extendidos.
+* Analizar los **fundamentos** conceptuales de las bases de datos y evaluar sus **ventajas** determinantes frente a los sistemas de archivos tradicionales.
+* Comprender la **arquitectura** funcional, los **niveles de abstracción** y los subsistemas operativos de un sistema gestor de bases de datos (SGBD).
+* Determinar el **modelo de datos y la arquitectura** de integración óptimos para soportar aplicaciones de sistemas de información geográfica (SIG).
+* Examinar la implementación de los **estándares** internacionales del Open Geospatial Consortium (OGC) e ISO en motores relacionales extendidos.
 
 
 
 ## De sistemas de archivos a bases de datos relacionales
 
-El manejo de información en organizaciones y proyectos de geomática ha transitado históricamente desde esquemas basados en sistemas de archivos independientes hacia arquitecturas centralizadas administradas por **sistemas gestores de bases de datos (SGBD)** o **DBMS** (*Database Management System*).
+El manejo de información en organizaciones y proyectos de geomática ha transitado históricamente desde esquemas basados en sistemas de archivos independientes hacia arquitecturas centralizadas administradas por **sistemas gestores de bases de datos (SGBD)** (*Database Management System*, DBMS).
 
 Un sistema de archivos tradicional almacena los datos en estructuras cerradas dependientes de aplicaciones específicas (archivos planos, hojas de cálculo o formatos propietarios). Este enfoque presenta deficiencias estructurales críticas:
 
@@ -100,33 +198,19 @@ Un sistema de archivos tradicional almacena los datos en estructuras cerradas de
 * **Vulnerabilidad transaccional y concurrencia deficiente**: Carencia de mecanismos ACID (Atomicidad, Consistencia, Aislamiento y Durabilidad), lo que provoca condiciones de carrera, sobreescritura destructiva y corrupción de datos ante fallos del sistema o accesos simultáneos.
 * **Costos elevados de mantenimiento y gobierno**: La ausencia de esquemas y catálogos normalizados fragmenta las políticas de seguridad, integridad y respaldo.
 
+Frente a estas restricciones, una **base de datos** se define como una colección **integrada**, **estructurada** y **no redundante** de datos almacenados en soporte **persistente**, accesible **concurrentemente** por múltiples usuarios y aplicaciones mediante una estricta separación entre la representación **lógica** y la implementación **física**. Por su parte, el **sistema gestor de bases de datos (SGBD)** (*Database Management System*, DBMS) constituye la infraestructura de **software** responsable de proveer las interfaces y mecanismos para la **definición**, **manipulación**, **optimización**, **persistencia** y **administración** integral de dicha información.
 
-Frente a estas restricciones, una **base de datos** se define como una colección integrada, estructurada y no redundante de datos almacenados en soporte persistente, accesible concurrentemente por múltiples usuarios y aplicaciones mediante una estricta separación entre la representación lógica y la implementación física. Por su parte, el **SGBD** constituye la infraestructura de software responsable de proveer las interfaces y mecanismos para la definición, manipulación, optimización, persistencia y administración integral de dicha información.
+Cuando el motor relacional se extiende con soporte nativo para tipos **geométricos** y **geográficos**, predicados **topológicos** y métodos de **indexación multidimensional**, se conforma un **SGBD espacial** (*Spatial Database Management System*, SDBMS). En este texto se adoptan como sinónimos técnicos los términos **base de datos geográfica**, **base de datos espacial** o **GeoDB** para designar cualquier repositorio estructurado con soporte nativo de tipos espaciales. Por convención académica, el término comercial **geodatabase** se reserva exclusivamente para las estructuras de almacenamiento propietarias del ecosistema ESRI. Las definiciones formales, los invariantes del modelo y la terminología complementaria se consolidan en el @sec-anexo-glosario.
 
-Para unificar la nomenclatura técnica en este ámbito, se formalizan los siguientes conceptos fundamentales:
+Para comprender con rigor esta arquitectura, es necesario distinguir entre el plano **técnico** de habilitación y el principio **arquitectónico** fundamental. Extender el motor relacional con tipos geométricos, índices multidimensionales y predicados topológicos constituye el medio técnico instrumental. No obstante, la verdadera ruptura conceptual de un SGBD espacial radica en la **integración y centralización de esquemas**: la unificación de la geometría como un objeto de primera clase dentro del núcleo transaccional.
 
-* **Dato**: Unidad mínima de registro simbólico (caracteres alfabéticos, numéricos o geoespaciales brutos) carente de contexto inmediato.
-* **Información**: Conjunto estructurado de datos procesados que adquiere significado dentro de un modelo conceptual o contexto analítico.
-* **Atributo o campo**: Unidad atómica nominada que define una característica o propiedad de una entidad dentro de un dominio específico.
-* **Tupla o registro**: Instancia o agregación ordenada de atributos que representa a una entidad concreta en un momento dado.
-* **Relación o tabla**: Estructura lógica conformada por un conjunto no ordenado de tuplas consistentes con un esquema formal.
-* **Esquema de base de datos**: Definición estructural y semántica de las relaciones, tipos de datos, restricciones y reglas de integridad, expresada mediante sentencias formales.
-* **SGBD / DBMS (*Database Management System*)**: Infraestructura de software responsable de proveer las interfaces y mecanismos para la definición, manipulación, optimización, persistencia y administración integral de las bases de datos. En la literatura técnica y en este texto se emplean indistintamente el acrónimo en español (**SGBD**) y la sigla internacional en inglés (**DBMS**).
-* **SQL (*Structured Query Language*)**: Estándar declarativo para la consulta, modificación y definición estructural de bases de datos relacionales.
-    * **DDL (*Data Definition Language*)**: Subconjunto de SQL orientado a la definición, alteración y eliminación de esquemas y objetos de la base de datos (`CREATE`, `ALTER`, `DROP`).
-    * **DML (*Data Manipulation Language*)**: Subconjunto de SQL orientado a la inserción, actualización, eliminación y recuperación de registros (`SELECT`, `INSERT`, `UPDATE`, `DELETE`).
-* **Administrador de base de datos (DBA)**: Rol técnico responsable del diseño físico, la optimización, las políticas de seguridad, el control de concurrencia y los planes de contingencia del motor.
-* **Base de datos espacial (GeoDB)**: Colección estructurada de datos espaciales y alfanuméricos persistidos bajo un esquema unificado, accesible de forma concurrente y gobernada por un catálogo de referencia cartográfica.
-* **SGBD espacial / SDBMS (*Spatial Database Management System*)**: Sistema gestor de bases de datos extendido con soporte nativo para tipos geométricos y geográficos, predicados topológicos, funciones analíticas multidimensionales y métodos de indexación espacial (árboles R / GiST). En diagramas arquitectónicos y documentación técnica se adopta comúnmente la sigla **SDBMS**.
-
-En este texto se emplean de manera indistinta los términos **base de datos geográfica**, **base de datos espacial** o **GeoDB** para designar cualquier arquitectura de almacenamiento estructurado con soporte nativo de tipos espaciales, así como **SGBD espacial** y **SDBMS** para designar a su software gestor. Por convención, el término comercial **geodatabase** se reserva exclusivamente para las estructuras de almacenamiento propietarias del ecosistema ESRI.
-
-Como se sintetiza en la @fig-integracion-geodb-dot, el principio fundamental de una base de datos espacial radica en la **integración y centralización de esquemas**: el motor gestor consolida en un repositorio común atributos descriptivos, geometrías vectoriales tipadas y metadatos de referencia espacial, gobernados por un catálogo centralizado y un subsistema de integridad transaccional accesible por múltiples clientes en red.
+Como se sintetiza en la @fig-integracion-geodb-dot, el motor gestor consolida en un repositorio común **atributos descriptivos**, **geometrías vectoriales tipadas** y **metadatos de referencia espacial**, gobernados por un **catálogo centralizado** y un **subsistema de integridad transaccional** accesible por múltiples clientes en red.
 
 ::: {.diagrama-ancho}
+
 ```{dot}
 //| label: fig-integracion-geodb-dot
-//| fig-cap: "Centralización e integración de datos espaciales y alfanuméricos en un SDBMS."
+//| fig-cap: "Centralización e integración de datos espaciales y alfanuméricos en un SGBD espacial."
 //| fig-align: center
 //| fig-width: 6.5
 //| fig-height: 5
@@ -154,9 +238,9 @@ digraph G {
         { rank=same; c_desktop; c_web; c_script; }
     }
 
-    // Nivel 2 a 4: Motor SDBMS Integrado
+    // Nivel 2 a 4: Motor SGBD Espacial Integrado
     subgraph cluster_sdbms {
-        label = "Sistema gestor de bases de datos espaciales (SDBMS)";
+        label = "Sistema gestor de bases de datos espaciales (SGBD espacial)";
         style = "solid,rounded";
         color = "#0284c7";
         fontcolor = "#075985";
@@ -204,34 +288,30 @@ digraph G {
 
     tuples -> indexes [dir=both, label=" Indexación de páginas en disco", penwidth=1.1, fontcolor="#0f172a"];
 }
-
 ```
 
 :::
 
-Esta organización desacopla la representación lógica de la implementación física y resuelve las deficiencias de los sistemas de archivos:
-
-* **Unicidad de la fuente**: Se elimina la redundancia derivada de mantener tablas de atributos dispersas en hojas de cálculo y geometrías en archivos vectoriales independientes.
-* **Consistencia referencial síncrona**: Cualquier modificación sobre un registro (alfanumérico o espacial) queda sujeta a las restricciones del esquema global y a los mecanismos de aislamiento transaccional del motor.
-* **Acceso concurrente estandarizado**: Distintos perfiles de usuario y capas de servicio consumen y modifican el mismo repositorio sin riesgo de bloqueo a nivel de archivo ni sobreescritura destructiva.
-
 ### Componentes y funciones de un SGBD
 
-Un sistema de gestión de bases de datos es el software especializado responsable de la definición, almacenamiento, mantenimiento, consulta y control transaccional de los datos. Su arquitectura desacopla el almacenamiento físico de la interfaz lógica del usuario para garantizar concurrencia, rendimiento e integridad de la información.
+La arquitectura de un SGBD desacopla el almacenamiento físico de la interfaz lógica del usuario para garantizar concurrencia, rendimiento e integridad de la información.
 
 ![Componentes de un sistema de bases de datos, según Silberschatz, Korth y Sudarshan [-@silberschatz2002database].](../images/bde/componentes_dbms_3.jpg){#fig-silberschatz-dbms fig-align="center" width="65%"}
 
-En la @fig-silberschatz-dbms se presenta la arquitectura clásica funcional de un SGBD estructurada en tres capas operativas fundamentales: el procesador de consultas, el gestor de almacenamiento y el almacenamiento en disco.
+En la @fig-silberschatz-dbms se presenta la arquitectura clásica funcional de un SGBD estructurada en tres capas operativas fundamentales: el **procesador de consultas**, el **gestor de almacenamiento** y el **almacenamiento en disco**.
 
 **Procesador de consultas**:
 
-* **Intérprete DDL**: Procesa las sentencias de definición de datos y registra las definiciones correspondientes en el diccionario de datos.
+El **procesador de consultas** constituye el subsistema responsable de transformar instrucciones declarativas de alto nivel (ej. sentencias SQL donde se especifica qué información se requiere y no el algoritmo para buscarla) en planes algebraicos de ejecución de bajo costo, coordinando su despacho hacia el gestor de almacenamiento. Las sentencias SQL ingresan a este procesador a través de dos vías fundamentales: como **SQL estático embebido**, donde las consultas forman parte integral del código fuente (ej. programas en C, C++ o COBOL) de un programa de aplicación (ej. un software GIS de escritorio o un sistema catastral desarrollado a medida) y son analizadas durante la fase de compilación y enlazado para generar código objeto ejecutable (ej. código binario de máquina vinculado a librerías cliente dinámicas `.dll` o `.so`); o como **SQL dinámico**, donde las sentencias se generan, concatenan o parametrizan al vuelo durante el tiempo de ejecución desde herramientas interactivas o interfaces de usuario. En ambos casos, el procesador debe interpretar la sintaxis, validar los esquemas contra el catálogo, optimizar el árbol de operadores relacionales y ejecutar las instrucciones físicas resultantes.
+
+* **Intérprete DDL**: Procesa las sentencias de definición de datos y registra las definiciones correspondientes en el diccionario de datos (vínculo que la arquitectura conceptual formaliza directamente, aunque se omita la línea en el diagrama de Silberschatz).
 * **Compilador y organizador DML**: Traduce las sentencias DML formuladas en lenguajes de consulta a un plan de evaluación de bajo nivel compuesto por operadores relacionales.
 * **Motor de evaluación de consultas**: Ejecuta las instrucciones de bajo nivel generadas por el compilador DML interactuando directamente con el gestor de almacenamiento.
 * **Compilador y enlazador de programas de aplicación**: Integra las llamadas a funciones DML embebidas en el código fuente con el motor de evaluación para generar código objeto ejecutable.
 
-
 **Gestor de almacenamiento**:
+
+El **gestor de almacenamiento** es el responsable de proveer la interfaz operativa entre los datos de bajo nivel almacenados en el medio secundario persistente y las instrucciones lógicas despachadas por el motor de evaluación de consultas. Su función cardinal radica en abstraer las complejidades del hardware y del sistema de archivos del sistema operativo, traduciendo las peticiones de tuplas, geometrías e índices en transferencias eficientes de entrada/salida (I/O) de bloques o páginas hacia la memoria RAM. Al mismo tiempo, este módulo coordina la sincronización de accesos concurrentes, salvaguarda la durabilidad y consistencia transaccional mediante bitácoras en disco, y valida que las operaciones de inserción, actualización o consulta cumplan con las directivas de seguridad y las restricciones de dominio e integridad referencial definidas en el catálogo.
 
 * **Gestor de autorización e integridad**: Valida las restricciones de integridad declarativas y comprueba los privilegios de acceso de los usuarios a partir de los datos estadísticos y el diccionario.
 * **Gestor de transacciones**: Garantiza que la base de datos permanezca en un estado consistente a pesar de fallos del sistema, coordinando la ejecución concurrente sin interferencias.
@@ -240,11 +320,12 @@ En la @fig-silberschatz-dbms se presenta la arquitectura clásica funcional de u
 
 **Estructuras de almacenamiento en disco**:
 
+Las **estructuras de almacenamiento** en disco constituyen el estrato de persistencia física no volátil del SGBD, encargado de alojar de forma permanente tanto los registros de información como las estructuras de control requeridas para el funcionamiento del motor. Este nivel organiza el almacenamiento secundario en bloques o páginas de tamaño fijo, desacoplando la representación lógica de las tablas de su almacenamiento físico subyacente. En este sustrato conviven no solo los datos crudos del usuario y las geometrías serializadas, sino también los métodos de acceso acelerado (árboles B+, índices espaciales GiST o R-Tree), los catálogos del sistema que formalizan los esquemas e invariantes del modelo, y los metadatos estadísticos empleados por el optimizador de consultas para estimar costos de entrada y salida (I/O).
+
 * **Datos**: Bloques físicos que alojan los registros de la base de datos.
 * **Índices**: Estructuras de acceso rápido para acelerar la localización de tuplas específicas.
 * **Diccionario de datos**: Almacén centralizado de metadatos sobre la estructura lógica y esquemas del sistema.
 * **Datos estadísticos**: Información cuantitativa del catálogo sobre la distribución de las relaciones, empleada por el optimizador de consultas.
-
 
 En la @tbl-componentes-sgbd se detalla la correspondencia entre los módulos de la arquitectura de Silberschatz, su nivel operativo y su responsabilidad fundamental dentro del motor de base de datos.
 
@@ -264,12 +345,28 @@ Como marco comparativo, Elmasri y Navathe [-@ramez2007fundamentos] plantean una 
 
 ![Arquitectura de componentes y ejecución de transacciones, según Elmasri y Navathe [-@ramez2007fundamentos].](../images/bde/componentes_dbms_5.jpg){#fig-elmasri-dbms fig-align="center" width="80%"}
 
+### Topología cliente-servidor y tránsito en la pila de red
+
+Los sistemas gestores de bases de datos objeto-relacionales operan primordialmente bajo una **arquitectura cliente-servidor**. En este esquema, el motor de base de datos se ejecuta como un proceso demonio en segundo plano (*daemon process*, tal como el ejecutable `postgres`) aislado en su propio espacio de direcciones de memoria virtual, a la escucha de solicitudes entrantes a través de un puerto de red (por convención, el puerto TCP `5432`) o un socket de dominio UNIX local.
+
+Cualquier interacción ejecutada desde una aplicación cliente (un SIG de escritorio como QGIS, un servicio web como GeoServer o un script analítico en Python, R o Julia) requiere atravesar la frontera de aislamiento del sistema operativo mediante mecanismos de comunicación interprocesos (IPC) o protocolos de red. Al contrastar este flujo con el modelo de referencia **OSI** (*Open Systems Interconnection*), cada consulta SQL y cada conjunto de geometrías recuperadas deben franquear las siete capas funcionales:
+
+* **Capa 7 (Aplicación)**: La aplicación cliente formula la petición y el motor la procesa mediante un protocolo especializado a nivel de base de datos (como el protocolo *Frontend/Backend v3.0* de PostgreSQL o especificaciones HTTP/REST en OGC API).
+* **Capa 6 (Presentación)**: Se resuelve la serialización y codificación de los datos. En bases de datos espaciales, esto implica la traducción bidireccional entre las estructuras en memoria de librerías de cálculo (como GEOS) y formatos de intercambio estándar sobre la red (*Well-Known Binary* - WKB o *Extended WKB*), verificando la ordenación de bytes (*endianness*) y el juego de caracteres (UTF-8).
+* **Capa 5 (Sesión)**: Controla el establecimiento, autenticación criptográfica (ej. `SCRAM-SHA-256`), mantenimiento y cierre de la sesión de trabajo, administrando variables de entorno dinámicas como el `search_path` o el tiempo de espera transaccional.
+* **Capa 4 (Transporte)**: Segmentación y control de flujo mediante el protocolo **TCP**. Cada paquete se asocia unívocamente a un puerto de origen efímero en el cliente y al **puerto de destino** del gestor (`5432`), garantizando la entrega ordenada, libre de errores y con confirmación de recepción (*handshake* y ACKs).
+* **Capa 3 (Red)**: Empaquetamiento lógico y direccionamiento mediante datagramas **IP**. Define el enrutamiento entre interfaces físicas heterogéneas, redes locales corporativas o puentes de red virtualizados en contenedores Docker (`db-postgis`, `host.docker.internal`).
+* **Capa 2 (Enlace de datos)**: Estructuración en tramas (*frames*) Ethernet a nivel de direcciones físicas MAC o mediante controladores virtuales de bucle invertido (*loopback interface* `lo0` / `127.0.0.1`).
+* **Capa 1 (Física)**: Transmisión binaria de señales eléctricas, ópticas o electromagnéticas sobre el medio guiado, o bien transferencias de ráfagas a través del bus de datos y controladores del sistema operativo cuando cliente y servidor coexisten en el mismo equipo físico.
+
+Esta separación física y lógica impone que cualquier intercambio de tuplas espaciales demande ciclos continuos de serialización, llamadas al sistema (*syscalls*) y cambios de contexto, lo cual representa el costo operativo necesario para garantizar concurrencia multiusuario, control centralizado y gobierno estricto de los datos.
+
 
 ### Importancia y características de los SGBD
 
-En la infraestructura tecnológica contemporánea, los SGBD constituyen el núcleo operativo para la persistencia, disponibilidad e integridad de los activos de información. Su diseño minimiza la fragilidad intrínseca de los sistemas de archivos mediante la implementación de niveles formales de abstracción de datos (esquema físico, lógico y de vistas), permitiendo aislar las aplicaciones cliente de las modificaciones en el almacenamiento subyacente.
+En la infraestructura tecnológica contemporánea, los SGBD constituyen el núcleo operativo para garantizar la persistencia, disponibilidad e integridad de los activos de información. Su arquitectura supera la fragilidad intrínseca de los sistemas de archivos mediante la implementación de niveles formales de abstracción de datos (esquemas físico, lógico y de vistas, formalizados en la @sec-niveles-abstraccion), lo que garantiza el desacoplamiento estricto entre las aplicaciones cliente y las modificaciones en las estructuras de almacenamiento subyacentes.
 
-Las propiedades funcionales y arquitectónicas que distinguen a un SGBD frente a soluciones ad-hoc comprenden:
+Las propiedades funcionales y arquitectónicas que distinguen a un SGBD frente a soluciones ad-hoc (a la medida) comprenden:
 
 * **Independencia lógica y física**: Capacidad de modificar la organización física de los archivos o el diseño conceptual de las tablas sin requerir la reescritura de las aplicaciones que consumen la base de datos.
 * **Soporte de tipado abstracto y dominios complejos**: Definición rigurosa de tipos primitivos (escalares, numéricos, temporales) y estructurados (JSON, tipos geométricos/geográficos OGC, grandes objetos binarios o BLOB).
@@ -297,11 +394,12 @@ Dentro de este ecosistema, el **administrador de bases de datos (DBA)** represen
 * **Supervisión de restricciones de integridad**: Especificación de reglas declarativas (claves primarias, integridad referencial, restricciones de dominio) para que el gestor de integridad impida estados inconsistentes.
 * **Mantenimiento preventivo, respaldo y contingencia**: Definición de políticas de copias de seguridad (completas, incrementales y continuas), monitorización del almacenamiento secundario y ejecución periódica de simulacros de recuperación ante desastres.
 
-### Niveles de abstracción e independencia de datos
+### Niveles de abstracción e independencia de datos {#sec-niveles-abstraccion}
 
 Un sistema gestor de bases de datos abstrae la complejidad del almacenamiento secundario para presentar una representación simplificada de la información. La arquitectura estándar de tres niveles (ANSI/SPARC) formaliza este principio mediante capas operativas independientes, como se ilustra en la @fig-niveles-abstraccion-dot.
 
 ::: {.diagrama-ancho}
+
 ```{dot}
 //| label: fig-niveles-abstraccion-dot
 //| fig-cap: "Arquitectura ANSI/SPARC de tres niveles y correspondencias de independencia de datos."
@@ -363,6 +461,7 @@ digraph G {
     CS -> IS [dir=both, label=" Correspondencia conceptual/interna\n(Independencia física de datos)"];
 }
 
+
 ```
 
 :::
@@ -393,10 +492,10 @@ La separación desacoplada entre estos estratos garantiza dos propiedades operat
 A lo largo del desarrollo de los sistemas de información, los modelos de bases de datos se han estructurado en torno a paradigmas que responden tanto a las limitaciones del hardware de cada época como a la complejidad semántica de los datos:
 
 * **Modelos basados en registros y punteros físicos (Tipo 1)**: Dominantes en las décadas de 1950 y 1960 (modelos jerárquicos y de red), donde las asociaciones entre entidades se implementaban mediante enlaces físicos de memoria o apuntadores en disco.
-* **Modelo relacional (Tipo 2)**: Introducido por E. F. Codd en 1970, fundamentado en la teoría de conjuntos y la lógica de predicados de primer orden. La información se modela en relaciones (tablas compuestas por tuplas y atributos atómicos), y las vinculaciones se realizan exclusivamente a través de valores escalares compartidos (claves primarias y foráneas).
+* **Modelo relacional (Tipo 2)**: Introducido por E. F. Codd (@codd1970relational), fundamentado en la teoría de conjuntos y la lógica de predicados de primer orden. La información se modela en relaciones (tablas compuestas por tuplas y atributos atómicos), y las vinculaciones se realizan exclusivamente a través de valores escalares compartidos (claves primarias y foráneas).
 * **Modelos objeto-relacionales y orientados a objetos (Tipo 3)**: Formulados a partir de 1990 para superar la incapacidad del modelo relacional plano al manejar datos no atómicos. Introducen encapsulamiento, herencia, métodos y soporte nativo para tipos abstractos de datos (ADT), habilitando la persistencia e indexación de geometrías espaciales y tipos de datos multidimensionales.
-* **Modelos no relacionales y de grafos (NoSQL)**: Consolidados a partir de 2010 para resolver cuellos de botella de escalabilidad horizontal y rigidez de esquemas. Reemplazan la normalización formal por esquemas flexibles de lectura (*schema-on-read*) divididos en cuatro familias: documentales (JSON/BSON), clave-valor, matrices de columnas anchas y grafos de propiedades, estos últimos formalizados mediante el estándar internacional ISO/IEC 39075:2024 (GQL).
-* **Evolución contemporánea (NewSQL, multimodelo y bases de datos vectoriales)**: Desde 2012, el modelo relacional tradicional derivó hacia sistemas distribuidos elásticos con consistencia transaccional estricta mediante algoritmos de consenso (NewSQL). De forma paralela, surgieron motores convergentes multimodelo y bases de datos vectoriales optimizadas para búsqueda de similitud semántica mediante grafos de mundo pequeño (*HNSW*) sobre representaciones densas de alta dimensionalidad (*embeddings*).
+* **Modelos no relacionales y de grafos (NoSQL)**: Consolidados a partir de 2010 para resolver cuellos de botella de escalabilidad horizontal y rigidez de esquemas. Reemplazan la normalización formal por esquemas flexibles de lectura (*schema-on-read*) divididos en cuatro familias: documentales (JSON/BSON), clave-valor, familias de columnas (*wide-column*) y grafos de propiedades, estos últimos formalizados mediante el estándar internacional ISO/IEC 39075:2024 (GQL).
+* **Evolución contemporánea (NewSQL, multimodelo y bases de datos vectoriales)**: Desde 2012, el modelo relacional tradicional derivó hacia sistemas distribuidos elásticos con consistencia transaccional estricta mediante algoritmos de consenso (NewSQL). De forma paralela, surgieron *motores convergentes multimodelo* y *bases de datos vectoriales* optimizadas para búsqueda de similitud semántica mediante grafos de mundo pequeño (*HNSW*) sobre representaciones densas de alta dimensionalidad (*embeddings*).
 
 En la @fig-evolucion-modelos-dot se resume la trayectoria evolutiva de estos paradigmas, destacando la bifurcación entre sistemas orientados a transacciones ACID y soluciones diseñadas para escalabilidad distribuida o cómputo multidimensional.
 
@@ -456,7 +555,7 @@ digraph G {
 
     // Década 2010
     node [fillcolor="#f8fafc", color="#64748b", style="dashed,rounded,filled"];
-    NoSQL [label="NoSQL (Documental, Grafos, Clave-valor)"];
+    NoSQL [label="NoSQL (Documental, clave-valor, columnas anchas, grafos)"];
     node [style="filled,rounded", fillcolor="#e0f2fe", color="#0284c7"];
     NewSQL [label="NewSQL / Distribuido"];
 
@@ -489,10 +588,10 @@ digraph G {
     Multi -> Vec;
 }
 
+
 ```
 
 :::
-
 
 En la @tbl-dbms-modelos-ejemplos se sistematizan los motores de bases de datos representativos de la disciplina, estructurados conforme a los paradigmas arquitectónicos presentados.
 
@@ -502,7 +601,6 @@ En la @tbl-dbms-modelos-ejemplos se sistematizan los motores de bases de datos r
 | Modelo jerárquico | Década de 1960 (Tipo 1) | IBM IMS (*Information Management System*) | Estructuras en árbol con relaciones 1:N mediante punteros físicos padre-hijo. |
 | Modelo en red | Década de 1960 (Tipo 1) | IDS, Cullinet IDMS (estándar CODASYL) | Grafos de registros con relaciones N:M gestionadas mediante conjuntos (*sets*) y apuntadores en anillo. |
 | Modelo relacional transaccional (OLTP) | Década de 1970 (Tipo 2) | IBM System R, Ingres, IBM DB2, MySQL, SQLite | Tablas estructuradas por filas con tuplas y atributos atómicos, gobernadas por álgebra relacional y cumplimiento ACID. |
-| Modelo relacional analítico columnar (OLAP) | Década de 2010 (2019+) | DuckDB, ClickHouse, MonetDB | Álgebra relacional y sintaxis SQL estándar implementada sobre almacenamiento columnar y ejecución vectorial en memoria/CPU (SIMD). |
 | Orientado a objetos (OODBMS) | Década de 1990 (Tipo 3) | ObjectStore, db4o, Versant, Objectivity/DB | Persistencia directa de instancias del lenguaje anfitrión con encapsulamiento, identidad propia (OID) y métodos. |
 | Objeto-relacional (ORDBMS) | Década de 2000 (Tipo 2/3) | PostgreSQL (+ PostGIS), Oracle (v8i+), IBM Informix | Núcleo relacional con soporte nativo de tipos abstractos (ADT), polimorfismo, herencia de tablas e índices extensibles (GiST/SP-GiST). |
 | NoSQL: Documental | Década de 2010 | MongoDB, Apache CouchDB | Registros semiestructurados jerárquicos (JSON, BSON) con esquema dinámico (*schema-on-read*). |
@@ -510,10 +608,31 @@ En la @tbl-dbms-modelos-ejemplos se sistematizan los motores de bases de datos r
 | NoSQL: Clave-valor | Década de 2010 | Redis, Amazon DynamoDB, Memcached | Almacén asociativo indexado por *hash* unidimensional de muy baja latencia en memoria o disco. |
 | NoSQL: Familias de columnas (*wide-column*) | Década de 2010 | Apache Cassandra, Apache HBase, ScyllaDB | Tablas multidimensionales dispersas y particionadas horizontalmente, optimizadas para escrituras masivas distribuidas. |
 | NewSQL / SQL distribuido | Década de 2010 (2012+) | Google Cloud Spanner, CockroachDB, YugabyteDB, TiDB | Álgebra relacional estándar y transaccionalidad ACID global sobre clústeres elásticos mediante protocolos de consenso (Paxos/Raft). |
+| Modelo relacional analítico columnar (OLAP) | Década de 2010 (2019+) | DuckDB, ClickHouse, MonetDB | Álgebra relacional y sintaxis SQL estándar implementada sobre almacenamiento columnar y ejecución vectorial en memoria/CPU (SIMD). |
 | Multimodelo nativo | Década de 2010 (2015+) | ArangoDB, Microsoft Azure Cosmos DB | Motores concebidos de origen para procesar de forma unificada grafos, documentos, clave-valor y estructuras tabulares. |
 | Bases de datos vectoriales | Década de 2020 (2020+) | Milvus, Qdrant, Pinecone, Weaviate, Chroma | Almacenamiento e indexación de *embeddings* multidimensionales mediante grafos HNSW o cuantización vectorial para cálculo de distancias métricas. |
 
-: Clasificación de sistemas gestores de bases de datos según su modelo paradigmático. {#tbl-dbms-modelos-ejemplos}
+: Clasificación de sistemas gestores de bases de datos según su cronología formal. {#tbl-dbms-modelos-ejemplos}
+
+
+### Coexistencia paradigmática y persistencia políglota
+
+La trayectoria histórica de los modelos de datos no representa una secuencia de sustitución u obsolescencia tecnológica. El principio de **persistencia políglota** establece que las organizaciones deben seleccionar motores heterogéneos según la naturaleza del problema y las demandas del procesamiento. 
+
+Un motor relacional objeto-relacional (ORDBMS) con cumplimiento estricto de propiedades ACID continúa siendo el componente irremplazable en sistemas operacionales y catastrales donde la consistencia de las mutaciones concurrentes no es negociable. En contraste, las arquitecturas distribuidas, columnares o vectoriales resuelven problemas analíticos, elásticos o de inteligencia artificial que desbordarían los mecanismos de un motor relacional tradicional.
+
+En la @tbl-propositos-modelos-datos se contrastan los objetivos operativos, compromisos de diseño y el rol contemporáneo de cada paradigma dentro del ecosistema geoespacial.
+
+| Paradigma de datos | Objetivo operativo primordial | Compromisos de diseño (*trade-offs*) | Rol vigente en geomática y sistemas espaciales |
+| --- | --- | --- | --- |
+| **Relacional transaccional y objeto-relacional (OLTP / ORDBMS)** | Integridad transaccional estricta (ACID), soporte de esquemas complejos normalizados y consultas ad-hoc expresivas. | Escalabilidad horizontal compleja de escritura; sobrecarga de sincronización de páginas en disco. | **Núcleo institucional primario**: Catastro, registro predial, redes de infraestructura y repositorios corporativos gobernados por PostGIS u Oracle Spatial. |
+| **Relacional analítico columnar (OLAP)** | Agregaciones masivas, análisis temporal y escaneos exhaustivos de grandes volúmenes proyectando pocos atributos. | Ineficiente para mutaciones puntuales en tiempo real (`UPDATE`/`DELETE` fila a fila); ausencia de transacciones concurrentes complejas. | **Analítica espacial local y cubos de datos**: Procesamiento vectorial embebido de series de tiempo y nubes de puntos mediante DuckDB o ClickHouse. |
+| **NoSQL: Documental y clave-valor** | Baja latencia, esquemas dinámicos flexibles (*schema-on-read*) y alta disponibilidad con escalado horizontal sencillo. | Ausencia de relaciones formales (*joins* costosos o inexistentes); eventual consistencia de datos (modelo BASE). | **Caché y microservicios cartográficos**: Almacenamiento rápido de metadatos no estructurados, catálogos GeoJSON y caché de teselas web (Redis, MongoDB). |
+| **NoSQL: Grafos de propiedades** | Recorrido recursivo de relaciones densas y complejas sin operaciones costosas de combinación (*index-free adjacency*). | Ineficiente para escaneos masivos tabulares o agregaciones globales sobre atributos escalares. | **Topología y conectividad espacial**: Análisis de redes de transporte, flujo en cuencas hidrográficas y trazabilidad de suministro eléctrico (Neo4j). |
+| **NewSQL / SQL distribuido** | Consistencia transaccional ACID estricta distribuida sobre clústeres elásticos globales mediante protocolos de consenso. | Mayor latencia en transacciones trans-nodo por coordinación de quórum; mayor complejidad de infraestructura. | **Sistemas espaciales de escala planetaria**: Plataformas con concurrencia masiva global y demanda de disponibilidad ininterrumpida (CockroachDB, Spanner). |
+| **Bases de datos vectoriales** | Búsqueda aproximada de vecinos más cercanos (ANN) por similitud métrica sobre espacios densos de alta dimensionalidad. | No soportan lógica booleana relacional estándar ni predicados topológicos OGC exactos sobre geometrías físicas. | **Búsqueda semántica en observación de la Tierra**: Recuperación de teselas satelitales por contenido visual e indexación de *embeddings* espectrales (Milvus, `pgvector`). |
+
+: Objetivos operativos, compromisos arquitectónicos y vigencia de los modelos de datos en entornos geoespaciales. {#tbl-propositos-modelos-datos}
 
 ### La dimensión espacial como catalizador del modelo objeto-relacional
 
@@ -527,6 +646,7 @@ La adopción de modelos de bases de datos en geomática estuvo condicionada por 
 Como se sintetiza en la @fig-tipos-datos-modelos, la evolución arquitectónica respondió a la necesidad de gestionar simultáneamente atributos escalares simples y geometrías dotadas de comportamiento topológico.
 
 ::: {.diagrama-ancho}
+
 ```{dot}
 //| label: fig-tipos-datos-modelos
 //| fig-cap: "Convergencia de requerimientos de datos hacia el modelo objeto-relacional."
@@ -578,12 +698,13 @@ digraph G {
         fontsize = 10;
         bgcolor = "#fffbeb";
 
-        OR [label="Modelo objeto-relacional (ORDBMS)\n(Núcleo relacional SQL + Tipos abstractos ADT + Funciones espaciales OGC)", fillcolor="#fde68a", color="#d97706", width=4.5];
+        OR [label="Modelo objeto-relacional (ORDBMS)\n(Núcleo relacional SQL + tipos abstractos ADT + funciones espaciales OGC)", fillcolor="#fde68a", color="#d97706", width=4.5];
     }
 
     Rel -> OR;
     OO -> OR;
 }
+
 
 ```
 
@@ -593,21 +714,39 @@ El modelo relacional tradicional garantizaba integridad referencial, consistenci
 
 El modelo objeto-relacional resolvió esta encrucijada al extender el motor relacional con tipos de datos abstractos (ADT), índices espaciales multidimensionales (árboles R sobre infraestructura GiST) y predicados topológicos evaluables dentro del planificador de consultas.
 
+
 ### Consideraciones arquitectónicas: extensibilidad y motores de cómputo analítico
 
 Al analizar el ecosistema de datos espaciales y analíticos, es necesario distinguir entre la arquitectura de núcleo de un SGBD, los mecanismos de convergencia multimodelo por extensibilidad y los motores de procesamiento distribuido sobre lagos de datos:
 
-* **Estatus arquitectónico de PostgreSQL y su convergencia multimodelo**: PostgreSQL es en su diseño de núcleo un sistema objeto-relacional (ORDBMS). La extensibilidad provista por su arquitectura permitió implementar soporte para datos semiestructurados (`JSONB`), tipos espaciales avanzados e índices multidimensionales mediante PostGIS, y búsqueda por similitud vectorial mediante `pgvector`. De este modo, aunque su fundamento teórico no es multimodelo nativo, opera en la práctica como un sustrato convergente para cargas de trabajo heterogéneas.
-* **Diferenciación funcional de DuckDB**: DuckDB no plantea un nuevo modelo algebraico de datos, sino una reconfiguración de la arquitectura de ejecución. Se clasifica dentro del modelo relacional (Tipo 2), pero desacopla el paradigma tradicional de almacenamiento orientado a filas (*row-oriented*) para utilizar almacenamiento columnar vectorial en memoria. Su modelo de despliegue embebido (*in-process*) elimina la sobrecarga de red del modelo cliente-servidor, convirtiéndose en un motor OLAP especializado para análisis local sobre grandes volúmenes de datos tabulares y geoespaciales.
+* **Estatus arquitectónico de PostgreSQL y su convergencia multimodelo**: PostgreSQL es en su diseño de núcleo un sistema objeto-relacional (ORDBMS). La extensibilidad provista por su arquitectura permitió implementar soporte para datos semiestructurados (`JSONB`), tipos espaciales avanzados e índices multidimensionales mediante PostGIS, y búsqueda por similitud vectorial mediante `pgvector`. En sus versiones beta más recientes (como PostgreSQL 19), esta convergencia se amplía de forma nativa al incorporar consultas de grafos de propiedades mediante el estándar `SQL/PGQ` y capacidades avanzadas de optimización y asesoría de planes (`pg_plan_advice`). De este modo, aunque su fundamento teórico no es multimodelo nativo, opera en la práctica como un sustrato convergente altamente versátil para cargas de trabajo heterogéneas.
+
+* **Diferenciación funcional de DuckDB frente a la arquitectura cliente-servidor**: DuckDB no plantea un nuevo modelo algebraico de datos, sino una reconfiguración radical de la arquitectura de ejecución y enlace. Se clasifica dentro del modelo relacional (Tipo 2), pero sustituye el almacenamiento tradicional orientado a filas (*row-oriented*) por almacenamiento columnar vectorial en memoria. Su verdadera ruptura radica en su modelo de despliegue embebido (*in-process*): el motor se compila como una biblioteca directamente vinculada dentro del mismo espacio de direcciones del proceso anfitrión (Python, R, Julia o C++). Al suprimir la arquitectura cliente-servidor, el motor elimina la totalidad del tránsito por la pila de protocolos OSI (puertos TCP, llamadas al sistema, sockets y serialización de geometrías a WKB), permitiendo el intercambio directo de punteros en memoria RAM mediante estándares columnares como Apache Arrow.
+
 * **Distinción entre SGBD y motores de cómputo analítico (Apache Sedona)**: Soluciones como Apache Sedona (anteriormente GeoSpark) no constituyen sistemas gestores de bases de datos (SGBD). Carecen de motores de almacenamiento persistente propios, gestores de transacciones ACID, subsistemas de bitácora (*Write-Ahead Logging*) y gestores de búfer en disco. Sedona es un **motor de procesamiento espacial distribuido** que actúa como capa analítica sobre entornos de cómputo en clúster (Apache Spark y Apache Flink), permitiendo evaluar predicados espaciales e indexación en memoria sobre archivos externos (GeoParquet, Shapefiles o capas de lagos de datos).
+
+En la @tbl-cliente-servidor-vs-embebido se contrastan las implicaciones operativas y de ingeniería entre el modelo cliente-servidor tradicional y el paradigma analítico embebido.
+
+| Dimensión de diseño | Arquitectura cliente-servidor (PostgreSQL / PostGIS) | Arquitectura embebida *in-process* (DuckDB / SQLite) |
+| --- | --- | --- |
+| **Espacio de memoria** | Desacoplado; espacios de direcciones virtuales aislados entre cliente y servidor. | Compartido; el motor reside dentro del mismo espacio de direcciones del ejecutable anfitrión. |
+| **Mecanismo de enlace** | Sockets de red TCP/IP (puerto `5432`) o sockets de dominio UNIX locales. | Vinculación estática o dinámica de bibliotecas (C ABI, `.so`, `.dll`). |
+| **Tránsito por pila OSI** | Recorrido íntegro de capas 1 a 7 (encapsulamiento de tramas, paquetes y segmentos). | Nulo; supresión total de las capas de transporte, red y enlace del modelo OSI. |
+| **Serialización de geometrías** | Obligatoria; conversión continua entre objetos C en memoria y flujos binarios WKB de red. | Desacoplada de red; intercambio de arreglos contiguos en memoria (Apache Arrow / punteros directos). |
+| **Latencia por llamada** | Elevada por sobrecarga de sockets, llamadas al sistema (*syscalls*) y cambios de contexto. | Mínima; invocación directa de funciones por interfaz binaria en memoria RAM. |
+| **Perfil operativo idóneo** | Sistemas transaccionales concurrentes (OLTP), catastro multiusuario y control de acceso RBAC. | Procesamiento analítico local masivo (OLAP), transformaciones ETL intermedias y ciencia de datos. |
+
+: Comparación arquitectónica entre la topología cliente-servidor y el modelo de despliegue embebido. {#tbl-cliente-servidor-vs-embebido}
+
 
 ## Arquitecturas para aplicaciones de sistemas de información geográfica
 
-Históricamente, la vinculación entre los sistemas de información geográfica (SIG) y los sistemas de gestión de datos ha transitado por tres generaciones arquitectónicas principales, caracterizadas por el nivel de acoplamiento entre la geometría, los atributos temáticos y el motor de ejecución.
+Históricamente, la vinculación entre los sistemas de información geográfica (SIG) y los sistemas de gestión de datos ha transitado por tres generaciones arquitectónicas consolidadas dentro del paradigma relacional y objeto-relacional (ORDBMS). Esta taxonomía describe la evolución del acoplamiento entre la geometría, los atributos descriptivos y el motor de ejecución en entornos transaccionales operacionales (OLTP). Si bien los paradigmas analíticos contemporáneos (como motores columnares embebidos, cómputo distribuido sobre clústeres, o almacenes orientados a grafos y NoSQL) responden a demandas analíticas de frontera que se abordan en los proyectos de investigación al cierre del curso, el modelo integrado objeto-relacional constituye la base conceptual y operativa sobre la cual se fundamenta la integridad, concurrencia y estandarización de los datos geoespaciales corporativos.
 
-En la @fig-arquitecturas-sig-dbms se ilustra la evolución conceptual desde esquemas propietarios aislados hasta la centralización transaccional en motores espaciales integrados.
+En la @fig-arquitecturas-sig-dbms se ilustra esta evolución conceptual desde esquemas propietarios aislados hasta la centralización transaccional en motores espaciales integrados.
 
 ::: {.diagrama-ancho}
+
 ```{dot}
 //| label: fig-arquitecturas-sig-dbms
 //| fig-cap: "Evolución de las arquitecturas de integración entre SIG y bases de datos."
@@ -653,7 +792,7 @@ digraph G {
     }
 
     subgraph cluster_integrated {
-        label = "3. Arquitectura integrada (SDBMS)";
+        label = "3. Arquitectura integrada (SGBD espacial)";
         style = "solid,rounded";
         color = "#0369a1";
         fontcolor = "#075985";
@@ -663,7 +802,7 @@ digraph G {
         sig3 [label="Clientes SIG / Aplicaciones web\n(Visualización, edición y análisis)", fillcolor="#e0f2fe", color="#0284c7", width=2.6];
 
         subgraph cluster_sdbms {
-            label = "Sistema gestor de bases de datos espaciales (SDBMS)";
+            label = "Sistema gestor de bases de datos espaciales (SGBD espacial)";
             style = "filled,rounded";
             color = "#0284c7";
             fontcolor = "#0369a1";
@@ -679,6 +818,7 @@ digraph G {
         sig3 -> engine [label="SQL espacial unificado\n(ST_Intersects, ST_Buffer, etc.)"];
     }
 }
+
 
 ```
 
@@ -698,7 +838,7 @@ Este esquema desacopla el almacenamiento en dos repositorios independientes: los
 * **Ventajas**: Incorpora las capacidades analíticas, de seguridad y de consulta declarativa del SGBD para la fracción alfanumérica de la información.
 * **Limitaciones**: La responsabilidad de integrar y sincronizar la geometría con la tabla recae exclusivamente en la capa de aplicación (*application programs*), lo que genera un rendimiento inferior al de las soluciones ad-hoc, sobrecarga de memoria en el cliente y riesgo permanente de inconsistencia transaccional (huérfanos espaciales o tablas sin geometría asociada).
 
-### Arquitectura integrada (SDBMS)
+### Arquitectura integrada (SGBD espacial)
 
 Representa el estándar contemporáneo, donde el sistema gestor de bases de datos asume tanto la geometría como los atributos descriptivos dentro de un mismo motor estructurado:
 
@@ -711,6 +851,7 @@ Representa el estándar contemporáneo, donde el sistema gestor de bases de dato
 La adopción de una arquitectura integrada formaliza un esquema multicapa donde se dividen estrictamente las tareas entre la aplicación cliente y el motor gestor de bases de datos, tal como se esquematiza en la @fig-rol-sgbd-sig.
 
 ::: {.diagrama-ancho}
+
 ```{dot}
 //| label: fig-rol-sgbd-sig
 //| fig-cap: "Distribución de capas y responsabilidades entre el software SIG y el SGBD objeto-relacional."
@@ -771,6 +912,7 @@ digraph G {
     ordbms -> disk [dir=both, label=" Bloques y páginas I/O", penwidth=1.2];
 }
 
+
 ```
 
 :::
@@ -785,7 +927,7 @@ Bajo este modelo de distribución operativa se derivan ventajas determinantes:
 
 PostgreSQL es un sistema gestor de bases de datos objeto-relacional (ORDBMS) de código abierto, diseñado con una arquitectura extensible que permite incorporar nuevos tipos de datos, funciones definidas por el usuario en múltiples lenguajes (C, PL/pgSQL, Python) y métodos de acceso indexados especializados.
 
-PostGIS es la extensión espacial oficial de PostgreSQL. Transforma el motor relacional en un SDBMS completo al incorporar:
+PostGIS es la extensión espacial oficial de PostgreSQL. Transforma el motor relacional en un SGBD espacial completo al incorporar:
 
 * Tipos de datos espaciales geométricos vectoriales (`geometry`), geodésicos (`geography`), matriciales (`raster`) y estructuras topológicas (`topology`).
 * Funciones de análisis espacial conformes a las especificaciones internacionales de la OGC.
@@ -797,6 +939,7 @@ Cuando se administra PostgreSQL de forma nativa sobre el sistema anfitrión Wind
 ```powershell
 Get-Service -Name postgresql*
 
+
 ```
 
 Para asegurar que las utilidades de línea de comandos (`psql`, `pg_dump`, `pg_restore`) respondan globalmente en la consola del sistema anfitrión, la ruta binaria del motor (por ejemplo, `C:\Program Files\PostgreSQL\<version>\bin`) debe estar registrada en la variable de entorno del sistema `Path`.
@@ -806,7 +949,7 @@ Para asegurar que las utilidades de línea de comandos (`psql`, `pg_dump`, `pg_r
 
 Para comprobar que el entorno espacial se encuentra habilitado y operativo en la base de datos de trabajo `sig_db_unal`, se consulta la firma completa de dependencias compiladas contra el motor relacional:
 
-```{bash}
+<!-- ```{bash}
 #| label: audit-verificacion-postgis-host
 #| eval: true
 #| echo: true
@@ -817,7 +960,65 @@ psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATAB
   -x -P format=wrapped -P columns=90 \
   -c "SELECT postgis_full_version();"
 
+
+``` -->
+
+
+::: {.panel-tabset}
+
+### Terminal (psql)
+
+```{bash}
+#| label: audit-verificacion-postgis-psql
+#| eval: true
+#| echo: true
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+# Inspección de versión y librerías geoespaciales vinculadas a PostGIS
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATABASE} \
+  -x -P format=wrapped -P columns=90 \
+  -c "SELECT postgis_full_version();"
 ```
+
+### Python (SQLAlchemy)
+
+```{python}
+#| label: audit-verificacion-postgis-python-sqlalchemy
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+import textwrap
+from sqlalchemy import text
+
+# Ejecución de la consulta utilizando el motor instanciado para Docker
+with engine_docker.connect() as conn:
+    version_postgis = conn.execute(text("SELECT postgis_full_version();")).scalar()
+    print(textwrap.fill(version_postgis, width=90))
+```
+
+### Python (Pandas)
+
+```{python}
+#| label: audit-verificacion-postgis-python-pandas
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+
+import textwrap
+import pandas as pd
+
+# Lectura directa a DataFrame mediante el motor de Docker
+query = "SELECT postgis_full_version();"
+df_version = pd.read_sql(query, con=engine_docker)
+
+# Extracción y particionamiento a 90 columnas
+cadena_version = df_version.iloc[0, 0]
+print(textwrap.fill(cadena_version, width=90))
+
+```
+:::
 
 El resultado de esta función expone las librerías base sobre las cuales opera el motor espacial:
 
@@ -826,65 +1027,201 @@ El resultado de esta función expone las librerías base sobre las cuales opera 
 * **GDAL (*Geospatial Data Abstraction Library*)**: Librería de traducción y soporte para formatos ráster y vectoriales.
 * **LIBXML2**: Procesador de serializaciones XML/GML.
 
+
 ## Estándar OGC Simple Features for SQL (ISO 19125)
 
-El Open Geospatial Consortium (OGC) y la Organización Internacional de Normalización (ISO/TC 211) formularon la especificación *Simple Features for SQL* (SFS), recogida formalmente bajo la norma ISO 19125. Esta especificación define una arquitectura estandarizada para almacenar, manipular y consultar geometrías 2D en bases de datos relacionales.
+El Open Geospatial Consortium (OGC) y la Organización Internacional de Normalización (ISO/TC 211) formularon la especificación *Simple Feature Access* (SFA) —conocida comúnmente en entornos relacionales como *Simple Features for SQL* (SFS)—, estandarizada bajo la norma ISO 19125. Esta especificación se estructura formalmente en dos partes complementarias: la Parte 1 (*Common Architecture*), que define el modelo conceptual de geometrías, la jerarquía de tipos (`Point`, `Curve`, `Surface`, `GeometryCollection`) y su vinculación con sistemas de referencia de coordenadas [@ogc_sfa_part1_2011]; y la Parte 2 (*SQL Option*), que especifica la implementación técnica, el esquema relacional y las funciones en SQL requeridas para almacenar, manipular y consultar dichas colecciones geométricas en motores de bases de datos relacionales [@ogc_sfa_part2_2010].
+
 
 ### Jerarquía de tipos geométricos OGC
 
-El estándar define una jerarquía orientada a objetos donde la clase raíz abstracta es `Geometry`. En la @fig-jerarquia-ogc-dot se ilustra el árbol de herencia para las primitivas simples y las agrupaciones espaciales.
+El estándar define una taxonomía orientada a objetos en la que la clase abstracta raíz es `Geometry`. En la @fig-jerarquia-ogc-uml se presenta el diagrama de clases conforme a la especificación formal ISO 19125 / OGC SFA.
 
 ::: {.diagrama-ancho}
+
 ```{dot}
-//| label: fig-jerarquia-ogc-dot
-//| fig-cap: "Jerarquía de tipos de datos geométricos según la norma OGC SFS / ISO 19125."
+//| label: fig-jerarquia-ogc-uml
+//| fig-cap: "Diagrama de clases UML para la jerarquía de geometrías según ISO 19125 / OGC Simple Feature Access."
 //| fig-align: center
 //| fig-width: 6.5
-//| fig-height: 4
+//| fig-height: 7.0
+//| out-width: "100%"
 //| echo: false
 
-digraph G {
-    graph [rankdir=TB, bgcolor="transparent", nodesep=0.3, ranksep=0.5, fontname="Helvetica"];
-    node [shape=box, style="filled,rounded", fontname="Helvetica", fontsize=9, penwidth=1.0];
-    edge [color="#475569", arrowhead=onormal, arrowsize=1.0, penwidth=1.1];
+digraph SQL_Geometry_Hierarchy {
+    graph [rankdir=BT, nodesep=0.25, ranksep=0.55, fontname="Helvetica", bgcolor="transparent"];
+    node [shape=record, fontname="Helvetica", fontsize=8, style="filled", fillcolor="#ffffff", color="#334155", penwidth=0.8];
+    edge [fontname="Helvetica", fontsize=7, color="#475569", penwidth=0.8];
 
-    // Clase Raíz Abstracta
-    root [label="Geometry\n«Abstract»", fillcolor="#f1f5f9", color="#334155", fontcolor="#0f172a", width=2.0];
+    // Sistemas de referencia espacial
+    srs [label="{ReferenceSystems::\nSpatialReferenceSystem}", fillcolor="#f8fafc"];
+    mrs [label="{ReferenceSystems::\nMeasureReferenceSystem}", fillcolor="#f8fafc"];
 
-    // Clases Intermedias Abstractas
-    point [label="Point", fillcolor="#dbeafe", color="#1d4ed8", fontcolor="#1e3a8a", width=1.5];
-    curve [label="Curve\n«Abstract»", fillcolor="#f8fafc", color="#64748b", fontcolor="#334155", width=1.5];
-    surface [label="Surface\n«Abstract»", fillcolor="#f8fafc", color="#64748b", fontcolor="#334155", width=1.5];
-    geomcoll [label="GeometryCollection", fillcolor="#fef3c7", color="#d97706", fontcolor="#78350f", width=1.8];
+    // Clase raíz
+    geom [label="{Geometry\n«Abstract»}", fillcolor="#f1f5f9", penwidth=1.2];
 
-    // Clases Derivadas Concretas
-    linestring [label="LineString", fillcolor="#dbeafe", color="#1d4ed8", fontcolor="#1e3a8a", width=1.5];
-    linearring [label="LinearRing", fillcolor="#dbeafe", color="#1d4ed8", fontcolor="#1e3a8a", width=1.5];
-    polygon [label="Polygon", fillcolor="#dbeafe", color="#1d4ed8", fontcolor="#1e3a8a", width=1.5];
+    // Nivel 1: Subclases principales
+    point [label="{Point}"];
+    curve [label="{Curve\n«Abstract»}", fillcolor="#f8fafc"];
+    surface [label="{Surface\n«Abstract»}", fillcolor="#f8fafc"];
+    geomcoll [label="{GeometryCollection}"];
 
-    // Colecciones Homogéneas Concretas
-    multipoint [label="MultiPoint", fillcolor="#fed7aa", color="#ea580c", fontcolor="#7c2d12", width=1.5];
-    multilinestring [label="MultiLineString", fillcolor="#fed7aa", color="#ea580c", fontcolor="#7c2d12", width=1.5];
-    multipolygon [label="MultiPolygon", fillcolor="#fed7aa", color="#ea580c", fontcolor="#7c2d12", width=1.5];
+    // Nivel 2: Tipos intermedios y derivados
+    linestring [label="{LineString}"];
+    polygon [label="{Polygon}"];
+    polyhedralsurface [label="{PolyhedralSurface}"];
 
-    // Relaciones de herencia (apuntando a la clase base)
-    point -> root;
-    curve -> root;
-    surface -> root;
-    geomcoll -> root;
+    multisurface [label="{MultiSurface\n«Abstract»}", fillcolor="#f8fafc"];
+    multicurve [label="{MultiCurve\n«Abstract»}", fillcolor="#f8fafc"];
+    multipoint [label="{MultiPoint}"];
+
+    // Nivel 3: Subtipos concretos de Curve y colecciones
+    line [label="{Line}"];
+    linearring [label="{LinearRing}"];
+    multipolygon [label="{MultiPolygon}"];
+    multilinestring [label="{MultiLineString}"];
+
+    // Asociaciones con SRS (con cardinalidad OGC)
+    geom -> srs [arrowhead=none, headlabel="1  +spatialRS", labeldistance=2.0];
+    geom -> mrs [arrowhead=none, headlabel="0..1  +mesureRS", labeldistance=2.0];
+
+    // Generalización / Herencia (flechas con punta triangular hacia la superclase)
+    edge [arrowhead=onormal, arrowsize=1.0];
+    point -> geom;
+    curve -> geom;
+    surface -> geom;
+    geomcoll -> geom;
 
     linestring -> curve;
+    line -> linestring;
     linearring -> linestring;
-    polygon -> surface;
 
+    polygon -> surface;
+    polyhedralsurface -> surface;
+
+    multisurface -> geomcoll;
+    multicurve -> geomcoll;
     multipoint -> geomcoll;
-    multilinestring -> geomcoll;
-    multipolygon -> geomcoll;
+
+    multipolygon -> multisurface;
+    multilinestring -> multicurve;
+
+    // Agregaciones estructurales (rombo vacío en el contenedor)
+    edge [arrowhead=none, arrowtail=odiamond, dir=back, arrowsize=1.0];
+    linestring -> point [headlabel="2..*  +vertex", labeldistance=1.7];
+    polygon -> linearring [headlabel="1..*  +ring", labeldistance=1.7];
+    polyhedralsurface -> polygon [headlabel="1..*  +patch", labeldistance=1.7];
+
+    multipoint -> point [headlabel="0..*  +element", labeldistance=1.7];
+    multilinestring -> linestring [headlabel="0..*  +element", labeldistance=1.7];
+    multipolygon -> polygon [headlabel="0..*  +element", labeldistance=1.7];
 }
 
 ```
 
 :::
+
+Para la interpretación de la @fig-jerarquia-ogc-uml se deben considerar las siguientes convenciones de la notación UML:
+
+* **Clases abstractas (`«Abstract»`):** Entidades conceptuales que no admiten instanciación directa (`Geometry`, `Curve`, `Surface`, `MultiSurface`, `MultiCurve`). Definen contratos de métodos y propiedades que heredan las clases concretas.
+* **Generalización ($\triangle$):** Relación de herencia (*es-un*). La flecha orientada hacia la superclase indica que la subclase adquiere sus atributos, operaciones y restricciones topológicas.
+* **Agregación ($\diamond$):** Relación estructural (*compuesto-por*). El rombo ubicado en el extremo de la clase contenedora indica que esta se compone de una colección de elementos de la clase vinculada.
+* **Multiplicidad:** Restricción cardinal de las asociaciones; por ejemplo, `2..*` denota la obligatoriedad de al menos dos vértices para instanciar un `LineString`, mientras que `1..*` exige al menos un anillo delimitador para un `Polygon`.
+
+### Representación espacial de primitivas y colecciones
+
+Cada entidad definida en el estándar posee una signatura geométrica y una dimensión topológica intrínseca. En la @fig-geometrias-graficas se presenta la morfología de las geometrías fundamentales y sus agrupaciones.
+
+```{python}
+#| label: fig-geometrias-graficas
+#| fig-cap: "Instanciación espacial y morfología de tipos geométricos según el estándar OGC."
+#| fig-align: center
+#| out-width: "60%"
+#| results: false
+#| echo: false
+
+import matplotlib.pyplot as plt
+from shapely.geometry import Polygon
+
+fig, axes = plt.subplots(4, 2, figsize=(6.5, 9.0), constrained_layout=True)
+
+# ---------------------------------------------------------
+# Fila 0: Primitivas lineales y puntuales
+# ---------------------------------------------------------
+# Point
+ax = axes[0, 0]
+ax.plot(2, 1.5, 'o', color='#1d4ed8', markersize=8)
+ax.set_title("Point (Dim 0)", fontsize=9, weight='bold')
+
+# LineString
+ax = axes[0, 1]
+ax.plot([0.5, 1.8, 3.2], [0.8, 2.4, 1.0], '-o', color='#0284c7', linewidth=2, markersize=5)
+ax.set_title("LineString (Dim 1)", fontsize=9, weight='bold')
+
+# ---------------------------------------------------------
+# Fila 1: Geometrías cerradas y poligonales
+# ---------------------------------------------------------
+# LinearRing
+ax = axes[1, 0]
+ring_x, ring_y = [0.8, 3.0, 2.0, 0.8], [0.6, 1.0, 2.4, 0.6]
+ax.plot(ring_x, ring_y, '--o', color='#0f766e', linewidth=2, markersize=5)
+ax.set_title("LinearRing (Dim 1, cerrado)", fontsize=9, weight='bold')
+
+# Polygon con anillo interior (hueco)
+ax = axes[1, 1]
+ext = [(0.5, 0.5), (3.3, 0.5), (3.3, 2.5), (0.5, 2.5), (0.5, 0.5)]
+hole = [(1.2, 1.0), (2.5, 1.0), (2.5, 2.0), (1.2, 2.0), (1.2, 1.0)]
+poly = Polygon(shell=ext, holes=[hole])
+ax.fill(*poly.exterior.xy, color='#bfdbfe', alpha=0.8, edgecolor='#1d4ed8', linewidth=1.5)
+ax.fill(*poly.interiors[0].xy, color='#ffffff', edgecolor='#1d4ed8', linewidth=1.5, linestyle='--')
+ax.set_title("Polygon (Dim 2)", fontsize=9, weight='bold')
+
+# ---------------------------------------------------------
+# Fila 2: Colecciones homogéneas (Dim 0 y 1)
+# ---------------------------------------------------------
+# MultiPoint
+ax = axes[2, 0]
+ax.plot([0.8, 1.7, 2.8], [2.0, 0.8, 2.2], 'o', color='#ea580c', markersize=7)
+ax.set_title("MultiPoint (Dim 0)", fontsize=9, weight='bold')
+
+# MultiLineString
+ax = axes[2, 1]
+ax.plot([0.5, 2.0], [2.2, 2.5], '-', color='#ea580c', linewidth=2)
+ax.plot([1.2, 3.2], [1.0, 0.6], '-', color='#ea580c', linewidth=2)
+ax.set_title("MultiLineString (Dim 1)", fontsize=9, weight='bold')
+
+# ---------------------------------------------------------
+# Fila 3: Colecciones complejas y heterogéneas
+# ---------------------------------------------------------
+# MultiPolygon
+ax = axes[3, 0]
+p1 = Polygon([(0.5, 0.7), (1.8, 0.7), (1.8, 2.3), (0.5, 2.3)])
+p2 = Polygon([(2.2, 1.1), (3.3, 0.5), (3.3, 2.0)])
+ax.fill(*p1.exterior.xy, color='#fed7aa', edgecolor='#c2410c', linewidth=1.5)
+ax.fill(*p2.exterior.xy, color='#fed7aa', edgecolor='#c2410c', linewidth=1.5)
+ax.set_title("MultiPolygon (Dim 2)", fontsize=9, weight='bold')
+
+# GeometryCollection
+ax = axes[3, 1]
+p_col = Polygon([(1.2, 0.5), (3.2, 0.5), (2.2, 1.6)])
+ax.fill(*p_col.exterior.xy, color='#fef08a', edgecolor='#ca8a04', alpha=0.7)
+ax.plot([0.6, 1.6], [2.0, 2.5], '-', color='#16a34a', linewidth=2)
+ax.plot(0.8, 1.0, 'o', color='#dc2626', markersize=6)
+ax.set_title("GeometryCollection (Heterogénea)", fontsize=9, weight='bold')
+
+# Configuración de límites y cuadrícula en todos los subplots
+for ax in axes.flat:
+    _ = ax.set_xlim(0, 3.8)
+    _ = ax.set_ylim(0, 3.0)
+    ax.grid(True, linestyle=':', alpha=0.5)
+    ax.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
+
+# plt.savefig("../images/geometrias_ogc.png", dpi=300, bbox_inches="tight")
+
+plt.show()
+
+```
+
 
 En la @tbl-tipos-ogc se detallan las características topológicas y dimensionales de los tipos definidos en la norma.
 
@@ -901,11 +1238,12 @@ En la @tbl-tipos-ogc se detallan las características topológicas y dimensional
 
 : Primitivas y colecciones geométricas del estándar OGC. {#tbl-tipos-ogc}
 
-## Serialización y formatos estándar: WKT y WKB
+
+### Serialización y formatos estándar: WKT y WKB
 
 Para garantizar el intercambio de geometrías entre sistemas heterogéneos, el estándar OGC define dos formatos de interoperabilidad:
 
-### Formato Well-Known Text (WKT)
+#### Formato Well-Known Text (WKT)
 
 WKT es una codificación en texto plano legible por humanos que define la estructura del tipo geométrico y sus secuencias de coordenadas:
 
@@ -918,11 +1256,12 @@ En superficies poligonales, el primer anillo define el perímetro exterior, mien
 ```text
 POLYGON((0 0, 10 0, 10 10, 0 10, 0 0), (2 2, 4 2, 4 4, 2 4, 2 2))
 
+
 ```
 
 PostGIS extiende el estándar WKT incorporando componentes tridimensionales y de medición lineal: `POINT Z`, `POINT M` y `POINT ZM`.
 
-### Formato Well-Known Binary (WKB) y EWKB
+#### Formato Well-Known Binary (WKB) y EWKB
 
 WKB es una representación binaria estructurada en secuencias de bytes (*byte arrays*), optimizada para la transferencia en red y el almacenamiento interno en páginas de disco:
 
@@ -932,19 +1271,1009 @@ WKB es una representación binaria estructurada en secuencias de bytes (*byte ar
 
 PostGIS implementa el formato extendido **EWKB** (*Extended Well-Known Binary*), el cual embebe directamente el identificador del sistema de referencia espacial (SRID) en la cabecera binaria del objeto geométrico.
 
+### Representación espacial de primitivas y colecciones en PostGIS
+
+Para verificar la persistencia física de las geometrías OGC y evaluar el intercambio de datos mediante los formatos canónicos WKT y WKB directamente en el motor relacional del servidor local, el flujo de trabajo se estructura en dos fases complementarias:
+
+1. **Persistencia relacional en PostGIS:** Se provisiona una tabla polimórfica (`public.muestras_geometrias_ogc`) con una columna geométrica sin modificadores de tipo restrictivos (*typmod*), permitiendo almacenar las ocho primitivas y colecciones fundamentales mediante constructores estándar `ST_GeomFromText`. Conforme a la gramática formal de la norma ISO 19125-2, el tipo `LinearRing` carece de un constructor textual WKT autónomo en el estándar SQL; por consiguiente, se persiste como una curva `LineString` cerrada con coincidencia topológica estricta entre el vértice inicial y final.
+
+2. **Extracción binaria y renderizado en Python:** El entorno ejecuta una consulta relacional solicitando la codificación canónica *Well-Known Binary* (`ST_AsBinary`), decodifica los flujos de bytes mediante `shapely.wkb` y genera la matriz gráfica comparativa.
+
+El siguiente bloque de instrucciones DDL y DML ejecuta el aprovisionamiento y poblamiento de la relación en el clúster PostgreSQL:
+
+* **Eliminación condicional previa:** Suprime la tabla `public.muestras_geometrias_ogc` si existe en el esquema (`DROP TABLE IF EXISTS`), garantizando la idempotencia del script ante múltiples ejecuciones.
+* **Definición del esquema de la tabla:** Crea la relación especificando una clave primaria serial, identificadores de ordenamiento, atributos descriptivos y una columna espacial de tipo genérico `geometry` sin restricción de subtipo (*typmod*).
+* **Inserción de atributos y geometrías:** Registra los datos alfanuméricos e instancia físicamente cada objeto geométrico a partir de literales WKT mediante la función constructora `ST_GeomFromText`.
+
+::: {.panel-tabset}
+
+### Terminal (psql)
+
+```{bash}
+#| label: ddl-poblar-muestras-ogc-psql
+#| eval: true
+#| echo: true
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+query_muestras="
+SET client_min_messages = warning;
+DROP TABLE IF EXISTS public.muestras_geometrias_ogc;
+RESET client_min_messages;
+
+CREATE TABLE public.muestras_geometrias_ogc (
+    id serial PRIMARY KEY,
+    orden integer NOT NULL,
+    nombre varchar(30) NOT NULL,
+    descripcion varchar(50) NOT NULL,
+    geom geometry NOT NULL
+);
+
+INSERT INTO public.muestras_geometrias_ogc (orden, nombre, descripcion, geom) VALUES
+(1, 'Point', 'Point (Dim 0)', 
+    ST_GeomFromText('POINT(2 1.5)')),
+(2, 'LineString', 'LineString (Dim 1)', 
+    ST_GeomFromText('LINESTRING(0.5 0.8, 1.8 2.4, 3.2 1.0)')),
+(3, 'LinearRing', 'LinearRing (Dim 1, cerrado)', 
+    ST_GeomFromText('LINESTRING(0.8 0.6, 3.0 1.0, 2.0 2.4, 0.8 0.6)')),
+(4, 'Polygon', 'Polygon (Dim 2)', 
+    ST_GeomFromText('POLYGON((0.5 0.5, 3.3 0.5, 3.3 2.5, 0.5 2.5, 0.5 0.5), (1.2 1.0, 2.5 1.0, 2.5 2.0, 1.2 2.0, 1.2 1.0))')),
+(5, 'MultiPoint', 'MultiPoint (Dim 0)', 
+    ST_GeomFromText('MULTIPOINT(0.8 2.0, 1.7 0.8, 2.8 2.2)')),
+(6, 'MultiLineString', 'MultiLineString (Dim 1)', 
+    ST_GeomFromText('MULTILINESTRING((0.5 2.2, 2.0 2.5), (1.2 1.0, 3.2 0.6))')),
+(7, 'MultiPolygon', 'MultiPolygon (Dim 2)', 
+    ST_GeomFromText('MULTIPOLYGON(((0.5 0.7, 1.8 0.7, 1.8 2.3, 0.5 2.3, 0.5 0.7)), ((2.2 1.1, 3.3 0.5, 3.3 2.0, 2.2 1.1)))')),
+(8, 'GeometryCollection', 'GeometryCollection (Heterogénea)', 
+    ST_GeomFromText('GEOMETRYCOLLECTION(POLYGON((1.2 0.5, 3.2 0.5, 2.2 1.6, 1.2 0.5)), LINESTRING(0.6 2.0, 1.6 2.5), POINT(0.8 1.0))'));
+"
+
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATABASE} \
+  -c "${query_muestras}"
+```
+
+### Python (SQLAlchemy)
+
+```{python}
+#| label: ddl-poblar-muestras-ogc-sqlalchemy
+#| eval: true
+#| echo: true
+
+from sqlalchemy import text
+
+query_muestras = """
+SET client_min_messages = warning;
+DROP TABLE IF EXISTS public.muestras_geometrias_ogc;
+RESET client_min_messages;
+
+CREATE TABLE public.muestras_geometrias_ogc (
+    id serial PRIMARY KEY,
+    orden integer NOT NULL,
+    nombre varchar(30) NOT NULL,
+    descripcion varchar(50) NOT NULL,
+    geom geometry NOT NULL
+);
+
+INSERT INTO public.muestras_geometrias_ogc (orden, nombre, descripcion, geom) VALUES
+(1, 'Point', 'Point (Dim 0)', 
+    ST_GeomFromText('POINT(2 1.5)')),
+(2, 'LineString', 'LineString (Dim 1)', 
+    ST_GeomFromText('LINESTRING(0.5 0.8, 1.8 2.4, 3.2 1.0)')),
+(3, 'LinearRing', 'LinearRing (Dim 1, cerrado)', 
+    ST_GeomFromText('LINESTRING(0.8 0.6, 3.0 1.0, 2.0 2.4, 0.8 0.6)')),
+(4, 'Polygon', 'Polygon (Dim 2)', 
+    ST_GeomFromText('POLYGON((0.5 0.5, 3.3 0.5, 3.3 2.5, 0.5 2.5, 0.5 0.5), (1.2 1.0, 2.5 1.0, 2.5 2.0, 1.2 2.0, 1.2 1.0))')),
+(5, 'MultiPoint', 'MultiPoint (Dim 0)', 
+    ST_GeomFromText('MULTIPOINT(0.8 2.0, 1.7 0.8, 2.8 2.2)')),
+(6, 'MultiLineString', 'MultiLineString (Dim 1)', 
+    ST_GeomFromText('MULTILINESTRING((0.5 2.2, 2.0 2.5), (1.2 1.0, 3.2 0.6))')),
+(7, 'MultiPolygon', 'MultiPolygon (Dim 2)', 
+    ST_GeomFromText('MULTIPOLYGON(((0.5 0.7, 1.8 0.7, 1.8 2.3, 0.5 2.3, 0.5 0.7)), ((2.2 1.1, 3.3 0.5, 3.3 2.0, 2.2 1.1)))')),
+(8, 'GeometryCollection', 'GeometryCollection (Heterogénea)', 
+    ST_GeomFromText('GEOMETRYCOLLECTION(POLYGON((1.2 0.5, 3.2 0.5, 2.2 1.6, 1.2 0.5)), LINESTRING(0.6 2.0, 1.6 2.5), POINT(0.8 1.0))'));
+"""
+
+# Ejecución transaccional atómica sobre el motor anfitrión previamente instanciado
+with engine_local.begin() as conn:
+    conn.execute(text(query_muestras))
+    print("Tabla public.muestras_geometrias_ogc aprovisionada y poblada exitosamente.")
+```
+
+:::
+
+
+Una vez confirmada la inserción en el motor, el bloque subsecuente recupera las geometrías en WKB, reconstruye los objetos topológicos e ilustra la morfología de cada tipo en Python (@fig-geometrias-graficas-postgis-py-shapely-ejecucion), R (@fig-geometrias-graficas-postgis-r-ejecucion) y Julia (@fig-geometrias-graficas-postgis-jl-ejecucion):
+
+
+::: {.panel-tabset}
+
+### Python (Shapely)
+
+```{python}
+#| label: fig-geometrias-graficas-postgis-py-shapely-codigo
+#| fig-cap: "Instanciación espacial y morfología de tipos geométricos según el estándar OGC en Python con Shapely."
+#| fig-align: center
+#| fig-width: 6.5
+#| fig-height: 9.0
+#| out-width: "60%"
+#| results: false
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código en Python (Shapely)"
+#| eval: false
+
+# =========================================================================
+# 0. Módulos y bibliotecas requeridas
+# =========================================================================
+# 'os': Módulo estándar para interactuar con el sistema operativo;
+# permite recuperar variables de entorno del sistema (credenciales seguras).
+import os
+
+# 'psycopg2': Controlador canónico (driver) de PostgreSQL para Python;
+# gestiona el protocolo de red, la conexión y la ejecución de sentencias SQL.
+import psycopg2
+
+# 'matplotlib.pyplot': Biblioteca estándar de graficación técnica y científica;
+# provee las funciones para construir y configurar lienzos vectoriales 2D.
+import matplotlib.pyplot as plt
+
+# 'shapely.wkb': Submódulo de la biblioteca geoespacial Shapely (basada en GEOS);
+# permite deserializar cadenas binarias en formato Well-Known Binary (WKB) 
+# y reconstruirlas como objetos geométricos espaciales manipulables en memoria.
+from shapely import wkb
+
+# -------------------------------------------------------------------------
+# 1. Conexión a la base de datos relacional
+# -------------------------------------------------------------------------
+conn = psycopg2.connect(
+    host=os.environ.get("LOCAL_PGHOST"),
+    port=os.environ.get("LOCAL_PGPORT"),
+    dbname=os.environ.get("LOCAL_PGDATABASE"),
+    user=os.environ.get("LOCAL_PGUSER"),
+    password=os.environ.get("LOCAL_PGPASSWORD")
+)
+
+# -------------------------------------------------------------------------
+# 2. Extracción de entidades en formato binario estándar (WKB)
+# -------------------------------------------------------------------------
+cursor = conn.cursor()
+cursor.execute("""
+    SELECT orden, nombre, descripcion, ST_AsBinary(geom) AS wkb 
+    FROM public.muestras_geometrias_ogc 
+    ORDER BY orden ASC;
+""")
+registros = cursor.fetchall()
+cursor.close()
+conn.close()
+
+# -------------------------------------------------------------------------
+# 3. Configuración del lienzo gráfico (Matplotlib)
+# -------------------------------------------------------------------------
+fig, axes = plt.subplots(4, 2, figsize=(6.5, 9.0), constrained_layout=True)
+axes_flat = axes.flatten()
+
+# -------------------------------------------------------------------------
+# 4. Función de despacho polimórfico para renderizado geométrico
+# -------------------------------------------------------------------------
+def graficar_geometria(ax, geom, nombre):
+    if geom.geom_type == 'Point':
+        ax.plot(geom.x, geom.y, 'o', color='#1d4ed8', markersize=8)
+        
+    elif geom.geom_type == 'LineString':
+        x, y = geom.xy
+        if nombre == 'LinearRing':
+            ax.plot(x, y, '--o', color='#0f766e', linewidth=2, markersize=5)
+        else:
+            ax.plot(x, y, '-o', color='#0284c7', linewidth=2, markersize=5)
+            
+    elif geom.geom_type == 'Polygon':
+        ax.fill(*geom.exterior.xy, color='#bfdbfe', alpha=0.8, edgecolor='#1d4ed8', linewidth=1.5)
+        for interior in geom.interiors:
+            ax.fill(*interior.xy, color='#ffffff', edgecolor='#1d4ed8', linewidth=1.5, linestyle='--')
+            
+    elif geom.geom_type == 'MultiPoint':
+        for pt in geom.geoms:
+            ax.plot(pt.x, pt.y, 'o', color='#ea580c', markersize=7)
+            
+    elif geom.geom_type == 'MultiLineString':
+        for line in geom.geoms:
+            ax.plot(*line.xy, '-', color='#ea580c', linewidth=2)
+            
+    elif geom.geom_type == 'MultiPolygon':
+        for poly in geom.geoms:
+            ax.fill(*poly.exterior.xy, color='#fed7aa', edgecolor='#c2410c', linewidth=1.5)
+            
+    elif geom.geom_type == 'GeometryCollection':
+        for part in geom.geoms:
+            if part.geom_type == 'Polygon':
+                ax.fill(*part.exterior.xy, color='#fef08a', edgecolor='#ca8a04', alpha=0.7)
+            elif part.geom_type == 'LineString':
+                ax.plot(*part.xy, '-', color='#16a34a', linewidth=2)
+            elif part.geom_type == 'Point':
+                ax.plot(part.x, part.y, 'o', color='#dc2626', markersize=6)
+
+# -------------------------------------------------------------------------
+# 5. Iteración, deserialización binaria y graficación
+# -------------------------------------------------------------------------
+for idx, (orden, nombre, descripcion, binario_wkb) in enumerate(registros):
+    ax = axes_flat[idx]
+    geometria = wkb.loads(bytes(binario_wkb))
+    graficar_geometria(ax, geometria, nombre)
+    ax.set_title(descripcion, fontsize=9, weight='bold')
+    _ = ax.set_xlim(0, 3.8)
+    _ = ax.set_ylim(0, 3.0)
+    ax.grid(True, linestyle=':', alpha=0.5)
+    ax.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
+
+plt.show()
+```
+
+```{python}
+#| label: fig-geometrias-graficas-postgis-py-shapely-ejecucion
+#| fig-cap: "Instanciación espacial y morfología de tipos geométricos según el estándar OGC en Python con Shapely."
+#| fig-align: center
+#| fig-width: 6.5
+#| fig-height: 9.0
+#| out-width: "60%"
+#| results: false
+#| echo: false
+#| eval: true
+
+import os
+import psycopg2
+import matplotlib.pyplot as plt
+from shapely import wkb
+
+conn = psycopg2.connect(
+    host=os.environ.get("LOCAL_PGHOST"),
+    port=os.environ.get("LOCAL_PGPORT"),
+    dbname=os.environ.get("LOCAL_PGDATABASE"),
+    user=os.environ.get("LOCAL_PGUSER"),
+    password=os.environ.get("LOCAL_PGPASSWORD")
+)
+
+cursor = conn.cursor()
+cursor.execute("""
+    SELECT orden, nombre, descripcion, ST_AsBinary(geom) AS wkb 
+    FROM public.muestras_geometrias_ogc 
+    ORDER BY orden ASC;
+""")
+registros = cursor.fetchall()
+cursor.close()
+conn.close()
+
+fig, axes = plt.subplots(4, 2, figsize=(6.5, 9.0), constrained_layout=True)
+axes_flat = axes.flatten()
+
+def graficar_geometria(ax, geom, nombre):
+    if geom.geom_type == 'Point':
+        ax.plot(geom.x, geom.y, 'o', color='#1d4ed8', markersize=8)
+        
+    elif geom.geom_type == 'LineString':
+        x, y = geom.xy
+        if nombre == 'LinearRing':
+            ax.plot(x, y, '--o', color='#0f766e', linewidth=2, markersize=5)
+        else:
+            ax.plot(x, y, '-o', color='#0284c7', linewidth=2, markersize=5)
+            
+    elif geom.geom_type == 'Polygon':
+        ax.fill(*geom.exterior.xy, color='#bfdbfe', alpha=0.8, edgecolor='#1d4ed8', linewidth=1.5)
+        for interior in geom.interiors:
+            ax.fill(*interior.xy, color='#ffffff', edgecolor='#1d4ed8', linewidth=1.5, linestyle='--')
+            
+    elif geom.geom_type == 'MultiPoint':
+        for pt in geom.geoms:
+            ax.plot(pt.x, pt.y, 'o', color='#ea580c', markersize=7)
+            
+    elif geom.geom_type == 'MultiLineString':
+        for line in geom.geoms:
+            ax.plot(*line.xy, '-', color='#ea580c', linewidth=2)
+            
+    elif geom.geom_type == 'MultiPolygon':
+        for poly in geom.geoms:
+            ax.fill(*poly.exterior.xy, color='#fed7aa', edgecolor='#c2410c', linewidth=1.5)
+            
+    elif geom.geom_type == 'GeometryCollection':
+        for part in geom.geoms:
+            if part.geom_type == 'Polygon':
+                ax.fill(*part.exterior.xy, color='#fef08a', edgecolor='#ca8a04', alpha=0.7)
+            elif part.geom_type == 'LineString':
+                ax.plot(*part.xy, '-', color='#16a34a', linewidth=2)
+            elif part.geom_type == 'Point':
+                ax.plot(part.x, part.y, 'o', color='#dc2626', markersize=6)
+
+for idx, (orden, nombre, descripcion, binario_wkb) in enumerate(registros):
+    ax = axes_flat[idx]
+    geometria = wkb.loads(bytes(binario_wkb))
+    graficar_geometria(ax, geometria, nombre)
+    ax.set_title(descripcion, fontsize=9, weight='bold')
+    _ = ax.set_xlim(0, 3.8)
+    _ = ax.set_ylim(0, 3.0)
+    ax.grid(True, linestyle=':', alpha=0.5)
+    ax.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
+
+plt.show()
+```
+
+### Python (GeoPandas)
+
+```{python}
+#| label: fig-geometrias-graficas-postgis-py-geopandas-codigo
+#| fig-cap: "Instanciación espacial y morfología de tipos geométricos según el estándar OGC en Python con GeoPandas."
+#| fig-align: center
+#| fig-width: 6.5
+#| fig-height: 9.0
+#| out-width: "60%"
+#| results: false
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código en Python (GeoPandas)"
+#| eval: false
+
+# =========================================================================
+# 0. Módulos y bibliotecas requeridas
+# =========================================================================
+# 'geopandas': Extensión geoespacial para estructuras tabulares DataFrame;
+# abstrae la deserialización de columnas espaciales relacionales directamente
+# hacia objetos geométricos vectoriales GeoSeries mediante GEOS/Shapely.
+import geopandas as gpd
+
+# 'sqlalchemy.text': Envoltorio declarativo de consultas ejecutables en SQLAlchemy 2.0.
+from sqlalchemy import text
+
+# 'matplotlib.pyplot': Biblioteca estándar para renderizado y control de lienzos 2D.
+import matplotlib.pyplot as plt
+
+# -------------------------------------------------------------------------
+# 1. Extracción relacional directa hacia GeoDataFrame (motor local)
+# -------------------------------------------------------------------------
+query_muestras = """
+SELECT orden, nombre, descripcion, geom 
+FROM public.muestras_geometrias_ogc 
+ORDER BY orden ASC;
+"""
+
+with engine_local.connect() as conn:
+    gdf = gpd.read_postgis(text(query_muestras), con=conn, geom_col="geom")
+
+# -------------------------------------------------------------------------
+# 2. Configuración del lienzo gráfico (Matplotlib)
+# -------------------------------------------------------------------------
+fig, axes = plt.subplots(4, 2, figsize=(6.5, 9.0), constrained_layout=True)
+axes_flat = axes.flatten()
+
+# -------------------------------------------------------------------------
+# 3. Función de despacho polimórfico para renderizado de geometrías
+# -------------------------------------------------------------------------
+def graficar_geometria_gpd(ax, geom, nombre):
+    if geom.geom_type == 'Point':
+        ax.plot(geom.x, geom.y, 'o', color='#1d4ed8', markersize=8)
+        
+    elif geom.geom_type == 'LineString':
+        x, y = geom.xy
+        if nombre == 'LinearRing':
+            ax.plot(x, y, '--o', color='#0f766e', linewidth=2, markersize=5)
+        else:
+            ax.plot(x, y, '-o', color='#0284c7', linewidth=2, markersize=5)
+            
+    elif geom.geom_type == 'Polygon':
+        ax.fill(*geom.exterior.xy, color='#bfdbfe', alpha=0.8, edgecolor='#1d4ed8', linewidth=1.5)
+        for interior in geom.interiors:
+            ax.fill(*interior.xy, color='#ffffff', edgecolor='#1d4ed8', linewidth=1.5, linestyle='--')
+            
+    elif geom.geom_type == 'MultiPoint':
+        for pt in geom.geoms:
+            ax.plot(pt.x, pt.y, 'o', color='#ea580c', markersize=7)
+            
+    elif geom.geom_type == 'MultiLineString':
+        for line in geom.geoms:
+            ax.plot(*line.xy, '-', color='#ea580c', linewidth=2)
+            
+    elif geom.geom_type == 'MultiPolygon':
+        for poly in geom.geoms:
+            ax.fill(*poly.exterior.xy, color='#fed7aa', edgecolor='#c2410c', linewidth=1.5)
+            
+    elif geom.geom_type == 'GeometryCollection':
+        for part in geom.geoms:
+            if part.geom_type == 'Polygon':
+                ax.fill(*part.exterior.xy, color='#fef08a', edgecolor='#ca8a04', alpha=0.7)
+            elif part.geom_type == 'LineString':
+                ax.plot(*part.xy, '-', color='#16a34a', linewidth=2)
+            elif part.geom_type == 'Point':
+                ax.plot(part.x, part.y, 'o', color='#dc2626', markersize=6)
+
+# -------------------------------------------------------------------------
+# 4. Iteración y graficación desde el GeoDataFrame
+# -------------------------------------------------------------------------
+for idx, fila in gdf.iterrows():
+    ax = axes_flat[idx]
+    graficar_geometria_gpd(ax, fila.geom, fila["nombre"])
+    ax.set_title(fila["descripcion"], fontsize=9, weight='bold')
+    _ = ax.set_xlim(0, 3.8)
+    _ = ax.set_ylim(0, 3.0)
+    ax.grid(True, linestyle=':', alpha=0.5)
+    ax.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
+
+plt.show()
+```
+
+```{python}
+#| label: fig-geometrias-graficas-postgis-py-geopandas-ejecucion
+#| fig-cap: "Instanciación espacial y morfología de tipos geométricos según el estándar OGC en Python con GeoPandas."
+#| fig-align: center
+#| fig-width: 6.5
+#| fig-height: 9.0
+#| out-width: "60%"
+#| results: false
+#| echo: false
+#| eval: true
+
+import geopandas as gpd
+from sqlalchemy import text
+import matplotlib.pyplot as plt
+
+query_muestras = """
+SELECT orden, nombre, descripcion, geom 
+FROM public.muestras_geometrias_ogc 
+ORDER BY orden ASC;
+"""
+
+with engine_local.connect() as conn:
+    gdf = gpd.read_postgis(text(query_muestras), con=conn, geom_col="geom")
+
+fig, axes = plt.subplots(4, 2, figsize=(6.5, 9.0), constrained_layout=True)
+axes_flat = axes.flatten()
+
+def graficar_geometria_gpd(ax, geom, nombre):
+    if geom.geom_type == 'Point':
+        ax.plot(geom.x, geom.y, 'o', color='#1d4ed8', markersize=8)
+        
+    elif geom.geom_type == 'LineString':
+        x, y = geom.xy
+        if nombre == 'LinearRing':
+            ax.plot(x, y, '--o', color='#0f766e', linewidth=2, markersize=5)
+        else:
+            ax.plot(x, y, '-o', color='#0284c7', linewidth=2, markersize=5)
+            
+    elif geom.geom_type == 'Polygon':
+        ax.fill(*geom.exterior.xy, color='#bfdbfe', alpha=0.8, edgecolor='#1d4ed8', linewidth=1.5)
+        for interior in geom.interiors:
+            ax.fill(*interior.xy, color='#ffffff', edgecolor='#1d4ed8', linewidth=1.5, linestyle='--')
+            
+    elif geom.geom_type == 'MultiPoint':
+        for pt in geom.geoms:
+            ax.plot(pt.x, pt.y, 'o', color='#ea580c', markersize=7)
+            
+    elif geom.geom_type == 'MultiLineString':
+        for line in geom.geoms:
+            ax.plot(*line.xy, '-', color='#ea580c', linewidth=2)
+            
+    elif geom.geom_type == 'MultiPolygon':
+        for poly in geom.geoms:
+            ax.fill(*poly.exterior.xy, color='#fed7aa', edgecolor='#c2410c', linewidth=1.5)
+            
+    elif geom.geom_type == 'GeometryCollection':
+        for part in geom.geoms:
+            if part.geom_type == 'Polygon':
+                ax.fill(*part.exterior.xy, color='#fef08a', edgecolor='#ca8a04', alpha=0.7)
+            elif part.geom_type == 'LineString':
+                ax.plot(*part.xy, '-', color='#16a34a', linewidth=2)
+            elif part.geom_type == 'Point':
+                ax.plot(part.x, part.y, 'o', color='#dc2626', markersize=6)
+
+for idx, fila in gdf.iterrows():
+    ax = axes_flat[idx]
+    graficar_geometria_gpd(ax, fila.geom, fila["nombre"])
+    ax.set_title(fila["descripcion"], fontsize=9, weight='bold')
+    _ = ax.set_xlim(0, 3.8)
+    _ = ax.set_ylim(0, 3.0)
+    ax.grid(True, linestyle=':', alpha=0.5)
+    ax.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
+
+plt.show()
+```
+
+### R
+
+```{r}
+#| label: fig-geometrias-graficas-postgis-r-codigo
+#| fig-cap: "Instanciación espacial y morfología de tipos geométricos según el estándar OGC en R."
+#| fig-align: center
+#| fig-width: 6.5
+#| fig-height: 9.0
+#| out-width: "60%"
+#| results: false
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+#| eval: false
+
+# =========================================================================
+# 0. Módulos y bibliotecas requeridas
+# =========================================================================
+# 'DBI': Interfaz unificada de conexión a bases de datos relacionales en R.
+library(DBI)
+
+# 'RPostgres': Controlador optimizado en C++ para comunicación nativa con PostgreSQL.
+library(RPostgres)
+
+# 'sf': Biblioteca estándar para geometrías vectoriales bajo Simple Features;
+# enlaza con GDAL, GEOS y PROJ, proveyendo deserialización nativa de WKB.
+library(sf)
+
+# -------------------------------------------------------------------------
+# 1. Conexión a la base de datos relacional
+# -------------------------------------------------------------------------
+conn <- dbConnect(
+  RPostgres::Postgres(),
+  host = Sys.getenv("LOCAL_PGHOST"),
+  port = as.integer(Sys.getenv("LOCAL_PGPORT")),
+  dbname = Sys.getenv("LOCAL_PGDATABASE"),
+  user = Sys.getenv("LOCAL_PGUSER"),
+  password = Sys.getenv("LOCAL_PGPASSWORD")
+)
+
+# -------------------------------------------------------------------------
+# 2. Extracción de entidades en formato binario estándar (WKB)
+# -------------------------------------------------------------------------
+query <- "
+  SELECT orden, nombre, descripcion, ST_AsBinary(geom) AS wkb 
+  FROM public.muestras_geometrias_ogc 
+  ORDER BY orden ASC;
+"
+registros <- dbGetQuery(conn, query)
+dbDisconnect(conn)
+
+# Conversión del vector binario WKB a objetos de clase 'sfc' (Simple Feature Column)
+class(registros$wkb) <- "WKB"
+geometrias <- st_as_sfc(registros$wkb, EWKB = FALSE)
+
+# -------------------------------------------------------------------------
+# 3. Configuración del lienzo gráfico (Base R Graphics)
+# -------------------------------------------------------------------------
+# Márgenes calibrados por celda (inferior, izquierdo, superior, derecho)
+par(mfrow = c(4, 2), mar = c(1.8, 1.8, 2.2, 1.2), oma = c(0, 0, 0, 0))
+
+# -------------------------------------------------------------------------
+# 4. Función de despacho polimórfico para renderizado geométrico
+# -------------------------------------------------------------------------
+graficar_geometria_r <- function(geom, nombre, descripcion) {
+  # Inicialización del marco cartesiano libre de distorsión por relación de aspecto fija
+  plot.new()
+  plot.window(xlim = c(0, 3.8), ylim = c(0, 3.0))
+  
+  # Cuadrícula homogénea de 4 columnas x 3 filas con estilo punteado
+  grid(nx = 4, ny = 3, lty = 3, col = "gray75")
+  box(col = "#334155", lwd = 1.0)
+  title(main = descripcion, cex.main = 1.05, font.main = 2, line = 0.6)
+
+  # Renderizado condicional según el tipo primitivo
+  if (inherits(geom, "POINT")) {
+    points(geom[1], geom[2], pch = 19, col = "#1d4ed8", cex = 2.2)
+    
+  } else if (inherits(geom, "LINESTRING")) {
+    if (nombre == "LinearRing") {
+      lines(geom[, 1], geom[, 2], col = "#0f766e", lty = 2, lwd = 2.5)
+      points(geom[, 1], geom[, 2], pch = 19, col = "#0f766e", cex = 1.2)
+    } else {
+      lines(geom[, 1], geom[, 2], col = "#0284c7", lwd = 2.5)
+      points(geom[, 1], geom[, 2], pch = 19, col = "#0284c7", cex = 1.2)
+    }
+    
+  } else if (inherits(geom, "POLYGON")) {
+    # Anillo exterior
+    polygon(geom[[1]][, 1], geom[[1]][, 2], col = "#bfdbfe", border = "#1d4ed8", lwd = 2.0)
+    # Huecos interiores (islas)
+    if (length(geom) > 1) {
+      for (h in 2:length(geom)) {
+        polygon(geom[[h]][, 1], geom[[h]][, 2], col = "white", border = "#1d4ed8", lty = 2, lwd = 2.0)
+      }
+    }
+    
+  } else if (inherits(geom, "MULTIPOINT")) {
+    points(geom[, 1], geom[, 2], pch = 19, col = "#ea580c", cex = 1.8)
+    
+  } else if (inherits(geom, "MULTILINESTRING")) {
+    for (linea in geom) {
+      lines(linea[, 1], linea[, 2], col = "#ea580c", lwd = 2.5)
+    }
+    
+  } else if (inherits(geom, "MULTIPOLYGON")) {
+    for (poligono in geom) {
+      polygon(poligono[[1]][, 1], poligono[[1]][, 2], col = "#fed7aa", border = "#c2410c", lwd = 2.0)
+    }
+    
+  } else if (inherits(geom, "GEOMETRYCOLLECTION")) {
+    for (elem in geom) {
+      if (inherits(elem, "POLYGON")) {
+        polygon(elem[[1]][, 1], elem[[1]][, 2], col = "#fef08a", border = "#ca8a04", lwd = 2.0)
+      } else if (inherits(elem, "LINESTRING")) {
+        lines(elem[, 1], elem[, 2], col = "#16a34a", lwd = 2.5)
+      } else if (inherits(elem, "POINT")) {
+        points(elem[1], elem[2], pch = 19, col = "#dc2626", cex = 1.8)
+      }
+    }
+  }
+}
+
+# -------------------------------------------------------------------------
+# 5. Iteración y graficación
+# -------------------------------------------------------------------------
+for (i in seq_len(nrow(registros))) {
+  graficar_geometria_r(geometrias[[i]], registros$nombre[i], registros$descripcion[i])
+}
+
+```
+
+
+
+```{r}
+#| label: fig-geometrias-graficas-postgis-r-ejecucion
+#| fig-cap: "Instanciación espacial y morfología de tipos geométricos según el estándar OGC en R."
+#| fig-align: center
+#| fig-width: 6.5
+#| fig-height: 9.0
+#| out-width: "60%"
+#| results: false
+#| echo: false
+#| eval: true
+
+# =========================================================================
+# 0. Módulos y bibliotecas requeridas
+# =========================================================================
+# 'DBI': Interfaz unificada de conexión a bases de datos relacionales en R.
+library(DBI)
+
+# 'RPostgres': Controlador optimizado en C++ para comunicación nativa con PostgreSQL.
+library(RPostgres)
+
+# 'sf': Biblioteca estándar para geometrías vectoriales bajo Simple Features;
+# enlaza con GDAL, GEOS y PROJ, proveyendo deserialización nativa de WKB.
+library(sf)
+
+# -------------------------------------------------------------------------
+# 1. Conexión a la base de datos relacional
+# -------------------------------------------------------------------------
+conn <- dbConnect(
+  RPostgres::Postgres(),
+  host = Sys.getenv("LOCAL_PGHOST"),
+  port = as.integer(Sys.getenv("LOCAL_PGPORT")),
+  dbname = Sys.getenv("LOCAL_PGDATABASE"),
+  user = Sys.getenv("LOCAL_PGUSER"),
+  password = Sys.getenv("LOCAL_PGPASSWORD")
+)
+
+# -------------------------------------------------------------------------
+# 2. Extracción de entidades en formato binario estándar (WKB)
+# -------------------------------------------------------------------------
+query <- "
+  SELECT orden, nombre, descripcion, ST_AsBinary(geom) AS wkb 
+  FROM public.muestras_geometrias_ogc 
+  ORDER BY orden ASC;
+"
+registros <- dbGetQuery(conn, query)
+dbDisconnect(conn)
+
+# Conversión del vector binario WKB a objetos de clase 'sfc' (Simple Feature Column)
+class(registros$wkb) <- "WKB"
+geometrias <- st_as_sfc(registros$wkb, EWKB = FALSE)
+
+# -------------------------------------------------------------------------
+# 3. Configuración del lienzo gráfico (Base R Graphics)
+# -------------------------------------------------------------------------
+# Márgenes calibrados por celda (inferior, izquierdo, superior, derecho)
+par(mfrow = c(4, 2), mar = c(1.8, 1.8, 2.2, 1.2), oma = c(0, 0, 0, 0))
+
+# -------------------------------------------------------------------------
+# 4. Función de despacho polimórfico para renderizado geométrico
+# -------------------------------------------------------------------------
+graficar_geometria_r <- function(geom, nombre, descripcion) {
+  # Inicialización del marco cartesiano libre de distorsión por relación de aspecto fija
+  plot.new()
+  plot.window(xlim = c(0, 3.8), ylim = c(0, 3.0))
+  
+  # Cuadrícula homogénea de 4 columnas x 3 filas con estilo punteado
+  grid(nx = 4, ny = 3, lty = 3, col = "gray75")
+  box(col = "#334155", lwd = 1.0)
+  title(main = descripcion, cex.main = 1.05, font.main = 2, line = 0.6)
+
+  # Renderizado condicional según el tipo primitivo
+  if (inherits(geom, "POINT")) {
+    points(geom[1], geom[2], pch = 19, col = "#1d4ed8", cex = 2.2)
+    
+  } else if (inherits(geom, "LINESTRING")) {
+    if (nombre == "LinearRing") {
+      lines(geom[, 1], geom[, 2], col = "#0f766e", lty = 2, lwd = 2.5)
+      points(geom[, 1], geom[, 2], pch = 19, col = "#0f766e", cex = 1.2)
+    } else {
+      lines(geom[, 1], geom[, 2], col = "#0284c7", lwd = 2.5)
+      points(geom[, 1], geom[, 2], pch = 19, col = "#0284c7", cex = 1.2)
+    }
+    
+  } else if (inherits(geom, "POLYGON")) {
+    # Anillo exterior
+    polygon(geom[[1]][, 1], geom[[1]][, 2], col = "#bfdbfe", border = "#1d4ed8", lwd = 2.0)
+    # Huecos interiores (islas)
+    if (length(geom) > 1) {
+      for (h in 2:length(geom)) {
+        polygon(geom[[h]][, 1], geom[[h]][, 2], col = "white", border = "#1d4ed8", lty = 2, lwd = 2.0)
+      }
+    }
+    
+  } else if (inherits(geom, "MULTIPOINT")) {
+    points(geom[, 1], geom[, 2], pch = 19, col = "#ea580c", cex = 1.8)
+    
+  } else if (inherits(geom, "MULTILINESTRING")) {
+    for (linea in geom) {
+      lines(linea[, 1], linea[, 2], col = "#ea580c", lwd = 2.5)
+    }
+    
+  } else if (inherits(geom, "MULTIPOLYGON")) {
+    for (poligono in geom) {
+      polygon(poligono[[1]][, 1], poligono[[1]][, 2], col = "#fed7aa", border = "#c2410c", lwd = 2.0)
+    }
+    
+  } else if (inherits(geom, "GEOMETRYCOLLECTION")) {
+    for (elem in geom) {
+      if (inherits(elem, "POLYGON")) {
+        polygon(elem[[1]][, 1], elem[[1]][, 2], col = "#fef08a", border = "#ca8a04", lwd = 2.0)
+      } else if (inherits(elem, "LINESTRING")) {
+        lines(elem[, 1], elem[, 2], col = "#16a34a", lwd = 2.5)
+      } else if (inherits(elem, "POINT")) {
+        points(elem[1], elem[2], pch = 19, col = "#dc2626", cex = 1.8)
+      }
+    }
+  }
+}
+
+# -------------------------------------------------------------------------
+# 5. Iteración y graficación
+# -------------------------------------------------------------------------
+for (i in seq_len(nrow(registros))) {
+  graficar_geometria_r(geometrias[[i]], registros$nombre[i], registros$descripcion[i])
+}
+
+```
+
+
+### Julia
+
+
+::: {.content-visible when-format="html"}
+
+```{julia}
+#| label: fig-geometrias-graficas-postgis-jl-codigo
+#| eval: false
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+
+using LibPQ
+using DataFrames
+using Plots
+gr()
+
+try
+    host = get(ENV, "LOCAL_PGHOST", "db-postgis")
+    port = get(ENV, "LOCAL_PGPORT", "5432")
+    db   = get(ENV, "LOCAL_PGDATABASE", "sig_db_unal")
+    user = get(ENV, "LOCAL_PGUSER", "profe_unal")
+    pass = get(ENV, "LOCAL_PGPASSWORD", "geomatica2025")
+    
+    cadena_conexion = "host=$(host) port=$(port) dbname=$(db) user=$(user) password=$(pass)"
+    canal = LibPQ.Connection(cadena_conexion)
+    
+    query = "SELECT orden, nombre, descripcion, ST_AsText(geom) AS wkt FROM public.muestras_geometrias_ogc ORDER BY orden ASC;"
+    df = DataFrame(execute(canal, query))
+    close(canal)
+    
+    # Configuración base balanceada para cada celda
+    cfg(tit) = (
+        xlims = (0, 3.8), 
+        ylims = (0, 3.0), 
+        title = tit, 
+        titlefontsize = 11,
+        framestyle = :box,
+        grid = true,
+        gridstyle = :dot,
+        gridalpha = 0.5,
+        xticks = (0.5:1.0:3.5, ["", "", "", ""]),
+        yticks = (0.5:1.0:2.5, ["", "", ""]),
+        legend = false,
+        top_margin = 4Plots.mm,
+        bottom_margin = 2Plots.mm
+    )
+
+    # 1. Point
+    local p1 = plot(; cfg(df.descripcion[1])...)
+    scatter!(p1, [2.0], [1.5], color = "#1d4ed8", markersize = 10)
+
+    # 2. LineString
+    local p2 = plot(; cfg(df.descripcion[2])...)
+    plot!(p2, [0.5, 1.8, 3.2], [0.8, 2.4, 1.0], color = "#0284c7", linewidth = 2.5, marker = :circle, markersize = 6)
+
+    # 3. LinearRing
+    local p3 = plot(; cfg(df.descripcion[3])...)
+    plot!(p3, [0.8, 3.0, 2.0, 0.8], [0.6, 1.0, 2.4, 0.6], color = "#0f766e", linestyle = :dash, linewidth = 2.5, marker = :circle, markersize = 6)
+
+    # 4. Polygon
+    local p4 = plot(; cfg(df.descripcion[4])...)
+    plot!(p4, Shape([0.5, 3.3, 3.3, 0.5], [0.5, 0.5, 2.5, 2.5]), fillcolor = "#bfdbfe", fillalpha = 0.8, linecolor = "#1d4ed8", linewidth = 2)
+    plot!(p4, Shape([1.2, 2.5, 2.5, 1.2], [1.0, 1.0, 2.0, 2.0]), fillcolor = :white, linecolor = "#1d4ed8", linestyle = :dash, linewidth = 2)
+
+    # 5. MultiPoint
+    local p5 = plot(; cfg(df.descripcion[5])...)
+    scatter!(p5, [0.8, 1.7, 2.8], [2.0, 0.8, 2.2], color = "#ea580c", markersize = 8)
+
+    # 6. MultiLineString
+    local p6 = plot(; cfg(df.descripcion[6])...)
+    plot!(p6, [0.5, 2.0], [2.2, 2.5], color = "#ea580c", linewidth = 2.5)
+    plot!(p6, [1.2, 3.2], [1.0, 0.6], color = "#ea580c", linewidth = 2.5)
+
+    # 7. MultiPolygon
+    local p7 = plot(; cfg(df.descripcion[7])...)
+    plot!(p7, Shape([0.5, 1.8, 1.8, 0.5], [0.7, 0.7, 2.3, 2.3]), fillcolor = "#fed7aa", linecolor = "#c2410c", linewidth = 2)
+    plot!(p7, Shape([2.2, 3.3, 3.3, 2.2], [1.1, 0.5, 2.0, 1.1]), fillcolor = "#fed7aa", linecolor = "#c2410c", linewidth = 2)
+
+    # 8. GeometryCollection
+    local p8 = plot(; cfg(df.descripcion[8])...)
+    plot!(p8, Shape([1.2, 3.2, 2.2], [0.5, 0.5, 1.6]), fillcolor = "#fef08a", linecolor = "#ca8a04", linewidth = 2)
+    plot!(p8, [0.6, 1.6], [2.0, 2.5], color = "#16a34a", linewidth = 2.5)
+    scatter!(p8, [0.8], [1.0], color = "#dc2626", markersize = 8)
+
+    plot(
+        p1, p2, p3, p4, p5, p6, p7, p8,
+        layout = (4, 2),
+        size = (700, 950)
+    )
+
+catch fallo_proceso
+    println("Error durante la extracción o graficación en Julia: ", fallo_proceso)
+    
+    plot(
+        title = "Fallo en ejecución de bloque espacial",
+        framestyle = :none,
+        annotations = (0.5, 0.5, text("Error: " * string(fallo_proceso), 10, :red, :center)),
+        legend = false,
+        size = (700, 950)
+    )
+end
+```
+
+:::
+
+
+```{r}
+#| label: fig-geometrias-graficas-postgis-jl-ejecucion
+#| fig-cap: "Instanciación espacial y morfología de tipos geométricos según el estándar OGC en Julia."
+#| echo: false
+#| results: asis
+#| code-fold: false
+#| fig-align: "center"
+#| fig-width: 6.5
+#| fig-height: 9.0
+#| out-width: "60%"
+
+plots_dir <- Sys.getenv("PLOTS_DIR", unset = ".")
+if (!dir.exists(plots_dir)) dir.create(plots_dir, recursive = TRUE)
+ruta_img <- file.path(plots_dir, "temp_grafica_julia_geometrias_ogc.png")
+
+j_plot('
+ENV["GKSwstype"] = "100"
+using LibPQ
+using DataFrames
+using Plots
+gr()
+
+try
+    host = get(ENV, "LOCAL_PGHOST", "db-postgis")
+    port = get(ENV, "LOCAL_PGPORT", "5432")
+    db   = get(ENV, "LOCAL_PGDATABASE", "sig_db_unal")
+    user = get(ENV, "LOCAL_PGUSER", "profe_unal")
+    pass = get(ENV, "LOCAL_PGPASSWORD", "geomatica2025")
+    
+    cadena_conexion = "host=$(host) port=$(port) dbname=$(db) user=$(user) password=$(pass)"
+    canal = LibPQ.Connection(cadena_conexion)
+    
+    query = "SELECT orden, nombre, descripcion, ST_AsText(geom) AS wkt FROM public.muestras_geometrias_ogc ORDER BY orden ASC;"
+    df = DataFrame(execute(canal, query))
+    close(canal)
+    
+    # Configuración base balanceada para cada celda
+    cfg(tit) = (
+        xlims = (0, 3.8), 
+        ylims = (0, 3.0), 
+        title = tit, 
+        titlefontsize = 11,
+        framestyle = :box,
+        grid = true,
+        gridstyle = :dot,
+        gridalpha = 0.5,
+        xticks = (0.5:1.0:3.5, ["", "", "", ""]),
+        yticks = (0.5:1.0:2.5, ["", "", ""]),
+        legend = false,
+        top_margin = 4Plots.mm,
+        bottom_margin = 2Plots.mm
+    )
+
+    # 1. Point
+    local p1 = plot(; cfg(df.descripcion[1])...)
+    scatter!(p1, [2.0], [1.5], color = "#1d4ed8", markersize = 10)
+
+    # 2. LineString
+    local p2 = plot(; cfg(df.descripcion[2])...)
+    plot!(p2, [0.5, 1.8, 3.2], [0.8, 2.4, 1.0], color = "#0284c7", linewidth = 2.5, marker = :circle, markersize = 6)
+
+    # 3. LinearRing
+    local p3 = plot(; cfg(df.descripcion[3])...)
+    plot!(p3, [0.8, 3.0, 2.0, 0.8], [0.6, 1.0, 2.4, 0.6], color = "#0f766e", linestyle = :dash, linewidth = 2.5, marker = :circle, markersize = 6)
+
+    # 4. Polygon
+    local p4 = plot(; cfg(df.descripcion[4])...)
+    plot!(p4, Shape([0.5, 3.3, 3.3, 0.5], [0.5, 0.5, 2.5, 2.5]), fillcolor = "#bfdbfe", fillalpha = 0.8, linecolor = "#1d4ed8", linewidth = 2)
+    plot!(p4, Shape([1.2, 2.5, 2.5, 1.2], [1.0, 1.0, 2.0, 2.0]), fillcolor = :white, linecolor = "#1d4ed8", linestyle = :dash, linewidth = 2)
+
+    # 5. MultiPoint
+    local p5 = plot(; cfg(df.descripcion[5])...)
+    scatter!(p5, [0.8, 1.7, 2.8], [2.0, 0.8, 2.2], color = "#ea580c", markersize = 8)
+
+    # 6. MultiLineString
+    local p6 = plot(; cfg(df.descripcion[6])...)
+    plot!(p6, [0.5, 2.0], [2.2, 2.5], color = "#ea580c", linewidth = 2.5)
+    plot!(p6, [1.2, 3.2], [1.0, 0.6], color = "#ea580c", linewidth = 2.5)
+
+    # 7. MultiPolygon
+    local p7 = plot(; cfg(df.descripcion[7])...)
+    plot!(p7, Shape([0.5, 1.8, 1.8, 0.5], [0.7, 0.7, 2.3, 2.3]), fillcolor = "#fed7aa", linecolor = "#c2410c", linewidth = 2)
+    plot!(p7, Shape([2.2, 3.3, 3.3, 2.2], [1.1, 0.5, 2.0, 1.1]), fillcolor = "#fed7aa", linecolor = "#c2410c", linewidth = 2)
+
+    # 8. GeometryCollection
+    local p8 = plot(; cfg(df.descripcion[8])...)
+    plot!(p8, Shape([1.2, 3.2, 2.2], [0.5, 0.5, 1.6]), fillcolor = "#fef08a", linecolor = "#ca8a04", linewidth = 2)
+    plot!(p8, [0.6, 1.6], [2.0, 2.5], color = "#16a34a", linewidth = 2.5)
+    scatter!(p8, [0.8], [1.0], color = "#dc2626", markersize = 8)
+
+    plot(
+        p1, p2, p3, p4, p5, p6, p7, p8,
+        layout = (4, 2),
+        size = (700, 950)
+    )
+
+catch fallo_proceso
+    println("Error durante la extracción o graficación en Julia: ", fallo_proceso)
+    
+    plot(
+        title = "Fallo en ejecución de bloque espacial",
+        framestyle = :none,
+        annotations = (0.5, 0.5, text("Error: " * string(fallo_proceso), 10, :red, :center)),
+        legend = false,
+        size = (700, 950)
+    )
+end
+', n = ruta_img, w = 700, h = 1150)
+```
+
+:::
+
+
+
 ## Catálogos de metadatos espaciales
 
-En un motor relacional espacial, el clúster almacena la información cartográfica respetando las reglas de metadatos del estándar OGC a través de dos componentes centrales:
+En un motor relacional espacial, el clúster administra la información cartográfica y el esquema de tipos geométricos siguiendo las especificaciones normativas de la norma ISO 19125-2 / OGC Simple Feature Access - Part 2: SQL Option [@ogc_sfa_part2_2010]. El estándar define dos estructuras de metadatos cardinales para la interoperabilidad entre motores de bases de datos y clientes SIG (Figura 3 de OGC 06-104r4):
 
-* **`spatial_ref_sys`**: Diccionario canónico de sistemas de referencia de coordenadas (CRS). Define las proyecciones, elipsoides y datums que el motor es capaz de interpretar y transformar.
-* **`geometry_columns`**: Inventario dinámico de capas espaciales. Registra las tablas y columnas geométricas instanciadas físicamente en los esquemas de la base de datos.
+* **`spatial_ref_sys`**: Diccionario canónico de sistemas de referencia de coordenadas (CRS). Almacena las proyecciones, elipsoides, datums y parámetros de transformación matemática.
+* **`geometry_columns`**: Inventario descriptivo de columnas espaciales. Registra la relación entre tablas de entidades, nombres de columnas, dimensiones de coordenadas y el SRID asignado. Conforme a la cláusula 7.1.1 de la norma, los motores pueden implementar este catálogo como una vista dinámica sobre el diccionario del sistema en lugar de una tabla física base.
+
 
 ### El catálogo spatial_ref_sys
 
-El catálogo `spatial_ref_sys` es la tabla canónica donde residen las definiciones de todos los sistemas de referencia de coordenadas soportados por el motor:
+El catálogo `spatial_ref_sys` materializa la especificación formal descrita en la cláusula 7.1.2 de la norma OGC SFA Parte 2, la cual exige la persistencia de los identificadores y definiciones WKT de los marcos geodésicos:
+
+::: {.panel-tabset}
+
+### Terminal (psql)
 
 ```{bash}
-#| label: query-spatial-ref-sys
+#| label: query-spatial-ref-sys-psql
 #| eval: true
 #| echo: true
 export PGPASSWORD="${LOCAL_PGPASSWORD}"
@@ -961,6 +2290,54 @@ psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATAB
 
 ```
 
+### Python (SQLAlchemy)
+
+```{python}
+#| label: query-spatial-ref-sys-sqlalchemy
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+from sqlalchemy import text
+
+query_cols = """
+SELECT column_name, data_type 
+FROM information_schema.columns 
+WHERE table_name = 'spatial_ref_sys';
+"""
+
+with engine_local.connect() as conn:
+    resultado = conn.execute(text(query_cols)).fetchall()
+    print(f"{'column_name':<20} | {'data_type'}")
+    print("-" * 45)
+    for fila in resultado:
+        print(f"{fila.column_name:<20} | {fila.data_type}")
+
+```
+
+### Python (Pandas)
+
+```{python}
+#| label: query-spatial-ref-sys-pandas
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+import pandas as pd
+
+query_cols = """
+SELECT column_name, data_type 
+FROM information_schema.columns 
+WHERE table_name = 'spatial_ref_sys';
+"""
+
+df_columnas = pd.read_sql(query_cols, con=engine_local)
+df_columnas
+
+```
+
+:::
+
 Sus columnas clave comprenden:
 
 * `srid`: Identificador entero del sistema de referencia espacial (habitualmente alineado con el estándar internacional EPSG).
@@ -971,11 +2348,15 @@ Sus columnas clave comprenden:
 
 Al consultar las definiciones preinstaladas para Colombia, el motor lista los marcos geodésicos históricos y las fajas Gauss-Krüger tradicionales:
 
+::: {.panel-tabset}
+
+### Terminal (psql)
+
 ```{bash}
-#| label: query-crs-colombia-catalogo
+#| label: query-crs-colombia-docker-psql
 #| eval: true
 #| echo: true
-export PGPASSWORD="${LOCAL_PGPASSWORD}"
+export PGPASSWORD="${DOCKER_PGPASSWORD}"
 
 query_sistemas_colombia="
 SELECT 
@@ -987,11 +2368,76 @@ WHERE srtext ILIKE '%Colombia%' OR srtext ILIKE '%MAGNA-SIRGAS%'
 ORDER BY srid;
 "
 
-psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATABASE} \
+psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} \
   -P format=wrapped -P columns=90 \
   -c "${query_sistemas_colombia}"
 
 ```
+
+### Python (SQLAlchemy)
+
+```{python}
+#| label: query-crs-colombia-docker-sqlalchemy
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+from sqlalchemy import text
+
+query_sistemas_colombia = """
+SELECT 
+    srid, 
+    auth_name, 
+    split_part(srtext, '"', 2) AS nombre_sistema
+FROM spatial_ref_sys
+WHERE srtext ILIKE '%Colombia%' OR srtext ILIKE '%MAGNA-SIRGAS%'
+ORDER BY srid;
+"""
+
+with engine_docker.connect() as conn:
+    resultado = conn.execute(text(query_sistemas_colombia)).fetchall()
+    print(f"{'srid':<8} | {'auth_name':<10} | {'nombre_sistema'}")
+    print("-" * 90)
+    for fila in resultado:
+        nombre = fila.nombre_sistema if len(fila.nombre_sistema) <= 65 else fila.nombre_sistema[:62] + "..."
+        print(f"{fila.srid:<8} | {fila.auth_name:<10} | {nombre:<65}")
+
+```
+
+### Python (Pandas)
+
+```{python}
+#| label: query-crs-colombia-docker-pandas
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+import pandas as pd
+from sqlalchemy import text
+
+# Control estricto de visualización para terminal y celdas de texto
+pd.set_option("display.width", 90)
+pd.set_option("display.max_columns", None)
+pd.set_option("display.max_colwidth", 60)
+
+query_sistemas_colombia = """
+SELECT 
+    srid, 
+    auth_name, 
+    split_part(srtext, '"', 2) AS nombre_sistema
+FROM spatial_ref_sys
+WHERE srtext ILIKE '%Colombia%' OR srtext ILIKE '%MAGNA-SIRGAS%'
+ORDER BY srid;
+"""
+
+with engine_docker.connect() as conn:
+    df_sistemas = pd.read_sql(text(query_sistemas_colombia), con=conn)
+
+df_sistemas
+
+```
+
+:::
 
 ::: {.callout-warning title="Ausencia del código EPSG 9377 en volcados iniciales de spatial_ref_sys"}
 La tabla `spatial_ref_sys` es una tabla relacional física en disco poblada a partir de los scripts iniciales de PostGIS o volcados históricos (como `init_unal_spatialdb.sql`). A diferencia del software de escritorio moderno o la biblioteca PROJ (que actualizan sus parámetros en cada compilación contra `proj.db`), el catálogo relacional en PostgreSQL es estático y no se actualiza de forma automática.
@@ -1003,8 +2449,12 @@ Aunque el tipado declarativo de PostgreSQL permite crear columnas con `geometry(
 
 Como labor fundamental de administración de bases de datos (DBA), el registro oficial debe ser incorporado al catálogo. **Esta instrucción DML solo requiere ejecutarse una única vez en la base de datos**, pues la cláusula `ON CONFLICT` garantiza su persistencia permanente sin duplicación:
 
+::: {.panel-tabset}
+
+### Terminal (psql)
+
 ```{bash}
-#| label: dml-insert-crs-9377
+#| label: dml-insert-crs-9377-psql
 #| eval: true
 #| echo: true
 export PGPASSWORD="${LOCAL_PGPASSWORD}"
@@ -1024,8 +2474,37 @@ SET srtext = EXCLUDED.srtext, proj4text = EXCLUDED.proj4text;
 
 psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATABASE} \
   -c "${query_insert_9377}"
-
 ```
+
+### Python (SQLAlchemy)
+
+```{python}
+#| label: dml-insert-crs-9377-sqlalchemy
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+from sqlalchemy import text
+
+query_insert_9377 = """
+INSERT INTO spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text)
+VALUES (
+    9377,
+    'EPSG',
+    9377,
+    'PROJCS["MAGNA-SIRGAS / Origen-Nacional",GEOGCS["MAGNA-SIRGAS",DATUM["Marco_Geocentrico_Nacional_de_Referencia",SPHEROID["GRS 1980",6378137,298.257222101,AUTHORITY["EPSG","7019"]],AUTHORITY["EPSG","6686"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4686"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",4],PARAMETER["central_meridian",-73],PARAMETER["scale_factor",0.9992],PARAMETER["false_easting",5000000],PARAMETER["false_northing",2000000],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AUTHORITY["EPSG","9377"]]',
+    '+proj=tmerc +lat_0=4 +lon_0=-73 +k=0.9992 +x_0=5000000 +y_0=2000000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs'
+)
+ON CONFLICT (srid) DO UPDATE 
+SET srtext = EXCLUDED.srtext, proj4text = EXCLUDED.proj4text;
+"""
+
+with engine_local.begin() as conn:
+    conn.execute(text(query_insert_9377))
+    print("Registro EPSG:9377 incorporado/actualizado exitosamente en spatial_ref_sys.")
+```
+
+:::
 
 Mediante la cláusula `ON CONFLICT (srid) DO UPDATE`, la sentencia formaliza una operación atómica de tipo **UPSERT**, confiriendo **idempotencia** a la ejecución:
 
@@ -1036,8 +2515,12 @@ Este diseño garantiza que los ciclos continuos de renderizado en Quarto manteng
 
 Una vez registrada la tupla en disco, la inspección detallada de los sistemas cartográficos de referencia para el país expone sus parámetros elipsoidales y de proyección:
 
+::: {.panel-tabset}
+
+### Terminal (psql)
+
 ```{bash}
-#| label: sql-query-colombia-srid
+#| label: query-colombia-srid-psql
 #| eval: true
 #| echo: true
 export PGPASSWORD="${LOCAL_PGPASSWORD}"
@@ -1055,6 +2538,65 @@ psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATAB
 
 ```
 
+### Python (SQLAlchemy)
+
+```{python}
+#| label: query-colombia-srid-sqlalchemy
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+import textwrap
+from sqlalchemy import text
+
+query_colombia = """
+SELECT srid, auth_name, auth_srid, srtext 
+FROM spatial_ref_sys 
+WHERE srid IN (4326, 3116, 9377)
+ORDER BY srid;
+"""
+
+with engine_local.connect() as conn:
+    registros = conn.execute(text(query_colombia)).fetchall()
+    for idx, r in enumerate(registros, start=1):
+        print(f"-[ RECORD {idx} ]" + "-" * 75)
+        print(f"srid      | {r.srid}")
+        print(f"auth_name | {r.auth_name}")
+        print(f"auth_srid | {r.auth_srid}")
+        srtext_ajustado = textwrap.fill(r.srtext, width=76, subsequent_indent=" " * 12)
+        print(f"srtext    | {srtext_ajustado}\n")
+
+```
+
+### Python (Pandas)
+
+```{python}
+#| label: query-colombia-srid-pandas
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+import pandas as pd
+
+# Configuración del ancho máximo tabular a 90 columnas
+pd.set_option("display.width", 90)
+pd.set_option("display.max_columns", None)
+pd.set_option("display.max_colwidth", 45)
+
+query_colombia = """
+SELECT srid, auth_name, auth_srid, srtext 
+FROM spatial_ref_sys 
+WHERE srid IN (4326, 3116, 9377)
+ORDER BY srid;
+"""
+
+df_colombia = pd.read_sql(query_colombia, con=engine_local)
+df_colombia
+
+```
+
+:::
+
 Entre estos identificadores fundamentales destacan:
 
 * **SRID 4326**: Sistema geográfico global WGS 84 (coordenadas angulares en grados decimales de latitud y longitud).
@@ -1062,15 +2604,18 @@ Entre estos identificadores fundamentales destacan:
 * **SRID 9377**: Proyección MAGNA-SIRGAS / Origen Nacional Único (sistema oficial conforme a la Resolución IGAC 471 de 2020, con origen en $4^\circ\text{ N}, 73^\circ\text{ W}$, factor de escala $k_0 = 0.9992$, falso este de $5\,000\,000\text{ m}$ y falso norte de $2\,000\,000\text{ m}$).
 
 
-
 ### La vista de catálogo geometry_columns
 
-El estándar OGC estipula que toda tabla relacional que incorpore una o más columnas espaciales debe estar documentada de manera uniforme en el catálogo `geometry_columns`.
+La especificación OGC SFA Parte 2 (cláusula 7.1.3) establece que toda relación que implemente atributos geométricos debe registrar sus metadatos descriptivos en el catálogo `GEOMETRY_COLUMNS` [@ogc_sfa_part2_2010]. Esta estructura provee a las aplicaciones clientes y motores de análisis la información indispensable para validar la dimensionalidad, el tipo de primitiva y el sistema de referencia de coordenadas sin necesidad de escanear la totalidad de las tuplas de la tabla.
 
-En versiones contemporáneas de PostGIS, `geometry_columns` no es una tabla física estática que deba poblarse manualmente, sino una vista del sistema construida dinámicamente mediante introspección sobre el catálogo de PostgreSQL (`pg_class`, `pg_attribute`, `pg_type`). Esta vista extrae las restricciones declarativas y el tipado estricto (*typmod*, por ejemplo `geometry(Point, 9377)`):
+En implementaciones tempranas de bases de datos espaciales, este catálogo operaba como una tabla física estática cuyo registro exigía procedimientos imperativos como `AddGeometryColumn()` o disparadores (*triggers*). A partir de PostGIS 2.0, y en concordancia con la cláusula 7.1.1 de la norma, `geometry_columns` se materializa como una vista del sistema construida dinámicamente por introspección sobre los catálogos relacionales de PostgreSQL (`pg_class`, `pg_attribute`, `pg_type`, `pg_namespace` y `pg_constraint`).
+
+::: {.panel-tabset}
+
+### Terminal (psql)
 
 ```{bash}
-#| label: query-geometry-columns-catalog
+#| label: query-geometry-columns-catalog-psql
 #| eval: true
 #| echo: true
 export PGPASSWORD="${LOCAL_PGPASSWORD}"
@@ -1087,6 +2632,59 @@ psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATAB
 
 ```
 
+### Python (SQLAlchemy)
+
+```{python}
+#| label: query-geometry-columns-catalog-sqlalchemy
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+from sqlalchemy import text
+
+query_geom_cols = """
+SELECT f_table_schema, f_table_name, f_geometry_column, coord_dimension, srid, type 
+FROM geometry_columns 
+LIMIT 10;
+"""
+
+with engine_local.connect() as conn:
+    resultado = conn.execute(text(query_geom_cols)).fetchall()
+    print(f"{'schema':<12} | {'table_name':<20} | {'geom_col':<16} | {'dim':<4} | {'srid':<7} | {'type'}")
+    print("-" * 88)
+    for r in resultado:
+        print(f"{r.f_table_schema:<12} | {r.f_table_name:<20} | {r.f_geometry_column:<16} | {r.coord_dimension:<4} | {r.srid:<7} | {r.type}")
+
+```
+
+### Python (Pandas)
+
+```{python}
+#| label: query-geometry-columns-catalog-pandas
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+import pandas as pd
+
+# Calibración del ancho y columnas para salida tabular estricta de 90 caracteres
+pd.set_option("display.width", 90)
+pd.set_option("display.max_columns", None)
+pd.set_option("display.max_colwidth", 25)
+
+query_geom_cols = """
+SELECT f_table_schema, f_table_name, f_geometry_column, coord_dimension, srid, type 
+FROM geometry_columns 
+LIMIT 10;
+"""
+
+df_geom_cols = pd.read_sql(query_geom_cols, con=engine_local)
+df_geom_cols
+
+```
+
+:::
+
 Los campos descriptivos obligatorios según la norma OGC son:
 
 * `f_table_schema`: Esquema relacional donde reside la tabla (ej. `public`, `base750`, `divpol`).
@@ -1098,18 +2696,22 @@ Los campos descriptivos obligatorios según la norma OGC son:
 
 Para realizar una auditoría integral de la base de datos pedagógica `sig_db_unal`, se combina la vista `geometry_columns` con la tabla `spatial_ref_sys`. Esta consulta consolida los marcos de referencia en uso real, identificando las capas cartográficas existentes por esquema y detectando capas sin proyección asignada (`srid: 0`):
 
+::: {.panel-tabset}
+
+### Terminal (psql)
+
 ```{bash}
-#| label: query-crs-en-uso-db
+#| label: query-crs-en-uso-docker-psql
 #| eval: true
 #| echo: true
-export PGPASSWORD="${LOCAL_PGPASSWORD}"
+export PGPASSWORD="${DOCKER_PGPASSWORD}"
 
 query_crs_en_uso="
 SELECT 
-    g.srid,
-    COALESCE(s.auth_name, 'LOCAL') AS autoridad,
-    COALESCE(split_part(s.srtext, '\"', 2), 'Sin CRS asignado (Plano / Indefinido)') AS descripcion_crs,
-    count(*) AS numero_de_capas,
+    g.srid, 
+    COALESCE(s.auth_name, 'LOCAL') AS autoridad, 
+    COALESCE(split_part(s.srtext, '\"', 2), 'Sin CRS asignado (Plano / Indefinido)') AS descripcion_crs, 
+    count(*) AS numero_de_capas, 
     string_agg(g.f_table_schema || '.' || g.f_table_name, ', ') AS capas_asociadas
 FROM geometry_columns g
 LEFT JOIN spatial_ref_sys s ON g.srid = s.srid
@@ -1117,21 +2719,97 @@ GROUP BY g.srid, s.auth_name, s.srtext
 ORDER BY g.srid;
 "
 
-psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATABASE} \
+psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} \
   -x -P format=wrapped -P columns=90 \
   -c "${query_crs_en_uso}"
 
 ```
 
+### Python (SQLAlchemy)
+
+```{python}
+#| label: query-crs-en-uso-docker-sqlalchemy
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+import textwrap
+from sqlalchemy import text
+
+query_crs_en_uso = """
+SELECT 
+    g.srid, 
+    COALESCE(s.auth_name, 'LOCAL') AS autoridad, 
+    COALESCE(split_part(s.srtext, '"', 2), 'Sin CRS asignado (Plano / Indefinido)') AS descripcion_crs, 
+    count(*) AS numero_de_capas, 
+    string_agg(g.f_table_schema || '.' || g.f_table_name, ', ') AS capas_asociadas
+FROM geometry_columns g
+LEFT JOIN spatial_ref_sys s ON g.srid = s.srid
+GROUP BY g.srid, s.auth_name, s.srtext
+ORDER BY g.srid;
+"""
+
+with engine_docker.connect() as conn:
+    registros = conn.execute(text(query_crs_en_uso)).fetchall()
+    for idx, r in enumerate(registros, start=1):
+        print(f"-[ RECORD {idx} ]" + "-" * 75)
+        print(f"srid            | {r.srid}")
+        print(f"autoridad       | {r.autoridad}")
+        desc_crs = textwrap.fill(r.descripcion_crs, width=70, subsequent_indent=" " * 18)
+        print(f"descripcion_crs | {desc_crs}")
+        print(f"numero_de_capas | {r.numero_de_capas}")
+        capas = textwrap.fill(r.capas_asociadas, width=70, subsequent_indent=" " * 18)
+        print(f"capas_asociadas | {capas}\n")
+
+```
+
+### Python (Pandas)
+
+```{python}
+#| label: query-crs-en-uso-docker-pandas
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+import pandas as pd
+
+# Control de ancho y corte de columnas para salida tabular acotada a 90 caracteres
+pd.set_option("display.width", 90)
+pd.set_option("display.max_columns", None)
+pd.set_option("display.max_colwidth", 32)
+
+query_crs_en_uso = """
+SELECT 
+    g.srid, 
+    COALESCE(s.auth_name, 'LOCAL') AS autoridad, 
+    COALESCE(split_part(s.srtext, '"', 2), 'Sin CRS asignado (Plano / Indefinido)') AS descripcion_crs, 
+    count(*) AS numero_de_capas, 
+    string_agg(g.f_table_schema || '.' || g.f_table_name, ', ') AS capas_asociadas
+FROM geometry_columns g
+LEFT JOIN spatial_ref_sys s ON g.srid = s.srid
+GROUP BY g.srid, s.auth_name, s.srtext
+ORDER BY g.srid;
+"""
+
+df_crs_en_uso = pd.read_sql(query_crs_en_uso, con=engine_docker)
+df_crs_en_uso
+
+```
+
+:::
 
 ### Asignación de identificador espacial en las vistas del esquema
 
 Al examinar los resultados de la consulta cruzada anterior, se constata que las relaciones `capa_departamentos` y `capa_municipios` del esquema `divpol` reportan `srid: 0`. Esto ocurre porque ambos objetos son vistas relacionales (consultas almacenadas) en las que la columna geométrica fue proyectada sin un identificador de referencia explícito, lo que ocasiona que los clientes SIG interpreten la proyección como indefinida.
 
-Aunque los fundamentos formales de DDL y DML para el diseño avanzado de vistas espaciales se estudiarán detalladamente en capítulos posteriores, es indispensable regularizar el catálogo desde esta primera sesión. La solución consiste en redefinir ambas vistas forzando la conversión explícita de la columna geométrica al sistema de coordenadas de la cartografía base del curso (`EPSG:21892`, MAGNA-SIRGAS / Colombia Bogotá):
+Aunque los fundamentos formales de DDL y DML para el diseño avanzado de vistas espaciales se estudiarán detalladamente en capítulos posteriores, es indispensable regularizar el catálogo desde esta primera sesión. La solución consiste en redefinir ambas vistas forzando la conversión explícita de la columna geométrica al sistema de coordenadas de la cartografía base de la base de datos `sig_db_unal`, es decir `EPSG:21892`, *Bogotá 1975 / Colombia Bogotá* zone (asociado al elipsoide Internacional 1924 / Hayford y datum Bogotá 1975):
+
+::: {.panel-tabset}
+
+### Terminal (psql)
 
 ```{bash}
-#| label: ddl-remediacion-vistas-divpol
+#| label: ddl-remediacion-vistas-divpol-psql
 #| eval: true
 #| echo: true
 export PGPASSWORD="${LOCAL_PGPASSWORD}"
@@ -1171,10 +2849,65 @@ psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATAB
 
 ```
 
+### Python (SQLAlchemy)
+
+```{python}
+#| label: ddl-remediacion-vistas-divpol-sqlalchemy
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+from sqlalchemy import text
+
+query_recreacion_vistas = """
+DROP VIEW IF EXISTS divpol.capa_departamentos;
+CREATE VIEW divpol.capa_departamentos AS
+SELECT 
+    d.gid,
+    d.gid AS oid,
+    d.dep_id AS id_dane,
+    d.dep_nombre AS departamento,
+    d.the_geom::geometry(Geometry, 21892) AS the_geom
+FROM divpol.departamentos d
+WHERE d.the_geom IS NOT NULL
+ORDER BY d.dep_id;
+
+DROP VIEW IF EXISTS divpol.capa_municipios;
+CREATE VIEW divpol.capa_municipios AS
+SELECT 
+    m.gid,
+    m.gid AS oid,
+    m.mun_id AS id_dane,
+    d.dep_id AS dep_codigo_dane,
+    initcap(d.dep_nombre::text) AS departamento,
+    m.mun_nombre AS municipio,
+    m.the_geom::geometry(Geometry, 21892) AS the_geom
+FROM divpol.municipios m
+LEFT JOIN divpol.departamentos d ON d.dep_id::text = m.dep_id::text
+WHERE m.the_geom IS NOT NULL
+ORDER BY m.mun_id;
+"""
+
+with engine_local.begin() as conn:
+    conn.execute(text(query_recreacion_vistas))
+    print(
+        "Vistas divpol.capa_departamentos y divpol.capa_municipios\n"
+        "recreadas exitosamente con SRID 21892."
+    )
+
+```
+
+:::
+
+
 Tras la ejecución del bloque anterior, se audita nuevamente el catálogo `geometry_columns` para validar la correcta inscripción del identificador espacial:
 
+::: {.panel-tabset}
+
+### Terminal (psql)
+
 ```{bash}
-#| label: audit-verificacion-vistas-srid
+#| label: audit-verificacion-vistas-srid-psql
 #| eval: true
 #| echo: true
 export PGPASSWORD="${LOCAL_PGPASSWORD}"
@@ -1198,21 +2931,91 @@ psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATAB
 
 ```
 
+### Python (SQLAlchemy)
+
+```{python}
+#| label: audit-verificacion-vistas-srid-sqlalchemy
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+from sqlalchemy import text
+
+query_verif_vistas = """
+SELECT 
+    f_table_schema, 
+    f_table_name, 
+    f_geometry_column, 
+    coord_dimension, 
+    srid, 
+    type 
+FROM geometry_columns 
+WHERE f_table_schema = 'divpol' 
+  AND f_table_name IN ('capa_departamentos', 'capa_municipios');
+"""
+
+with engine_local.connect() as conn:
+    resultado = conn.execute(text(query_verif_vistas)).fetchall()
+    print(f"{'schema':<10} | {'table_name':<20} | {'geom_column':<15} | {'dim':<4} | {'srid':<6} | {'type'}")
+    print("-" * 75)
+    for r in resultado:
+        print(f"{r.f_table_schema:<10} | {r.f_table_name:<20} | {r.f_geometry_column:<15} | {r.coord_dimension:<4} | {r.srid:<6} | {r.type}")
+
+```
+
+### Python (Pandas)
+
+```{python}
+#| label: audit-verificacion-vistas-srid-pandas
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+import pandas as pd
+
+# Calibración de parámetros de visualización para salida tabular de 90 caracteres
+pd.set_option("display.width", 90)
+pd.set_option("display.max_columns", None)
+pd.set_option("display.max_colwidth", 25)
+
+query_verif_vistas = """
+SELECT 
+    f_table_schema, 
+    f_table_name, 
+    f_geometry_column, 
+    coord_dimension, 
+    srid, 
+    type 
+FROM geometry_columns 
+WHERE f_table_schema = 'divpol' 
+  AND f_table_name IN ('capa_departamentos', 'capa_municipios');
+"""
+
+df_vistas_srid = pd.read_sql(query_verif_vistas, con=engine_local)
+df_vistas_srid
+
+```
+
+:::
+
 El catálogo reporta ahora el identificador `21892`, garantizando la interoperabilidad con clientes de escritorio y servicios web.
 
 ::: {.callout-tip title="Persistencia del catálogo mediante respaldo"}
-Tras incorporar el sistema `EPSG:9377` en el catálogo `spatial_ref_sys` y corregir el tipado de las vistas del esquema `divpol`, el catálogo relacional alcanza un estado consistente con el estándar OGC.  
+Tras incorporar el sistema `EPSG:9377` en el catálogo `spatial_ref_sys` y corregir el tipado de las vistas del esquema `divpol`, el catálogo relacional alcanza un estado consistente con el estándar OGC.
 
 Para preservar estas modificaciones frente a eventuales destrucciones del volumen persistente, fallos del contenedor o reinicializaciones del clúster local, se recomienda generar un nuevo respaldo de la base de datos `sig_db_unal` aplicando los procedimientos documentados en la @sec-respaldo-recuperacion-bd. Disponer de un archivo de volcado actualizado (en formato SQL plano o binario personalizado .dump) permite reconstruir la base de datos con las definiciones espaciales saneadas, eliminando la necesidad de reejecutar manualmente las sentencias de remediación en futuras restauraciones.
 :::
-
 
 ## Verificación práctica en la consola integrada
 
 A continuación se demuestra la secuencia operativa para comprobar la disponibilidad de la extensión espacial, aprovisionar una tabla pedagógica con tipado geométrico estricto, insertar una entidad mediante sintaxis WKT y auditar su catalogación automática:
 
+::: {.panel-tabset}
+
+### Terminal (psql)
+
 ```{bash}
-#| label: ddl-verify-spatial-schema-execute
+#| label: ddl-verify-spatial-schema-psql
 #| eval: true
 #| echo: true
 export PGPASSWORD="${LOCAL_PGPASSWORD}"
@@ -1257,5 +3060,146 @@ psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATAB
 
 ```
 
+### Python (SQLAlchemy)
+
+```{python}
+#| label: ddl-verify-spatial-schema-sqlalchemy
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+from sqlalchemy import text
+
+# 1. Inspección de extensiones espaciales activas
+with engine_local.connect() as conn:
+    ext = conn.execute(text("SELECT extname, extversion FROM pg_extension WHERE extname = 'postgis';")).fetchone()
+    print(f"Extensión activa: {ext.extname} | Versión: {ext.extversion}\n")
+
+# 2. Creación e inserción pedagógica (transacción atómica)
+query_ddl = """
+DROP TABLE IF EXISTS public.infraestructura_referencia;
+
+CREATE TABLE public.infraestructura_referencia (
+    id serial PRIMARY KEY,
+    codigo varchar(10) NOT NULL UNIQUE,
+    descripcion text,
+    geom geometry(Point, 9377) NOT NULL
+);
+
+INSERT INTO public.infraestructura_referencia (codigo, descripcion, geom) 
+VALUES (
+    'EST-001', 
+    'Estación de monitoreo central', 
+    ST_GeomFromText('POINT(5000000 2000000)', 9377)
+);
+"""
+
+with engine_local.begin() as conn:
+    conn.execute(text(query_ddl))
+    print("Tabla public.infraestructura_referencia aprovisionada e inserción confirmada.\n")
+
+# 3. Auditoría de registro automático en geometry_columns
+query_audit = """
+SELECT f_table_schema, f_table_name, f_geometry_column, coord_dimension, srid, type 
+FROM geometry_columns 
+WHERE f_table_name = 'infraestructura_referencia';
+"""
+
+with engine_local.connect() as conn:
+    resultado = conn.execute(text(query_audit)).fetchall()
+    print(f"{'schema':<10} | {'table_name':<28} | {'geom_column':<12} | {'dim':<4} | {'srid':<6} | {'type'}")
+    print("-" * 75)
+    for r in resultado:
+        print(f"{r.f_table_schema:<10} | {r.f_table_name:<28} | {r.f_geometry_column:<12} | {r.coord_dimension:<4} | {r.srid:<6} | {r.type}")
+
+```
+
+### Python (Pandas)
+
+```{python}
+#| label: ddl-verify-spatial-schema-pandas
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+import pandas as pd
+from sqlalchemy import text
+
+# Configuración del ancho máximo tabular a 90 columnas
+pd.set_option("display.width", 90)
+pd.set_option("display.max_columns", None)
+pd.set_option("display.max_colwidth", 30)
+
+# 1. Inspección de extensiones espaciales activas
+df_ext = pd.read_sql(
+    "SELECT extname, extversion FROM pg_extension WHERE extname = 'postgis';", 
+    con=engine_local
+)
+print("Estado de la extensión espacial:")
+print(df_ext.to_string(index=False))
+print("\n" + "-" * 60 + "\n")
+
+# 2. Creación e inserción pedagógica mediante el motor transaccional
+query_ddl = """
+DROP TABLE IF EXISTS public.infraestructura_referencia;
+
+CREATE TABLE public.infraestructura_referencia (
+    id serial PRIMARY KEY,
+    codigo varchar(10) NOT NULL UNIQUE,
+    descripcion text,
+    geom geometry(Point, 9377) NOT NULL
+);
+
+INSERT INTO public.infraestructura_referencia (codigo, descripcion, geom) 
+VALUES (
+    'EST-001', 
+    'Estación de monitoreo central', 
+    ST_GeomFromText('POINT(5000000 2000000)', 9377)
+);
+"""
+
+with engine_local.begin() as conn:
+    conn.execute(text(query_ddl))
+
+# 3. Auditoría de registro automático en geometry_columns
+query_audit = """
+SELECT f_table_schema, f_table_name, f_geometry_column, coord_dimension, srid, type 
+FROM geometry_columns 
+WHERE f_table_name = 'infraestructura_referencia';
+"""
+
+df_audit = pd.read_sql(query_audit, con=engine_local)
+df_audit
+
+```
+
+:::
+
 La consulta a `geometry_columns` reporta de forma automática la dimensión $2$, el SRID $9377$ y el tipo de dato `POINT`, validando la interoperabilidad del clúster con clientes SIG externos.
 
+
+
+## Articulación con los proyectos de investigación
+
+Los fundamentos examinados a lo largo de este capítulo —la transición de archivos a repositorios transaccionales, la división modular del SGBD, la sobrecarga del tránsito por la pila de protocolos OSI en la arquitectura cliente-servidor y la centralización de geometrías tipadas bajo estándares OGC— constituyen la línea base teórica sobre la cual se estructuran los proyectos de investigación aplicada del Eje 4.
+
+Cada tecnología emergente abordada en las semanas 11 a 16 no surge para reemplazar el núcleo relacional con garantías ACID, sino para mitigar una tensión arquitectónica específica cuando el volumen, la frecuencia de ingesta o la topología de las consultas desbordan los mecanismos tradicionales del motor objeto-relacional.
+
+En la @tbl-articulacion-proyectos-capitulo se formaliza la correspondencia entre los componentes conceptuales desarrollados en esta sesión introductoria y las hipótesis experimentales que cada equipo de investigación defenderá en los seminarios finales.
+
+| Proyecto y tecnología (Eje 4) | Eje conceptual abordado en el capítulo | Tensión arquitectónica evaluada | Objeto del taller y contraste experimental |
+|---|---|---|---|
+| **Tema 01: DuckDB espacial y GeoParquet** | Topología cliente-servidor, almacenamiento columnar (OLAP) y modelo embebido (*in-process*). | La sobrecarga de red por sockets TCP, llamadas al sistema (*syscalls*) y la ineficiencia del *heap storage* de 8 KB en escaneos masivos. | Cuantificar la ganancia computacional de suprimir la pila OSI y evaluar la delegación de filtros (*predicate pushdown*) directamente sobre archivos GeoParquet en almacenamiento de nube. |
+| **Tema 02: Apache Sedona y PySpark** | Distinción entre SGBD acoplado y motor de cómputo analítico distribuido. | El límite físico de escalabilidad vertical (*scale-up*) del *buffer pool* local al ejecutar cruces espaciales (*Spatial Joins*) masivos. | Evaluar el particionamiento multidimensional distribuido (*Quad-Tree* / *KDB-Tree*) y la optimización de grafos acíclicos dirigidos (DAG) para mitigar el trasiego de datos (*data shuffling*) en clúster. |
+| **Tema 03: Mallas discretas globales (Uber H3 y Google S2)** | Indexación multidimensional continua (GiST / R-Tree) y cajas mínimas delimitadoras (MBR). | La ineficiencia y solapamiento de árboles espaciales continuos frente a telemetría masiva de alta densidad. | Contrastar la indexación geométrica planar continua con índices escalares discretos unidimensionales generados por curvas de llenado del espacio, evaluando la distorsión métrica y la velocidad de agregación temporal. |
+| **Tema 04: Neo4j Spatial frente a pgRouting** | Modelos NoSQL de grafos de propiedades (ISO GQL) frente al modelo objeto-relacional normalizado. | El costo algorítmico exponencial de evaluar relaciones topológicas continuas mediante operaciones de combinación relacional (*joins*) indexadas. | Medir la latencia en algoritmos de ruteo dinámico (Dijkstra / A*) aprovechando la adyacencia libre de índices (*index-free adjacency*) en grafos nativos frente a la indexación relacional en PostGIS. |
+| **Tema 05: Elasticsearch / OpenSearch frente a MongoDB espacial** | Esquemas dinámicos en lectura (*schema-on-read*) y transaccionalidad BASE frente a garantías ACID estrictas. | La rigidez del esquema relacional en escritura (*schema-on-write*) ante flujos desestructurados de eventos y telemetría de sensores IoT en tiempo real. | Evaluar la tasa de ingestión concurrente masiva y la velocidad de filtrado geoespacial (*geo-fencing*) utilizando árboles BKD y mallas `2dsphere`. |
+| **Tema 06: Programación procedural y extensiones nativas en Rust (PGRX)** | Serialización de geometrías (WKB/EWKB), extensibilidad de bajo nivel y ejecución compilada en el motor. | La penalización de rendimiento derivada de la deserialización de flujos binarios entre el espacio de usuario y las interfaces dinámicas en lenguajes interpretados. | Desarrollar rutinas analíticas espaciales compiladas directamente contra la memoria interna del servidor (`GSERIALIZED`), midiendo el balance entre seguridad de memoria y aceleración computacional sin salir del proceso gestor. |
+
+: Matriz de articulación conceptual entre los fundamentos del capítulo y los proyectos finales de investigación. {#tbl-articulacion-proyectos-capitulo}
+
+Comprender esta correspondencia permite concebir la infraestructura geoespacial corporativa no como una tecnología aislada, sino como un ecosistema articulado bajo el principio de **persistencia políglota**: el motor relacional espacial opera como el repositorio maestro transaccional que salvaguarda la integridad y la topología legal de los datos, mientras que las arquitecturas especializadas resuelven cuellos de botella de escala, conectividad analítica y latencia masiva.
+
+::: {.callout-note appearance="simple"}
+**Consulta terminológica y acrónimos:** El catálogo formal de siglas técnicas (OGC, ISO, ACID, MVCC), junto con la definición de los invariantes del modelo objeto-relacional y las estructuras de indexación multidimensional, se encuentra disponible para consulta transversal en la @sec-anexo-glosario.
+:::
