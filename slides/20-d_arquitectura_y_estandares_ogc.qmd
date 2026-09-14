@@ -6,6 +6,8 @@ date: today
 format:
   revealjs:
     theme: default
+    toc: true
+    toc-depth: 1
     toc-title: "Tabla de contenidos"
     slide-number: true
     hash-type: number
@@ -45,6 +47,12 @@ format:
           font-size: 0.9em !important;
           margin-left: 1.2em !important;
         }
+
+        .diagrama-slide svg {
+        width: 100% !important;
+        height: auto !important;
+        max-height: 540px !important;
+        }
         </style>
 ---
 
@@ -57,23 +65,23 @@ format:
 ::: {.column width="50%"}
 **Sistemas gestores y arquitectura**
 
-- **SGBD / DBMS**: Sistema gestor de bases de datos (*database management system*).
-- **SDBMS**: SGBD espacial (*spatial database management system*).
-- **GeoDB**: Repositorio de base de datos espacial o geográfica.
-- **DBA**: Administrador de bases de datos (*database administrator*).
-- **ACID**: Atomicidad, consistencia, aislamiento y durabilidad.
-- **WAL**: Registro previo en bitácora (*write-ahead logging*).
+* **SGBD / DBMS**: Sistema gestor de bases de datos (*database management system*).
+* **SDBMS**: SGBD espacial (*spatial database management system*).
+* **GeoDB**: Repositorio de base de datos espacial o geográfica.
+* **DBA**: Administrador de bases de datos (*database administrator*).
+* **ACID**: Atomicidad, consistencia, aislamiento y durabilidad.
+* **WAL**: Registro previo en bitácora (*write-ahead logging*).
 :::
 
 ::: {.column width="50%"}
 **Lenguajes y estándares espaciales**
 
-- **SQL**: Lenguaje de consulta estructurado (*structured query language*).
-- **DDL / DML**: Sublenguajes de definición y manipulación de datos.
-- **OGC**: Consorcio geoespacial abierto (*Open Geospatial Consortium*).
-- **CRS / SRID**: Sistema de referencia de coordenadas e identificador espacial.
-- **WKT / WKB / EWKB**: Serializaciones en texto, binario y binario extendido.
-- **GiST**: Árbol de búsqueda generalizada (*generalized search tree*).
+* **SQL**: Lenguaje de consulta estructurado (*structured query language*).
+* **DDL / DML**: Sublenguajes de definición y manipulación de datos.
+* **OGC**: Consorcio geoespacial abierto (*Open Geospatial Consortium*).
+* **CRS / SRID**: Sistema de referencia de coordenadas e identificador espacial.
+* **WKT / WKB / EWKB**: Serializaciones en texto, binario y binario extendido.
+* **GiST**: Árbol de búsqueda generalizada (*generalized search tree*).
 :::
 :::
 :::
@@ -85,56 +93,59 @@ format:
 ::: {.column width="50%"}
 **Modelos, estándares y procesamiento**
 
-- **CODASYL**: Consorcio estandarizador de modelos en red (*Conference on Data Systems Languages*).
-- **OLTP / OLAP**: Procesamiento transaccional / analítico en línea.
-- **ADT**: Tipo de dato abstracto (*abstract data type*).
-- **ISO / IEC**: Organismos internacionales de normalización técnica y electrotécnica.
-- **GQL**: Estándar formal de consultas sobre grafos (*graph query language*, ISO/IEC 39075:2024).
-- **Spark / Flink**: Motores distribuidos para cómputo en memoria y flujos continuos (*streams*).
+* **CODASYL**: Consorcio estandarizador de modelos en red (*Conference on Data Systems Languages*).
+* **OLTP / OLAP**: Procesamiento transaccional / analítico en línea.
+* **ADT**: Tipo de dato abstracto (*abstract data type*).
+* **ISO / IEC**: Organismos internacionales de normalización técnica y electrotécnica.
+* **GQL**: Estándar formal de consultas sobre grafos (*graph query language*, ISO/IEC 39075:2024).
+* **Spark / Flink**: Motores distribuidos para cómputo en memoria y flujos continuos (*streams*).
 :::
 
 ::: {.column width="50%"}
 **Indexación, tipos y representaciones**
 
-- **Árbol B / B+**: Estructura jerárquica univariada balanceada (*balanced tree*).
-- **MBR**: Caja envolvente mínima (*minimum bounding box*).
-- **JSONB**: Almacenamiento binario estructurado para JSON en PostgreSQL.
-- **pgvector**: Extensión de PostgreSQL para indexación y búsqueda vectorial.
-- **HNSW**: Grafo navegable jerárquico de mundo pequeño (*hierarchical navigable small world*).
-- **Embeddings**: Representaciones vectoriales densas continuas de alta dimensionalidad.
+* **Árbol B / B+**: Estructura jerárquica univariada balanceada (*balanced tree*).
+* **MBR**: Rectángulo delimitador mínimo (*minimum bounding rectangle*).
+* **JSONB**: Almacenamiento binario estructurado para JSON en PostgreSQL.
+* **pgvector**: Extensión de PostgreSQL para indexación y búsqueda vectorial.
+* **HNSW**: Grafo navegable jerárquico de mundo pequeño (*hierarchical navigable small world*).
+* **Embeddings**: Representaciones vectoriales densas continuas de alta dimensionalidad.
 :::
 :::
 :::
 
 ## Limitaciones del sistema de archivos tradicional
 
+::: {style="font-size: 0.74em; line-height: 1.25;"}
 ::: {.columns}
 ::: {.column width="50%"}
 **Deficiencias estructurales**
 
-- **Redundancia e inconsistencia**: Duplicación descontrolada de archivos sin sincronización.
-- **Aislamiento**: Datos fragmentados en formatos heterogéneos y cerrados.
-- **Acoplamiento rígido**: El cambio de formato exige reescribir las aplicaciones.
-- **Vulnerabilidad transaccional**: Carencia de garantías ACID y riesgo de sobreescritura.
+* **Redundancia e inconsistencia**: Duplicación descontrolada de archivos sin sincronización.
+* **Aislamiento**: Datos fragmentados en formatos heterogéneos y cerrados.
+* **Acoplamiento rígido**: El cambio de formato exige reescribir las aplicaciones consumidoras.
+* **Vulnerabilidad transaccional**: Carencia de garantías ACID y riesgo de sobreescritura destructiva.
 :::
 
 ::: {.column width="50%"}
 **Impacto en proyectos SIG**
 
-- Tablas de atributos dispersas en hojas de cálculo.
-- Geometrías huérfanas en directorios locales.
-- Bloqueos de archivo monousuario.
-- Corrupción por caídas imprevistas de red o energía.
+* Tablas de atributos dispersas en hojas de cálculo desvinculadas.
+* Geometrías huérfanas en directorios locales sin validación referencial.
+* Bloqueos de archivo monousuario que impiden la edición concurrente.
+* Corrupción por caídas imprevistas de red o fallos eléctricos sin bitácora.
+:::
 :::
 :::
 
 ## Principio de integración en un SDBMS
 
-Desacoplamiento de la representación lógica frente al almacenamiento físico:
+Desacoplamiento estricto de la representación lógica frente al almacenamiento físico:
 
 ```{dot}
+//| label: dot-integracion-sdbms
 //| fig-align: center
-//| fig-width: 9
+//| fig-width: 9.2
 //| fig-height: 2.8
 //| echo: false
 
@@ -149,13 +160,13 @@ digraph G {
         color = "#16a34a";
         fontcolor = "#065f46";
         bgcolor = "#f0fdf4";
-        c1 [label="SIG escritorio\n(QGIS, ArcGIS)", fillcolor="#dcfce7", color="#16a34a"];
-        c2 [label="Servicios web\n(GeoServer)", fillcolor="#dcfce7", color="#16a34a"];
-        c3 [label="Scripts\n(Python, R, Julia)", fillcolor="#dcfce7", color="#16a34a"];
+        c1 [label="SIG escritorio\n(QGIS, ArcGIS Pro)", fillcolor="#dcfce7", color="#16a34a"];
+        c2 [label="Servicios web\n(GeoServer, APIs)", fillcolor="#dcfce7", color="#16a34a"];
+        c3 [label="Scripts analíticos\n(Python, R, Julia)", fillcolor="#dcfce7", color="#16a34a"];
     }
 
     subgraph cluster_sdbms {
-        label = "Repositorio centralizado (SDBMS)";
+        label = "Repositorio centralizado integrado (SDBMS)";
         style = "solid,rounded";
         color = "#0284c7";
         fontcolor = "#075985";
@@ -166,23 +177,25 @@ digraph G {
     }
 
     c1 -> motor [dir=both, label="SQL"];
-    c2 -> motor [dir=both, label="WFS/API"];
-    c3 -> motor [dir=both, label="Conexión nativa"];
+    c2 -> motor [dir=both, label="WFS / OGC API"];
+    c3 -> motor [dir=both, label="Conexión nativa libpq"];
 }
 
 ```
 
-* **Fuente única de verdad**: Eliminación de discrepancias entre tabla y vector.
-* **Acceso multiusuario seguro**: Control de concurrencia a nivel de tupla.
+* **Fuente única de verdad**: Unificación de la geometría como objeto de primera clase dentro del núcleo relacional.
+* **Acceso multiusuario gobernado**: Control de concurrencia a nivel de tupla sin bloqueos de archivo completo.
 
 # Arquitectura y niveles de abstracción
 
 ## Arquitectura clásica del motor (Silberschatz)
 
+::: {.diagrama-slide}
 ```{dot}
+//| label: dot-arquitectura-silberschatz
 //| fig-align: center
 //| fig-width: 9.5
-//| fig-height: 4.8
+//| fig-height: 7
 //| echo: false
 
 digraph G {
@@ -190,7 +203,6 @@ digraph G {
     node [shape=box, style="filled,rounded", fontname="Helvetica", fontsize=10.5, penwidth=1.0];
     edge [color="#475569", arrowhead=vee, arrowsize=0.75, fontname="Helvetica", fontsize=9];
 
-    // Nivel 1: Usuarios e Interfaces
     subgraph cluster_users {
         label = "Capa de usuarios y herramientas de acceso";
         style = "dashed,rounded";
@@ -198,13 +210,12 @@ digraph G {
         fontcolor = "#065f46";
         bgcolor = "#f0fdf4";
 
-        u_app [label="Usuarios finales\n(Aplicaciones web / SIG)", fillcolor="#dcfce7", color="#16a34a", width=2.6];
-        u_dba [label="Analistas y DBA\n(Consola psql / DDL / DML)", fillcolor="#dcfce7", color="#16a34a", width=2.6];
+        u_app [label="Usuarios y aplicaciones\n(QGIS / WebSIG / Pipelines)", fillcolor="#dcfce7", color="#16a34a", width=3.0];
+        u_dba [label="Analistas y DBA\n(Consola psql / Scripts DDL/DML)", fillcolor="#dcfce7", color="#16a34a", width=3.0];
 
         { rank=same; u_app; u_dba; }
     }
 
-    // Nivel 2: Procesador de Consultas
     subgraph cluster_qp {
         label = "1. Procesador de consultas (evaluación y optimización lógica)";
         style = "solid,rounded";
@@ -212,13 +223,12 @@ digraph G {
         fontcolor = "#075985";
         bgcolor = "#f0f9ff";
 
-        parser [label="Compilador / Optimizador SQL\n(Traducción a álgebra relacional y plan de costo mínimo)", fillcolor="#bae6fd", color="#0284c7", width=6.2];
-        engine [label="Motor de evaluación de consultas\n(Despacho y ejecución del plan óptimo)", fillcolor="#bae6fd", color="#0284c7", width=6.2];
+        parser [label="Compilador / Optimizador basado en costos (CBO)\n(Traducción a álgebra relacional y selección del plan óptimo)", fillcolor="#bae6fd", color="#0284c7", width=6.5];
+        engine [label="Motor de evaluación de consultas\n(Despacho y ejecución de operadores algebraicos)", fillcolor="#bae6fd", color="#0284c7", width=6.5];
 
         parser -> engine [label=" Plan físico ejecutable"];
     }
 
-    // Nivel 3: Gestor de Almacenamiento
     subgraph cluster_sm {
         label = "2. Gestor de almacenamiento (control de memoria y transaccionalidad)";
         style = "solid,rounded";
@@ -226,13 +236,12 @@ digraph G {
         fontcolor = "#075985";
         bgcolor = "#f0f9ff";
 
-        sm_ctrl [label="Control transaccional e integridad\n[ Gestor ACID / WAL  |  Autorización ]", fillcolor="#e0f2fe", color="#38bdf8", width=6.2];
-        sm_buf [label="Gestor de búferes y archivos\n[ Paginación RAM  |  Estructuras de bloques ]", fillcolor="#e0f2fe", color="#38bdf8", width=6.2];
+        sm_ctrl [label="Control transaccional e integridad\n[ Gestor ACID / Bitácora WAL  |  Gestor de integridad y permisos ]", fillcolor="#e0f2fe", color="#38bdf8", width=6.5];
+        sm_buf [label="Gestor de búferes y archivos\n[ Búfer pool en memoria RAM  |  Paginación y direccionamiento ]", fillcolor="#e0f2fe", color="#38bdf8", width=6.5];
 
         sm_ctrl -> sm_buf [style=dotted, arrowhead=none];
     }
 
-    // Nivel 4: Almacenamiento en Disco
     subgraph cluster_disk {
         label = "3. Almacenamiento persistente en disco";
         style = "filled,rounded";
@@ -240,18 +249,18 @@ digraph G {
         fontcolor = "#0f172a";
         bgcolor = "#f8fafc";
 
-        disk [label="Páginas de disco:\n[ Tablas relacionales  |  Índices (B+ / GiST)  |  Catálogo (Diccionario) ]", fillcolor="#ffffff", color="#64748b", width=6.2];
+        disk [label="Páginas de almacenamiento físico (8 KB):\n[ Tablas relacionales  |  Índices (B+ / GiST)  |  Diccionario de datos  |  Estadísticas ]", fillcolor="#ffffff", color="#64748b", width=6.5];
     }
 
-    // Flujos entre capas
     u_app -> parser [label=" Sentencias DML"];
     u_dba -> parser [label=" Sentencias DDL / SQL"];
     engine -> sm_ctrl [label=" Solicitud de tuplas"];
-    sm_buf -> disk [dir=both, label=" Transferencia de bloques (I/O)"];
+    sm_buf -> disk [dir=both, label=" Transferencia de bloques I/O"];
 }
 
 ```
 
+:::
 
 ## Componentes funcionales del motor (Silberschatz)
 
@@ -312,6 +321,8 @@ digraph G {
 :::
 :::
 
+
+
 # Modelos de datos y dimensión espacial
 
 ## Requerimientos del dato geoespacial
@@ -330,45 +341,54 @@ Los motores relacionales clásicos manejan atributos escalares atómicos. El esp
 * **Fallo del árbol B/B+**: Incapacidad de indexar de forma nativa rangos bidimensionales o cajas envolventes mínimas (*MBR*).
 
 
-# Evolución de modelos de datos
 
-## Taxonomía de modelos de bases de datos
+## Taxonomía de modelos y arquitectura de despliegue: paradigmas clásicos y relacionales
 
-::: {style="font-size: 0.80em; line-height: 1.28;"}
-::: {.columns}
-::: {.column width="50%"}
-**Paradigmas clásicos**
+::: {style="font-size: 0.70em; line-height: 1.22;"}
+Los modelos algebraicos iniciales y transaccionales se vinculan a topologías de acceso físico o servicios en red:
 
-- **Tipo 1 (1950--1960)**: Sistemas de archivos, modelos jerárquicos y en red gestionados mediante punteros físicos en disco (estándar CODASYL).
-- **Tipo 2 (1970+)**: Modelo relacional (Codd); tuplas, álgebra relacional, normalización formal y garantías transaccionales ACID (OLTP).
-- **Tipo 3 (1990+)**: Orientado a objetos (OODBMS) y objeto-relacional (ORDBMS); soporte nativo de tipos abstractos (ADT), herencia e índices extensibles.
+| Modelo de datos | Paradigma representativo | Topología de despliegue predominante |
+| :- | :-- | :--- |
+| **Tipo 1 (1950--1960)** | Jerárquico (IMS) y en red (CODASYL). | **Local / Monolítica**: Punteros directos a sectores de disco en un único equipo. |
+| **Tipo 2 (1970+)** | Relacional OLTP (System R, Ingres, MySQL). | **Cliente-servidor**: Proceso demonio aislado (`mysqld`) accesible por red TCP. |
+| **Tipo 2 Columnar (2019+)** | Relacional analítico OLAP (DuckDB, MonetDB). | **Embebida (*in-process*)**: Biblioteca C/C++ en el mismo espacio de memoria del cliente. |
+| **Tipo 3 (1990+)** | Objeto-relacional / ORDBMS (PostgreSQL/PostGIS). | **Cliente-servidor**: Demonio multiusuario (`postgres`) con tipos abstractos (ADT). |
+
+: Paradigmas clásicos y objeto-relacionales frente al sistema operativo.
 :::
 
-::: {.column width="50%"}
-**Paradigmas contemporáneos**
+## Taxonomía de modelos y arquitectura de despliegue: paradigmas contemporáneos
 
-- **NoSQL (2010+)**: Esquemas flexibles (*schema-on-read*); familias documentales, clave-valor, columnas anchas y grafos (ISO/IEC 39075:2024 GQL).
-- **NewSQL (2012+)**: Álgebra relacional estándar con transaccionalidad ACID global sobre clústeres elásticos distribuidos (Spanner, CockroachDB).
-- **Vectoriales (2020+)**: Indexación y búsqueda de similitud sobre *embeddings* multidimensionales densos mediante grafos HNSW.
-:::
-:::
+::: {style="font-size: 0.70em; line-height: 1.22;"}
+Los esquemas analíticos de frontera distribuyen el cómputo en clústeres elásticos o espacios métricos:
+
+| Modelo de datos | Paradigma representativo | Topología de despliegue predominante |
+| :- | :-- | :--- |
+| **NoSQL / Grafos (2010+)** | Documental (Mongo), Grafos (Neo4j, ISO GQL). | **Cliente-servidor y distribuida**: Clústeres con esquemas dinámicos (*schema-on-read*). |
+| **NewSQL (2012+)** | Relacional distribuido elástico (Spanner, Cockroach). | **Distribuida en clúster**: Nodos coordinados por consenso (Raft/Paxos) con ACID global. |
+| **Vectoriales (2020+)** | Indexación métrica HNSW (Milvus, pgvector). | **Híbrida**: Motores dedicados cliente-servidor o extensiones sobre ORDBMS. |
+
+: Paradigmas distribuidos, no relacionales y vectoriales frente al sistema operativo.
 :::
 
-## Cronología y convergencia espacial
+
+## Cronología y convergencia hacia el modelo objeto-relacional
 
 ```{dot}
+//| label: dot-cronologia-modelos
 //| fig-align: center
-//| fig-width: 9.0
-//| fig-height: 2.0
+//| fig-width: 10.0
+//| fig-height: 2.6
+//| out-width: "100%"
 //| echo: false
 
 digraph G {
-    graph [rankdir=LR, bgcolor="transparent", nodesep=0.2, ranksep=0.3, fontname="Helvetica"];
-    node [shape=box, style="filled,rounded", fontname="Helvetica", fontsize=8.5, penwidth=1.0, margin="0.1,0.06"];
-    edge [color="#475569", arrowhead=vee, arrowsize=0.65];
+    graph [rankdir=LR, bgcolor="transparent", nodesep=0.25, ranksep=0.45, fontname="Helvetica", size="10,2.6!", ratio=fill];
+    node [shape=box, style="filled,rounded", fontname="Helvetica", fontsize=9.5, penwidth=1.0, margin="0.12,0.07"];
+    edge [color="#475569", arrowhead=vee, arrowsize=0.75, penwidth=1.0];
 
     t1 [label="Tipo 1 (1950-60)\nJerárquico / Red", fillcolor="#e2e8f0", color="#94a3b8"];
-    t2 [label="Tipo 2 (1970+)\nRelacional (OLTP)", fillcolor="#cbd5e1", color="#64748b"];
+    t2 [label="Tipo 2 (1970+)\nRelacional (OLTP / OLAP)", fillcolor="#cbd5e1", color="#64748b"];
     t3 [label="Tipo 3 (1990+)\nObjeto-Relacional", fillcolor="#94a3b8", color="#475569"];
     nosql [label="NoSQL (2010+)\nDocumental / Grafos", fillcolor="#f8fafc", color="#64748b", style="dashed,rounded,filled"];
     newsql [label="NewSQL (2012+)\nSQL Distribuido", fillcolor="#e0f2fe", color="#0284c7"];
@@ -384,63 +404,112 @@ digraph G {
 
 ```
 
-::: {style="font-size: 0.84em; line-height: 1.3; margin-top: 0.6em;"}
+::: {style="font-size: 0.80em; line-height: 1.25; margin-top: 0.4em;"}
 
 * **El catalizador espacial**: Los límites del modelo relacional plano impulsaron el desarrollo del modelo **objeto-relacional (Tipo 3)** para almacenar geometrías complejas bajo tipos abstractos (ADT) sin desarticular coordenadas.
-
-
-* **Convergencia actual**: Motores relacionales maduros integran almacenamiento semiestructurado (`JSONB`), cómputo geoespacial (PostGIS) e indexación vectorial densa (`pgvector`) en una única instancia.
-
-
-
+* **Bifurcación analítica y convergencia**: El modelo relacional consolidó motores orientados a transacciones (OLTP) y escaneos columnares masivos (OLAP). Paralelamente, los motores maduros integran datos semiestructurados (`JSONB`), cómputo geoespacial (PostGIS) e indexación vectorial densa (`pgvector`) en una única instancia.
 :::
 
 
+## Persistencia políglota: modelos operacionales y analíticos
 
+::: {style="font-size: 0.66em; line-height: 1.18;"}
+La persistencia políglota establece el uso del motor idóneo según la carga:
 
+| Paradigma | Objetivo operativo | Compromiso (*trade-off*) | Rol vigente en geomática |
+| --- | --- | --- | --- |
+| **ORDBMS (PostGIS)** | Integridad ACID, esquemas normalizados y SQL espacial. | Sobrecarga de sincronización de páginas en disco y red. | **Núcleo institucional**: Catastro, registro predial y redes de infraestructura. |
+| **Relacional OLAP (DuckDB)** | Escaneos masivos, agregaciones y formato columnar. | Ineficiente para mutaciones fila a fila; concurrencia monoproceso. | **Analítica local y cubos**: Series temporales y archivos GeoParquet. |
+| **NoSQL (Documental/KV)** | Muy baja latencia y esquemas dinámicos (*schema-on-read*). | Consistencia eventual (BASE) y ausencia de uniones relacionales. | **Caché y microservicios**: Catálogos GeoJSON y caché de teselas web (Redis/Mongo). |
 
+: Paradigmas operacionales y analíticos en el ecosistema geoespacial.
+:::
+
+## Persistencia políglota: modelos topológicos y vectoriales
+
+::: {style="font-size: 0.66em; line-height: 1.18;"}
+Modelos no convencionales para problemas de alta dimensionalidad o conectividad:
+
+| Paradigma | Objetivo operativo | Compromiso (*trade-off*) | Rol vigente en geomática |
+| --- | --- | --- | --- |
+| **Grafos (Neo4j)** | Recorrido recursivo sin combinaciones (*index-free adjacency*). | Ineficiente para escaneos tabulares globales sobre escalares. | **Topología y redes**: Flujos en cuencas hidrográficas y ruteo sobre mallas. |
+| **Vectoriales (pgvector)** | Búsqueda aproximada (ANN) sobre espacios densos continuos. | No resuelven predicados topológicos exactos sobre geometrías OGC. | **Búsqueda semántica**: Recuperación de teselas por similitud espectral (*embeddings*). |
+
+: Paradigmas de conectividad topológica y representación latente.
+:::
 
 ## Precisiones arquitectónicas contemporáneas
 
-::: {style="font-size: 0.75em; line-height: 1.25;"}
+::: {style="font-size: 0.73em; line-height: 1.25;"}
 ::: {.columns}
 ::: {.column width="33%"}
 **PostgreSQL / PostGIS**
 
-- Motor objeto-relacional (Tipo 3) de núcleo extensible.
-- Sustrato convergente: almacena datos relacionales, documentos (`JSONB`), geometrías y vectores densos (`pgvector`).
+* Motor objeto-relacional (Tipo 3) de núcleo extensible.
+* Despliegue **cliente-servidor**: proceso demonio `postgres` aislado en memoria.
+* Comunicaciones reguladas por la pila OSI y control estricto de concurrencia ACID.
 :::
 
 ::: {.column width="33%"}
 **DuckDB**
 
-- Motor relacional columnar (Tipo 2) con ejecución vectorial en memoria.
-- Arquitectura embebida (*in-process*) sin sobrecarga de red cliente-servidor.
-- Optimizado para procesamiento analítico complejo (OLAP) sobre grandes volúmenes espaciales.
+* Motor relacional columnar (Tipo 2) con ejecución vectorial en CPU (SIMD).
+* Despliegue **embebido (*in-process*)**: reside en la memoria del ejecutable cliente.
+* Suprime por completo los sockets TCP, las llamadas de red y la serialización a WKB.
 :::
 
 ::: {.column width="33%"}
 **Apache Sedona**
 
-- **No es un SGBD**: carece de almacenamiento persistente propio, bitácora WAL y garantías ACID.
-- Motor de cómputo y procesamiento espacial distribuido en memoria sobre clústeres Apache Spark y Flink.
+* **No es un SGBD**: carece de almacenamiento persistente propio y bitácora WAL.
+* Motor de **cómputo espacial distribuido** en memoria sobre Apache Spark y Flink.
+* Particiona geometrías entre múltiples nodos para resolver cruces masivos (*shuffling*).
 :::
 :::
 :::
 
+# Topologías de despliegue y arquitecturas SIG
 
+## Topología cliente-servidor: capas de aplicación y datos
 
+::: {style="font-size: 0.70em; line-height: 1.22;"}
+En un ORDBMS (PostgreSQL), la separación de procesos impone atravesar la pila OSI:
+
+| Capa OSI | Función en el SDBMS | Manifestación en PostGIS / PostgreSQL |
+| - | -- | --- |
+| **7. Aplicación** | Protocolo de alto nivel de base de datos. | Protocolo *Frontend/Backend v3.0* de PostgreSQL o HTTP/REST (OGC API). |
+| **6. Presentación** | Serialización y codificación de datos. | Traducción bidireccional GEOS $\leftrightarrow$ WKB/EWKB, *endianness* y UTF-8. |
+| **5. Sesión** | Control de conexión y estado. | Autenticación criptográfica (`SCRAM-SHA-256`), variables y `search_path`. |
+
+: Capas superiores orientadas a la sintaxis y representación de datos.
+:::
+
+## Topología cliente-servidor: transporte y red física
+
+::: {style="font-size: 0.67em; line-height: 1.18;"}
+Transferencia binaria y aislamiento a través de la infraestructura de red:
+
+| Capa OSI | Función en el SDBMS | Manifestación en PostGIS / PostgreSQL |
+| - | --- | --- |
+| **4. Transporte** | Segmentación y entrega confiable. | Protocolo **TCP**, control de flujo, confirmaciones (ACK) y puerto **5432**. |
+| **3. Red** | Direccionamiento lógico y enrutamiento. | Datagramas **IP**, subredes corporativas o puente virtual Docker (`db-postgis`). |
+| **2. Enlace** | Transmisión por tramas locales. | Tramas Ethernet, direcciones físicas MAC o adaptador de bucle invertido (`127.0.0.1`). |
+| **1. Física** | Transmisión de señales binarias. | Medio físico guiado (fibra/cobre) o bus interno de memoria en el anfitrión. |
+
+: Capas inferiores de transporte, direccionamiento y enlace físico.
+:::
 
 ## Evolución de arquitecturas SIG
 
-::: {style="font-size: 0.76em; line-height: 1.25;"}
+::: {style="font-size: 0.68em; line-height: 1.22;"}
 
 | Arquitectura | Componentes | Ventajas | Limitaciones |
-| :--- | :--- | :--- | :--- |
-| **1. Ad-hoc** | Software SIG monousuario con formato binario cerrado. | Alta velocidad y eficiencia en dibujo vectorial local. | Esquema cerrado, nulo soporte concurrente y silos aislados de información. |
-| **2. Dual / híbrida** | SGBD estándar (atributos) + archivos CAD/Shapefile (geometría). | Consultas declarativas SQL sobre la fracción alfanumérica. | Enlace débil por ID, sobrecarga en cliente y riesgo de huérfanos sin ACID conjunto. |
-| **3. Integrada (SDBMS)** | SGBD objeto-relacional (PostGIS) con tipo geométrico nativo. | Consistencia ACID integral, multiusuario y cálculo espacial en servidor. | Exige diseño formal de esquemas relacionales e índices multidimensionales (GiST). |
+| - | --- | --- | --- |
+| **1. Ad-hoc** | Software SIG monousuario con formato binario cerrado en disco. | Alta velocidad y eficiencia en renderizado vectorial local. | Esquema cerrado, nula concurrencia y proliferación de silos redundantes. |
+| **2. Dual / híbrida** | SGBD estándar (atributos) + archivos CAD/Shapefile (geometría). | Consultas declarativas SQL sobre la fracción alfanumérica. | Enlace débil por ID, sobrecarga en memoria cliente y riesgo de huérfanos sin ACID. |
+| **3. Integrada (SDBMS)** | SGBD objeto-relacional (PostGIS) con tipo geométrico nativo. | Consistencia ACID integral, concurrencia multiusuario y cómputo en servidor. | Demanda diseño formal de esquemas relacionales, índices GiST y afinamiento DBA. |
 
+: Evolución histórica de la integración entre SIG y gestores de bases de datos.
 :::
 
 ## Distribución de responsabilidades: SIG y SGBD
@@ -480,12 +549,15 @@ digraph G {
 :::
 
 
-
 # PostgreSQL y la extensión PostGIS
 
 ## Motor objeto-relacional y pila geoespacial
 
-PostgreSQL provee extensibilidad para registrar tipos abstractos (ADT), funciones e índices. PostGIS incorpora la pila geoespacial estándar:
+::: {style="font-size: 0.72em; line-height: 1.25;"}
+PostgreSQL provee las interfaces de extensibilidad para registrar tipos abstractos (ADT), funciones e índices. PostGIS acopla al núcleo la biblioteca geoespacial:
+
+::: {.columns}
+::: {.column width="46%"}
 
 ```text
 ┌────────────────────────────────────────────────────────┐
@@ -498,26 +570,28 @@ PostgreSQL provee extensibilidad para registrar tipos abstractos (ADT), funcione
 
 ```
 
-* **GEOS**: Algoritmos computacionales (`ST_Intersects`, `ST_Buffer`).
+:::
 
+::: {.column width="54%"}
 
-* **PROJ**: Conversión geodésica y reproyección de coordenadas.
+* **GEOS**: Primitivas y predicados topológicos (`ST_Intersects`, `ST_Buffer`).
+* **PROJ**: Conversiones geodésicas y transformaciones cartográficas de datum.
+* **GDAL**: Traducción de formatos vectoriales y matriciales ráster.
+* **Árboles GiST**: Indexación multidimensional sobre cajas envolventes mínimas (*MBR*).
+:::
+:::
+:::
 
+## Verificación de dependencias y PostGIS
 
-* **Árboles GiST**: Indexación de cajas envolventes mínimas (*Bounding Boxes*).
-
-
-
-## Verificación de PostGIS en el motor
-
-La inspección de dependencias confirma las versiones vinculadas en el clúster:
+La inspección de dependencias compiladas confirma la operatividad del motor espacial:
 
 ```sql
-SELECT PostGIS_Full_Version();
+SELECT postgis_full_version();
 
 ```
 
-Resultado estructurado obtenido en el entorno de trabajo:
+Salida estructurada capturada en la instancia de trabajo:
 
 ```text
 POSTGIS="3.6.2" [EXTENSION] PGSQL="180" 
@@ -528,15 +602,64 @@ LIBJSON="0.12"
 
 ```
 
-*Garantiza compatibilidad completa con funciones OGC y tipado estricto.*
+*Valida la disponibilidad de los algoritmos OGC, el tipado estricto y las librerías de enlace dinámico.*
+
+## Entorno de ejecución: terminal y ecosistema Python
+
+::: {style="font-size: 0.78em; line-height: 1.25;"}
+::: {.columns}
+::: {.column width="50%"}
+**Terminal integrada (`psql`)**
+
+Variables de entorno estándar de `libpq`:
+
+```bash
+# Conexión por defecto a la instancia anfitriona
+export PGHOST="host.docker.internal"
+export PGPORT="5432"
+export PGUSER="postgres"
+export PGPASSWORD='geomatica2025'
+export PGDATABASE="sig_db_unal"
+
+psql -c "SELECT postgis_version();"
+
+```
+
+Interacción interactiva de bajo nivel, despacho DDL directo y administración del servidor.
+:::
+
+::: {.column width="50%"}
+**Pila Python (SQLAlchemy / GeoPandas)**
+
+Instanciación global de motores desacoplados:
+
+```python
+from sqlalchemy import create_engine, text
+import geopandas as gpd
+
+# Motores instanciados al inicio del capítulo
+engine_local = create_engine(cadena_local)
+engine_docker = create_engine(cadena_docker)
+
+# Extracción directa a GeoDataFrame
+query = text("SELECT orden, nombre, geom FROM public.muestras_geometrias_ogc;")
+with engine_local.connect() as conn:
+    gdf = gpd.read_postgis(query, con=conn, geom_col="geom")
+
+```
+
+:::
+:::
+:::
 
 # Estándar OGC Simple Features for SQL
 
 ## Jerarquía geométrica OGC (ISO 19125)
 
 ```{dot}
+//| label: dot-jerarquia-ogc
 //| fig-align: center
-//| fig-width: 8
+//| fig-width: 8.5
 //| fig-height: 3.5
 //| echo: false
 
@@ -554,9 +677,9 @@ digraph G {
     linestring [label="LineString (1D)", fillcolor="#dbeafe", color="#1d4ed8"];
     polygon [label="Polygon (2D)", fillcolor="#dbeafe", color="#1d4ed8"];
 
-    multipoint [label="MultiPoint", fillcolor="#fed7aa", color="#ea580c"];
-    multilinestring [label="MultiLineString", fillcolor="#fed7aa", color="#ea580c"];
-    multipolygon [label="MultiPolygon", fillcolor="#fed7aa", color="#ea580c"];
+    multipoint [label="MultiPoint (0D)", fillcolor="#fed7aa", color="#ea580c"];
+    multilinestring [label="MultiLineString (1D)", fillcolor="#fed7aa", color="#ea580c"];
+    multipolygon [label="MultiPolygon (2D)", fillcolor="#fed7aa", color="#ea580c"];
 
     point -> root;
     curve -> root;
@@ -573,12 +696,39 @@ digraph G {
 
 ```
 
-* **Primitivas simples**: `Point`, `LineString`, `Polygon`.
-
-
+* **Primitivas simples concretas**: `Point`, `LineString`, `Polygon`.
 * **Colecciones homogéneas**: `MultiPoint`, `MultiLineString`, `MultiPolygon`.
+* **Colección heterogénea**: `GeometryCollection` (admite entidades de dimensionalidad mixta).
 
+## Morfología de primitivas geométricas OGC
 
+::: {style="font-size: 0.70em; line-height: 1.22;"}
+Entidades geométricas fundamentales definidas bajo la norma ISO 19125 / OGC SFA:
+
+| Tipo geométrico | Dimensión | Signatura morfológica formal OGC |
+| - | - | --- |
+| `Point` | 0 | Par ordenado singular de coordenadas $(X, Y)$. |
+| `LineString` | 1 | Curva interpolada linealmente entre dos o más vértices discretos. |
+| `LinearRing` | 1 | Curva `LineString` cerrada y no autosecante (define anillos poligonales). |
+| `Polygon` | 2 | Superficie delimitada por un anillo exterior y cero o más anillos interiores (huecos). |
+
+: Características dimensionales de las primitivas geométricas del estándar OGC.
+:::
+
+## Morfología de colecciones geométricas OGC
+
+::: {style="font-size: 0.70em; line-height: 1.22;"}
+Agrupaciones homogéneas y heterogéneas según el estándar ISO 19125 / OGC SFA:
+
+| Tipo geométrico | Dimensión | Signatura morfológica formal OGC |
+| - | - | --- |
+| `MultiPoint` | 0 | Agrupación no conexa de vértices independientes. |
+| `MultiLineString` | 1 | Colección de cadenas lineales que pueden cruzarse o ser disyuntas. |
+| `MultiPolygon` | 2 | Conjunto conexo o disyunto de polígonos independientes. |
+| `GeometryCollection` | Variable | Agrupación arbitraria y heterogénea de cualquier tipo geométrico. |
+
+: Características dimensionales de las colecciones geométricas del estándar OGC.
+:::
 
 ## Serialización: WKT y WKB / EWKB
 
@@ -586,7 +736,7 @@ digraph G {
 ::: {.column width="50%"}
 **Well-Known Text (WKT)**
 
-Formato ASCII legible para intercambio:
+Formato ASCII legible para diseño e intercambio:
 
 ```text
 POINT(5000000 2000000)
@@ -605,39 +755,40 @@ Soporta componentes 3D/4D: `POINT Z`, `POINT M`, `POINT ZM`.
 ::: {.column width="50%"}
 **Well-Known Binary (WKB / EWKB)**
 
-Flujo binario compacto para disco y red:
+Flujo binario estructurado para almacenamiento y red:
 
-* Preserva precisión numérica IEEE 754.
-
-
-* Controla orden de bytes (*Endianness*).
-
-
-* **EWKB (PostGIS)**: Embebe el código de proyección (SRID) en la cabecera binaria.
+* Preserva precisión en coma flotante IEEE 754.
+* Controla ordenación de bytes (*Endianness*).
+* **EWKB (PostGIS)**: Embebe directamente el identificador espacial (SRID) en la cabecera binaria del objeto.
 :::
 :::
-
-
 
 # Catálogos de metadatos espaciales
 
-## Catálogo spatial_ref_sys
+## Estructura del catálogo spatial_ref_sys
 
-::: {style="font-size: 0.78em; line-height: 1.25;"}
-Diccionario canónico de sistemas de referencia de coordenadas (CRS) soportados por el motor:
+::: {style="font-size: 0.70em; line-height: 1.20;"}
+Diccionario canónico de sistemas de referencia de coordenadas (CRS) en disco:
 
 | Columna clave | Significado técnico |
-| :--- | :--- |
+| - | --- |
 | `srid` | Identificador entero único (habitualmente código EPSG). |
 | `auth_name` | Organismo normativo de referencia (`'EPSG'`). |
+| `auth_srid` | Código numérico asignado por la autoridad cartográfica. |
 | `srtext` | Parámetros del elipsoide, datum y proyección en formato WKT CRS. |
-| `proj4text` | Cadena técnica de parámetros consumida por la biblioteca PROJ. |
+| `proj4text` | Cadena técnica de inicialización consumida por la biblioteca PROJ. |
 
-**Sistemas fundamentales en el contexto colombiano**
+: Estructura relacional del catálogo de sistemas de referencia de coordenadas.
+:::
 
-- **SRID 4326**: Sistema geográfico global WGS 84 (coordenadas angulares en grados).
-- **SRID 3116**: Proyección MAGNA-SIRGAS / Colombia Bogotá (Gauss-Krüger tradicional).
-- **SRID 9377**: MAGNA-SIRGAS / Origen Nacional Único (Resolución IGAC 471 de 2020).
+## Sistemas de referencia fundamentales en Colombia
+
+::: {style="font-size: 0.74em; line-height: 1.25;"}
+Marcos geodésicos y proyecciones oficiales registrados en `spatial_ref_sys`:
+
+* **SRID 4326 (WGS 84)**: Sistema geográfico global no proyectado; coordenadas angulares en grados decimales de latitud y longitud.
+* **SRID 3116 (MAGNA-SIRGAS / Colombia Bogotá)**: Proyección conforme Gauss-Krüger con meridiano central en $74^\circ 04' 39.0285''\text{ W}$ y origen $(1\,000\,000\text{ m E}, 1\,000\,000\text{ m N})$.
+* **SRID 9377 (MAGNA-SIRGAS / Origen Nacional Único)**: Sistema oficial según Resolución IGAC 471 de 2020; origen central en $4^\circ\text{ N}, 73^\circ\text{ W}$, factor de escala $k_0 = 0.9992$, falso este de $5\,000\,000\text{ m}$ y falso norte de $2\,000\,000\text{ m}$.
 :::
 
 ## Actualización e idempotencia de EPSG 9377
@@ -660,6 +811,7 @@ SET srtext = EXCLUDED.srtext, proj4text = EXCLUDED.proj4text;
 
 
 * **Requisito operativo**: Si no reside en disco, funciones como `ST_Transform` abortarán.
+
 
 
 
@@ -691,14 +843,42 @@ Campos normalizados bajo la especificación OGC:
 
 
 
-# Verificación práctica en consola
+## Auditoría y remediación de vistas del esquema
 
-## Ciclo DDL, WKT e introspección
+::: {style="font-size: 0.78em; line-height: 1.25;"}
+Al inspeccionar vistas como `divpol.capa_departamentos`, el catálogo reporta inicialmente `srid: 0`:
+
+```sql
+-- Causa: Consultas almacenadas sin modificador de tipo espacial explícito (typmod)
+SELECT f_table_name, srid, type FROM geometry_columns WHERE f_table_schema = 'divpol';
+
+```
+
+**Remediación mediante casteo explícito (DDL)**:
+
+```sql
+-- Redefinición atómica asegurando SRID 21892 (Bogotá 1975)
+DROP VIEW IF EXISTS divpol.capa_departamentos;
+CREATE VIEW divpol.capa_departamentos AS
+SELECT 
+    d.gid, d.dep_id AS id_dane, d.dep_nombre AS departamento,
+    d.the_geom::geometry(Geometry, 21892) AS the_geom
+FROM divpol.departamentos d
+WHERE d.the_geom IS NOT NULL;
+
+```
+
+*Restablece la introspección automática en el catálogo, garantizando la interoperabilidad con clientes SIG y servicios web.*
+:::
+
+# Verificación práctica en consola y scripts
+
+## Ciclo DDL, WKT e introspección en psql
 
 Secuencia completa de persistencia espacial en `sig_db_unal`:
 
 ```sql
--- 1. Creación de tabla pedagógica con tipado estricto
+-- 1. Creación de tabla pedagógica con tipado estricto (typmod)
 CREATE TABLE public.infraestructura_referencia (
     id serial PRIMARY KEY,
     codigo varchar(10) NOT NULL UNIQUE,
@@ -718,3 +898,93 @@ WHERE f_table_name = 'infraestructura_referencia';
 ```
 
 Resultado validado: dimensión $2$, SRID $9377$ y tipo `POINT` expuestos de forma transparente para clientes SIG en red.
+
+## Extracción e inspección con SQLAlchemy y GeoPandas
+
+::: {style="font-size: 0.70em; line-height: 1.22;"}
+::: {.columns}
+::: {.column width="58%"}
+
+```python
+from sqlalchemy import text
+import geopandas as gpd
+
+query = text("""
+SELECT id, codigo, descripcion, geom 
+FROM public.infraestructura_referencia;
+""")
+
+with engine_local.connect() as conn:
+    gdf = gpd.read_postgis(query, con=conn, geom_col="geom")
+
+print(gdf[["codigo", "descripcion", "geom"]])
+print(f"CRS detectado: {gdf.crs}")
+
+```
+
+:::
+
+::: {.column width="42%"}
+**Puntos clave del flujo**
+
+* `read_postgis` delega la consulta al motor mediante SQLAlchemy 2.0.
+* La deserialización de flujos binarios WKB/EWKB se ejecuta en memoria hacia objetos Shapely.
+* PostGIS expone el SRID directamente a la estructura `GeoDataFrame`.
+:::
+:::
+:::
+
+# Articulación con los proyectos de investigación
+
+## Matriz de articulación conceptual: temas 01 a 03 (Eje 4)
+
+::: {style="font-size: 0.67em; line-height: 1.20;"}
+Los fundamentos del capítulo sustentan las hipótesis de investigación de frontera:
+
+| Proyecto (Eje 4) | Fundamento conceptual del capítulo | Tensión arquitectónica evaluada |
+| - | -- | --- |
+| **Tema 01: DuckDB y GeoParquet** | Topología cliente-servidor y almacenamiento columnar (OLAP). | Sobrecarga de red por sockets TCP/IP y llamadas al sistema frente al modelo embebido (*in-process*). |
+| **Tema 02: Apache Sedona y PySpark** | SGBD acoplado frente a motor de cómputo espacial distribuido. | Límite de escalabilidad vertical del *buffer pool* local en cruces espaciales masivos (*data shuffling*). |
+| **Tema 03: Mallas discretas (H3 / S2)** | Indexación multidimensional continua (GiST / R-Tree) y cajas MBR. | Ineficiencia y solapamiento de árboles espaciales continuos frente a telemetría masiva de alta densidad. |
+
+: Articulación entre fundamentos del capítulo y proyectos de investigación (Parte 1).
+:::
+
+## Matriz de articulación conceptual: temas 04 a 06 (Eje 4)
+
+::: {style="font-size: 0.67em; line-height: 1.20;"}
+Continuación de la articulación con tecnologías emergentes de persistencia:
+
+| Proyecto (Eje 4) | Fundamento conceptual del capítulo | Tensión arquitectónica evaluada |
+| - | -- | --- |
+| **Tema 04: Neo4j frente a pgRouting** | Grafos de propiedades (ISO GQL) frente al modelo relacional. | Costo algorítmico de evaluar relaciones topológicas continuas mediante operaciones de combinación (*joins*) indexadas. |
+| **Tema 05: Elasticsearch frente a MongoDB** | Esquemas flexibles (*schema-on-read*) frente a garantías ACID relacionales. | Ingestión masiva concurrente y filtrado geoespacial (*geo-fencing*) ante telemetría IoT desestructurada. |
+| **Tema 06: Rutinas nativas en Rust (PGRX)** | Serialización WKB y extensibilidad en el motor relacional. | Penalización de latencia al deserializar flujos binarios entre el núcleo gestor y lenguajes interpretados externos. |
+
+: Articulación entre fundamentos del capítulo y proyectos de investigación (Parte 2).
+:::
+
+## Síntesis de tensiones arquitectónicas (Eje 4)
+
+::: {.columns}
+::: {.column width="50%"}
+**El motor relacional espacial (PostGIS)**
+
+* Repositorio maestro institucional transaccional con garantías ACID.
+* Salvaguarda la integridad jurídica, referencial y topológica.
+* Interfaz declarativa SQL estándar para aplicaciones cliente concurrentes.
+:::
+
+::: {.column width="50%"}
+**Arquitecturas especializadas**
+
+* No buscan sustituir al motor relacional transaccional.
+* Resuelven cuellos de botella específicos de latencia, cómputo distribuido o volumen masivo.
+* Operan de forma articulada bajo el paradigma de **persistencia políglota**.
+:::
+:::
+
+::: {style="margin-top: 1.2em; font-size: 0.82em; text-align: center;"}
+*Para la consulta detallada de términos técnicos y acrónimos, remitirse al **@sec-anexo-glosario**.*
+:::
+

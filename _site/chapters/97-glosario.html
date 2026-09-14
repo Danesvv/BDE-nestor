@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.550">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Bases de datos espaciales - Apéndice H — Lista de acrónimos y glosario de conceptos técnicos</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/98-errata.html" rel="next">
+<link href="../chapters/93-postgresql.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Bases de datos espaciales</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../slides/index.html"> 
+<span class="menu-text">Diapositivas</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/alexyshr/bde2026"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/82-quarto.html">Apéndices</a></li><li class="breadcrumb-item"><a href="../chapters/97-glosario.html"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Lista de acrónimos y glosario de conceptos técnicos</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bienvenida</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/00-prefacio.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-syllabus.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Syllabus: bases de datos espaciales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../chapters/04-introduccion_instalacion_entornos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Instalación y entornos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-guia_instalacion_vscode_docker.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-instalacion_postgresql_18_windows.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Instalación y aprovisionamiento de PostgreSQL 18 y PostGIS 3.6</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13-infraestructura_docker_y_base_datos_espacial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Despliegue Docker y verificación de la base de datos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14-respaldo_y_recuperacion_bd.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Respaldo y recuperación de la base de datos sig_db_unal</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Fundamentos y diseño de bases de datos espaciales</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/20-arquitectura_y_estandares_ogc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Arquitectura de bases de datos espaciales y estándares OGC</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Proyectos aplicados</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/proyectos/00-guia_proyecto_final.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Guía metodológica para el proyecto final</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/proyectos/01-temas_proyecto_final.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Temas de proyecto final en bases de datos espaciales</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/proyectos/tema_02_apache_sedona/02-proyecto_apache_sedona.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ficha de propuesta de tema de investigación</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/proyectos/tema_02_apache_sedona/02-rubrica_proyecto_apache_sedona.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Rúbrica de evaluación para el reporte en QMD y el código</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+ <span class="menu-text">Apéndices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/82-quarto.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Quarto: orquestación y configuración</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/83-docker.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Docker: gestión de contenedores e imágenes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/84-git_github.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Git y GitHub: Sincronización Local-Remota</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/85-vscode.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Visual Studio Code (VScode): Extensiones e Interfaz</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/86-windows.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Temas técnicos sobre Windows</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/87-linux_ubuntu.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Temas Técnicos sobre Linux</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/93-postgresql.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">PostgreSQL</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/97-glosario.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Lista de acrónimos y glosario de conceptos técnicos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/98-errata.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Errata</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/99-referencias.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Referencias Bibliográficas</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#lista-de-acrónimos" id="toc-lista-de-acrónimos" class="nav-link active" data-scroll-target="#lista-de-acrónimos"><span class="header-section-number">H.1</span> Lista de acrónimos</a></li>
+  <li><a href="#glosario-de-conceptos-técnicos" id="toc-glosario-de-conceptos-técnicos" class="nav-link" data-scroll-target="#glosario-de-conceptos-técnicos"><span class="header-section-number">H.2</span> Glosario de conceptos técnicos</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/82-quarto.html">Apéndices</a></li><li class="breadcrumb-item"><a href="../chapters/97-glosario.html"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Lista de acrónimos y glosario de conceptos técnicos</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-anexo-glosario" class="quarto-section-identifier">Apéndice H — Lista de acrónimos y glosario de conceptos técnicos</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="lista-de-acrónimos" class="level2" data-number="H.1">
+<h2 data-number="H.1" class="anchored" data-anchor-id="lista-de-acrónimos"><span class="header-section-number">H.1</span> Lista de acrónimos</h2>
+<p>En la <a href="#tbl-lista-acronimos" class="quarto-xref">Tabla&nbsp;<span>H.1</span></a> se compilan las siglas y acrónimos técnicos empleados a lo largo del capítulo, indicando su equivalencia en inglés y su ámbito operativo.</p>
+<div id="tbl-lista-acronimos" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-lista-acronimos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;H.1: Catálogo de acrónimos y siglas técnicas normalizadas.
+</figcaption>
+<div aria-describedby="tbl-lista-acronimos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Acrónimo</th>
+<th>Denominación formal en español</th>
+<th>Término original en inglés</th>
+<th>Ámbito funcional</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>ACID</strong></td>
+<td>Atomicidad, consistencia, aislamiento y durabilidad</td>
+<td><em>Atomicity, Consistency, Isolation, Durability</em></td>
+<td>Transaccionalidad en motores de bases de datos.</td>
+</tr>
+<tr class="even">
+<td><strong>ADT</strong></td>
+<td>Tipo abstracto de datos</td>
+<td><em>Abstract Data Type</em></td>
+<td>Tipado extensible en modelos objeto-relacionales.</td>
+</tr>
+<tr class="odd">
+<td><strong>AIO</strong></td>
+<td>Entrada/salida asíncrona</td>
+<td><em>Asynchronous Input/Output</em></td>
+<td>Subsistema de almacenamiento del motor gestor.</td>
+</tr>
+<tr class="even">
+<td><strong>ANN</strong></td>
+<td>Vecinos más cercanos aproximados</td>
+<td><em>Approximate Nearest Neighbors</em></td>
+<td>Algoritmia de búsqueda en espacios vectoriales.</td>
+</tr>
+<tr class="odd">
+<td><strong>CBO</strong></td>
+<td>Optimizador basado en costos</td>
+<td><em>Cost-Based Optimizer</em></td>
+<td>Planificación y optimización de consultas SQL.</td>
+</tr>
+<tr class="even">
+<td><strong>CRS</strong></td>
+<td>Sistema de referencia de coordenadas</td>
+<td><em>Coordinate Reference System</em></td>
+<td>Georreferenciación y geodesia computacional.</td>
+</tr>
+<tr class="odd">
+<td><strong>DBA</strong></td>
+<td>Administrador de base de datos</td>
+<td><em>Database Administrator</em></td>
+<td>Gestión y gobierno de la infraestructura del motor.</td>
+</tr>
+<tr class="even">
+<td><strong>DDL</strong></td>
+<td>Lenguaje de definición de datos</td>
+<td><em>Data Definition Language</em></td>
+<td>Subconjunto SQL para definición de esquemas.</td>
+</tr>
+<tr class="odd">
+<td><strong>DML</strong></td>
+<td>Lenguaje de manipulación de datos</td>
+<td><em>Data Manipulation Language</em></td>
+<td>Subconjunto SQL para consulta y edición de tuplas.</td>
+</tr>
+<tr class="even">
+<td><strong>ECEF</strong></td>
+<td>Centrado en la Tierra, fijo a la Tierra</td>
+<td><em>Earth-Centered, Earth-Fixed</em></td>
+<td>Sistema cartesiano tridimensional geocéntrico.</td>
+</tr>
+<tr class="odd">
+<td><strong>EPSG</strong></td>
+<td>Grupo europeo de prospección petrolífera</td>
+<td><em>European Petroleum Survey Group</em></td>
+<td>Registro canónico de parámetros geodésicos.</td>
+</tr>
+<tr class="even">
+<td><strong>EWKB</strong></td>
+<td>Binario extendido bien conocido</td>
+<td><em>Extended Well-Known Binary</em></td>
+<td>Serialización binaria de geometrías con SRID.</td>
+</tr>
+<tr class="odd">
+<td><strong>GiST</strong></td>
+<td>Árbol de búsqueda generalizado</td>
+<td><em>Generalized Search Tree</em></td>
+<td>Estructura de indexación para dominios no escalares.</td>
+</tr>
+<tr class="even">
+<td><strong>GQL</strong></td>
+<td>Lenguaje de consulta de grafos</td>
+<td><em>Graph Query Language</em></td>
+<td>Estándar formal ISO/IEC 39075 para bases de datos de grafos.</td>
+</tr>
+<tr class="odd">
+<td><strong>HNSW</strong></td>
+<td>Grafos jerárquicos navegables de mundo pequeño</td>
+<td><em>Hierarchical Navigable Small World</em></td>
+<td>Estructura de indexación y búsqueda aproximada de vectores.</td>
+</tr>
+<tr class="even">
+<td><strong>IGAC</strong></td>
+<td>Instituto Geográfico Agustín Codazzi</td>
+<td>—</td>
+<td>Autoridad cartográfica y geodésica de Colombia.</td>
+</tr>
+<tr class="odd">
+<td><strong>LSM</strong></td>
+<td>Árbol estructurado por fusión de registros</td>
+<td><em>Log-Structured Merge-tree</em></td>
+<td>Estructura de almacenamiento en motores de columnas anchas.</td>
+</tr>
+<tr class="even">
+<td><strong>MBR</strong></td>
+<td>Rectángulo delimitador mínimo</td>
+<td><em>Minimum Bounding Rectangle</em></td>
+<td>Aproximación ortogonal planar de geometrías vectoriales.</td>
+</tr>
+<tr class="odd">
+<td><strong>MVCC</strong></td>
+<td>Control de concurrencia multiversión</td>
+<td><em>Multi-Version Concurrency Control</em></td>
+<td>Aislamiento transaccional sin bloqueos de lectura.</td>
+</tr>
+<tr class="even">
+<td><strong>OGC</strong></td>
+<td>Consorcio geoespacial abierto</td>
+<td><em>Open Geospatial Consortium</em></td>
+<td>Organización de estandarización geoespacial internacional.</td>
+</tr>
+<tr class="odd">
+<td><strong>OLAP</strong></td>
+<td>Procesamiento analítico en línea</td>
+<td><em>Online Analytical Processing</em></td>
+<td>Cargas analíticas masivas y procesamiento columnar.</td>
+</tr>
+<tr class="even">
+<td><strong>OLTP</strong></td>
+<td>Procesamiento de transacciones en línea</td>
+<td><em>Online Transaction Processing</em></td>
+<td>Transaccionalidad de alta concurrencia orientada a filas.</td>
+</tr>
+<tr class="odd">
+<td><strong>ORDBMS</strong></td>
+<td>Sistema gestor de bases de datos objeto-relacional</td>
+<td><em>Object-Relational Database Management System</em></td>
+<td>Modelo que combina álgebra relacional y tipos abstractos.</td>
+</tr>
+<tr class="even">
+<td><strong>RBAC</strong></td>
+<td>Control de acceso basado en roles</td>
+<td><em>Role-Based Access Control</em></td>
+<td>Modelo de seguridad y asignación de privilegios en el motor.</td>
+</tr>
+<tr class="odd">
+<td><strong>SFS</strong></td>
+<td>Geometrías simples para SQL</td>
+<td><em>Simple Features for SQL</em></td>
+<td>Estándar OGC / ISO 19125 para tipos espaciales vectoriales.</td>
+</tr>
+<tr class="even">
+<td><strong>SGBD</strong></td>
+<td>Sistema gestor de bases de datos</td>
+<td><em>Database Management System</em> (DBMS)</td>
+<td>Infraestructura de software para administración de datos.</td>
+</tr>
+<tr class="odd">
+<td><strong>SGBD espacial</strong></td>
+<td>Sistema gestor de bases de datos espaciales</td>
+<td><em>Spatial Database Management System</em> (SDBMS)</td>
+<td>Motor relacional extendido para geometrías y topología.</td>
+</tr>
+<tr class="even">
+<td><strong>SIG</strong></td>
+<td>Sistema de información geográfica</td>
+<td><em>Geographic Information System</em> (GIS)</td>
+<td>Software para captura, edición y análisis cartográfico.</td>
+</tr>
+<tr class="odd">
+<td><strong>SIMD</strong></td>
+<td>Instrucción única, datos múltiples</td>
+<td><em>Single Instruction, Multiple Data</em></td>
+<td>Procesamiento vectorial a nivel de registros de la CPU.</td>
+</tr>
+<tr class="even">
+<td><strong>SQL</strong></td>
+<td>Lenguaje de consulta estructurado</td>
+<td><em>Structured Query Language</em></td>
+<td>Estándar declarativo relacional internacional.</td>
+</tr>
+<tr class="odd">
+<td><strong>SQL/PGQ</strong></td>
+<td>Consultas de grafos de propiedades en SQL</td>
+<td><em>SQL/Property Graph Queries</em></td>
+<td>Parte 16 del estándar ISO SQL:2023.</td>
+</tr>
+<tr class="even">
+<td><strong>SRID</strong></td>
+<td>Identificador del sistema de referencia espacial</td>
+<td><em>Spatial Reference Identifier</em></td>
+<td>Clave numérica para identificación unívoca de CRS.</td>
+</tr>
+<tr class="odd">
+<td><strong>SSI</strong></td>
+<td>Aislamiento de instantáneas serializables</td>
+<td><em>Serializable Snapshot Isolation</em></td>
+<td>Implementación de serializabilidad transaccional sin bloqueos.</td>
+</tr>
+<tr class="even">
+<td><strong>TOAST</strong></td>
+<td>Técnica de almacenamiento de atributos sobredimensionados</td>
+<td><em>The Oversized-Attribute Storage Technique</em></td>
+<td>Mecanismo de compresión y desborde de páginas en PostgreSQL.</td>
+</tr>
+<tr class="odd">
+<td><strong>WAL</strong></td>
+<td>Bitácora de registro previo</td>
+<td><em>Write-Ahead Logging</em></td>
+<td>Mecanismo de persistencia y durabilidad transaccional.</td>
+</tr>
+<tr class="even">
+<td><strong>WKB</strong></td>
+<td>Binario bien conocido</td>
+<td><em>Well-Known Binary</em></td>
+<td>Representación binaria estándar OGC para geometrías.</td>
+</tr>
+<tr class="odd">
+<td><strong>WKT</strong></td>
+<td>Texto bien conocido</td>
+<td><em>Well-Known Text</em></td>
+<td>Representación textual estándar OGC para geometrías y CRS.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="glosario-de-conceptos-técnicos" class="level2" data-number="H.2">
+<h2 data-number="H.2" class="anchored" data-anchor-id="glosario-de-conceptos-técnicos"><span class="header-section-number">H.2</span> Glosario de conceptos técnicos</h2>
+<ul>
+<li><p><strong>Arquitectura canónica</strong>: Modelo de referencia formal, teórico y universalmente aceptado en la literatura científica y los estándares internacionales para describir la estructura conceptual, la división de subsistemas y los principios operativos de una tecnología, con independencia de soluciones comerciales o implementaciones de código abierto particulares.</p></li>
+<li><p><strong>Atributo (o campo)</strong>: Unidad atómica nominada que define una característica, propiedad o dimensión de una entidad dentro de un dominio específico en el esquema relacional.</p></li>
+<li><p><strong>Atributo atómico frente a dato no atómico</strong>: En el diseño relacional formal, clasifica los valores según su capacidad de descomposición estructural:</p>
+<ul>
+<li><strong>Atributo atómico</strong>: Valor escalar indivisible que carece de subestructuras con significado independiente dentro del modelo de datos (requisito indispensable de la primera forma normal o 1NF). Ejemplos: un código numérico <code>srid</code>, una marca temporal o un identificador entero.</li>
+<li><strong>Dato no atómico</strong>: Estructura compuesta, multivaluada o jerárquica cuyos componentes internos pueden descomponerse, direccionarse o evaluarse de forma individual sin alterar la validez del objeto. Ejemplos: arreglos (<code>ARRAY</code>), objetos semiestructurados (<code>JSONB</code>), tipos compuestos o entidades geométricas (<code>geometry</code>), conformadas internamente por secuencias ordenadas de pares o tripletas de coordenadas (<span class="math inline">\(X, Y, Z, M\)</span>) y anillos topológicos.</li>
+</ul></li>
+<li><p><strong>Base de datos espacial (GeoDB)</strong>: Colección integrada y estructurada de datos geométricos, geodésicos y alfanuméricos persistidos bajo un esquema unificado, accesible de forma concurrente, con soporte de transaccionalidad ACID y gobernada por catálogos de referencia cartográfica.</p></li>
+<li><p><strong>Base de datos vectorial</strong>: Sistema gestor de persistencia e indexación diseñado para almacenar coordenadas de alta dimensionalidad (<em>embeddings</em> en <span class="math inline">\(\mathbb{R}^d\)</span>) y resolver consultas de afinidad mediante métricas formales de distancia (euclidiana, coseno o producto escalar) estructuradas sobre algoritmos de búsqueda aproximada de vecinos más cercanos (ANN).</p></li>
+<li><p><strong>Búsqueda por similitud semántica</strong>: Método de recuperación de información que evalúa la afinidad conceptual entre entidades no estructuradas proyectadas hacia un espacio métrico latente continuo mediante modelos de aprendizaje profundo, sustituyendo la coincidencia léxica exacta por cálculo de proximidad geométrica multidimensional.</p></li>
+<li><p><strong>Cartucho de datos (<em>cartridge</em>) o extensión</strong>: Paquete de software desacoplado que se acopla a las interfaces de extensibilidad de un motor objeto-relacional para dotarlo de soporte nativo hacia un dominio específico (por ejemplo, tipos espaciales, clases de operadores GiST y funciones OGC provistas por la extensión <code>postgis</code>), sin requerir modificaciones ni recompilación en el código fuente nuclear del gestor.</p></li>
+<li><p><strong>Codificador (<em>encoder</em>) y representación densa (<em>embedding</em>)</strong>:</p>
+<ul>
+<li><strong>Codificador (<em>encoder</em>)</strong>: Función de mapeo <span class="math inline">\(f: \mathcal{X} \to \mathbb{R}^d\)</span> implementada mediante una red neuronal profunda que transforma una entidad de entrada no estructurada desde un espacio disperso hacia un vector numérico denso en un espacio continuo de dimensión fija <span class="math inline">\(d\)</span>.</li>
+<li><strong>Representación densa (<em>embedding</em>)</strong>: Vector numérico resultante de la inferencia del codificador, donde la proximidad métrica relativa entre vectores condensa equivalencia o similitud semántica.</li>
+</ul></li>
+<li><p><strong>Código objeto</strong>: Es la traducción en lenguaje de máquina binario (archivos .o o .obj) generada por el compilador a partir del código fuente. Contiene instrucciones comprensibles por la CPU, pero aún no tiene enlazadas las librerías del sistema ni los controladores externos.</p></li>
+<li><p><strong>Código objeto ejecutable</strong>: Es el binario final compilado y enlazado (por ejemplo, un archivo binario ELF en Linux o un ejecutable .exe en Windows). El enlazador (linker) toma el código objeto de la aplicación y lo fusiona con las librerías de ejecución del cliente de base de datos (como libpq o las bibliotecas en tiempo de ejecución del SGBD).</p></li>
+<li><p><strong>Cómputo espacial distribuido en lagos de datos (<em>spatial lakehouse engine</em>)</strong>: Arquitectura analítica fundamentada en el desacoplamiento estricto entre el motor de ejecución y el sustrato de persistencia física, delegando el almacenamiento a formatos columnares abiertos (como GeoParquet o GeoArrow en repositorios de objetos) y el procesamiento algebraico a grafos acíclicos dirigidos (DAG) en la memoria volátil de un clúster. A diferencia de los SGBD relacionales —cuyo optimizador opera sobre páginas físicas locales y estructuras de indexación ligadas al disco (árboles GiST)—, este paradigma estructura la evaluación de consultas mediante <strong>particionamiento espacial multidimensional distribuido</strong> (<em>Quad-Tree</em>, <em>KDB-Tree</em> o <em>R-Tree</em> global), optimizando la distribución de teselas o entidades entre nodos de trabajo (<em>workers</em>) para mitigar el cuello de botella derivado de la transferencia masiva de datos por red (<em>data shuffling</em>).</p>
+<p>La articulación de este modelo dentro de la disciplina responde a la necesidad de superar los límites de escalabilidad vertical (<em>scale-up</em>) propios de las instancias objeto-relacionales cuando se procesan volúmenes masivos de datos geográficos (telemetría continua, mallas de sensores o coberturas continentales). Al implementar formalmente la especificación OGC <em>Simple Feature Access</em> mediante sintaxis <em>Spatial SQL</em> sobre estructuras paralelas (DataFrames distribuidos), este enfoque faculta la comparación metodológica entre la resolución de predicados topológicos (<code>ST_Intersects</code>, <code>ST_Within</code>, <code>ST_Buffer</code>) gobernada por un gestor transaccional centralizado frente a su cómputo particionado sobre memoria distribuida elástica.</p></li>
+<li><p><strong>Consistencia transaccional en sistemas distribuidos elásticos</strong>: Garantía formal de cumplimiento determinista de las propiedades ACID y equivalencia secuencial estricta (<em>serializability</em> o <em>linearizability</em>) sobre datos particionados y distribuidos en múltiples nodos del clúster. Se fundamenta en algoritmos de consenso formal (Raft o Multi-Paxos) para la persistencia por quórum en bitácoras no volátiles (WAL), protocolos de compromiso en dos fases (2PC) para transacciones multinodo y sincronización temporal coordinada (relojes lógicos híbridos o tiempo físico acotado), asegurando un estado global válido e inalterable durante eventos de particionamiento autónomo, migración de rangos y escalado horizontal.</p></li>
+<li><p><strong>Control de acceso basado en roles</strong> (Role-Based Access Control, RBAC): es un modelo de seguridad donde los privilegios sobre los recursos del sistema (conexión, lectura, escritura, ejecución de funciones o definición de esquemas) se asignan a entidades abstractas denominadas roles, y no de forma individual a cada cuenta de usuario. Los usuarios finales obtienen sus autorizaciones al ser vinculados como miembros de uno o varios roles predefinidos.</p></li>
+<li><p><strong>Ejecución vectorial (<em>vectorized execution</em>)</strong>: Paradigma de diseño del procesador de consultas en motores analíticos (OLAP) que sustituye el modelo iterador tupla a tupla por la evaluación de bloques homogéneos contiguos de valores de una misma columna en la memoria intermedia, permitiendo al compilador emitir instrucciones de hardware <strong>SIMD</strong> a nivel de registros de CPU.</p></li>
+<li><p><strong>Embeddings frente a análisis de componentes principales (PCA)</strong>: Enfoques de reducción de dimensionalidad orientados a proyectar entidades desde espacios de alta dimensionalidad (<span class="math inline">\(\mathbb{R}^D\)</span>) hacia subespacios densos y continuos de menor dimensión (<span class="math inline">\(\mathbb{R}^d\)</span>, con <span class="math inline">\(d \ll D\)</span>). Mientras que el análisis de componentes principales (PCA) constituye una transformación lineal y ortogonal determinista que maximiza la varianza global proyectada mediante descomposición espectral o en valores singulares (SVD), los <em>embeddings</em> representan un mapeo no lineal aprendido mediante redes neuronales profundas que preserva vecindades locales y relaciones semánticas sobre variedades topológicas complejas (<em>manifolds</em>).</p>
+<div id="tbl-comparacion-pca-embeddings" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-comparacion-pca-embeddings-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;H.2: Comparación técnica y matemática entre PCA y modelos de embeddings.
+</figcaption>
+<div aria-describedby="tbl-comparacion-pca-embeddings-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Dimensión analítica</th>
+<th>Análisis de componentes principales (PCA)</th>
+<th>Representaciones densas (<em>embeddings</em>)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Naturaleza del mapeo</strong></td>
+<td>Transformación estrictamente lineal y ortogonal.</td>
+<td>Mapeo continuo no lineal parametrizado por funciones de activación.</td>
+</tr>
+<tr class="even">
+<td><strong>Método de resolución</strong></td>
+<td>Determinista y cerrado (descomposición espectral de la matriz de covarianza o SVD).</td>
+<td>Iterativo y estocástico (optimización por descenso de gradiente sobre redes neuronales).</td>
+</tr>
+<tr class="odd">
+<td><strong>Criterio de optimización</strong></td>
+<td>Maximización de la varianza proyectada y minimización del error de reconstrucción cuadrático medio.</td>
+<td>Minimización de funciones de pérdida contrastivas, tripletas o de entropía cruzada.</td>
+</tr>
+<tr class="even">
+<td><strong>Estructura de las dimensiones</strong></td>
+<td>Ejes ortogonales ordenados jerárquicamente de forma decreciente según la varianza explicada.</td>
+<td>Dimensiones continuas no jerárquicas con semántica distribuida (la información reside en la dirección y distancia angular o métrica).</td>
+</tr>
+<tr class="odd">
+<td><strong>Captura de variedades (<em>manifolds</em>)</strong></td>
+<td>Proyecta sobre hiperplanos planos; no desenrolla curvaturas ni topologías no lineales en los datos.</td>
+<td>Modela geometrías intrincadas y relaciones de vecindad no euclidianas en el espacio latente.</td>
+</tr>
+<tr class="even">
+<td><strong>Supervisión y contexto</strong></td>
+<td>Técnica no supervisada orientada exclusivamente a la dispersión numérica de los datos de entrada.</td>
+<td>Aprendizaje autosupervisado o supervisado guiado por tareas específicas (coocurrencia, similitud semántica o grafos).</td>
+</tr>
+<tr class="odd">
+<td><strong>Ámbito operativo en SGBD</strong></td>
+<td>Compresión de variables, decorrelación previa y reducción de dimensionalidad tabular.</td>
+<td>Almacenamiento e indexación en bases de datos vectoriales mediante algoritmos ANN (HNSW, IVF-PQ) para búsqueda por proximidad semántica.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div></li>
+<li><p><strong>Encapsulamiento</strong> (modelo objeto-relacional o Tipo 3): es el principio que agrupa la estructura interna y física de un dato complejo junto con la lógica algorítmica que lo manipula, ocultando la representación física en disco (arreglos binarios, compensaciones de memoria o índices internos) y exponiendo exclusivamente una interfaz declarativa de funciones estandarizadas.</p>
+<p>En PostgreSQL y PostGIS, una columna de tipo <code>geometry</code> implementa este principio: el motor almacena internamente una estructura binaria de bajo nivel (<code>GSERIALIZED</code>) que integra coordenadas, dimensiones, caja envolvente (MBR) y SRID. El analista no accede a los <em>offsets</em> de bytes en disco, sino que opera el objeto a través de constructores y métodos conformes a los estándares OGC e ISO:</p></li>
+</ul>
+<pre class="{sql}"><code>--| label: ddl-encapsulamiento-tipo-geometry
+--| eval: false
+--| echo: true
+
+-- 1. Definición del tipo abstracto: la estructura física queda encapsulada
+CREATE TABLE public.zonas_reserva (
+    id serial PRIMARY KEY,
+    nombre varchar(50) NOT NULL,
+    geom geometry(Polygon, 9377) NOT NULL
+);
+
+-- 2. Manipulación mediante constructor formal OGC (oculta la codificación binaria)
+INSERT INTO public.zonas_reserva (nombre, geom)
+VALUES (
+    'Parque Ecológico',
+    ST_GeomFromText('POLYGON((5000000 2000000, 5001000 2000000, 5001000 2001000, 5000000 2001000, 5000000 2000000))', 9377)
+);
+
+-- 3. Invocación de métodos y predicados: evaluación sin deserialización manual
+SELECT 
+    nombre,
+    ST_Area(geom) AS area_m2,
+    ST_AsText(geom) AS wkt_serializado
+FROM public.zonas_reserva;
+</code></pre>
+<ul>
+<li><p><strong>Encoder (codificador frente a filtrado espacial clásico en teledetección)</strong>: Modelo de extracción y reducción dimensional que sustituye la convolución planar analítica por representaciones latentes profundas. Mientras que el procesamiento digital de imágenes (PDI) aplica núcleos invariantes estáticos (<span class="math inline">\(K\)</span>, ej. Sobel <span class="math inline">\(3 \times 3\)</span>) sobre una matriz monocanal (<span class="math inline">\(H \times W\)</span>) para generar un ráster derivado que preserva la correspondencia biyectiva celda a celda (<span class="math inline">\(H \times W \times 1\)</span>, persistido como GeoTIFF/COG para álgebra de mapas), un <em>encoder</em> procesa el tensor multiespectral continuo completo (<span class="math inline">\(H \times W \times B\)</span>). Mediante bancos convolucionales jerárquicos (<span class="math inline">\(W\)</span>) optimizados por retropropagación y acoplados a activaciones no lineales, el codificador contrae progresivamente la resolución topológica de la escena mientras expande la profundidad semántica de los canales (<span class="math inline">\(C_1 &lt; C_2 &lt; C_3\)</span>). Finalmente, suprime la grilla planar mediante agregación global (<em>Global Average Pooling</em>) para condensar la tesela en un único vector denso latente (<em>embedding</em> <span class="math inline">\(1 \times d\)</span>, <span class="math inline">\(\mathbf{z} \in \mathbb{R}^d\)</span>), estructurado para indexación métrica y recuperación por similitud (<span class="math inline">\(k\)</span>-NN mediante índices HNSW) en bases de datos vectoriales como PostgreSQL con <code>pgvector</code>.</p>
+<p>En la <a href="#fig-comparacion-pdi-encoders-dot" class="quarto-xref">Figura&nbsp;<span>H.1</span></a> se esquematiza el paralelo operativo entre la convolución analítica superficial de PDI y la transformación jerárquica profunda del codificador neuronal hacia el espacio latente.</p></li>
+</ul>
+<div class="diagrama-ancho">
+<div class="cell" data-fig-width="6.5" data-fig-height="9" data-out-width="100%" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-comparacion-pdi-encoders-dot" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-comparacion-pdi-encoders-dot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<svg width="624" height="864" viewbox="0.00 0.00 599.00 786.80" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 782.8)">
+<title>G</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-782.8 595,-782.8 595,4 -4,4"></polygon>
+<g id="clust1" class="cluster">
+<title>cluster_pdi</title>
+<path fill="#fffaf0" stroke="#dd6b20" stroke-dasharray="5,2" d="M20,-8C20,-8 247,-8 247,-8 253,-8 259,-14 259,-20 259,-20 259,-540.4 259,-540.4 259,-546.4 253,-552.4 247,-552.4 247,-552.4 20,-552.4 20,-552.4 14,-552.4 8,-546.4 8,-540.4 8,-540.4 8,-20 8,-20 8,-14 14,-8 20,-8"></path>
+<text text-anchor="middle" x="133.5" y="-538.5" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#c05621">1. Filtrado espacial clásico (PDI / Teledetección)</text>
+</g>
+<g id="clust2" class="cluster">
+<title>cluster_dl</title>
+<path fill="#f7fafc" stroke="#3182ce" stroke-dasharray="5,2" d="M279,-8C279,-8 571,-8 571,-8 577,-8 583,-14 583,-20 583,-20 583,-540.4 583,-540.4 583,-546.4 577,-552.4 571,-552.4 571,-552.4 279,-552.4 279,-552.4 273,-552.4 267,-546.4 267,-540.4 267,-540.4 267,-20 267,-20 267,-14 273,-8 279,-8"></path>
+<text text-anchor="middle" x="425" y="-538.5" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#2b6cb0">2. Codificador profundo y representaciones densas (Encoder)</text>
+</g>
+<!-- input_raster -->
+<g id="node1" class="node">
+<title>input_raster</title>
+<path fill="#ebf8ff" stroke="transparent" d="M123,-623.8C123,-623.8 427,-623.8 427,-623.8 433,-623.8 439,-629.8 439,-635.8 439,-635.8 439,-762.8 439,-762.8 439,-768.8 433,-774.8 427,-774.8 427,-774.8 123,-774.8 123,-774.8 117,-774.8 111,-768.8 111,-762.8 111,-762.8 111,-635.8 111,-635.8 111,-629.8 117,-623.8 123,-623.8"></path>
+<text text-anchor="start" x="148.29" y="-757.3" font-family="Helvetica,sans-Serif" font-size="10.00"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</text>
+<text text-anchor="start" x="203.86" y="-757.3" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.00">Tesela ráster multiespectral de entrada (I)</text>
+<text text-anchor="start" x="122.95" y="-747.3" font-family="Helvetica,sans-Serif" font-size="10.00"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</text>
+<text text-anchor="start" x="178.51" y="-747.3" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#4a5568">Tensor 3D continuo: H × W × B (5 × 5 celdas × B bandas)</text>
+<text text-anchor="start" x="382.6" y="-747.3" font-family="Helvetica,sans-Serif" font-size="10.00"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</text>
+<text text-anchor="start" x="139.82" y="-729.1" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="8.00" fill="#2b6cb0">Resolución planar (H × W: 5 × 5)</text>
+<text text-anchor="start" x="311.61" y="-729.1" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="8.00" fill="#2b6cb0">Profundidad espectral (B)</text>
+<polygon fill="#bee3f8" stroke="transparent" points="121,-702.3 121,-715.3 153,-715.3 153,-702.3 121,-702.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="121,-702.3 121,-715.3 153,-715.3 153,-702.3 121,-702.3"></polygon>
+<polygon fill="#bee3f8" stroke="transparent" points="153,-702.3 153,-715.3 185,-715.3 185,-702.3 153,-702.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="153,-702.3 153,-715.3 185,-715.3 185,-702.3 153,-702.3"></polygon>
+<polygon fill="#bee3f8" stroke="transparent" points="185,-702.3 185,-715.3 217,-715.3 217,-702.3 185,-702.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="185,-702.3 185,-715.3 217,-715.3 217,-702.3 185,-702.3"></polygon>
+<polygon fill="#bee3f8" stroke="transparent" points="217,-702.3 217,-715.3 249,-715.3 249,-702.3 217,-702.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="217,-702.3 217,-715.3 249,-715.3 249,-702.3 217,-702.3"></polygon>
+<polygon fill="#bee3f8" stroke="transparent" points="249,-702.3 249,-715.3 280,-715.3 280,-702.3 249,-702.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="249,-702.3 249,-715.3 280,-715.3 280,-702.3 249,-702.3"></polygon>
+<polygon fill="#bee3f8" stroke="transparent" points="121,-689.3 121,-702.3 153,-702.3 153,-689.3 121,-689.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="121,-689.3 121,-702.3 153,-702.3 153,-689.3 121,-689.3"></polygon>
+<polygon fill="#90cdf4" stroke="transparent" points="153,-689.3 153,-702.3 185,-702.3 185,-689.3 153,-689.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="153,-689.3 153,-702.3 185,-702.3 185,-689.3 153,-689.3"></polygon>
+<polygon fill="#90cdf4" stroke="transparent" points="185,-689.3 185,-702.3 217,-702.3 217,-689.3 185,-689.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="185,-689.3 185,-702.3 217,-702.3 217,-689.3 185,-689.3"></polygon>
+<polygon fill="#90cdf4" stroke="transparent" points="217,-689.3 217,-702.3 249,-702.3 249,-689.3 217,-689.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="217,-689.3 217,-702.3 249,-702.3 249,-689.3 217,-689.3"></polygon>
+<polygon fill="#bee3f8" stroke="transparent" points="249,-689.3 249,-702.3 280,-702.3 280,-689.3 249,-689.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="249,-689.3 249,-702.3 280,-702.3 280,-689.3 249,-689.3"></polygon>
+<polygon fill="#bee3f8" stroke="transparent" points="121,-676.3 121,-689.3 153,-689.3 153,-676.3 121,-676.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="121,-676.3 121,-689.3 153,-689.3 153,-676.3 121,-676.3"></polygon>
+<polygon fill="#90cdf4" stroke="transparent" points="153,-676.3 153,-689.3 185,-689.3 185,-676.3 153,-676.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="153,-676.3 153,-689.3 185,-689.3 185,-676.3 153,-676.3"></polygon>
+<polygon fill="#63b3ed" stroke="transparent" points="185,-676.3 185,-689.3 217,-689.3 217,-676.3 185,-676.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="185,-676.3 185,-689.3 217,-689.3 217,-676.3 185,-676.3"></polygon>
+<polygon fill="#90cdf4" stroke="transparent" points="217,-676.3 217,-689.3 249,-689.3 249,-676.3 217,-676.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="217,-676.3 217,-689.3 249,-689.3 249,-676.3 217,-676.3"></polygon>
+<polygon fill="#bee3f8" stroke="transparent" points="249,-676.3 249,-689.3 280,-689.3 280,-676.3 249,-676.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="249,-676.3 249,-689.3 280,-689.3 280,-676.3 249,-676.3"></polygon>
+<polygon fill="#bee3f8" stroke="transparent" points="121,-663.3 121,-676.3 153,-676.3 153,-663.3 121,-663.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="121,-663.3 121,-676.3 153,-676.3 153,-663.3 121,-663.3"></polygon>
+<polygon fill="#90cdf4" stroke="transparent" points="153,-663.3 153,-676.3 185,-676.3 185,-663.3 153,-663.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="153,-663.3 153,-676.3 185,-676.3 185,-663.3 153,-663.3"></polygon>
+<polygon fill="#90cdf4" stroke="transparent" points="185,-663.3 185,-676.3 217,-676.3 217,-663.3 185,-663.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="185,-663.3 185,-676.3 217,-676.3 217,-663.3 185,-663.3"></polygon>
+<polygon fill="#90cdf4" stroke="transparent" points="217,-663.3 217,-676.3 249,-676.3 249,-663.3 217,-663.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="217,-663.3 217,-676.3 249,-676.3 249,-663.3 217,-663.3"></polygon>
+<polygon fill="#bee3f8" stroke="transparent" points="249,-663.3 249,-676.3 280,-676.3 280,-663.3 249,-663.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="249,-663.3 249,-676.3 280,-676.3 280,-663.3 249,-663.3"></polygon>
+<polygon fill="#bee3f8" stroke="transparent" points="121,-651.3 121,-663.3 153,-663.3 153,-651.3 121,-651.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="121,-651.3 121,-663.3 153,-663.3 153,-651.3 121,-651.3"></polygon>
+<polygon fill="#bee3f8" stroke="transparent" points="153,-651.3 153,-663.3 185,-663.3 185,-651.3 153,-651.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="153,-651.3 153,-663.3 185,-663.3 185,-651.3 153,-651.3"></polygon>
+<polygon fill="#bee3f8" stroke="transparent" points="185,-651.3 185,-663.3 217,-663.3 217,-651.3 185,-651.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="185,-651.3 185,-663.3 217,-663.3 217,-651.3 185,-651.3"></polygon>
+<polygon fill="#bee3f8" stroke="transparent" points="217,-651.3 217,-663.3 249,-663.3 249,-651.3 217,-651.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="217,-651.3 217,-663.3 249,-663.3 249,-651.3 217,-651.3"></polygon>
+<polygon fill="#bee3f8" stroke="transparent" points="249,-651.3 249,-663.3 280,-663.3 280,-651.3 249,-651.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="249,-651.3 249,-663.3 280,-663.3 280,-651.3 249,-651.3"></polygon>
+<polygon fill="none" stroke="#3182ce" points="120,-650.3 120,-716.3 281,-716.3 281,-650.3 120,-650.3"></polygon>
+<polygon fill="#63b3ed" stroke="transparent" points="293,-700.3 293,-714.3 428,-714.3 428,-700.3 293,-700.3"></polygon>
+<polygon fill="none" stroke="#4a5568" points="293,-700.3 293,-714.3 428,-714.3 428,-700.3 293,-700.3"></polygon>
+<text text-anchor="start" x="336.19" y="-706" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="7.00" fill="WHITE">Banda 1 (Azul)</text>
+<polygon fill="#48bb78" stroke="transparent" points="293,-684.3 293,-698.3 428,-698.3 428,-684.3 293,-684.3"></polygon>
+<polygon fill="none" stroke="#4a5568" points="293,-684.3 293,-698.3 428,-698.3 428,-684.3 293,-684.3"></polygon>
+<text text-anchor="start" x="324.91" y="-690" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="7.00" fill="WHITE">Banda 2 (Verde / NIR)</text>
+<polygon fill="#cbd5e0" stroke="transparent" points="293,-668.3 293,-682.3 428,-682.3 428,-668.3 293,-668.3"></polygon>
+<polygon fill="none" stroke="#4a5568" points="293,-668.3 293,-682.3 428,-682.3 428,-668.3 293,-668.3"></polygon>
+<text text-anchor="start" x="357.58" y="-673" font-family="Helvetica,sans-Serif" font-size="7.00" fill="#718096">...</text>
+<polygon fill="#4a5568" stroke="transparent" points="293,-652.3 293,-666.3 428,-666.3 428,-652.3 293,-652.3"></polygon>
+<polygon fill="none" stroke="#4a5568" points="293,-652.3 293,-666.3 428,-666.3 428,-652.3 293,-652.3"></polygon>
+<text text-anchor="start" x="333.86" y="-658" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="7.00" fill="WHITE">Banda B (SWIR)</text>
+<text text-anchor="start" x="155.17" y="-634" font-family="Helvetica,sans-Serif" font-size="7.00" fill="#718096">Coordenadas espaciales (i, j)</text>
+<text text-anchor="start" x="325.68" y="-634" font-family="Helvetica,sans-Serif" font-size="7.00" fill="#718096">Canales radiométricos</text>
+<path fill="none" stroke="#2b6cb0" d="M123,-623.8C123,-623.8 427,-623.8 427,-623.8 433,-623.8 439,-629.8 439,-635.8 439,-635.8 439,-762.8 439,-762.8 439,-768.8 433,-774.8 427,-774.8 427,-774.8 123,-774.8 123,-774.8 117,-774.8 111,-768.8 111,-762.8 111,-762.8 111,-635.8 111,-635.8 111,-629.8 117,-623.8 123,-623.8"></path>
+</g>
+<!-- kernel -->
+<g id="node2" class="node">
+<title>kernel</title>
+<path fill="#feebc8" stroke="transparent" d="M69.5,-419.2C69.5,-419.2 194.5,-419.2 194.5,-419.2 200.5,-419.2 206.5,-425.2 206.5,-431.2 206.5,-431.2 206.5,-507.2 206.5,-507.2 206.5,-513.2 200.5,-519.2 194.5,-519.2 194.5,-519.2 69.5,-519.2 69.5,-519.2 63.5,-519.2 57.5,-513.2 57.5,-507.2 57.5,-507.2 57.5,-431.2 57.5,-431.2 57.5,-425.2 63.5,-419.2 69.5,-419.2"></path>
+<text text-anchor="start" x="64.43" y="-508.2" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.00">Núcleo estático analítico (K)</text>
+<text text-anchor="start" x="60.69" y="-500" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#7b341e">Operador diferencial fijo 3 × 3 (ej. Sobel)</text>
+<polygon fill="#ffffff" stroke="transparent" points="63,-474.2 63,-492.2 109,-492.2 109,-474.2 63,-474.2"></polygon>
+<polygon fill="none" stroke="#c05621" points="63,-474.2 63,-492.2 109,-492.2 109,-474.2 63,-474.2"></polygon>
+<text text-anchor="start" x="81.55" y="-480.2" font-family="Helvetica,sans-Serif" font-size="10.00">-1</text>
+<polygon fill="#ffffff" stroke="transparent" points="110,-474.2 110,-492.2 156,-492.2 156,-474.2 110,-474.2"></polygon>
+<polygon fill="none" stroke="#c05621" points="110,-474.2 110,-492.2 156,-492.2 156,-474.2 110,-474.2"></polygon>
+<text text-anchor="start" x="130.22" y="-480.2" font-family="Helvetica,sans-Serif" font-size="10.00">0</text>
+<polygon fill="#ffffff" stroke="transparent" points="157,-474.2 157,-492.2 202,-492.2 202,-474.2 157,-474.2"></polygon>
+<polygon fill="none" stroke="#c05621" points="157,-474.2 157,-492.2 202,-492.2 202,-474.2 157,-474.2"></polygon>
+<text text-anchor="start" x="173.8" y="-480.2" font-family="Helvetica,sans-Serif" font-size="10.00">+1</text>
+<polygon fill="#ffffff" stroke="transparent" points="63,-455.2 63,-473.2 109,-473.2 109,-455.2 63,-455.2"></polygon>
+<polygon fill="none" stroke="#c05621" points="63,-455.2 63,-473.2 109,-473.2 109,-455.2 63,-455.2"></polygon>
+<text text-anchor="start" x="81.55" y="-461.2" font-family="Helvetica,sans-Serif" font-size="10.00">-2</text>
+<polygon fill="#ffffff" stroke="transparent" points="110,-455.2 110,-473.2 156,-473.2 156,-455.2 110,-455.2"></polygon>
+<polygon fill="none" stroke="#c05621" points="110,-455.2 110,-473.2 156,-473.2 156,-455.2 110,-455.2"></polygon>
+<text text-anchor="start" x="130.22" y="-461.2" font-family="Helvetica,sans-Serif" font-size="10.00">0</text>
+<polygon fill="#ffffff" stroke="transparent" points="157,-455.2 157,-473.2 202,-473.2 202,-455.2 157,-455.2"></polygon>
+<polygon fill="none" stroke="#c05621" points="157,-455.2 157,-473.2 202,-473.2 202,-455.2 157,-455.2"></polygon>
+<text text-anchor="start" x="173.8" y="-461.2" font-family="Helvetica,sans-Serif" font-size="10.00">+2</text>
+<polygon fill="#ffffff" stroke="transparent" points="63,-436.2 63,-454.2 109,-454.2 109,-436.2 63,-436.2"></polygon>
+<polygon fill="none" stroke="#c05621" points="63,-436.2 63,-454.2 109,-454.2 109,-436.2 63,-436.2"></polygon>
+<text text-anchor="start" x="81.55" y="-442.2" font-family="Helvetica,sans-Serif" font-size="10.00">-1</text>
+<polygon fill="#ffffff" stroke="transparent" points="110,-436.2 110,-454.2 156,-454.2 156,-436.2 110,-436.2"></polygon>
+<polygon fill="none" stroke="#c05621" points="110,-436.2 110,-454.2 156,-454.2 156,-436.2 110,-436.2"></polygon>
+<text text-anchor="start" x="130.22" y="-442.2" font-family="Helvetica,sans-Serif" font-size="10.00">0</text>
+<polygon fill="#ffffff" stroke="transparent" points="157,-436.2 157,-454.2 202,-454.2 202,-436.2 157,-436.2"></polygon>
+<polygon fill="none" stroke="#c05621" points="157,-436.2 157,-454.2 202,-454.2 202,-436.2 157,-436.2"></polygon>
+<text text-anchor="start" x="173.8" y="-442.2" font-family="Helvetica,sans-Serif" font-size="10.00">+1</text>
+<polygon fill="none" stroke="#c05621" points="61,-434.2 61,-494.2 204,-494.2 204,-434.2 61,-434.2"></polygon>
+<text text-anchor="start" x="69.47" y="-423.9" font-family="Helvetica,sans-Serif" font-size="7.00" fill="#7b341e">Coeficientes invariantes sin optimización</text>
+<path fill="none" stroke="#dd6b20" d="M69.5,-419.2C69.5,-419.2 194.5,-419.2 194.5,-419.2 200.5,-419.2 206.5,-425.2 206.5,-431.2 206.5,-431.2 206.5,-507.2 206.5,-507.2 206.5,-513.2 200.5,-519.2 194.5,-519.2 194.5,-519.2 69.5,-519.2 69.5,-519.2 63.5,-519.2 57.5,-513.2 57.5,-507.2 57.5,-507.2 57.5,-431.2 57.5,-431.2 57.5,-425.2 63.5,-419.2 69.5,-419.2"></path>
+</g>
+<!-- input_raster&#45;&gt;kernel -->
+<g id="edge1" class="edge">
+<title>input_raster-&gt;kernel</title>
+<path fill="none" stroke="#4a5568" stroke-width="1.2" d="M158.75,-619.79C158.75,-619.79 158.75,-533.38 158.75,-533.38"></path>
+<polygon fill="#4a5568" stroke="#4a5568" stroke-width="1.2" points="162.25,-533.38 158.75,-523.38 155.25,-533.38 162.25,-533.38"></polygon>
+<text text-anchor="middle" x="243.52" y="-579.3" font-family="Helvetica,sans-Serif" font-size="9.00"> Extracción monocanal</text>
+<text text-anchor="middle" x="243.52" y="-568.5" font-family="Helvetica,sans-Serif" font-size="9.00"> (Matriz 2D: 5 × 5)</text>
+</g>
+<!-- pyramid -->
+<g id="node6" class="node">
+<title>pyramid</title>
+<path fill="#ebf8ff" stroke="transparent" d="M295.5,-419.2C295.5,-419.2 536.5,-419.2 536.5,-419.2 542.5,-419.2 548.5,-425.2 548.5,-431.2 548.5,-431.2 548.5,-507.2 548.5,-507.2 548.5,-513.2 542.5,-519.2 536.5,-519.2 536.5,-519.2 295.5,-519.2 295.5,-519.2 289.5,-519.2 283.5,-513.2 283.5,-507.2 283.5,-507.2 283.5,-431.2 283.5,-431.2 283.5,-425.2 289.5,-419.2 295.5,-419.2"></path>
+<text text-anchor="start" x="291.47" y="-508.2" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.00">Bancos convolucionales multiescala jerárquicos (W)</text>
+<text text-anchor="start" x="287" y="-500" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#2b6cb0">W optimizados vía retropropagación + activación no lineal (ReLU/GELU)</text>
+<polygon fill="#bee3f8" stroke="transparent" points="289,-475.2 289,-492.2 544,-492.2 544,-475.2 289,-475.2"></polygon>
+<polygon fill="none" stroke="#3182ce" points="289,-475.2 289,-492.2 544,-492.2 544,-475.2 289,-475.2"></polygon>
+<text text-anchor="start" x="304.25" y="-482" font-family="Helvetica,sans-Serif" font-size="8.00">[H/2 × W/2 × C</text>
+<text text-anchor="start" x="356.7" y="-482" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="8.00">1</text>
+<text text-anchor="start" x="361.15" y="-482" font-family="Helvetica,sans-Serif" font-size="8.00">] - Primitivas locales (bordes / texturas simples)</text>
+<polygon fill="#90cdf4" stroke="transparent" points="289,-456.2 289,-473.2 544,-473.2 544,-456.2 289,-456.2"></polygon>
+<polygon fill="none" stroke="#3182ce" points="289,-456.2 289,-473.2 544,-473.2 544,-456.2 289,-456.2"></polygon>
+<text text-anchor="start" x="305.35" y="-463" font-family="Helvetica,sans-Serif" font-size="8.00">[H/4 × W/4 × C</text>
+<text text-anchor="start" x="357.8" y="-463" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="8.00">2</text>
+<text text-anchor="start" x="362.25" y="-463" font-family="Helvetica,sans-Serif" font-size="8.00">] - Patrones espaciales y motivos estructurales</text>
+<polygon fill="#63b3ed" stroke="transparent" points="289,-437.2 289,-454.2 544,-454.2 544,-437.2 289,-437.2"></polygon>
+<polygon fill="none" stroke="#3182ce" points="289,-437.2 289,-454.2 544,-454.2 544,-437.2 289,-437.2"></polygon>
+<text text-anchor="start" x="317.57" y="-444" font-family="Helvetica,sans-Serif" font-size="8.00">[H/8 × W/8 × C</text>
+<text text-anchor="start" x="370.02" y="-444" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="8.00">3</text>
+<text text-anchor="start" x="374.47" y="-444" font-family="Helvetica,sans-Serif" font-size="8.00">] - Semántica y contexto espacial global</text>
+<text text-anchor="start" x="292.67" y="-425" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#2b6cb0">Contracción topológica (H/8) vs. expansión semántica (C</text>
+<text text-anchor="start" x="494.53" y="-425" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="8.00" fill="#2b6cb0">1</text>
+<text text-anchor="start" x="498.98" y="-425" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#2b6cb0"> &lt; C</text>
+<text text-anchor="start" x="513.87" y="-425" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="8.00" fill="#2b6cb0">2</text>
+<text text-anchor="start" x="518.32" y="-425" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#2b6cb0"> &lt; C</text>
+<text text-anchor="start" x="533.21" y="-425" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="8.00" fill="#2b6cb0">3</text>
+<text text-anchor="start" x="537.66" y="-425" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#2b6cb0">)</text>
+<path fill="none" stroke="#3182ce" d="M295.5,-419.2C295.5,-419.2 536.5,-419.2 536.5,-419.2 542.5,-419.2 548.5,-425.2 548.5,-431.2 548.5,-431.2 548.5,-507.2 548.5,-507.2 548.5,-513.2 542.5,-519.2 536.5,-519.2 536.5,-519.2 295.5,-519.2 295.5,-519.2 289.5,-519.2 283.5,-513.2 283.5,-507.2 283.5,-507.2 283.5,-431.2 283.5,-431.2 283.5,-425.2 289.5,-419.2 295.5,-419.2"></path>
+</g>
+<!-- input_raster&#45;&gt;pyramid -->
+<g id="edge2" class="edge">
+<title>input_raster-&gt;pyramid</title>
+<path fill="none" stroke="#4a5568" stroke-width="1.2" d="M361.25,-619.79C361.25,-619.79 361.25,-533.38 361.25,-533.38"></path>
+<polygon fill="#4a5568" stroke="#4a5568" stroke-width="1.2" points="364.75,-533.38 361.25,-523.38 357.75,-533.38 364.75,-533.38"></polygon>
+<text text-anchor="middle" x="461.04" y="-584.7" font-family="Helvetica,sans-Serif" font-size="9.00"> Ingesta tensorial completa (5 × 5 × B)</text>
+<text text-anchor="middle" x="461.04" y="-573.9" font-family="Helvetica,sans-Serif" font-size="9.00"> Optimización de pesos W vía</text>
+<text text-anchor="middle" x="461.04" y="-563.1" font-family="Helvetica,sans-Serif" font-size="9.00"> retropropagación del gradiente</text>
+</g>
+<!-- conv_op -->
+<g id="node3" class="node">
+<title>conv_op</title>
+<path fill="#ffffff" stroke="transparent" d="M51.17,-303.6C51.17,-303.6 188.83,-303.6 188.83,-303.6 194.17,-303.6 199.5,-308.93 199.5,-314.27 199.5,-314.27 199.5,-324.93 199.5,-324.93 199.5,-330.27 194.17,-335.6 188.83,-335.6 188.83,-335.6 51.17,-335.6 51.17,-335.6 45.83,-335.6 40.5,-330.27 40.5,-324.93 40.5,-324.93 40.5,-314.27 40.5,-314.27 40.5,-308.93 45.83,-303.6 51.17,-303.6"></path>
+<text text-anchor="start" x="53.27" y="-324.6" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.00">Convolución 2D homogénea</text>
+<text text-anchor="start" x="68.61" y="-316.4" font-family="Helvetica,sans-Serif" font-size="8.00">S(i, j) = ∑∑ I(i-m, j-n) K(m, n)</text>
+<text text-anchor="start" x="43.79" y="-308.4" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#7b341e">Desplazamiento planar sobre ventana local</text>
+<path fill="none" stroke="#dd6b20" d="M51.17,-303.6C51.17,-303.6 188.83,-303.6 188.83,-303.6 194.17,-303.6 199.5,-308.93 199.5,-314.27 199.5,-314.27 199.5,-324.93 199.5,-324.93 199.5,-330.27 194.17,-335.6 188.83,-335.6 188.83,-335.6 51.17,-335.6 51.17,-335.6 45.83,-335.6 40.5,-330.27 40.5,-324.93 40.5,-324.93 40.5,-314.27 40.5,-314.27 40.5,-308.93 45.83,-303.6 51.17,-303.6"></path>
+</g>
+<!-- kernel&#45;&gt;conv_op -->
+<g id="edge3" class="edge">
+<title>kernel-&gt;conv_op</title>
+<path fill="none" stroke="#4a5568" stroke-width="1.2" d="M128.5,-415.19C128.5,-415.19 128.5,-349.64 128.5,-349.64"></path>
+<polygon fill="#4a5568" stroke="#4a5568" stroke-width="1.2" points="132,-349.64 128.5,-339.64 125,-349.64 132,-349.64"></polygon>
+</g>
+<!-- raster_out -->
+<g id="node4" class="node">
+<title>raster_out</title>
+<path fill="#feebc8" stroke="transparent" d="M41,-117C41,-117 199,-117 199,-117 205,-117 211,-123 211,-129 211,-129 211,-208 211,-208 211,-214 205,-220 199,-220 199,-220 41,-220 41,-220 35,-220 29,-214 29,-208 29,-208 29,-129 29,-129 29,-123 35,-117 41,-117"></path>
+<text text-anchor="start" x="61.66" y="-208.5" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.00">Ráster filtrado planar (S)</text>
+<text text-anchor="start" x="31.52" y="-200.3" font-family="Helvetica,sans-Serif" font-size="8.00">Dimensión espacial preservada: H × W × 1 (5 × 5)</text>
+<polygon fill="#fbd38d" stroke="transparent" points="33,-181.5 33,-193.5 68,-193.5 68,-181.5 33,-181.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="33,-181.5 33,-193.5 68,-193.5 68,-181.5 33,-181.5"></polygon>
+<polygon fill="#fbd38d" stroke="transparent" points="68,-181.5 68,-193.5 103,-193.5 103,-181.5 68,-181.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="68,-181.5 68,-193.5 103,-193.5 103,-181.5 68,-181.5"></polygon>
+<polygon fill="#ed8936" stroke="transparent" points="103,-181.5 103,-193.5 138,-193.5 138,-181.5 103,-181.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="103,-181.5 103,-193.5 138,-193.5 138,-181.5 103,-181.5"></polygon>
+<polygon fill="#fbd38d" stroke="transparent" points="138,-181.5 138,-193.5 173,-193.5 173,-181.5 138,-181.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="138,-181.5 138,-193.5 173,-193.5 173,-181.5 138,-181.5"></polygon>
+<polygon fill="#fbd38d" stroke="transparent" points="173,-181.5 173,-193.5 207,-193.5 207,-181.5 173,-181.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="173,-181.5 173,-193.5 207,-193.5 207,-181.5 173,-181.5"></polygon>
+<polygon fill="#fbd38d" stroke="transparent" points="33,-169.5 33,-181.5 68,-181.5 68,-169.5 33,-169.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="33,-169.5 33,-181.5 68,-181.5 68,-169.5 33,-169.5"></polygon>
+<polygon fill="#fbd38d" stroke="transparent" points="68,-169.5 68,-181.5 103,-181.5 103,-169.5 68,-169.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="68,-169.5 68,-181.5 103,-181.5 103,-169.5 68,-169.5"></polygon>
+<polygon fill="#dd6b20" stroke="transparent" points="103,-169.5 103,-181.5 138,-181.5 138,-169.5 103,-169.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="103,-169.5 103,-181.5 138,-181.5 138,-169.5 103,-169.5"></polygon>
+<polygon fill="#fbd38d" stroke="transparent" points="138,-169.5 138,-181.5 173,-181.5 173,-169.5 138,-169.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="138,-169.5 138,-181.5 173,-181.5 173,-169.5 138,-169.5"></polygon>
+<polygon fill="#fbd38d" stroke="transparent" points="173,-169.5 173,-181.5 207,-181.5 207,-169.5 173,-169.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="173,-169.5 173,-181.5 207,-181.5 207,-169.5 173,-169.5"></polygon>
+<polygon fill="#fbd38d" stroke="transparent" points="33,-157.5 33,-169.5 68,-169.5 68,-157.5 33,-157.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="33,-157.5 33,-169.5 68,-169.5 68,-157.5 33,-157.5"></polygon>
+<polygon fill="#fbd38d" stroke="transparent" points="68,-157.5 68,-169.5 103,-169.5 103,-157.5 68,-157.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="68,-157.5 68,-169.5 103,-169.5 103,-157.5 68,-157.5"></polygon>
+<polygon fill="#c05621" stroke="transparent" points="103,-157.5 103,-169.5 138,-169.5 138,-157.5 103,-157.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="103,-157.5 103,-169.5 138,-169.5 138,-157.5 103,-157.5"></polygon>
+<polygon fill="#fbd38d" stroke="transparent" points="138,-157.5 138,-169.5 173,-169.5 173,-157.5 138,-157.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="138,-157.5 138,-169.5 173,-169.5 173,-157.5 138,-157.5"></polygon>
+<polygon fill="#fbd38d" stroke="transparent" points="173,-157.5 173,-169.5 207,-169.5 207,-157.5 173,-157.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="173,-157.5 173,-169.5 207,-169.5 207,-157.5 173,-157.5"></polygon>
+<polygon fill="#fbd38d" stroke="transparent" points="33,-145.5 33,-157.5 68,-157.5 68,-145.5 33,-145.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="33,-145.5 33,-157.5 68,-157.5 68,-145.5 33,-145.5"></polygon>
+<polygon fill="#fbd38d" stroke="transparent" points="68,-145.5 68,-157.5 103,-157.5 103,-145.5 68,-145.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="68,-145.5 68,-157.5 103,-157.5 103,-145.5 68,-145.5"></polygon>
+<polygon fill="#dd6b20" stroke="transparent" points="103,-145.5 103,-157.5 138,-157.5 138,-145.5 103,-145.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="103,-145.5 103,-157.5 138,-157.5 138,-145.5 103,-145.5"></polygon>
+<polygon fill="#fbd38d" stroke="transparent" points="138,-145.5 138,-157.5 173,-157.5 173,-145.5 138,-145.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="138,-145.5 138,-157.5 173,-157.5 173,-145.5 138,-145.5"></polygon>
+<polygon fill="#fbd38d" stroke="transparent" points="173,-145.5 173,-157.5 207,-157.5 207,-145.5 173,-145.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="173,-145.5 173,-157.5 207,-157.5 207,-145.5 173,-145.5"></polygon>
+<polygon fill="#fbd38d" stroke="transparent" points="33,-133.5 33,-145.5 68,-145.5 68,-133.5 33,-133.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="33,-133.5 33,-145.5 68,-145.5 68,-133.5 33,-133.5"></polygon>
+<polygon fill="#fbd38d" stroke="transparent" points="68,-133.5 68,-145.5 103,-145.5 103,-133.5 68,-133.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="68,-133.5 68,-145.5 103,-145.5 103,-133.5 68,-133.5"></polygon>
+<polygon fill="#ed8936" stroke="transparent" points="103,-133.5 103,-145.5 138,-145.5 138,-133.5 103,-133.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="103,-133.5 103,-145.5 138,-145.5 138,-133.5 103,-133.5"></polygon>
+<polygon fill="#fbd38d" stroke="transparent" points="138,-133.5 138,-145.5 173,-145.5 173,-133.5 138,-133.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="138,-133.5 138,-145.5 173,-145.5 173,-133.5 138,-133.5"></polygon>
+<polygon fill="#fbd38d" stroke="transparent" points="173,-133.5 173,-145.5 207,-145.5 207,-133.5 173,-133.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="173,-133.5 173,-145.5 207,-145.5 207,-133.5 173,-133.5"></polygon>
+<polygon fill="none" stroke="#dd6b20" points="32,-132.5 32,-194.5 208,-194.5 208,-132.5 32,-132.5"></polygon>
+<text text-anchor="start" x="48.18" y="-121.3" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#7b341e">Correspondencia biyectiva celda a celda</text>
+<path fill="none" stroke="#dd6b20" d="M41,-117C41,-117 199,-117 199,-117 205,-117 211,-123 211,-129 211,-129 211,-208 211,-208 211,-214 205,-220 199,-220 199,-220 41,-220 41,-220 35,-220 29,-214 29,-208 29,-208 29,-129 29,-129 29,-123 35,-117 41,-117"></path>
+</g>
+<!-- conv_op&#45;&gt;raster_out -->
+<g id="edge4" class="edge">
+<title>conv_op-&gt;raster_out</title>
+<path fill="none" stroke="#4a5568" stroke-width="1.2" d="M120,-299.54C120,-299.54 120,-234.17 120,-234.17"></path>
+<polygon fill="#4a5568" stroke="#4a5568" stroke-width="1.2" points="123.5,-234.17 120,-224.17 116.5,-234.17 123.5,-234.17"></polygon>
+<text text-anchor="middle" x="182.99" y="-264.5" font-family="Helvetica,sans-Serif" font-size="9.00"> Deslizamiento de ventana</text>
+<text text-anchor="middle" x="182.99" y="-253.7" font-family="Helvetica,sans-Serif" font-size="9.00"> (Padding: H' = H = 5, W' = W = 5)</text>
+</g>
+<!-- storage_pdi -->
+<g id="node5" class="node">
+<title>storage_pdi</title>
+<path fill="#ffffff" stroke="transparent" d="M35.83,-20C35.83,-20 216.17,-20 216.17,-20 221.83,-20 227.5,-25.67 227.5,-31.33 227.5,-31.33 227.5,-42.67 227.5,-42.67 227.5,-48.33 221.83,-54 216.17,-54 216.17,-54 35.83,-54 35.83,-54 30.17,-54 24.5,-48.33 24.5,-42.67 24.5,-42.67 24.5,-31.33 24.5,-31.33 24.5,-25.67 30.17,-20 35.83,-20"></path>
+<text text-anchor="start" x="52.86" y="-43" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.00">Persistencia matricial continua</text>
+<text text-anchor="start" x="27.87" y="-33" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#4a5568">GeoTIFF / Cloud Optimized GeoTIFF (COG)</text>
+<text text-anchor="start" x="35.57" y="-24.8" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#7b341e">Uso: Visualización cartográfica y álgebra de mapas</text>
+<path fill="none" stroke="#c05621" d="M35.83,-20C35.83,-20 216.17,-20 216.17,-20 221.83,-20 227.5,-25.67 227.5,-31.33 227.5,-31.33 227.5,-42.67 227.5,-42.67 227.5,-48.33 221.83,-54 216.17,-54 216.17,-54 35.83,-54 35.83,-54 30.17,-54 24.5,-48.33 24.5,-42.67 24.5,-42.67 24.5,-31.33 24.5,-31.33 24.5,-25.67 30.17,-20 35.83,-20"></path>
+</g>
+<!-- raster_out&#45;&gt;storage_pdi -->
+<g id="edge5" class="edge">
+<title>raster_out-&gt;storage_pdi</title>
+<path fill="none" stroke="#4a5568" stroke-width="1.2" d="M120,-112.73C120,-112.73 120,-68.12 120,-68.12"></path>
+<polygon fill="#4a5568" stroke="#4a5568" stroke-width="1.2" points="123.5,-68.12 120,-58.12 116.5,-68.12 123.5,-68.12"></polygon>
+</g>
+<!-- pooling -->
+<g id="node7" class="node">
+<title>pooling</title>
+<path fill="#ffffff" stroke="transparent" d="M310.17,-303.6C310.17,-303.6 521.83,-303.6 521.83,-303.6 527.17,-303.6 532.5,-308.93 532.5,-314.27 532.5,-314.27 532.5,-324.93 532.5,-324.93 532.5,-330.27 527.17,-335.6 521.83,-335.6 521.83,-335.6 310.17,-335.6 310.17,-335.6 304.83,-335.6 299.5,-330.27 299.5,-324.93 299.5,-324.93 299.5,-314.27 299.5,-314.27 299.5,-308.93 304.83,-303.6 310.17,-303.6"></path>
+<text text-anchor="start" x="302.86" y="-324.6" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.00">Colapso espacial final (Global Average Pooling)</text>
+<text text-anchor="start" x="312.89" y="-316.4" font-family="Helvetica,sans-Serif" font-size="8.00">Promedia dimensiones espaciales suprimiendo la grilla 2D</text>
+<text text-anchor="start" x="326.14" y="-308.4" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#2b6cb0">[H</text>
+<text text-anchor="start" x="334.14" y="-308.4" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="8.00" fill="#2b6cb0">f</text>
+<text text-anchor="start" x="336.37" y="-308.4" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#2b6cb0"> × W</text>
+<text text-anchor="start" x="352.81" y="-308.4" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="8.00" fill="#2b6cb0">f</text>
+<text text-anchor="start" x="355.03" y="-308.4" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#2b6cb0"> × C</text>
+<text text-anchor="start" x="369.7" y="-308.4" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="8.00" fill="#2b6cb0">f</text>
+<text text-anchor="start" x="371.92" y="-308.4" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#2b6cb0">] = [H/8 × W/8 × C</text>
+<text text-anchor="start" x="435.71" y="-308.4" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="8.00" fill="#2b6cb0">3</text>
+<text text-anchor="start" x="440.16" y="-308.4" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#2b6cb0">] → Vector [1 × C</text>
+<text text-anchor="start" x="500.18" y="-308.4" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="8.00" fill="#2b6cb0">3</text>
+<text text-anchor="start" x="504.63" y="-308.4" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#2b6cb0">]</text>
+<path fill="none" stroke="#3182ce" d="M310.17,-303.6C310.17,-303.6 521.83,-303.6 521.83,-303.6 527.17,-303.6 532.5,-308.93 532.5,-314.27 532.5,-314.27 532.5,-324.93 532.5,-324.93 532.5,-330.27 527.17,-335.6 521.83,-335.6 521.83,-335.6 310.17,-335.6 310.17,-335.6 304.83,-335.6 299.5,-330.27 299.5,-324.93 299.5,-324.93 299.5,-314.27 299.5,-314.27 299.5,-308.93 304.83,-303.6 310.17,-303.6"></path>
+</g>
+<!-- pyramid&#45;&gt;pooling -->
+<g id="edge6" class="edge">
+<title>pyramid-&gt;pooling</title>
+<path fill="none" stroke="#4a5568" stroke-width="1.2" d="M416,-415.19C416,-415.19 416,-349.64 416,-349.64"></path>
+<polygon fill="#4a5568" stroke="#4a5568" stroke-width="1.2" points="419.5,-349.64 416,-339.64 412.5,-349.64 419.5,-349.64"></polygon>
+<text text-anchor="middle" x="482.04" y="-380.1" font-family="Helvetica,sans-Serif" font-size="9.00"> Agregación espacial global</text>
+<text text-anchor="middle" x="482.04" y="-369.3" font-family="Helvetica,sans-Serif" font-size="9.00"> (sobre el tensor final de etapa 3)</text>
+</g>
+<!-- vector_out -->
+<g id="node8" class="node">
+<title>vector_out</title>
+<path fill="#ebf8ff" stroke="transparent" d="M323,-128.5C323,-128.5 509,-128.5 509,-128.5 515,-128.5 521,-134.5 521,-140.5 521,-140.5 521,-196.5 521,-196.5 521,-202.5 515,-208.5 509,-208.5 509,-208.5 323,-208.5 323,-208.5 317,-208.5 311,-202.5 311,-196.5 311,-196.5 311,-140.5 311,-140.5 311,-134.5 317,-128.5 323,-128.5"></path>
+<text text-anchor="start" x="334.88" y="-194.5" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.00">Vector latente denso (Embedding)</text>
+<text text-anchor="start" x="316.73" y="-176.3" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#4a5568">Dimensión vectorial: 1 × d (donde d = C₃ o proyectado)</text>
+<polygon fill="#bee3f8" stroke="transparent" points="318,-150.5 318,-166.5 358,-166.5 358,-150.5 318,-150.5"></polygon>
+<polygon fill="none" stroke="#3182ce" points="318,-150.5 318,-166.5 358,-166.5 358,-150.5 318,-150.5"></polygon>
+<text text-anchor="start" x="332.67" y="-156.1" font-family="Helvetica,sans-Serif" font-size="8.00">z₁</text>
+<polygon fill="#bee3f8" stroke="transparent" points="358,-150.5 358,-166.5 397,-166.5 397,-150.5 358,-150.5"></polygon>
+<polygon fill="none" stroke="#3182ce" points="358,-150.5 358,-166.5 397,-166.5 397,-150.5 358,-150.5"></polygon>
+<text text-anchor="start" x="372.17" y="-156.1" font-family="Helvetica,sans-Serif" font-size="8.00">z₂</text>
+<polygon fill="#bee3f8" stroke="transparent" points="397,-150.5 397,-166.5 436,-166.5 436,-150.5 397,-150.5"></polygon>
+<polygon fill="none" stroke="#3182ce" points="397,-150.5 397,-166.5 436,-166.5 436,-150.5 397,-150.5"></polygon>
+<text text-anchor="start" x="411.17" y="-156.1" font-family="Helvetica,sans-Serif" font-size="8.00">z₃</text>
+<polygon fill="#e2e8f0" stroke="transparent" points="436,-150.5 436,-166.5 475,-166.5 475,-150.5 436,-150.5"></polygon>
+<polygon fill="none" stroke="#3182ce" points="436,-150.5 436,-166.5 475,-166.5 475,-150.5 436,-150.5"></polygon>
+<text text-anchor="start" x="452.17" y="-156.1" font-family="Helvetica,sans-Serif" font-size="8.00">...</text>
+<polygon fill="#bee3f8" stroke="transparent" points="475,-150.5 475,-166.5 514,-166.5 514,-150.5 475,-150.5"></polygon>
+<polygon fill="none" stroke="#3182ce" points="475,-150.5 475,-166.5 514,-166.5 514,-150.5 475,-150.5"></polygon>
+<text text-anchor="start" x="490.28" y="-157.1" font-family="Helvetica,sans-Serif" font-size="8.00">z</text>
+<text text-anchor="start" x="494.28" y="-157.1" font-family="Helvetica,sans-Serif" baseline-shift="sub" font-size="8.00">d</text>
+<polygon fill="none" stroke="#3182ce" points="317,-149.5 317,-167.5 515,-167.5 515,-149.5 317,-149.5"></polygon>
+<text text-anchor="start" x="317.16" y="-136.2" font-family="Helvetica,sans-Serif" font-size="7.00" fill="#2b6cb0">Un solo punto métrico en el espacio latente para toda la tesela I</text>
+<path fill="none" stroke="#3182ce" d="M323,-128.5C323,-128.5 509,-128.5 509,-128.5 515,-128.5 521,-134.5 521,-140.5 521,-140.5 521,-196.5 521,-196.5 521,-202.5 515,-208.5 509,-208.5 509,-208.5 323,-208.5 323,-208.5 317,-208.5 311,-202.5 311,-196.5 311,-196.5 311,-140.5 311,-140.5 311,-134.5 317,-128.5 323,-128.5"></path>
+</g>
+<!-- pooling&#45;&gt;vector_out -->
+<g id="edge7" class="edge">
+<title>pooling-&gt;vector_out</title>
+<path fill="none" stroke="#4a5568" stroke-width="1.2" d="M416,-299.54C416,-299.54 416,-222.55 416,-222.55"></path>
+<polygon fill="#4a5568" stroke="#4a5568" stroke-width="1.2" points="419.5,-222.55 416,-212.55 412.5,-222.55 419.5,-222.55"></polygon>
+<text text-anchor="middle" x="486.78" y="-264.5" font-family="Helvetica,sans-Serif" font-size="9.00"> Proyección métrica unidimensional</text>
+<text text-anchor="middle" x="486.78" y="-253.7" font-family="Helvetica,sans-Serif" font-size="9.00"> (1 vector por tesela)</text>
+</g>
+<!-- storage_dl -->
+<g id="node9" class="node">
+<title>storage_dl</title>
+<path fill="#ffffff" stroke="transparent" d="M321.83,-20C321.83,-20 510.17,-20 510.17,-20 515.83,-20 521.5,-25.67 521.5,-31.33 521.5,-31.33 521.5,-42.67 521.5,-42.67 521.5,-48.33 515.83,-54 510.17,-54 510.17,-54 321.83,-54 321.83,-54 316.17,-54 310.5,-48.33 310.5,-42.67 310.5,-42.67 310.5,-31.33 310.5,-31.33 310.5,-25.67 316.17,-20 321.83,-20"></path>
+<text text-anchor="start" x="336.46" y="-43" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.00">Persistencia e indexación métrica</text>
+<text text-anchor="start" x="326.6" y="-33" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#4a5568">PostgreSQL + pgvector / Milvus / Qdrant</text>
+<text text-anchor="start" x="313.58" y="-24.8" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#2b6cb0">Uso: Búsqueda k-NN por similitud coseno (Índice HNSW)</text>
+<path fill="none" stroke="#2b6cb0" d="M321.83,-20C321.83,-20 510.17,-20 510.17,-20 515.83,-20 521.5,-25.67 521.5,-31.33 521.5,-31.33 521.5,-42.67 521.5,-42.67 521.5,-48.33 515.83,-54 510.17,-54 510.17,-54 321.83,-54 321.83,-54 316.17,-54 310.5,-48.33 310.5,-42.67 310.5,-42.67 310.5,-31.33 310.5,-31.33 310.5,-25.67 316.17,-20 321.83,-20"></path>
+</g>
+<!-- vector_out&#45;&gt;storage_dl -->
+<g id="edge8" class="edge">
+<title>vector_out-&gt;storage_dl</title>
+<path fill="none" stroke="#4a5568" stroke-width="1.2" d="M416,-124.35C416,-124.35 416,-68.01 416,-68.01"></path>
+<polygon fill="#4a5568" stroke="#4a5568" stroke-width="1.2" points="419.5,-68.01 416,-58.01 412.5,-68.01 419.5,-68.01"></polygon>
+</g>
+</g>
+</svg>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-comparacion-pdi-encoders-dot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;H.1: Representación matricial y dimensional del filtrado espacial clásico frente a la extracción de embeddings mediante encoders.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<ul>
+<li><p><strong>Esquema de base de datos</strong>: Definición estructural, lógica y semántica de las relaciones, tipos de datos, restricciones de dominio, claves y reglas de integridad que gobiernan un repositorio relacional, expresada formalmente mediante sentencias DDL.</p></li>
+<li><p><strong>Esquema en lectura (<em>schema-on-read</em>)</strong>: Paradigma de persistencia (característico de motores NoSQL documentales) donde los datos se almacenan sin someterse a una validación estructural previa contra un esquema DDL formal. El motor o la aplicación compila e interpreta la estructura, los tipos de datos y la jerarquía en el momento exacto de evaluar la consulta, contrastando con el esquema rígido en escritura (<em>schema-on-write</em>) propio de los sistemas relacionales.</p></li>
+<li><p><strong>Garantías ACID</strong>: Conjunto de propiedades operativas que gobiernan el procesamiento transaccional en un SGBD:</p>
+<ul>
+<li><strong>Atomicidad (<em>Atomicity</em>)</strong>: Garantía de indivisibilidad operativa; una transacción se consolida en su totalidad o revierte todas sus modificaciones mediante el uso coordinado del registro previo en bitácora (WAL) y registros de reversión (<em>rollback</em>).</li>
+<li><strong>Consistencia (<em>Consistency</em>)</strong>: Preservación del estado válido del catálogo relacional; el motor invalida y aborta cualquier transacción que transgreda restricciones declarativas (<code>PRIMARY KEY</code>, <code>FOREIGN KEY</code>, <code>CHECK</code>) o disparadores.</li>
+<li><strong>Aislamiento (<em>Isolation</em>)</strong>: Ejecución concurrente protegida contra anomalías; el gestor de transacciones aísla las modificaciones simultáneas valiéndose de control de concurrencia multiversión (MVCC) o protocolos de bloqueo.</li>
+<li><strong>Durabilidad (<em>Durability</em>)</strong>: Garantía de persistencia no volátil; el motor asegura que, una vez confirmado el <code>COMMIT</code>, los cambios residan en disco persistente mediante sincronización del WAL (<code>fsync</code>), permitiendo su recuperación ante fallos del kernel o cortes eléctricos.</li>
+</ul></li>
+<li><p><strong>Grafos de mundo pequeño navegables y jerárquicos (HNSW)</strong>: Estructura de <em>indexación</em> basada en grafos multicapa superpuestos que optimiza la <em>búsqueda</em> aproximada de vecinos más cercanos (ANN) en espacios vectoriales continuos, logrando una complejidad temporal de escala logarítmica <span class="math inline">\(O(\log N)\)</span> mediante un recorrido voraz (<em>greedy routing</em>) descendente.</p></li>
+<li><p><strong>Herencia de tablas (en SGBD objeto-relacionales)</strong>: Mecanismo estructural del modelo relacional extendido que permite a una relación subordinada (tabla hija) adquirir automáticamente la totalidad de las columnas, tipos de datos y restricciones declaradas en una o más relaciones base (tablas padre) mediante la cláusula <code>INHERITS</code>. Las consultas de agregación o escaneo ejecutadas sobre la relación padre acceden de forma polimórfica y transparente a las tuplas de todas sus tablas descendientes, a menos que se limite el alcance a la relación superior mediante la cláusula declarativa <code>ONLY</code>.</p>
+<p>En bases de datos espaciales, este mecanismo formaliza taxonomías geográficas jerárquicas (por ejemplo, derivar redes de acueducto o elementos de transporte a partir de una entidad abstracta con geometría común):</p></li>
+</ul>
+<pre class="{sql}"><code>--| label: ddl-herencia-tablas-postgis
+--| eval: false
+--| echo: true
+
+-- 1. Definición de la relación padre (esquema y geometría común)
+CREATE TABLE public.elemento_red (
+    id serial PRIMARY KEY,
+    codigo varchar(20) NOT NULL UNIQUE,
+    estado_operativo varchar(15) DEFAULT 'ACTIVO',
+    geom geometry(Geometry, 9377) NOT NULL
+);
+
+-- 2. Creación de relaciones hijas mediante la cláusula INHERITS
+CREATE TABLE public.valvula (
+    diametro_pulgadas numeric(4, 2) NOT NULL,
+    presion_nominal_psi integer NOT NULL
+) INHERITS (public.elemento_red);
+
+CREATE TABLE public.tuberia (
+    material varchar(30) NOT NULL,
+    rugosidad_coef numeric(5, 4) NOT NULL
+) INHERITS (public.elemento_red);
+
+-- 3. Inserción de tuplas en las relaciones especializadas
+INSERT INTO public.valvula (codigo, estado_operativo, geom, diametro_pulgadas, presion_nominal_psi)
+VALUES ('VAL-01', 'ACTIVO', ST_GeomFromText('POINT(5000000 2000000)', 9377), 4.0, 150);
+
+INSERT INTO public.tuberia (codigo, estado_operativo, geom, material, rugosidad_coef)
+VALUES ('TUB-01', 'ACTIVO', ST_GeomFromText('LINESTRING(5000000 2000000, 5000200 2000000)', 9377), 'PVC', 0.0090);
+
+-- 4. Consulta polimórfica (recupera todas las hijas) frente a consulta restringida (ONLY)
+SELECT codigo, ST_GeometryType(geom) AS tipo_geom FROM public.elemento_red;
+SELECT codigo, ST_GeometryType(geom) AS tipo_geom FROM ONLY public.elemento_red;
+</code></pre>
+<ul>
+<li><p><strong>Invariantes del modelo</strong>: En teoría de bases de datos y diseño formal de sistemas, un invariante es una condición lógica o predicado que debe cumplirse y permanecer verdadero en todo momento, a través de cualquier transición de estado del sistema. Si una transacción intenta ejecutar una modificación que vulnere dicha condición, el motor aborta la operación y ejecuta una reversión (rollback) para impedir que la base de datos entre en un estado inconsistente. Ejemplos: Integridad de entidad (unicidad y no nulidad, ej: llave primaria); integridad referencial (llave foránea), integridad de dominio (check), validez topológica, homogeneidad de referencia espacial (SRID), consistencia dimensional). El diccionario de datos almacena estas especificaciones para que el gestor de integridad pueda contrastar cualquier operación DML contra ellas antes de permitir su persistencia física en las páginas de almacenamiento en disco.</p></li>
+<li><p><strong>Método de clase</strong>: Función vinculada a la definición formal del tipo abstracto de datos (clase) y no al estado de un objeto particular en memoria o disco. Opera habitualmente como constructor o método de fábrica (<em>factory method</em>) para instanciar nuevos objetos espaciales a partir de argumentos escalares o serializaciones externas (WKT, WKB, coordenadas numéricas):</p></li>
+</ul>
+<pre class="{sql}"><code>--| label: sql-ejemplo-metodo-clase
+--| eval: false
+--| echo: true
+
+-- Invocación del constructor sin requerir una entidad preexistente en la base de datos
+SELECT ST_GeomFromText('POINT(5000000 2000000)', 9377) AS nueva_geometria;
+</code></pre>
+<ul>
+<li><strong>Método de instancia</strong>: Función asociada a un objeto específico ya materializado en el motor, la cual opera accediendo a su estado interno encapsulado (secuencias de coordenadas, dimensiones, vértices o anillos topológicos) para calcular métricas, evaluar predicados espaciales o derivar propiedades:</li>
+</ul>
+<pre class="{sql}"><code>--| label: sql-ejemplo-metodo-instancia
+--| eval: false
+--| echo: true
+
+-- Invocación sobre los atributos geométricos encapsulados de una tupla persistida
+SELECT 
+    codigo,
+    ST_Area(geom) AS area_m2,
+    ST_GeometryType(geom) AS tipo_geometria
+FROM public.predios;
+</code></pre>
+<ul>
+<li><p><strong>Modelo de despliegue embebido (<em>in-process</em>)</strong>: Arquitectura donde el motor de base de datos se vincula como biblioteca de ejecución dentro del mismo proceso y espacio de memoria de la aplicación anfitriona (DuckDB o SQLite), eliminando la comunicación por red y la sobrecarga de sockets propia del esquema cliente-servidor.</p></li>
+<li><p><strong>OID (identificador de objeto y principio de identidad)</strong>: Valor numérico único, global e inmutable asignado automáticamente por el motor gestor en modelos orientados a objetos y objeto-relacionales que confiere distinción unívoca a cada entidad, con independencia del estado o valores contenidos en sus atributos (desacoplamiento entre identidad y estado). A diferencia del modelo relacional estricto —donde la unicidad depende de los valores escalares de una clave primaria—, dos objetos con atributos descriptivos y geometrías idénticas constituyen instancias independientes en memoria y disco al portar OID distintos:</p></li>
+</ul>
+<pre class="{sql}"><code>--| label: ddl-glosario-identidad-oid
+--| eval: false
+--| echo: true
+
+-- Relación con entidades de idéntico estado espacial y temático
+CREATE TABLE public.muestras_duplicadas (
+    fid serial PRIMARY KEY, -- Identificador subrogado equivalente al OID
+    sensor varchar(20) NOT NULL,
+    geom geometry(Point, 9377) NOT NULL
+);
+
+-- Inserción de tuplas con valores y geometría idénticos
+INSERT INTO public.muestras_duplicadas (sensor, geom) VALUES
+('TERM-01', ST_GeomFromText('POINT(5000000 2000000)', 9377)),
+('TERM-01', ST_GeomFromText('POINT(5000000 2000000)', 9377));
+
+-- Estado idéntico preservando identidades independientes por identificador
+SELECT fid AS oid_objeto, sensor, ST_AsText(geom) AS wkt 
+FROM public.muestras_duplicadas;
+</code></pre>
+<ul>
+<li><p><strong>OLTP frente a OLAP como paradigmas arquitectónicos</strong>: Patrones conceptuales de diseño, estructuración física del almacenamiento y optimización de ejecución que delimitan el perfil operativo de un motor de bases de datos. El procesamiento transaccional en línea (<strong>OLTP</strong>) prioriza la atomicidad ACID, alta concurrencia y baja latencia en operaciones puntuales de lectura/escritura sobre esquemas normalizados orientados a filas (<em>heap/row-oriented</em>); en contraste, el procesamiento analítico en línea (<strong>OLAP</strong>) maximiza el rendimiento en escaneos masivos, agregaciones complejas y proyecciones de atributos específicos sobre esquemas desnormalizados orientados a columnas (<em>columnar storage</em>).</p>
+<div id="tbl-oltp-vs-olap" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-oltp-vs-olap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;H.3: Comparación técnica entre paradigmas arquitectónicos OLTP y OLAP.
+</figcaption>
+<div aria-describedby="tbl-oltp-vs-olap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Dimensión arquitectónica</th>
+<th>Procesamiento transaccional (OLTP)</th>
+<th>Procesamiento analítico (OLAP)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Objetivo operativo</strong></td>
+<td>Transacciones concurrentes atómicas en tiempo real.</td>
+<td>Consultas complejas, analítica histórica y agregaciones masivas.</td>
+</tr>
+<tr class="even">
+<td><strong>Disposición física</strong></td>
+<td>Orientada a filas (<em>heap storage</em>, páginas de 8 KB).</td>
+<td>Orientada a columnas (<em>columnar blocks</em> contiguos por atributo).</td>
+</tr>
+<tr class="odd">
+<td><strong>Patrón de acceso</strong></td>
+<td>Lecturas y mutaciones atómicas (<code>INSERT</code>, <code>UPDATE</code>) de registros individuales.</td>
+<td>Escaneos secuenciales masivos proyectando pocas columnas.</td>
+</tr>
+<tr class="even">
+<td><strong>Esquema de datos</strong></td>
+<td>Normalizado (3NF/BCNF) para suprimir redundancias y anomalías de escritura.</td>
+<td>Desnormalizado (esquemas en estrella, copo de nieve o tablas anchas).</td>
+</tr>
+<tr class="odd">
+<td><strong>Mecanismo de cómputo</strong></td>
+<td>Procesamiento transaccional de baja latencia con aislamiento ACID.</td>
+<td>Paralelismo interprocesos, ejecución vectorial en CPU (SIMD) y alta compresión.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Aunque PostgreSQL fue concebido en su núcleo como un motor relacional <strong>OLTP</strong> basado en páginas físicas orientadas a filas (<em>heap storage</em> de 8 KB), su diseño extensible permite ejecutar cargas de trabajo analíticas de perfil <strong>OLAP</strong>. Esta convergencia se logra combinando la API <em>Table Access Method</em> (TAM) para almacenamiento y compresión columnar (<code>citus</code>, <code>hydra</code>), optimizaciones nativas del motor de ejecución (procesamiento paralelo, compilación JIT vía LLVM y poda dinámica de particiones), aceleración por hardware con instrucciones SIMD y la delegación de cómputo (<em>pushdown</em>) hacia formatos columnares o lagos de datos externos (como Apache Parquet) mediante <em>Foreign Data Wrappers</em> (FDW).</p></li>
+<li><p><strong>Modelo OSI (<em>Open Systems Interconnection</em>)</strong>: Marco arquitectónico y conceptual de referencia estandarizado por la Organización Internacional de Normalización (ISO/IEC 7498-1) que descompone el proceso de comunicación e interoperabilidad en redes de datos en siete capas funcionales jerárquicas e independientes (Física, Enlace de datos, Red, Transporte, Sesión, Presentación y Aplicación). Cada estrato abstrae un conjunto específico de responsabilidades mediante interfaces bien definidas, prestando servicios a la capa superior e interactuando con la inferior mediante encapsulamiento sucesivo de cabeceras y unidades de datos de protocolo (PDU).</p>
+<p>En la arquitectura de sistemas gestores de bases de datos objeto-relacionales (ORDBMS), este modelo formaliza el costo computacional de la topología cliente-servidor: cada consulta SQL y cada conjunto de geometrías transmitidas deben franquear la pila completa desde el protocolo de aplicación en el espacio de usuario (Capa 7), resolviendo la serialización binaria de objetos geométricos (Capa 6), la sesión autenticada (Capa 5) y la segmentación TCP en un puerto asignado como el 5432 (Capa 4), hasta el direccionamiento IP (Capa 3) y la transmisión de tramas sobre interfaces de red o adaptadores virtuales de bucle invertido (<em>loopback</em>).</p></li>
+<li><p><strong>Persistencia de clases (en bases de datos orientadas a objetos y objeto-relacionales)</strong>: Mecanismo arquitectónico que permite a las instancias de una clase (u objetos en memoria con identidad propia mediante OID, atributos complejos y comportamiento asociado) almacenarse de forma directa y no volátil en disco, sobreviviendo a la terminación del proceso que las creó sin requerir su descomposición forzada en múltiples tablas relacionales normalizadas (mitigación del desajuste de impedancia objeto-relacional). En motores objeto-relacionales, se materializa mediante tipos compuestos definidos por el usuario (<code>CREATE TYPE</code>) o tablas tipadas estructuradas a partir de tipos de datos abstractos:</p></li>
+</ul>
+<pre class="{sql}"><code>--| label: ddl-ejemplo-persistencia-clases
+--| eval: false
+--| echo: true
+
+-- 1. Definición del tipo compuesto estructurado (equivalente a la clase en memoria)
+CREATE TYPE public.tipo_estacion_meteo AS (
+    identificador varchar(15),
+    altitud_msnm numeric(6, 2),
+    sensores text[],
+    ubicacion geometry(Point, 9377)
+);
+
+-- 2. Persistencia directa de instancias del tipo abstracto dentro de una relación
+CREATE TABLE public.red_hidrometeorologica (
+    id serial PRIMARY KEY,
+    cuenca varchar(50) NOT NULL,
+    estacion public.tipo_estacion_meteo NOT NULL
+);
+
+-- 3. Instanciación y almacenamiento del objeto preservando su estructura integral
+INSERT INTO public.red_hidrometeorologica (cuenca, estacion)
+VALUES (
+    'Cuenca Alta Río Bogotá',
+    ROW('EST-SABANA-01', 2550.00, ARRAY['Pluviómetro', 'Anemómetro'], ST_GeomFromText('POINT(5000000 2000000)', 9377))
+);
+
+-- 4. Acceso directo a los miembros y geometrías del objeto persistido
+SELECT 
+    cuenca,
+    (estacion).identificador AS codigo_estacion,
+    (estacion).altitud_msnm AS elevacion,
+    ST_AsText((estacion).ubicacion) AS wkt_posicion
+FROM public.red_hidrometeorologica;
+</code></pre>
+<ul>
+<li><strong>Polimorfismo (en SGBD objeto-relacionales)</strong>: Principio arquitectónico que faculta a una misma interfaz, operador o función para procesar argumentos de distintos tipos concretos pertenecientes a una misma jerarquía de herencia (<code>Geometry</code>), ejecutando en tiempo de ejecución (<em>runtime</em>) la rutina algorítmica específica según la signatura morfológica del objeto (despacho dinámico). En esquemas relacionales, habilita la definición de columnas espaciales genéricas capaces de alojar simultáneamente entidades de distinta dimensión topológica (<code>Point</code>, <code>LineString</code>, <code>Polygon</code>) bajo una misma relación:</li>
+</ul>
+<pre class="{sql}"><code>--| label: ddl-ejemplo-polimorfismo-glosario
+--| eval: false
+--| echo: true
+
+-- 1. Definición de columna espacial polimórfica (acepta cualquier subtipo OGC)
+CREATE TABLE public.infraestructura_multitipo (
+    id serial PRIMARY KEY,
+    nombre varchar(50) NOT NULL,
+    geom geometry(Geometry, 9377) NOT NULL
+);
+
+-- 2. Inserción de primitivas heterogéneas en la misma relación
+INSERT INTO public.infraestructura_multitipo (nombre, geom) VALUES
+('Punto de control', ST_GeomFromText('POINT(5000000 2000000)', 9377)),
+('Línea de conducción', ST_GeomFromText('LINESTRING(5000000 2000000, 5000500 2000500)', 9377)),
+('Predio operativo', ST_GeomFromText('POLYGON((5000000 2000000, 5000200 2000000, 5000200 2000200, 5000000 2000200, 5000000 2000000))', 9377));
+
+-- 3. Despacho dinámico: ST_Area y ST_Length resuelven según la morfología del registro
+SELECT 
+    nombre,
+    ST_GeometryType(geom) AS subtipo,
+    ST_Length(geom) AS longitud_m,
+    ST_Area(geom) AS area_m2
+FROM public.infraestructura_multitipo;
+</code></pre>
+<ul>
+<li><p><strong>Propiedad tipada</strong>: Atributo, campo o par clave-valor asociado a una entidad (en esquemas relacionales, objeto-relacionales o grafos de propiedades) cuyo dominio de valores admisibles, representación física en memoria/disco y operadores válidos están formalmente restringidos por un tipo de dato explícito (primitivo, estructurado o abstracto). Su declaración impone validación de integridad semántica en tiempo de escritura (<em>schema-on-write</em>), previene anomalías por incoherencia de dominios y permite al motor de base de datos asignar métodos de acceso indexados y optimizadores algebraicos especializados (tales como predicados topológicos sobre columnas espaciales).</p></li>
+<li><p><strong>Relación (o tabla)</strong>: Estructura lógica bidimensional fundamental del modelo relacional, formalizada matemáticamente como un subconjunto no ordenado del producto cartesiano de los dominios de sus atributos, consistente con un esquema formal y compuesta por tuplas homogéneas.</p></li>
+<li><p><strong>Serialización</strong>: Concepto con doble acepción en sistemas gestores de bases de datos:</p>
+<ul>
+<li><strong>Serializabilidad transaccional</strong>: Nivel supremo de aislamiento (<code>SERIALIZABLE</code>) que asegura que el resultado final de transacciones concurrentes sea equivalente a una ejecución estrictamente secuencial, previniendo anomalías complejas como el sesgo de escritura (<em>write skew</em>).</li>
+<li><strong>Serialización de datos</strong>: Proceso algorítmico de codificación que transforma estructuras dinámicas en memoria RAM (objetos C, topologías o grafos) en secuencias contiguas de bytes (como WKB/EWKB) o representaciones textuales (como WKT o GeoJSON) para su persistencia física o transporte en red.</li>
+</ul></li>
+<li><p><strong>Serialización SQL</strong>: Transformación de objetos y estructuras de datos en sentencias o literales textuales interpretables por la gramática de SQL (como sentencias DML o llamadas a constructores tipo <code>ST_GeomFromText</code>) para su persistencia en scripts o transferencia en el motor.</p></li>
+<li><p><strong>Serializaciones XML/GML</strong>: Codificación jerárquica basada en etiquetas de texto bajo el estándar OGC <em>Geography Markup Language</em> (ISO 19136), orientada al intercambio e interoperabilidad de entidades geográficas y sus atributos a través de servicios web (como OGC WFS).</p></li>
+<li><p><strong>Sistema distribuido elástico</strong>: Arquitectura de base de datos compuesta por un clúster de nodos interconectados que opera ante el cliente como una única instancia lógica, con capacidad para aprovisionar (<em>scale-out</em>) o liberar (<em>scale-in</em>) recursos de procesamiento y almacenamiento de forma dinámica y automática según la demanda transaccional, sin degradación ni caída del servicio (<em>zero downtime</em>). En motores NewSQL y SQL distribuido, se fundamenta en el particionamiento horizontal autónomo (<em>auto-sharding</em>), la migración transparente de fragmentos de datos y la preservación de transaccionalidad ACID global mediante protocolos de consenso (Raft o Paxos).</p></li>
+<li><p><strong>Solución <em>ad-hoc</em></strong>: Implementación técnica construida a la medida para resolver una demanda analítica o de almacenamiento puntual, caracterizada por la ausencia de un marco arquitectónico reutilizable, carencia de esquemas formales y acoplamiento dependiente del formato local.</p></li>
+<li><p><strong>Tipo abstracto de datos (ADT)</strong>: Tipo de dato formal definido por el usuario o una extensión cuya estructura interna y métodos de serialización están encapsulados, operando en el motor como un tipo de dato nativo.</p></li>
+<li><p><strong>Tipo de dato <code>geography</code></strong>: Tipo abstracto de datos especializado en PostGIS para la persistencia y cómputo de relaciones topológicas sobre un elipsoide geodésico de referencia (comúnmente WGS 84, EPSG:4326). Opera bajo trigonometría esférica/elipsoidal, emitiendo resultados métricos en metros sin requerir transformaciones cartográficas planas intermedias, con una sobrecarga de cálculo superior al tipo plano <code>geometry</code>.</p></li>
+<li><p><strong>Tupla (registro o fila)</strong>: Unidad estructural elemental en una relación relacional que representa una instancia o entidad discreta del dominio, conformada por una colección finita de valores correspondientes a los atributos declarados en el esquema.</p></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/93-postgresql.html" class="pagination-link" aria-label="PostgreSQL">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">PostgreSQL</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/98-errata.html" class="pagination-link" aria-label="Errata">
+        <span class="nav-page-text"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Errata</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
