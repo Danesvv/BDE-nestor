@@ -985,6 +985,6 @@ Continuación de la articulación con tecnologías emergentes de persistencia:
 :::
 
 ::: {style="margin-top: 1.2em; font-size: 0.82em; text-align: center;"}
-*Para la consulta detallada de términos técnicos y acrónimos, remitirse al **@sec-anexo-glosario**.*
+*Para la consulta detallada de términos técnicos y acrónimos, remitirse al anexo con el glosario de términos técnicos.*
 :::
 

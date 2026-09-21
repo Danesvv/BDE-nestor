@@ -1,8 +1,16 @@
+---
+engine: knitr
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
 # Lista de acrónimos y glosario de conceptos técnicos {#sec-anexo-glosario}
 
 ## Lista de acrónimos
 
-En la @tbl-lista-acronimos se compilan las siglas y acrónimos técnicos empleados a lo largo del capítulo, indicando su equivalencia en inglés y su ámbito operativo.
+En la @tbl-lista-acronimos se compilan las siglas y acrónimos técnicos empleados a lo largo del libro, indicando su equivalencia en inglés y su ámbito operativo.
 
 | Acrónimo | Denominación formal en español | Término original en inglés | Ámbito funcional |
 | --- | --- | --- | --- |

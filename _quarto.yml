@@ -61,7 +61,7 @@ book:
     - part: "Fundamentos y diseño de bases de datos espaciales"
       chapters:
         - chapters/20-arquitectura_y_estandares_ogc.qmd
-      #  - chapters/21-modelado_conceptual_y_normalizacion.qmd
+        - chapters/21-modelado_conceptual_logico_fisico.qmd
       #  - chapters/22-algebra_relacional_ddl_y_modelado_visual.qmd
 
     #- part: "PostgreSQL, PostGIS y análisis espacial avanzado"

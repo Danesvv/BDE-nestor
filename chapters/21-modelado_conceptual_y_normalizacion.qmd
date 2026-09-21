@@ -1,1 +1,0 @@
-# Modelado conceptual espacial y normalización relacional

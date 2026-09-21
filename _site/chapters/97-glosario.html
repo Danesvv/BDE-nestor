@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -219,6 +253,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Arquitectura de bases de datos espaciales y estándares OGC</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/21-modelado_conceptual_logico_fisico.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Modelado conceptual, diseño lógico e implementación física espacial</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -233,25 +273,25 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/proyectos/00-guia_proyecto_final.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Guía metodológica para el proyecto final</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Guía metodológica para el proyecto final</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/proyectos/01-temas_proyecto_final.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Temas de proyecto final en bases de datos espaciales</span></span></a>
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Temas de proyecto final en bases de datos espaciales</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/proyectos/tema_02_apache_sedona/02-proyecto_apache_sedona.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ficha de propuesta de tema de investigación</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ficha de propuesta de tema de investigación</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/proyectos/tema_02_apache_sedona/02-rubrica_proyecto_apache_sedona.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Rúbrica de evaluación para el reporte en QMD y el código</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Rúbrica de evaluación para el reporte en QMD y el código</span></span></a>
   </div>
 </li>
       </ul>
@@ -366,7 +406,7 @@ window.Quarto = {
 
 <section id="lista-de-acrónimos" class="level2" data-number="H.1">
 <h2 data-number="H.1" class="anchored" data-anchor-id="lista-de-acrónimos"><span class="header-section-number">H.1</span> Lista de acrónimos</h2>
-<p>En la <a href="#tbl-lista-acronimos" class="quarto-xref">Tabla&nbsp;<span>H.1</span></a> se compilan las siglas y acrónimos técnicos empleados a lo largo del capítulo, indicando su equivalencia en inglés y su ámbito operativo.</p>
+<p>En la <a href="#tbl-lista-acronimos" class="quarto-xref">Tabla&nbsp;<span>H.1</span></a> se compilan las siglas y acrónimos técnicos empleados a lo largo del libro, indicando su equivalencia en inglés y su ámbito operativo.</p>
 <div id="tbl-lista-acronimos" class="quarto-float anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-lista-acronimos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -707,31 +747,28 @@ Tabla&nbsp;H.2: Comparación técnica y matemática entre PCA y modelos de embed
 <li><p><strong>Encapsulamiento</strong> (modelo objeto-relacional o Tipo 3): es el principio que agrupa la estructura interna y física de un dato complejo junto con la lógica algorítmica que lo manipula, ocultando la representación física en disco (arreglos binarios, compensaciones de memoria o índices internos) y exponiendo exclusivamente una interfaz declarativa de funciones estandarizadas.</p>
 <p>En PostgreSQL y PostGIS, una columna de tipo <code>geometry</code> implementa este principio: el motor almacena internamente una estructura binaria de bajo nivel (<code>GSERIALIZED</code>) que integra coordenadas, dimensiones, caja envolvente (MBR) y SRID. El analista no accede a los <em>offsets</em> de bytes en disco, sino que opera el objeto a través de constructores y métodos conformes a los estándares OGC e ISO:</p></li>
 </ul>
-<pre class="{sql}"><code>--| label: ddl-encapsulamiento-tipo-geometry
---| eval: false
---| echo: true
-
--- 1. Definición del tipo abstracto: la estructura física queda encapsulada
-CREATE TABLE public.zonas_reserva (
-    id serial PRIMARY KEY,
-    nombre varchar(50) NOT NULL,
-    geom geometry(Polygon, 9377) NOT NULL
-);
-
--- 2. Manipulación mediante constructor formal OGC (oculta la codificación binaria)
-INSERT INTO public.zonas_reserva (nombre, geom)
-VALUES (
-    'Parque Ecológico',
-    ST_GeomFromText('POLYGON((5000000 2000000, 5001000 2000000, 5001000 2001000, 5000000 2001000, 5000000 2000000))', 9377)
-);
-
--- 3. Invocación de métodos y predicados: evaluación sin deserialización manual
-SELECT 
-    nombre,
-    ST_Area(geom) AS area_m2,
-    ST_AsText(geom) AS wkt_serializado
-FROM public.zonas_reserva;
-</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- 1. Definición del tipo abstracto: la estructura física queda encapsulada</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="kw">public</span>.zonas_reserva (</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">id</span> serial <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    nombre <span class="dt">varchar</span>(<span class="dv">50</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    geom geometry(Polygon, <span class="dv">9377</span>) <span class="kw">NOT</span> <span class="kw">NULL</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">-- 2. Manipulación mediante constructor formal OGC (oculta la codificación binaria)</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> <span class="kw">public</span>.zonas_reserva (nombre, geom)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">VALUES</span> (</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Parque Ecológico'</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    ST_GeomFromText(<span class="st">'POLYGON((5000000 2000000, 5001000 2000000, 5001000 2001000, 5000000 2001000, 5000000 2000000))'</span>, <span class="dv">9377</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">-- 3. Invocación de métodos y predicados: evaluación sin deserialización manual</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    nombre,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    ST_Area(geom) <span class="kw">AS</span> area_m2,</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    ST_AsText(geom) <span class="kw">AS</span> wkt_serializado</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="kw">public</span>.zonas_reserva;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <ul>
 <li><p><strong>Encoder (codificador frente a filtrado espacial clásico en teledetección)</strong>: Modelo de extracción y reducción dimensional que sustituye la convolución planar analítica por representaciones latentes profundas. Mientras que el procesamiento digital de imágenes (PDI) aplica núcleos invariantes estáticos (<span class="math inline">\(K\)</span>, ej. Sobel <span class="math inline">\(3 \times 3\)</span>) sobre una matriz monocanal (<span class="math inline">\(H \times W\)</span>) para generar un ráster derivado que preserva la correspondencia biyectiva celda a celda (<span class="math inline">\(H \times W \times 1\)</span>, persistido como GeoTIFF/COG para álgebra de mapas), un <em>encoder</em> procesa el tensor multiespectral continuo completo (<span class="math inline">\(H \times W \times B\)</span>). Mediante bancos convolucionales jerárquicos (<span class="math inline">\(W\)</span>) optimizados por retropropagación y acoplados a activaciones no lineales, el codificador contrae progresivamente la resolución topológica de la escena mientras expande la profundidad semántica de los canales (<span class="math inline">\(C_1 &lt; C_2 &lt; C_3\)</span>). Finalmente, suprime la grilla planar mediante agregación global (<em>Global Average Pooling</em>) para condensar la tesela en un único vector denso latente (<em>embedding</em> <span class="math inline">\(1 \times d\)</span>, <span class="math inline">\(\mathbf{z} \in \mathbb{R}^d\)</span>), estructurado para indexación métrica y recuperación por similitud (<span class="math inline">\(k\)</span>-NN mediante índices HNSW) en bases de datos vectoriales como PostgreSQL con <code>pgvector</code>.</p>
 <p>En la <a href="#fig-comparacion-pdi-encoders-dot" class="quarto-xref">Figura&nbsp;<span>H.1</span></a> se esquematiza el paralelo operativo entre la convolución analítica superficial de PDI y la transformación jerárquica profunda del codificador neuronal hacia el espacio latente.</p></li>
@@ -1119,89 +1156,77 @@ Figura&nbsp;H.1: Representación matricial y dimensional del filtrado espacial c
 <li><p><strong>Herencia de tablas (en SGBD objeto-relacionales)</strong>: Mecanismo estructural del modelo relacional extendido que permite a una relación subordinada (tabla hija) adquirir automáticamente la totalidad de las columnas, tipos de datos y restricciones declaradas en una o más relaciones base (tablas padre) mediante la cláusula <code>INHERITS</code>. Las consultas de agregación o escaneo ejecutadas sobre la relación padre acceden de forma polimórfica y transparente a las tuplas de todas sus tablas descendientes, a menos que se limite el alcance a la relación superior mediante la cláusula declarativa <code>ONLY</code>.</p>
 <p>En bases de datos espaciales, este mecanismo formaliza taxonomías geográficas jerárquicas (por ejemplo, derivar redes de acueducto o elementos de transporte a partir de una entidad abstracta con geometría común):</p></li>
 </ul>
-<pre class="{sql}"><code>--| label: ddl-herencia-tablas-postgis
---| eval: false
---| echo: true
-
--- 1. Definición de la relación padre (esquema y geometría común)
-CREATE TABLE public.elemento_red (
-    id serial PRIMARY KEY,
-    codigo varchar(20) NOT NULL UNIQUE,
-    estado_operativo varchar(15) DEFAULT 'ACTIVO',
-    geom geometry(Geometry, 9377) NOT NULL
-);
-
--- 2. Creación de relaciones hijas mediante la cláusula INHERITS
-CREATE TABLE public.valvula (
-    diametro_pulgadas numeric(4, 2) NOT NULL,
-    presion_nominal_psi integer NOT NULL
-) INHERITS (public.elemento_red);
-
-CREATE TABLE public.tuberia (
-    material varchar(30) NOT NULL,
-    rugosidad_coef numeric(5, 4) NOT NULL
-) INHERITS (public.elemento_red);
-
--- 3. Inserción de tuplas en las relaciones especializadas
-INSERT INTO public.valvula (codigo, estado_operativo, geom, diametro_pulgadas, presion_nominal_psi)
-VALUES ('VAL-01', 'ACTIVO', ST_GeomFromText('POINT(5000000 2000000)', 9377), 4.0, 150);
-
-INSERT INTO public.tuberia (codigo, estado_operativo, geom, material, rugosidad_coef)
-VALUES ('TUB-01', 'ACTIVO', ST_GeomFromText('LINESTRING(5000000 2000000, 5000200 2000000)', 9377), 'PVC', 0.0090);
-
--- 4. Consulta polimórfica (recupera todas las hijas) frente a consulta restringida (ONLY)
-SELECT codigo, ST_GeometryType(geom) AS tipo_geom FROM public.elemento_red;
-SELECT codigo, ST_GeometryType(geom) AS tipo_geom FROM ONLY public.elemento_red;
-</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- 1. Definición de la relación padre (esquema y geometría común)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="kw">public</span>.elemento_red (</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">id</span> serial <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    codigo <span class="dt">varchar</span>(<span class="dv">20</span>) <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">UNIQUE</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    estado_operativo <span class="dt">varchar</span>(<span class="dv">15</span>) <span class="kw">DEFAULT</span> <span class="st">'ACTIVO'</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    geom geometry(Geometry, <span class="dv">9377</span>) <span class="kw">NOT</span> <span class="kw">NULL</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">-- 2. Creación de relaciones hijas mediante la cláusula INHERITS</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="kw">public</span>.valvula (</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    diametro_pulgadas <span class="dt">numeric</span>(<span class="dv">4</span>, <span class="dv">2</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    presion_nominal_psi <span class="dt">integer</span> <span class="kw">NOT</span> <span class="kw">NULL</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>) INHERITS (<span class="kw">public</span>.elemento_red);</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="kw">public</span>.tuberia (</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    material <span class="dt">varchar</span>(<span class="dv">30</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    rugosidad_coef <span class="dt">numeric</span>(<span class="dv">5</span>, <span class="dv">4</span>) <span class="kw">NOT</span> <span class="kw">NULL</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>) INHERITS (<span class="kw">public</span>.elemento_red);</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co">-- 3. Inserción de tuplas en las relaciones especializadas</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> <span class="kw">public</span>.valvula (codigo, estado_operativo, geom, diametro_pulgadas, presion_nominal_psi)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="kw">VALUES</span> (<span class="st">'VAL-01'</span>, <span class="st">'ACTIVO'</span>, ST_GeomFromText(<span class="st">'POINT(5000000 2000000)'</span>, <span class="dv">9377</span>), <span class="fl">4.0</span>, <span class="dv">150</span>);</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> <span class="kw">public</span>.tuberia (codigo, estado_operativo, geom, material, rugosidad_coef)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="kw">VALUES</span> (<span class="st">'TUB-01'</span>, <span class="st">'ACTIVO'</span>, ST_GeomFromText(<span class="st">'LINESTRING(5000000 2000000, 5000200 2000000)'</span>, <span class="dv">9377</span>), <span class="st">'PVC'</span>, <span class="fl">0.0090</span>);</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co">-- 4. Consulta polimórfica (recupera todas las hijas) frente a consulta restringida (ONLY)</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> codigo, ST_GeometryType(geom) <span class="kw">AS</span> tipo_geom <span class="kw">FROM</span> <span class="kw">public</span>.elemento_red;</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> codigo, ST_GeometryType(geom) <span class="kw">AS</span> tipo_geom <span class="kw">FROM</span> <span class="kw">ONLY</span> <span class="kw">public</span>.elemento_red;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <ul>
 <li><p><strong>Invariantes del modelo</strong>: En teoría de bases de datos y diseño formal de sistemas, un invariante es una condición lógica o predicado que debe cumplirse y permanecer verdadero en todo momento, a través de cualquier transición de estado del sistema. Si una transacción intenta ejecutar una modificación que vulnere dicha condición, el motor aborta la operación y ejecuta una reversión (rollback) para impedir que la base de datos entre en un estado inconsistente. Ejemplos: Integridad de entidad (unicidad y no nulidad, ej: llave primaria); integridad referencial (llave foránea), integridad de dominio (check), validez topológica, homogeneidad de referencia espacial (SRID), consistencia dimensional). El diccionario de datos almacena estas especificaciones para que el gestor de integridad pueda contrastar cualquier operación DML contra ellas antes de permitir su persistencia física en las páginas de almacenamiento en disco.</p></li>
 <li><p><strong>Método de clase</strong>: Función vinculada a la definición formal del tipo abstracto de datos (clase) y no al estado de un objeto particular en memoria o disco. Opera habitualmente como constructor o método de fábrica (<em>factory method</em>) para instanciar nuevos objetos espaciales a partir de argumentos escalares o serializaciones externas (WKT, WKB, coordenadas numéricas):</p></li>
 </ul>
-<pre class="{sql}"><code>--| label: sql-ejemplo-metodo-clase
---| eval: false
---| echo: true
-
--- Invocación del constructor sin requerir una entidad preexistente en la base de datos
-SELECT ST_GeomFromText('POINT(5000000 2000000)', 9377) AS nueva_geometria;
-</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Invocación del constructor sin requerir una entidad preexistente en la base de datos</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> ST_GeomFromText(<span class="st">'POINT(5000000 2000000)'</span>, <span class="dv">9377</span>) <span class="kw">AS</span> nueva_geometria;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <ul>
 <li><strong>Método de instancia</strong>: Función asociada a un objeto específico ya materializado en el motor, la cual opera accediendo a su estado interno encapsulado (secuencias de coordenadas, dimensiones, vértices o anillos topológicos) para calcular métricas, evaluar predicados espaciales o derivar propiedades:</li>
 </ul>
-<pre class="{sql}"><code>--| label: sql-ejemplo-metodo-instancia
---| eval: false
---| echo: true
-
--- Invocación sobre los atributos geométricos encapsulados de una tupla persistida
-SELECT 
-    codigo,
-    ST_Area(geom) AS area_m2,
-    ST_GeometryType(geom) AS tipo_geometria
-FROM public.predios;
-</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Invocación sobre los atributos geométricos encapsulados de una tupla persistida</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    codigo,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    ST_Area(geom) <span class="kw">AS</span> area_m2,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    ST_GeometryType(geom) <span class="kw">AS</span> tipo_geometria</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="kw">public</span>.predios;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <ul>
 <li><p><strong>Modelo de despliegue embebido (<em>in-process</em>)</strong>: Arquitectura donde el motor de base de datos se vincula como biblioteca de ejecución dentro del mismo proceso y espacio de memoria de la aplicación anfitriona (DuckDB o SQLite), eliminando la comunicación por red y la sobrecarga de sockets propia del esquema cliente-servidor.</p></li>
 <li><p><strong>OID (identificador de objeto y principio de identidad)</strong>: Valor numérico único, global e inmutable asignado automáticamente por el motor gestor en modelos orientados a objetos y objeto-relacionales que confiere distinción unívoca a cada entidad, con independencia del estado o valores contenidos en sus atributos (desacoplamiento entre identidad y estado). A diferencia del modelo relacional estricto —donde la unicidad depende de los valores escalares de una clave primaria—, dos objetos con atributos descriptivos y geometrías idénticas constituyen instancias independientes en memoria y disco al portar OID distintos:</p></li>
 </ul>
-<pre class="{sql}"><code>--| label: ddl-glosario-identidad-oid
---| eval: false
---| echo: true
-
--- Relación con entidades de idéntico estado espacial y temático
-CREATE TABLE public.muestras_duplicadas (
-    fid serial PRIMARY KEY, -- Identificador subrogado equivalente al OID
-    sensor varchar(20) NOT NULL,
-    geom geometry(Point, 9377) NOT NULL
-);
-
--- Inserción de tuplas con valores y geometría idénticos
-INSERT INTO public.muestras_duplicadas (sensor, geom) VALUES
-('TERM-01', ST_GeomFromText('POINT(5000000 2000000)', 9377)),
-('TERM-01', ST_GeomFromText('POINT(5000000 2000000)', 9377));
-
--- Estado idéntico preservando identidades independientes por identificador
-SELECT fid AS oid_objeto, sensor, ST_AsText(geom) AS wkt 
-FROM public.muestras_duplicadas;
-</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Relación con entidades de idéntico estado espacial y temático</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="kw">public</span>.muestras_duplicadas (</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    fid serial <span class="kw">PRIMARY</span> <span class="kw">KEY</span>, <span class="co">-- Identificador subrogado equivalente al OID</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    sensor <span class="dt">varchar</span>(<span class="dv">20</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    geom geometry(Point, <span class="dv">9377</span>) <span class="kw">NOT</span> <span class="kw">NULL</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">-- Inserción de tuplas con valores y geometría idénticos</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> <span class="kw">public</span>.muestras_duplicadas (sensor, geom) <span class="kw">VALUES</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>(<span class="st">'TERM-01'</span>, ST_GeomFromText(<span class="st">'POINT(5000000 2000000)'</span>, <span class="dv">9377</span>)),</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>(<span class="st">'TERM-01'</span>, ST_GeomFromText(<span class="st">'POINT(5000000 2000000)'</span>, <span class="dv">9377</span>));</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">-- Estado idéntico preservando identidades independientes por identificador</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> fid <span class="kw">AS</span> oid_objeto, sensor, ST_AsText(geom) <span class="kw">AS</span> wkt </span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="kw">public</span>.muestras_duplicadas;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <ul>
 <li><p><strong>OLTP frente a OLAP como paradigmas arquitectónicos</strong>: Patrones conceptuales de diseño, estructuración física del almacenamiento y optimización de ejecución que delimitan el perfil operativo de un motor de bases de datos. El procesamiento transaccional en línea (<strong>OLTP</strong>) prioriza la atomicidad ACID, alta concurrencia y baja latencia en operaciones puntuales de lectura/escritura sobre esquemas normalizados orientados a filas (<em>heap/row-oriented</em>); en contraste, el procesamiento analítico en línea (<strong>OLAP</strong>) maximiza el rendimiento en escaneos masivos, agregaciones complejas y proyecciones de atributos específicos sobre esquemas desnormalizados orientados a columnas (<em>columnar storage</em>).</p>
 <div id="tbl-oltp-vs-olap" class="quarto-float anchored">
@@ -1259,68 +1284,62 @@ Tabla&nbsp;H.3: Comparación técnica entre paradigmas arquitectónicos OLTP y O
 <p>En la arquitectura de sistemas gestores de bases de datos objeto-relacionales (ORDBMS), este modelo formaliza el costo computacional de la topología cliente-servidor: cada consulta SQL y cada conjunto de geometrías transmitidas deben franquear la pila completa desde el protocolo de aplicación en el espacio de usuario (Capa 7), resolviendo la serialización binaria de objetos geométricos (Capa 6), la sesión autenticada (Capa 5) y la segmentación TCP en un puerto asignado como el 5432 (Capa 4), hasta el direccionamiento IP (Capa 3) y la transmisión de tramas sobre interfaces de red o adaptadores virtuales de bucle invertido (<em>loopback</em>).</p></li>
 <li><p><strong>Persistencia de clases (en bases de datos orientadas a objetos y objeto-relacionales)</strong>: Mecanismo arquitectónico que permite a las instancias de una clase (u objetos en memoria con identidad propia mediante OID, atributos complejos y comportamiento asociado) almacenarse de forma directa y no volátil en disco, sobreviviendo a la terminación del proceso que las creó sin requerir su descomposición forzada en múltiples tablas relacionales normalizadas (mitigación del desajuste de impedancia objeto-relacional). En motores objeto-relacionales, se materializa mediante tipos compuestos definidos por el usuario (<code>CREATE TYPE</code>) o tablas tipadas estructuradas a partir de tipos de datos abstractos:</p></li>
 </ul>
-<pre class="{sql}"><code>--| label: ddl-ejemplo-persistencia-clases
---| eval: false
---| echo: true
-
--- 1. Definición del tipo compuesto estructurado (equivalente a la clase en memoria)
-CREATE TYPE public.tipo_estacion_meteo AS (
-    identificador varchar(15),
-    altitud_msnm numeric(6, 2),
-    sensores text[],
-    ubicacion geometry(Point, 9377)
-);
-
--- 2. Persistencia directa de instancias del tipo abstracto dentro de una relación
-CREATE TABLE public.red_hidrometeorologica (
-    id serial PRIMARY KEY,
-    cuenca varchar(50) NOT NULL,
-    estacion public.tipo_estacion_meteo NOT NULL
-);
-
--- 3. Instanciación y almacenamiento del objeto preservando su estructura integral
-INSERT INTO public.red_hidrometeorologica (cuenca, estacion)
-VALUES (
-    'Cuenca Alta Río Bogotá',
-    ROW('EST-SABANA-01', 2550.00, ARRAY['Pluviómetro', 'Anemómetro'], ST_GeomFromText('POINT(5000000 2000000)', 9377))
-);
-
--- 4. Acceso directo a los miembros y geometrías del objeto persistido
-SELECT 
-    cuenca,
-    (estacion).identificador AS codigo_estacion,
-    (estacion).altitud_msnm AS elevacion,
-    ST_AsText((estacion).ubicacion) AS wkt_posicion
-FROM public.red_hidrometeorologica;
-</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- 1. Definición del tipo compuesto estructurado (equivalente a la clase en memoria)</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TYPE</span> <span class="kw">public</span>.tipo_estacion_meteo <span class="kw">AS</span> (</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    identificador <span class="dt">varchar</span>(<span class="dv">15</span>),</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    altitud_msnm <span class="dt">numeric</span>(<span class="dv">6</span>, <span class="dv">2</span>),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    sensores text[],</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    ubicacion geometry(Point, <span class="dv">9377</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">-- 2. Persistencia directa de instancias del tipo abstracto dentro de una relación</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="kw">public</span>.red_hidrometeorologica (</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">id</span> serial <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    cuenca <span class="dt">varchar</span>(<span class="dv">50</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    estacion <span class="kw">public</span>.tipo_estacion_meteo <span class="kw">NOT</span> <span class="kw">NULL</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co">-- 3. Instanciación y almacenamiento del objeto preservando su estructura integral</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> <span class="kw">public</span>.red_hidrometeorologica (cuenca, estacion)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="kw">VALUES</span> (</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Cuenca Alta Río Bogotá'</span>,</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ROW</span>(<span class="st">'EST-SABANA-01'</span>, <span class="fl">2550.00</span>, <span class="dt">ARRAY</span>[<span class="st">'Pluviómetro'</span>, <span class="st">'Anemómetro'</span>], ST_GeomFromText(<span class="st">'POINT(5000000 2000000)'</span>, <span class="dv">9377</span>))</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="co">-- 4. Acceso directo a los miembros y geometrías del objeto persistido</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    cuenca,</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    (estacion).identificador <span class="kw">AS</span> codigo_estacion,</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    (estacion).altitud_msnm <span class="kw">AS</span> elevacion,</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    ST_AsText((estacion).ubicacion) <span class="kw">AS</span> wkt_posicion</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="kw">public</span>.red_hidrometeorologica;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <ul>
 <li><strong>Polimorfismo (en SGBD objeto-relacionales)</strong>: Principio arquitectónico que faculta a una misma interfaz, operador o función para procesar argumentos de distintos tipos concretos pertenecientes a una misma jerarquía de herencia (<code>Geometry</code>), ejecutando en tiempo de ejecución (<em>runtime</em>) la rutina algorítmica específica según la signatura morfológica del objeto (despacho dinámico). En esquemas relacionales, habilita la definición de columnas espaciales genéricas capaces de alojar simultáneamente entidades de distinta dimensión topológica (<code>Point</code>, <code>LineString</code>, <code>Polygon</code>) bajo una misma relación:</li>
 </ul>
-<pre class="{sql}"><code>--| label: ddl-ejemplo-polimorfismo-glosario
---| eval: false
---| echo: true
-
--- 1. Definición de columna espacial polimórfica (acepta cualquier subtipo OGC)
-CREATE TABLE public.infraestructura_multitipo (
-    id serial PRIMARY KEY,
-    nombre varchar(50) NOT NULL,
-    geom geometry(Geometry, 9377) NOT NULL
-);
-
--- 2. Inserción de primitivas heterogéneas en la misma relación
-INSERT INTO public.infraestructura_multitipo (nombre, geom) VALUES
-('Punto de control', ST_GeomFromText('POINT(5000000 2000000)', 9377)),
-('Línea de conducción', ST_GeomFromText('LINESTRING(5000000 2000000, 5000500 2000500)', 9377)),
-('Predio operativo', ST_GeomFromText('POLYGON((5000000 2000000, 5000200 2000000, 5000200 2000200, 5000000 2000200, 5000000 2000000))', 9377));
-
--- 3. Despacho dinámico: ST_Area y ST_Length resuelven según la morfología del registro
-SELECT 
-    nombre,
-    ST_GeometryType(geom) AS subtipo,
-    ST_Length(geom) AS longitud_m,
-    ST_Area(geom) AS area_m2
-FROM public.infraestructura_multitipo;
-</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- 1. Definición de columna espacial polimórfica (acepta cualquier subtipo OGC)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="kw">public</span>.infraestructura_multitipo (</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">id</span> serial <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    nombre <span class="dt">varchar</span>(<span class="dv">50</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    geom geometry(Geometry, <span class="dv">9377</span>) <span class="kw">NOT</span> <span class="kw">NULL</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">-- 2. Inserción de primitivas heterogéneas en la misma relación</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> <span class="kw">public</span>.infraestructura_multitipo (nombre, geom) <span class="kw">VALUES</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>(<span class="st">'Punto de control'</span>, ST_GeomFromText(<span class="st">'POINT(5000000 2000000)'</span>, <span class="dv">9377</span>)),</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>(<span class="st">'Línea de conducción'</span>, ST_GeomFromText(<span class="st">'LINESTRING(5000000 2000000, 5000500 2000500)'</span>, <span class="dv">9377</span>)),</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>(<span class="st">'Predio operativo'</span>, ST_GeomFromText(<span class="st">'POLYGON((5000000 2000000, 5000200 2000000, 5000200 2000200, 5000000 2000200, 5000000 2000000))'</span>, <span class="dv">9377</span>));</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co">-- 3. Despacho dinámico: ST_Area y ST_Length resuelven según la morfología del registro</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    nombre,</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    ST_GeometryType(geom) <span class="kw">AS</span> subtipo,</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    ST_Length(geom) <span class="kw">AS</span> longitud_m,</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    ST_Area(geom) <span class="kw">AS</span> area_m2</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="kw">public</span>.infraestructura_multitipo;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <ul>
 <li><p><strong>Propiedad tipada</strong>: Atributo, campo o par clave-valor asociado a una entidad (en esquemas relacionales, objeto-relacionales o grafos de propiedades) cuyo dominio de valores admisibles, representación física en memoria/disco y operadores válidos están formalmente restringidos por un tipo de dato explícito (primitivo, estructurado o abstracto). Su declaración impone validación de integridad semántica en tiempo de escritura (<em>schema-on-write</em>), previene anomalías por incoherencia de dominios y permite al motor de base de datos asignar métodos de acceso indexados y optimizadores algebraicos especializados (tales como predicados topológicos sobre columnas espaciales).</p></li>
 <li><p><strong>Relación (o tabla)</strong>: Estructura lógica bidimensional fundamental del modelo relacional, formalizada matemáticamente como un subconjunto no ordenado del producto cartesiano de los dominios de sus atributos, consistente con un esquema formal y compuesta por tuplas homogéneas.</p></li>
