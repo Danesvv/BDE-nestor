@@ -1,0 +1,1233 @@
+---
+engine: knitr
+execute:
+  echo: true
+  warning: false
+  message: false
+filters:
+  #- diagram
+  - ../_extensions/pandoc-ext/diagram/diagram.lua
+diagram:
+  engine:
+    plantuml:
+      #execpath: ["java", "-jar", "D:/Classes/Unal_2025/Bases_de_Datos_Espaciales/GitHub/plantuml.jar"]
+      execpath: plantuml
+format:
+  html:
+    css: ../styles.css
+    toc: true
+    number-sections: true
+  pdf:
+    documentclass: scrreprt
+    number-sections: true
+    toc: false
+---
+
+
+# Implementación física DDL y migración espacial {#sec-diseño-fisico}
+
+```{r}
+#| label: setup-j-eval-j-plot
+#| code-fold: true
+#| include: false
+source("../j_eval_j_plot.r")
+
+```
+
+```{r}
+#| label: setup-variables-sistema-r-1
+#| include: false
+
+# 1. Registro de variables en el proceso padre para persistencia y herencia en Knitr
+Sys.setenv(
+  # Directorio relativo de almacenamiento de respaldos (resuelto desde chapters/)
+  PLOTS_DIR = "../plots"
+)
+
+```
+
+::: {.content-visible when-format="html"}
+
+
+::: {.callout-note appearance="simple" title="Presentación de la sesión"}
+Las diapositivas interactivas correspondientes al presente capítulo se encuentran disponibles en: [Presentación interactiva: Arquitectura y estándares OGC](https://www.google.com/search?q=../slides/20-d_arquitectura_y_estandares_ogc.html){target="_blank"}.
+:::
+
+
+```{r}
+#| label: setup-variables-sistema-r
+#| include: false
+
+# Registro de variables en el proceso padre para persistencia y herencia en Knitr
+Sys.setenv(
+  # Instancia física en el sistema anfitrión (accesible desde el contenedor)
+  LOCAL_PGHOST = "host.docker.internal",
+  LOCAL_PGPORT = "5432",
+  LOCAL_PGUSER = "postgres",
+  LOCAL_PGPASSWORD = "geomatica2025",
+  LOCAL_PGDATABASE = "sig_db_unal",
+  
+  # Instancia dockerizada (red bridge interna)
+  DOCKER_PGHOST = "db-postgis",
+  DOCKER_PGPORT = "5432",
+  DOCKER_PGUSER = "profe_unal",
+  DOCKER_PGPASSWORD = "geomatica2025",
+  DOCKER_PGDATABASE = "sig_db_unal",
+  
+  # Parámetros por defecto para el cliente interactivo libpq (apuntando al host local)
+  PGHOST = "host.docker.internal",
+  PGPORT = "5432",
+  PGUSER = "postgres",
+  PGPASSWORD = "geomatica2025",
+  PGDATABASE = "sig_db_unal"
+)
+```
+
+
+
+::: {.panel-tabset}
+
+### Terminal integrada
+
+Para la interacción interactiva mediante la consola de comandos o la terminal integrada de Visual Studio Code, se configuran las variables de entorno estándar de `libpq` para apuntar al clúster correspondiente. Ver el fundamento técnico en la @sec-gestion-variables-entorno.
+
+```{bash}
+#| label: setup-variables-sesion-bash-html
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+
+# 1. Parámetros para la instancia física en el sistema anfitrión (host local)
+export LOCAL_PGHOST="host.docker.internal"
+export LOCAL_PGPORT="5432"
+export LOCAL_PGUSER="postgres"
+export LOCAL_PGPASSWORD='geomatica2025'
+export LOCAL_PGDATABASE="sig_db_unal"
+
+# 2. Parámetros para la instancia dockerizada (red bridge interna)
+export DOCKER_PGHOST="db-postgis"
+export DOCKER_PGPORT="5432"
+export DOCKER_PGUSER="profe_unal"
+export DOCKER_PGPASSWORD='geomatica2025'
+export DOCKER_PGDATABASE="sig_db_unal"
+
+# 3. Asignación de variables estándar de libpq por defecto (apuntando al host local)
+export PGHOST="${LOCAL_PGHOST}"
+export PGPORT="${LOCAL_PGPORT}"
+export PGUSER="${LOCAL_PGUSER}"
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+export PGDATABASE="${LOCAL_PGDATABASE}"
+
+# 4. Verificación de endpoints configurados en la sesión
+echo "Endpoint anfitrión (host):   ${LOCAL_PGUSER}@${LOCAL_PGHOST}:${LOCAL_PGPORT}/${LOCAL_PGDATABASE}"
+echo "Endpoint contenedor (docker): ${DOCKER_PGUSER}@${DOCKER_PGHOST}:${DOCKER_PGPORT}/${DOCKER_PGDATABASE}"
+echo "Sesión a vincular por defecto: ${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}"
+
+```
+
+### psql (Docker)
+
+Configuración de variables de sesión `libpq` para conectar al clúster en la red interna del contenedor:
+
+```{bash}
+#| label: setup-variables-sesion-docker
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+
+
+export PGHOST="${DOCKER_PGHOST}"
+export PGPORT="${DOCKER_PGPORT}"
+export PGUSER="${DOCKER_PGUSER}"
+export PGPASSWORD="${DOCKER_PGPASSWORD}"
+export PGDATABASE="${DOCKER_PGDATABASE}"
+
+echo "Sesión lista para conectar a contenedor Docker: ${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}"
+echo "Ejecute el comando psql"
+echo "Dentro de psql Use \`\conninfo\` o \`SHOW data_directory;\` para chequear la conexión"
+
+```
+
+
+### psql (anfitrión)
+
+Configuración de variables de sesión `libpq` para conectar al clúster ejecutado directamente en el sistema anfitrión:
+
+Base de datos: `sig_db_unal`: 
+
+```{bash}
+#| label: setup-variables-sesion-local1
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+
+
+export PGHOST="${LOCAL_PGHOST}"
+export PGPORT="${LOCAL_PGPORT}"
+export PGUSER="${LOCAL_PGUSER}"
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+export PGDATABASE="${LOCAL_PGDATABASE}"
+
+echo "Sesión lista para conectar al host anfitrión: ${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}"
+echo "Ejecute el comando psql"
+echo "Dentro de psql Use \`\conninfo\` o \`SHOW data_directory;\` para chequear la conexión"
+
+```
+
+
+Base de datos: `bde_territorio_nacional` (a crear en este capítulo): 
+
+```{bash}
+#| label: setup-variables-sesion-local2
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+
+
+export PGHOST="${LOCAL_PGHOST}"
+export PGPORT="${LOCAL_PGPORT}"
+export PGUSER="${LOCAL_PGUSER}"
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+export PGDATABASE="bde_territorio_nacional"
+
+echo "Sesión lista para conectar al host anfitrión: ${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}"
+echo "Ejecute el comando psql"
+echo "Dentro de psql Use \`\conninfo\` o \`SHOW data_directory;\` para chequear la conexión"
+
+```
+
+
+### Python (SQLAlchemy)
+
+```{python}
+#| label: setup-motores-python
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+
+import os
+from sqlalchemy import create_engine
+
+# 1. Parámetros y motor para la instancia anfitriona (host local)
+host_local = os.getenv("LOCAL_PGHOST", "host.docker.internal")
+port_local = os.getenv("LOCAL_PGPORT", "5432")
+user_local = os.getenv("LOCAL_PGUSER", "postgres")
+pass_local = os.getenv("LOCAL_PGPASSWORD", "geomatica2025")
+db_local   = os.getenv("LOCAL_PGDATABASE", "sig_db_unal")
+
+cadena_local = f"postgresql+psycopg2://{user_local}:{pass_local}@{host_local}:{port_local}/{db_local}"
+engine_local = create_engine(cadena_local)
+
+# 2. Parámetros y motor para la instancia en red interna (Docker)
+host_docker = os.getenv("DOCKER_PGHOST", "db-postgis")
+port_docker = os.getenv("DOCKER_PGPORT", "5432")
+user_docker = os.getenv("DOCKER_PGUSER", "profe_unal")
+pass_docker = os.getenv("DOCKER_PGPASSWORD", "geomatica2025")
+db_docker   = os.getenv("DOCKER_PGDATABASE", "sig_db_unal")
+
+cadena_docker = f"postgresql+psycopg2://{user_docker}:{pass_docker}@{host_docker}:{port_docker}/{db_docker}"
+engine_docker = create_engine(cadena_docker)
+
+# Verificación de endpoints sin credenciales enmascaradas
+print(
+    "Motor local instanciado:\n  "
+    f"{engine_local.url.render_as_string(hide_password=False)}"
+)
+print(
+    "Motor docker instanciado:\n  "
+    f"{engine_docker.url.render_as_string(hide_password=False)}"
+)
+
+```
+
+:::
+
+:::
+
+::: {.content-visible when-format="pdf"}
+::: {.callout-note appearance="simple"}
+**Entorno de ejecución interactivo:** Las consultas y sentencias DDL/DML de este capítulo asumen que la sesión de terminal o el entorno de ejecución de Python disponen de las variables de conexión estándar debidamente configuradas. Si ejecuta los bloques de forma manual en la consola, verifique la asignación de parámetros descrita en la @sec-gestion-variables-entorno.
+:::
+:::
+
+## Objetivos del capítulo
+
+
+## Implementación física y migración espacial desde el repositorio legado
+
+El paso del modelo lógico al plano físico demanda materializar las relaciones en el gestor relacional y resolver la interoperabilidad con repositorios preexistentes. En los sistemas de información geográfica es habitual enfrentarse a bases de datos heredadas (*legacy*) que no se ajustan a las normas cartográficas vigentes ni a los principios de normalización relacional.
+
+### Arquitectura de la base de datos legado frente al nuevo repositorio local
+
+El entorno de experimentación dispone de la base de datos `sig_db_unal`, la cual opera como repositorio de origen (*staging*). Al auditar su estructura técnica se constatan dos condiciones determinantes:
+
+* **Sistema de referencia de coordenadas en desuso:** La totalidad de sus capas vectoriales está almacenada nativamente bajo el elipsoide Bogotá (origen Colombia Central, código **EPSG:21892**), sistema deprecado por la autoridad cartográfica nacional (IGAC) mediante la Resolución 471 de 2020 en favor del sistema unificado **EPSG:9377** (MAGNA-SIRGAS Origen Nacional).
+
+* **Estructura tabular de origen:** A diferencia de esquemas cartográficos planos desarticulados, las tablas `divpol.departamentos` y `divpol.municipios` en `sig_db_unal` ya implementan identificadores DIVIPOLA (`dep_id`, `mun_id`) y nombres normalizados (`dep_nombre`, `mun_nombre`). Sin embargo, carecen del atributo `mun_categoria` y requieren la migración formal hacia claves foráneas declarativas con integridad referencial en el nuevo motor.
+
+Para subsanar estas limitaciones, se implementa en la instancia local la base de datos `bde_territorio_nacional`. Este nuevo repositorio adopta el estándar EPSG:9377, formaliza las claves foráneas del subsistema territorial (`departamentos`, `municipios`, `microregiones`) y resuelve la espacialidad de las entidades agregadas mediante álgebra computacional en el servidor.
+
+### Creación del catálogo físico y extensiones espaciales
+
+La inicialización del repositorio operacional requiere la conexión administrativa a la base de datos por defecto del motor local (`postgres`), la terminación de sesiones concurrentes para garantizar idempotencia, la creación de la base de datos física y la posterior habilitación de la extensión PostGIS:
+
+```{sql}
+--| label: ddl-crear-base-datos
+--| eval: false
+--| echo: true
+
+-- Importante: Usaremos la base de datos local!!
+
+-- Terminación de conexiones activas y recreación limpia del repositorio
+SELECT pg_terminate_backend(pid) 
+FROM pg_stat_activity 
+WHERE datname = 'bde_territorio_nacional' AND pid <> pg_backend_pid();
+
+DROP DATABASE IF EXISTS bde_territorio_nacional;
+
+CREATE DATABASE bde_territorio_nacional 
+    WITH ENCODING = 'UTF8' 
+    TEMPLATE = template0;
+
+\connect bde_territorio_nacional
+
+-- Habilitación del motor espacial PostGIS y esquemas temáticos
+CREATE EXTENSION IF NOT EXISTS postgis;
+CREATE SCHEMA IF NOT EXISTS divpol;
+
+```
+
+```{bash}
+#| label: ddl-crear-base-datos-exec
+#| eval: true
+#| echo: false
+
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "postgres" <<'EOF'
+SELECT pg_terminate_backend(pid) 
+FROM pg_stat_activity 
+WHERE datname = 'bde_territorio_nacional' AND pid <> pg_backend_pid();
+
+DROP DATABASE IF EXISTS bde_territorio_nacional;
+
+CREATE DATABASE bde_territorio_nacional WITH ENCODING = 'UTF8' TEMPLATE = template0;
+EOF
+
+psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "bde_territorio_nacional" <<'EOF'
+CREATE EXTENSION IF NOT EXISTS postgis;
+CREATE SCHEMA IF NOT EXISTS divpol;
+EOF
+
+```
+
+### Actualización del sistema de referencia espacial MAGNA-SIRGAS Origen Nacional (EPSG:9377)
+
+Al crear un catálogo nuevo a partir de una plantilla básica, la tabla `spatial_ref_sys` no incluye por defecto la definición oficial del origen único nacional. Se asegura su registro en `bde_territorio_nacional` mediante la cláusula `ON CONFLICT`:
+
+```{sql}
+--| label: dml-insertar-srid-9377
+--| eval: false
+--| echo: true
+
+-- Importante: Estamos usando la base de datos local!!
+
+-- Inserción o actualización del sistema MAGNA-SIRGAS Origen Nacional
+INSERT INTO spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text)
+VALUES (
+    9377,
+    'EPSG',
+    9377,
+    'PROJCS["MAGNA-SIRGAS / Origen-Nacional",GEOGCS["MAGNA-SIRGAS",DATUM["Marco_Geocentrico_Nacional_de_Referencia",SPHEROID["GRS 1980",6378137,298.257222101,AUTHORITY["EPSG","7019"]],AUTHORITY["EPSG","6686"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4686"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",4],PARAMETER["central_meridian",-73],PARAMETER["scale_factor",0.9992],PARAMETER["false_easting",5000000],PARAMETER["false_northing",2000000],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AUTHORITY["EPSG","9377"]]',
+    '+proj=tmerc +lat_0=4 +lon_0=-73 +k=0.9992 +x_0=5000000 +y_0=2000000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs'
+)
+ON CONFLICT (srid) DO UPDATE 
+SET srtext = EXCLUDED.srtext, proj4text = EXCLUDED.proj4text;
+
+```
+
+```{bash}
+#| label: dml-insertar-srid-9377-exec
+#| eval: true
+#| echo: false
+
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "bde_territorio_nacional" <<'EOF'
+INSERT INTO spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text)
+VALUES (
+    9377,
+    'EPSG',
+    9377,
+    'PROJCS["MAGNA-SIRGAS / Origen-Nacional",GEOGCS["MAGNA-SIRGAS",DATUM["Marco_Geocentrico_Nacional_de_Referencia",SPHEROID["GRS 1980",6378137,298.257222101,AUTHORITY["EPSG","7019"]],AUTHORITY["EPSG","6686"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4686"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",4],PARAMETER["central_meridian",-73],PARAMETER["scale_factor",0.9992],PARAMETER["false_easting",5000000],PARAMETER["false_northing",2000000],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AUTHORITY["EPSG","9377"]]',
+    '+proj=tmerc +lat_0=4 +lon_0=-73 +k=0.9992 +x_0=5000000 +y_0=2000000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs'
+)
+ON CONFLICT (srid) DO UPDATE 
+SET srtext = EXCLUDED.srtext, proj4text = EXCLUDED.proj4text;
+EOF
+
+```
+
+### Estructura DDL con restricciones declarativas e índices
+
+Siguiendo la signatura formal del modelo lógico territorial, se definen las tablas respetando el orden de dependencias referenciales: entidades padre (`departamentos` y `microregiones`) seguidas de la entidad dependiente (`municipios`). Se implementa la estrategia híbrida de identificadores mediante una columna artificial `gid SERIAL` para compatibilidad con SIG de escritorio, complementada por la clave primaria natural sobre el código oficial DIVIPOLA:
+
+```{sql}
+--| label: ddl-tablas-territoriales
+--| eval: false
+--| echo: true
+
+-- Importante: Estamos usando la base de datos local!!
+
+-- 1. Entidad departamental (Clase espacial primaria)
+CREATE TABLE divpol.departamentos (
+    gid SERIAL,
+    dep_id VARCHAR(2) NOT NULL,
+    dep_nombre VARCHAR(100) NOT NULL,
+    dep_region VARCHAR(50) NULL,
+    the_geom GEOMETRY(MultiPolygon, 9377) NOT NULL,
+    CONSTRAINT pk_divpol_departamentos PRIMARY KEY (dep_id),
+    CONSTRAINT uq_departamentos_gid UNIQUE (gid)
+);
+
+-- 2. Entidad microrregiones (Entidad alfanumérica pura sin the_geom)
+CREATE TABLE public.microregiones (
+    mic_id INTEGER NOT NULL,
+    mic_nombre VARCHAR(100) NOT NULL,
+    mic_descripcion TEXT NULL,
+    CONSTRAINT pk_public_microregiones PRIMARY KEY (mic_id),
+    CONSTRAINT uq_microregiones_nombre UNIQUE (mic_nombre)
+);
+
+-- 3. Entidad municipal (Clase espacial subordinada)
+CREATE TABLE divpol.municipios (
+    gid SERIAL,
+    mun_id VARCHAR(5) NOT NULL,
+    mun_nombre VARCHAR(100) NOT NULL,
+    mun_categoria VARCHAR(10) NULL,
+    dep_id VARCHAR(2) NOT NULL,
+    mic_id INTEGER NULL,
+    the_geom GEOMETRY(MultiPolygon, 9377) NOT NULL,
+    CONSTRAINT pk_divpol_municipios PRIMARY KEY (mun_id),
+    CONSTRAINT uq_municipios_gid UNIQUE (gid),
+    CONSTRAINT fk_municipios_departamentos FOREIGN KEY (dep_id)
+        REFERENCES divpol.departamentos (dep_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    CONSTRAINT fk_municipios_microregiones FOREIGN KEY (mic_id)
+        REFERENCES public.microregiones (mic_id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
+    CONSTRAINT chk_mun_categoria CHECK (
+        mun_categoria IN ('ESPECIAL', 'PRIMERA', 'SEGUNDA', 'TERCERA', 'CUARTA', 'QUINTA', 'SEXTA')
+    )
+);
+
+-- Índices B-Tree para optimización de cruces relacionales (FK)
+CREATE INDEX idx_municipios_dep_id ON divpol.municipios USING btree (dep_id);
+CREATE INDEX idx_municipios_mic_id ON divpol.municipios USING btree (mic_id);
+
+-- Índices espaciales GiST sobre cajas delimitadoras mínimas
+CREATE INDEX sidx_departamentos_geom ON divpol.departamentos USING gist (the_geom);
+CREATE INDEX sidx_municipios_geom ON divpol.municipios USING gist (the_geom);
+
+```
+
+```{bash}
+#| label: ddl-tablas-territoriales-exec
+#| eval: true
+#| echo: false
+
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "bde_territorio_nacional" <<'EOF'
+DROP TABLE IF EXISTS divpol.municipios CASCADE;
+DROP TABLE IF EXISTS public.microregiones CASCADE;
+DROP TABLE IF EXISTS divpol.departamentos CASCADE;
+
+CREATE TABLE divpol.departamentos (
+    gid SERIAL,
+    dep_id VARCHAR(2) NOT NULL,
+    dep_nombre VARCHAR(100) NOT NULL,
+    dep_region VARCHAR(50) NULL,
+    the_geom GEOMETRY(MultiPolygon, 9377) NOT NULL,
+    CONSTRAINT pk_divpol_departamentos PRIMARY KEY (dep_id),
+    CONSTRAINT uq_departamentos_gid UNIQUE (gid)
+);
+
+CREATE TABLE public.microregiones (
+    mic_id INTEGER NOT NULL,
+    mic_nombre VARCHAR(100) NOT NULL,
+    mic_descripcion TEXT NULL,
+    CONSTRAINT pk_public_microregiones PRIMARY KEY (mic_id),
+    CONSTRAINT uq_microregiones_nombre UNIQUE (mic_nombre)
+);
+
+CREATE TABLE divpol.municipios (
+    gid SERIAL,
+    mun_id VARCHAR(5) NOT NULL,
+    mun_nombre VARCHAR(100) NOT NULL,
+    mun_categoria VARCHAR(10) NULL,
+    dep_id VARCHAR(2) NOT NULL,
+    mic_id INTEGER NULL,
+    the_geom GEOMETRY(MultiPolygon, 9377) NOT NULL,
+    CONSTRAINT pk_divpol_municipios PRIMARY KEY (mun_id),
+    CONSTRAINT uq_municipios_gid UNIQUE (gid),
+    CONSTRAINT fk_municipios_departamentos FOREIGN KEY (dep_id)
+        REFERENCES divpol.departamentos (dep_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    CONSTRAINT fk_municipios_microregiones FOREIGN KEY (mic_id)
+        REFERENCES public.microregiones (mic_id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
+    CONSTRAINT chk_mun_categoria CHECK (
+        mun_categoria IN ('ESPECIAL', 'PRIMERA', 'SEGUNDA', 'TERCERA', 'CUARTA', 'QUINTA', 'SEXTA')
+    )
+);
+
+CREATE INDEX idx_municipios_dep_id ON divpol.municipios USING btree (dep_id);
+CREATE INDEX idx_municipios_mic_id ON divpol.municipios USING btree (mic_id);
+CREATE INDEX sidx_departamentos_geom ON divpol.departamentos USING gist (the_geom);
+CREATE INDEX sidx_municipios_geom ON divpol.municipios USING gist (the_geom);
+EOF
+
+```
+
+### Migración de datos y reproyección de coordenadas
+
+La transferencia de las coberturas vectoriales desde `sig_db_unal` hacia `bde_territorio_nacional` aplica transformaciones de coordenadas en vuelo. La función `ST_Transform(the_geom, 9377)` efectúa el cambio de datum y proyección cartográfica desde el elipsoide Bogotá (EPSG:21892) hacia el marco unificado nacional, mientras que `ST_Multi` garantiza la homogeneidad del tipo geométrico en caso de que existan polígonos simples en la tabla de origen:
+
+```{sql}
+--| label: dml-migracion-departamentos
+--| eval: false
+--| echo: true
+
+-- Importante: Estamos usando la base de datos local!!
+
+-- Ingesta y reproyección de departamentos desde sig_db_unal
+INSERT INTO divpol.departamentos (dep_id, dep_nombre, the_geom)
+SELECT 
+    dep_id,
+    UPPER(TRIM(dep_nombre)) AS dep_nombre,
+    ST_Multi(ST_Transform(the_geom, 9377)) AS the_geom
+FROM dblink(
+    'dbname=sig_db_unal user=postgres password=geomatica2025 host=127.0.0.1 port=5432',
+    'SELECT dep_id, dep_nombre, the_geom FROM divpol.departamentos'
+) AS d(dep_id VARCHAR(2), dep_nombre VARCHAR(100), the_geom GEOMETRY);
+
+```
+
+```{bash}
+#| label: dml-migracion-departamentos-exec
+#| eval: true
+#| echo: false
+
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "bde_territorio_nacional" -v ON_ERROR_STOP=1 <<'EOF'
+CREATE EXTENSION IF NOT EXISTS dblink;
+DELETE FROM divpol.departamentos;
+EOF
+
+# Inserción vía dblink con respaldo por tubería psql con casteo explícito de geometría
+if ! psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "bde_territorio_nacional" -v ON_ERROR_STOP=1 <<'EOF'
+INSERT INTO divpol.departamentos (dep_id, dep_nombre, the_geom)
+SELECT 
+    dep_id,
+    UPPER(TRIM(dep_nombre)) AS dep_nombre,
+    ST_Multi(ST_Transform(the_geom, 9377)) AS the_geom
+FROM dblink(
+    'dbname=sig_db_unal user=postgres password=geomatica2025 host=127.0.0.1 port=5432',
+    'SELECT dep_id, dep_nombre, the_geom FROM divpol.departamentos'
+) AS d(dep_id VARCHAR(2), dep_nombre VARCHAR(100), the_geom GEOMETRY);
+EOF
+then
+    psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "sig_db_unal" -t -A -c "
+      SELECT 'INSERT INTO divpol.departamentos (dep_id, dep_nombre, the_geom) VALUES (' || 
+             quote_literal(dep_id) || ', ' || 
+             quote_literal(UPPER(TRIM(dep_nombre))) || ', ' || 
+             'ST_Multi(ST_Transform(' || quote_literal(the_geom::text) || '::geometry, 9377)));'
+      FROM divpol.departamentos;
+    " | psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "bde_territorio_nacional" -v ON_ERROR_STOP=1
+fi
+
+```
+
+::: {.callout-note title="Resolución de nombres de red en dblink: cliente Docker frente a servidor anfitrión"}
+La aparente contradicción al configurar los parámetros de red radica en el contexto de ejecución de cada componente del flujo de trabajo:
+
+* **Invocación del cliente de línea de comandos (`psql`):** Cuando la sentencia se dispara desde la terminal integrada dentro del contenedor de desarrollo, el comando `psql` requiere el parámetro `-h "${LOCAL_PGHOST}"` (resuelto como `host.docker.internal`). Este nombre de dominio especial es provisto por el motor de Docker para permitir que un proceso cliente contenerizado enrute sus paquetes hacia el sistema operativo anfitrión.
+* **Ejecución interna de la función `dblink()`:** A diferencia del comando de terminal, la instrucción `SELECT * FROM dblink(...)` no la ejecuta el cliente en Docker, sino el proceso del servidor PostgreSQL que reside en el sistema anfitrión. Desde la perspectiva de ese motor, la base de datos de origen (`sig_db_unal`) está alojada localmente en su misma instancia física.
+
+Si dentro de la cadena de conexión de `dblink` se declara `host=host.docker.internal`, el sistema operativo anfitrión intentará resolver ese dominio a través de su servidor DNS convencional, fallando con el error `could not translate host name "host.docker.internal"`. Por esta razón, la cadena de conexión interna de `dblink` debe declarar estrictamente `host=127.0.0.1` (o `localhost`), garantizando que la conexión interbase ocurra a través de la interfaz de bucle invertido (*loopback*) del propio equipo.
+:::
+
+Para el poblamiento de `public.microregiones`, se insertan las delimitaciones operativas y se vinculan a la tabla de municipios durante la migración. La categorización municipal (`mun_categoria`) se asigna formalmente para cumplir con la restricción `chk_mun_categoria`, clasificando las ciudades principales en `ESPECIAL`, Chía en `PRIMERA` y el resto en `SEXTA`:
+
+```{sql}
+--| label: dml-ingesta-microregiones
+--| eval: false
+--| echo: true
+
+-- Importante: Estamos usando la base de datos local!!
+
+-- Inserción de catálogo temático de microrregiones
+INSERT INTO public.microregiones (mic_id, mic_nombre, mic_descripcion) VALUES
+(1, 'Bajo Cauca', 'Región ganadera del norte de Antioquia y sur de Córdoba'),
+(2, 'Valle del Sinú', 'Zona ganadera intensiva de la cuenca del río Sinú'),
+(3, 'Sabanas de Sucre y Bolívar', 'Sistemas de doble propósito en sabanas del Caribe'),
+(4, 'Altillanura Plana', 'Sabana nativa y pasturas mejoradas del oriente del Meta');
+
+-- Ingesta de municipios con reproyección y asignación de claves foráneas
+INSERT INTO divpol.municipios (mun_id, mun_nombre, mun_categoria, dep_id, mic_id, the_geom)
+SELECT 
+    m.mun_id,
+    UPPER(TRIM(m.mun_nombre)) AS mun_nombre,
+    CASE 
+        WHEN m.mun_id IN ('05001', '11001', '76001', '08001') THEN 'ESPECIAL'
+        WHEN m.mun_id = '25175' THEN 'PRIMERA'
+        ELSE 'SEXTA'
+    END AS mun_categoria,
+    m.dep_id,
+    CASE 
+        WHEN m.mun_id IN ('05154', '05250', '05495', '05790', '05837', '05893') THEN 1
+        WHEN m.mun_id IN ('23001', '23079', '23168', '23182', '23417', '23555') THEN 2
+        WHEN m.mun_id IN ('50006', '50226', '50568', '50577') THEN 4
+        ELSE NULL 
+    END AS mic_id,
+    ST_Multi(ST_Transform(m.the_geom, 9377)) AS the_geom
+FROM dblink(
+    'dbname=sig_db_unal user=postgres password=geomatica2025 host=127.0.0.1 port=5432',
+    'SELECT mun_id, mun_nombre, dep_id, the_geom FROM divpol.municipios'
+) AS m(mun_id VARCHAR(5), mun_nombre VARCHAR(50), dep_id VARCHAR(2), the_geom GEOMETRY);
+
+```
+
+```{bash}
+#| label: dml-ingesta-microregiones-exec
+#| eval: true
+#| echo: false
+
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "bde_territorio_nacional" -v ON_ERROR_STOP=1 <<'EOF'
+DELETE FROM divpol.municipios;
+DELETE FROM public.microregiones;
+
+INSERT INTO public.microregiones (mic_id, mic_nombre, mic_descripcion) VALUES
+(1, 'Bajo Cauca', 'Región ganadera del norte de Antioquia y sur de Córdoba'),
+(2, 'Valle del Sinú', 'Zona ganadera intensiva de la cuenca del río Sinú'),
+(3, 'Sabanas de Sucre y Bolívar', 'Sistemas de doble propósito en sabanas del Caribe'),
+(4, 'Altillanura Plana', 'Sabana nativa y pasturas mejoradas del oriente del Meta');
+EOF
+
+if ! psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "bde_territorio_nacional" -v ON_ERROR_STOP=1 <<'EOF'
+INSERT INTO divpol.municipios (mun_id, mun_nombre, mun_categoria, dep_id, mic_id, the_geom)
+SELECT 
+    m.mun_id,
+    UPPER(TRIM(m.mun_nombre)) AS mun_nombre,
+    CASE 
+        WHEN m.mun_id IN ('05001', '11001', '76001', '08001') THEN 'ESPECIAL'
+        WHEN m.mun_id = '25175' THEN 'PRIMERA'
+        ELSE 'SEXTA'
+    END AS mun_categoria,
+    m.dep_id,
+    CASE 
+        WHEN m.mun_id IN ('05154', '05250', '05495', '05790', '05837', '05893') THEN 1
+        WHEN m.mun_id IN ('23001', '23079', '23168', '23182', '23417', '23555') THEN 2
+        WHEN m.mun_id IN ('50006', '50226', '50568', '50577') THEN 4
+        ELSE NULL 
+    END AS mic_id,
+    ST_Multi(ST_Transform(m.the_geom, 9377)) AS the_geom
+FROM dblink(
+    'dbname=sig_db_unal user=postgres password=geomatica2025 host=127.0.0.1 port=5432',
+    'SELECT mun_id, mun_nombre, dep_id, the_geom FROM divpol.municipios'
+) AS m(mun_id VARCHAR(5), mun_nombre VARCHAR(50), dep_id VARCHAR(2), the_geom GEOMETRY);
+EOF
+then
+    psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "sig_db_unal" -t -A -c "
+      SELECT 'INSERT INTO divpol.municipios (mun_id, mun_nombre, mun_categoria, dep_id, mic_id, the_geom) VALUES (' || 
+             quote_literal(mun_id) || ', ' || 
+             quote_literal(UPPER(TRIM(mun_nombre))) || ', ' || 
+             quote_literal(CASE 
+               WHEN mun_id IN ('05001', '11001', '76001', '08001') THEN 'ESPECIAL'
+               WHEN mun_id = '25175' THEN 'PRIMERA'
+               ELSE 'SEXTA'
+             END) || ', ' || 
+             quote_literal(dep_id) || ', ' || 
+             CASE 
+               WHEN mun_id IN ('05154', '05250', '05495', '05790', '05837', '05893') THEN '1'
+               WHEN mun_id IN ('23001', '23079', '23168', '23182', '23417', '23555') THEN '2'
+               WHEN mun_id IN ('50006', '50226', '50568', '50577') THEN '4'
+               ELSE 'NULL'
+             END || ', ' || 
+             'ST_Multi(ST_Transform(' || quote_literal(the_geom::text) || '::geometry, 9377)));'
+      FROM divpol.municipios;
+    " | psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "bde_territorio_nacional" -v ON_ERROR_STOP=1
+fi
+
+```
+
+### Geometría derivada: disolución topológica de microrregiones
+
+Tal como se formalizó en el modelo conceptual UML y en el diseño lógico, la entidad `public.microregiones` carece de almacenamiento geométrico redundante. La extensión geográfica de cada microrregión se computa dinámicamente agregando las geometrías de sus municipios subordinados mediante `ST_Union` y se publica en el catálogo como una vista espacial:
+
+```{sql}
+--| label: ddl-vista-espacial-microregiones
+--| eval: false
+--| echo: true
+
+-- Importante: Estamos usando la base de datos local!!
+
+-- Creación de la vista espacial con agregación topológica en tiempo de consulta
+CREATE OR REPLACE VIEW public.v_microregiones_espacial AS
+SELECT 
+    mic.mic_id,
+    mic.mic_nombre,
+    mic.mic_descripcion,
+    COUNT(mun.mun_id)::integer AS total_municipios,
+    ROUND((ST_Area(ST_Union(mun.the_geom)) / 10000.0)::numeric, 2) AS area_total_ha,
+    ST_Multi(ST_Union(mun.the_geom))::GEOMETRY(MultiPolygon, 9377) AS the_geom
+FROM public.microregiones mic
+INNER JOIN divpol.municipios mun ON mic.mic_id = mun.mic_id
+GROUP BY mic.mic_id, mic.mic_nombre, mic.mic_descripcion;
+
+```
+
+```{bash}
+#| label: ddl-vista-espacial-microregiones-exec
+#| eval: true
+#| echo: false
+
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "bde_territorio_nacional" -v ON_ERROR_STOP=1 <<'EOF'
+DROP VIEW IF EXISTS public.v_microregiones_espacial CASCADE;
+
+CREATE OR REPLACE VIEW public.v_microregiones_espacial AS
+SELECT 
+    mic.mic_id,
+    mic.mic_nombre,
+    mic.mic_descripcion,
+    COUNT(mun.mun_id)::integer AS total_municipios,
+    ROUND((ST_Area(ST_Union(mun.the_geom)) / 10000.0)::numeric, 2) AS area_total_ha,
+    ST_Multi(ST_Union(mun.the_geom))::GEOMETRY(MultiPolygon, 9377) AS the_geom
+FROM public.microregiones mic
+INNER JOIN divpol.municipios mun ON mic.mic_id = mun.mic_id
+GROUP BY mic.mic_id, mic.mic_nombre, mic.mic_descripcion;
+EOF
+
+```
+
+### Operaciones de combinación relacional y espacial en el nuevo esquema
+
+Una vez poblado el repositorio, es posible contrastar los dos mecanismos de articulación de información analizados en el diseño lógico: la combinación relacional gobernada por claves foráneas (*Attribute Join*) y la combinación espacial asistida por predicados topológicos (*Spatial Join*).
+
+#### Combinación relacional: cuantificación municipal por departamento
+
+La consulta siguiente evalúa la igualdad estricta `mun.dep_id = dep.dep_id` aprovechando el índice B-Tree creado sobre la clave foránea:
+
+```{sql}
+--| label: query-join-relacional
+--| eval: false
+--| echo: true
+
+-- Importante: Estamos usando la base de datos local!!
+
+SELECT 
+    dep.dep_id,
+    dep.dep_nombre,
+    COUNT(mun.mun_id) AS total_municipios,
+    ROUND((ST_Area(dep.the_geom) / 1000000.0)::numeric, 2) AS area_dep_km2
+FROM divpol.departamentos dep
+INNER JOIN divpol.municipios mun ON dep.dep_id = mun.dep_id
+GROUP BY dep.dep_id, dep.dep_nombre, dep.the_geom
+ORDER BY total_municipios DESC
+LIMIT 5;
+
+```
+
+```{bash}
+#| label: query-join-relacional-exec
+#| eval: true
+#| echo: false
+
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "bde_territorio_nacional" \
+  -c "
+SELECT 
+    dep.dep_id,
+    dep.dep_nombre,
+    COUNT(mun.mun_id) AS total_municipios,
+    ROUND((ST_Area(dep.the_geom) / 1000000.0)::numeric, 2) AS area_dep_km2
+FROM divpol.departamentos dep
+INNER JOIN divpol.municipios mun ON dep.dep_id = mun.dep_id
+GROUP BY dep.dep_id, dep.dep_nombre, dep.the_geom
+ORDER BY total_municipios DESC
+LIMIT 5;
+"
+
+```
+
+#### Combinación espacial: adscripción territorial independiente de identificadores
+
+A diferencia de la combinación por atributos, un *Spatial Join* evalúa la inclusión topológica euclidiana mediante `ST_Intersects` sobre los índices GiST, permitiendo articular capas que no comparten claves foráneas explícitas:
+
+```{sql}
+--| label: query-join-espacial
+--| eval: false
+--| echo: true
+
+-- Importante: Estamos usando la base de datos local!!
+
+-- Verificación de contigüidad espacial entre la microrregión Valle del Sinú y municipios
+SELECT 
+    vm.mic_nombre,
+    mun.mun_nombre,
+    ROUND((ST_Area(ST_Intersection(mun.the_geom, vm.the_geom)) / 10000.0)::numeric, 2) AS area_traslape_ha
+FROM public.v_microregiones_espacial vm
+INNER JOIN divpol.municipios mun ON ST_Intersects(mun.the_geom, vm.the_geom)
+WHERE vm.mic_id = 2
+ORDER BY area_traslape_ha DESC;
+
+```
+
+```{bash}
+#| label: query-join-espacial-exec
+#| eval: true
+#| echo: false
+
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "bde_territorio_nacional" \
+  -c "
+SELECT 
+    vm.mic_nombre,
+    mun.mun_nombre,
+    ROUND((ST_Area(ST_Intersection(mun.the_geom, vm.the_geom)) / 10000.0)::numeric, 2) AS area_traslape_ha
+FROM public.v_microregiones_espacial vm
+INNER JOIN divpol.municipios mun ON ST_Intersects(mun.the_geom, vm.the_geom)
+WHERE vm.mic_id = 2
+ORDER BY area_traslape_ha DESC;
+"
+
+```
+
+
+::: {.callout-note title="Semántica topológica de ST_Intersects frente a colindancias de frontera"}
+La presencia de 34 registros en el resultado obedece a la definición matemática del predicado `ST_Intersects(A, B)` según el modelo estándar DE-9IM del OGC:
+
+* **Superposición superficial ($D = 2$):** Los 6 municipios constitutivos de la microrregión comparten área interior bidimensional, registrando superficies de traslape calculadas en miles de hectáreas.
+* **Contacto perimetral ($D \le 1$):** Los 28 municipios restantes son unidades vecinas que únicamente tocan la frontera exterior de la microrregión a lo largo de un límite compartido (`LineString`, satisfaciendo la condición topológica `ST_Touches`). Al evaluar `ST_Intersection` sobre entidades colindantes que solo comparten bordes, la geometría resultante es puramente lineal; en consecuencia, `ST_Area` evalúa su superficie como $0.00\text{ ha}$.
+
+Para aislar exclusivamente los municipios miembros y descartar colindancias de borde, la consulta puede restringirse añadiendo `AND ST_Area(ST_Intersection(mun.the_geom, vm.the_geom)) > 0` o evaluando la dimensión interior mediante `ST_Relate(mun.the_geom, vm.the_geom, '2********')`.
+:::
+
+### Asociación muchos a muchos en el modelo conceptual
+
+...
+
+:::{.diagrama-ancho}
+```{dot}
+//| label: fig-uml-conceptual-fgan-mm
+//| fig-cap: "Modelo conceptual UML con paquetes temáticos y asociación muchos a muchos directa en el subsistema productivo."
+//| fig-width: 6.5
+//| fig-height: 7
+//| out-width: "100%"
+//| fig-align: center
+//| echo: false
+
+digraph UML_Conceptual_MM {
+    graph [rankdir=TB, bgcolor="transparent", pad="0.15", nodesep=0.5, ranksep=0.65];
+    node [fontname="Helvetica,Arial,sans-serif", fontsize=9.5];
+    edge [fontname="Helvetica,Arial,sans-serif", fontsize=8.5, color="black"];
+
+    // =========================================================================
+    // DOMINIO DISCRETO (ENUMERACIÓN)
+    // =========================================================================
+    enum_categoria [shape=plain, label=<
+        <TABLE BGCOLOR="white" BORDER="1.0" CELLBORDER="0" CELLPADDING="3" CELLSPACING="0" COLOR="gray">
+            <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT POINT-SIZE="8" COLOR="dimgray"><I>&lt;&lt;Enumeration&gt;&gt;</I></FONT><BR/><B>dom_mun_categoria</B></TD></TR>
+            <TR><TD ALIGN="LEFT">ESPECIAL</TD></TR>
+            <TR><TD ALIGN="LEFT">PRIMERA</TD></TR>
+            <TR><TD ALIGN="LEFT">SEGUNDA</TD></TR>
+            <TR><TD ALIGN="LEFT">TERCERA</TD></TR>
+            <TR><TD ALIGN="LEFT">CUARTA</TD></TR>
+            <TR><TD ALIGN="LEFT">QUINTA</TD></TR>
+            <TR><TD ALIGN="LEFT">SEXTA</TD></TR>
+        </TABLE>
+    >];
+
+    // =========================================================================
+    // PAQUETE CONCEPTUAL: divpol
+    // =========================================================================
+    subgraph cluster_divpol {
+        label = "Paquete conceptual: divpol";
+        fontname = "Helvetica,Arial,sans-serif";
+        fontsize = 10.5;
+        fontcolor = "black";
+        color = "darkgray";
+        style = "dashed";
+
+        departamentos [shape=plain, label=<
+            <TABLE BGCOLOR="white" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="black">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT POINT-SIZE="8" COLOR="dimgray"><I>&lt;&lt;FeatureType&gt;&gt;</I></FONT><BR/><B>departamentos</B></TD></TR>
+                <TR><TD ALIGN="LEFT">dep_id : Character(2) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">dep_nombre : Character(100) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">dep_region : Character(50) [0..1]</TD></TR>
+                <TR><TD ALIGN="LEFT"><B>the_geom : MultiPolygon [1]</B></TD></TR>
+            </TABLE>
+        >];
+
+        municipios [shape=plain, label=<
+            <TABLE BGCOLOR="white" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="black">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT POINT-SIZE="8" COLOR="dimgray"><I>&lt;&lt;FeatureType&gt;&gt;</I></FONT><BR/><B>municipios</B></TD></TR>
+                <TR><TD ALIGN="LEFT">mun_id : Character(5) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">mun_nombre : Character(100) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">mun_categoria : dom_mun_categoria [0..1]</TD></TR>
+                <TR><TD ALIGN="LEFT"><B>the_geom : MultiPolygon [1]</B></TD></TR>
+            </TABLE>
+        >];
+    }
+
+    // =========================================================================
+    // PAQUETE CONCEPTUAL: public
+    // =========================================================================
+    subgraph cluster_public {
+        label = "Paquete conceptual: public";
+        fontname = "Helvetica,Arial,sans-serif";
+        fontsize = 10.5;
+        fontcolor = "black";
+        color = "darkgray";
+        style = "dashed";
+
+        microregiones [shape=plain, label=<
+            <TABLE BGCOLOR="white" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="black">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT POINT-SIZE="8" COLOR="dimgray"><I>&lt;&lt;ObjectType&gt;&gt;</I></FONT><BR/><B>microregiones</B></TD></TR>
+                <TR><TD ALIGN="LEFT">mic_id : Integer [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">mic_nombre : Character(100) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">mic_descripcion : Text [0..1]</TD></TR>
+            </TABLE>
+        >];
+    }
+
+    // =========================================================================
+    // PAQUETE CONCEPTUAL: fgan (ASOCIACIÓN M:M DIRECTA)
+    // =========================================================================
+    subgraph cluster_fgan {
+        label = "Paquete conceptual: fgan (subsistema productivo)";
+        fontname = "Helvetica,Arial,sans-serif";
+        fontsize = 10.5;
+        fontcolor = "black";
+        color = "darkgray";
+        style = "dashed";
+
+        dependencias [shape=plain, label=<
+            <TABLE BGCOLOR="white" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="black">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT POINT-SIZE="8" COLOR="dimgray"><I>&lt;&lt;ObjectType&gt;&gt;</I></FONT><BR/><B>dependencias</B></TD></TR>
+                <TR><TD ALIGN="LEFT">dpe_id : Integer [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">dpe_nombre : Character(100) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">dpe_descripcion : Text [0..1]</TD></TR>
+            </TABLE>
+        >];
+
+        sistemas_produccion [shape=plain, label=<
+            <TABLE BGCOLOR="white" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="black">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT POINT-SIZE="8" COLOR="dimgray"><I>&lt;&lt;ObjectType&gt;&gt;</I></FONT><BR/><B>sistemas_produccion</B></TD></TR>
+                <TR><TD ALIGN="LEFT">spr_id : Integer [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">spr_nombre : Character(100) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">spr_abreviatura : Character(10) [1]</TD></TR>
+            </TABLE>
+        >];
+    }
+
+    // Dependencia de enumeración
+    edge [arrowhead=vee, style=dashed, penwidth=1.0, color="gray"];
+    municipios -> enum_categoria [label="<<use>>"];
+
+    // Asociaciones territoriales
+    edge [arrowhead=none, style=solid, penwidth=1.5, color="black"];
+    departamentos -> municipios [taillabel="1", headlabel="1..*", label="compuesto por ►"];
+    microregiones -> municipios [taillabel="0..1", headlabel="1..*", label="agrupa ►"];
+
+    // Asociación M:M conceptual directa
+    dependencias -> sistemas_produccion [taillabel="1..*", headlabel="1..*", label="gestiona ►"];
+}
+
+```
+
+:::
+
+#### Resolución lógica mediante tabla asociativa intermedia
+
+...
+
+:::{.diagrama-ancho}
+```{dot}
+//| label: fig-resolucion-logica-mn-fgan
+//| fig-cap: "Resolución del esquema relacional M:N mediante tabla intermedia asociativa, código cromático y signatura formal."
+//| fig-width: 6.5
+//| fig-height: 7
+//| out-width: "100%"
+//| fig-align: center
+//| echo: false
+
+digraph Resolucion_Logica_MM {
+    graph [rankdir=TB, bgcolor="transparent", pad="0.15", nodesep=0.5, ranksep=0.65];
+    node [fontname="Helvetica,Arial,sans-serif", fontsize=10];
+    edge [fontname="Helvetica,Arial,sans-serif", fontsize=8.5];
+
+    // =========================================================================
+    // SUBGRAFO: TABLAS FÍSICAS DEL SUBSISTEMA fgan
+    // =========================================================================
+    subgraph cluster_logico_fgan {
+        label = "Nivel lógico relacional: resolución asociativa M:N (esquema fgan)";
+        fontname = "Helvetica,Arial,sans-serif";
+        fontsize = 10.5;
+        fontcolor = "blue";
+        color = "lightblue";
+        style = "dashed";
+
+        // Tablas maestras independientes en el rango superior
+        {
+            rank = same;
+            t_dep [shape=plain, label=<
+                <TABLE BGCOLOR="white" BORDER="1.5" CELLBORDER="1" CELLPADDING="5" CELLSPACING="0" COLOR="black">
+                    <TR><TD ALIGN="CENTER" BGCOLOR="lightgray" COLSPAN="2"><B>fgan.dependencias</B></TD></TR>
+                    <TR><TD ALIGN="LEFT" PORT="dpe_id"><FONT COLOR="green"><U><B>dpe_id</B></U></FONT></TD><TD ALIGN="LEFT">INTEGER (PK)</TD></TR>
+                    <TR><TD ALIGN="LEFT">dpe_nombre</TD><TD ALIGN="LEFT">VARCHAR(100) NOT NULL</TD></TR>
+                    <TR><TD ALIGN="LEFT">dpe_descripcion</TD><TD ALIGN="LEFT">TEXT NULL</TD></TR>
+                </TABLE>
+            >];
+
+            t_sis [shape=plain, label=<
+                <TABLE BGCOLOR="white" BORDER="1.5" CELLBORDER="1" CELLPADDING="5" CELLSPACING="0" COLOR="black">
+                    <TR><TD ALIGN="CENTER" BGCOLOR="lightgray" COLSPAN="2"><B>fgan.sistemas_produccion</B></TD></TR>
+                    <TR><TD ALIGN="LEFT" PORT="spr_id"><FONT COLOR="green"><U><B>spr_id</B></U></FONT></TD><TD ALIGN="LEFT">INTEGER (PK)</TD></TR>
+                    <TR><TD ALIGN="LEFT">spr_nombre</TD><TD ALIGN="LEFT">VARCHAR(100) NOT NULL</TD></TR>
+                    <TR><TD ALIGN="LEFT">spr_abreviatura</TD><TD ALIGN="LEFT">VARCHAR(10) NOT NULL</TD></TR>
+                </TABLE>
+            >];
+        }
+
+        // Tensión horizontal entre tablas padre
+        t_dep -> t_sis [style=invis, minlen=2];
+
+        // Tabla intermedia asociativa en el rango intermedio
+        t_puente [shape=plain, label=<
+            <TABLE BGCOLOR="white" BORDER="1.5" CELLBORDER="1" CELLPADDING="5" CELLSPACING="0" COLOR="black">
+                <TR><TD ALIGN="CENTER" BGCOLOR="lightgray" COLSPAN="2"><B>fgan.dependencias_sistemas_produccion</B></TD></TR>
+                <TR><TD ALIGN="LEFT" PORT="dpe_id"><FONT COLOR="red"><U><B>dpe_id</B></U></FONT></TD><TD ALIGN="LEFT"><FONT COLOR="red">INTEGER (PK, FK)</FONT></TD></TR>
+                <TR><TD ALIGN="LEFT" PORT="spr_id"><FONT COLOR="red"><U><B>spr_id</B></U></FONT></TD><TD ALIGN="LEFT"><FONT COLOR="red">INTEGER (PK, FK)</FONT></TD></TR>
+                <TR><TD ALIGN="LEFT">dps_fecha_asignacion</TD><TD ALIGN="LEFT">DATE NOT NULL</TD></TR>
+            </TABLE>
+        >];
+
+        // Punteros de integridad referencial hacia las tablas padre
+        edge [color="red", penwidth=1.5, dir=back, arrowtail=vee, arrowhead=none, arrowsize=0.8];
+        t_dep:dpe_id:w -> t_puente:dpe_id:w [label="  referencia PK"];
+        t_sis:spr_id:e  -> t_puente:spr_id:e  [label="referencia PK  "];
+
+        // =====================================================================
+        // SIGNATURA FORMAL RELACIONAL CON CÓDIGO CROMÁTICO
+        // =====================================================================
+        signaturas_fgan [shape=plain, label=<
+            <TABLE BGCOLOR="white" BORDER="1.5" CELLBORDER="0" CELLPADDING="6" CELLSPACING="0" COLOR="blue" STYLE="ROUNDED">
+                <TR>
+                    <TD ALIGN="CENTER" COLSPAN="2" BORDER="1" SIDES="B" BGCOLOR="aliceblue"><B><FONT COLOR="blue" POINT-SIZE="10">Signatura relacional formal del subsistema productivo</FONT></B></TD>
+                </TR>
+                <TR>
+                    <TD ALIGN="RIGHT"><B>dependencias</B></TD>
+                    <TD ALIGN="LEFT">
+                        <TABLE BORDER="0" CELLBORDER="0" CELLPADDING="0" CELLSPACING="5">
+                            <TR>
+                                <TD>(</TD>
+                                <TD><FONT COLOR="green"><U><B>dpe_id</B></U></FONT></TD>
+                                <TD>,</TD>
+                                <TD>dpe_nombre</TD>
+                                <TD>,</TD>
+                                <TD>dpe_descripcion</TD>
+                                <TD>)</TD>
+                            </TR>
+                        </TABLE>
+                    </TD>
+                </TR>
+                <TR>
+                    <TD ALIGN="RIGHT"><B>sistemas_produccion</B></TD>
+                    <TD ALIGN="LEFT">
+                        <TABLE BORDER="0" CELLBORDER="0" CELLPADDING="0" CELLSPACING="5">
+                            <TR>
+                                <TD>(</TD>
+                                <TD><FONT COLOR="green"><U><B>spr_id</B></U></FONT></TD>
+                                <TD>,</TD>
+                                <TD>spr_nombre</TD>
+                                <TD>,</TD>
+                                <TD>spr_abreviatura</TD>
+                                <TD>)</TD>
+                            </TR>
+                        </TABLE>
+                    </TD>
+                </TR>
+                <TR>
+                    <TD ALIGN="RIGHT"><B>dependencias_sistemas_produccion</B></TD>
+                    <TD ALIGN="LEFT">
+                        <TABLE BORDER="0" CELLBORDER="0" CELLPADDING="0" CELLSPACING="5">
+                            <TR>
+                                <TD>(</TD>
+                                <TD><FONT COLOR="red"><U><B>dpe_id</B></U></FONT></TD>
+                                <TD>,</TD>
+                                <TD><FONT COLOR="red"><U><B>spr_id</B></U></FONT></TD>
+                                <TD>,</TD>
+                                <TD>dps_fecha_asignacion</TD>
+                                <TD>)</TD>
+                            </TR>
+                        </TABLE>
+                    </TD>
+                </TR>
+            </TABLE>
+        >];
+
+        edge [style=invis, weight=6, minlen=1];
+        t_puente -> signaturas_fgan;
+    }
+}
+
+```
+
+:::
+
+#### Implementación física DDL del subsistema productivo
+
+Para materializar este diseño en la base de datos operacional `bde_territorio_nacional`, se declara el esquema `fgan`, se implementan los catálogos y se codifica la tabla asociativa intermedia con sus restricciones declarativas de clave primaria compuesta e integridad referencial en cascada:
+
+```{sql}
+--| label: ddl-resolucion-mn-fgan
+--| eval: false
+--| echo: true
+
+-- Importante: Estamos usando la base de datos local!!
+
+CREATE SCHEMA IF NOT EXISTS fgan;
+
+-- 1. Catálogo de dependencias maestras
+CREATE TABLE fgan.dependencias (
+    dpe_id INTEGER NOT NULL,
+    dpe_nombre VARCHAR(100) NOT NULL,
+    dpe_descripcion TEXT NULL,
+    CONSTRAINT pk_fgan_dependencias PRIMARY KEY (dpe_id)
+);
+
+-- 2. Catálogo de sistemas de producción
+CREATE TABLE fgan.sistemas_produccion (
+    spr_id INTEGER NOT NULL,
+    spr_nombre VARCHAR(100) NOT NULL,
+    spr_abreviatura VARCHAR(10) NOT NULL,
+    CONSTRAINT pk_fgan_sistemas_produccion PRIMARY KEY (spr_id)
+);
+
+-- 3. Tabla asociativa intermedia (Resolución física M:N)
+CREATE TABLE fgan.dependencias_sistemas_produccion (
+    dpe_id INTEGER NOT NULL,
+    spr_id INTEGER NOT NULL,
+    dps_fecha_asignacion DATE NOT NULL DEFAULT CURRENT_DATE,
+    CONSTRAINT pk_dependencias_sistemas PRIMARY KEY (dpe_id, spr_id),
+    CONSTRAINT fk_dps_dependencias FOREIGN KEY (dpe_id)
+        REFERENCES fgan.dependencias (dpe_id)
+        ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT fk_dps_sistemas FOREIGN KEY (spr_id)
+        REFERENCES fgan.sistemas_produccion (spr_id)
+        ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+```
+
+```{bash}
+#| label: ddl-resolucion-mn-fgan-exec
+#| eval: true
+#| echo: false
+
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "bde_territorio_nacional" -v ON_ERROR_STOP=1 <<'EOF'
+CREATE SCHEMA IF NOT EXISTS fgan;
+
+DROP TABLE IF EXISTS fgan.dependencias_sistemas_produccion CASCADE;
+DROP TABLE IF EXISTS fgan.sistemas_produccion CASCADE;
+DROP TABLE IF EXISTS fgan.dependencias CASCADE;
+
+CREATE TABLE fgan.dependencias (
+    dpe_id INTEGER NOT NULL,
+    dpe_nombre VARCHAR(100) NOT NULL,
+    dpe_descripcion TEXT NULL,
+    CONSTRAINT pk_fgan_dependencias PRIMARY KEY (dpe_id)
+);
+
+CREATE TABLE fgan.sistemas_produccion (
+    spr_id INTEGER NOT NULL,
+    spr_nombre VARCHAR(100) NOT NULL,
+    spr_abreviatura VARCHAR(10) NOT NULL,
+    CONSTRAINT pk_fgan_sistemas_produccion PRIMARY KEY (spr_id)
+);
+
+CREATE TABLE fgan.dependencias_sistemas_produccion (
+    dpe_id INTEGER NOT NULL,
+    spr_id INTEGER NOT NULL,
+    dps_fecha_asignacion DATE NOT NULL DEFAULT CURRENT_DATE,
+    CONSTRAINT pk_dependencias_sistemas PRIMARY KEY (dpe_id, spr_id),
+    CONSTRAINT fk_dps_dependencias FOREIGN KEY (dpe_id)
+        REFERENCES fgan.dependencias (dpe_id)
+        ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT fk_dps_sistemas FOREIGN KEY (spr_id)
+        REFERENCES fgan.sistemas_produccion (spr_id)
+        ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+-- Inserción de validación en la tabla puente M:N
+INSERT INTO fgan.dependencias (dpe_id, dpe_nombre) VALUES 
+(1, 'Gerencia Técnica'), 
+(2, 'Subdirección de Ciencia y Tecnología');
+
+INSERT INTO fgan.sistemas_produccion (spr_id, spr_nombre, spr_abreviatura) VALUES 
+(1, 'Doble Propósito', 'DP'), 
+(2, 'Cría Especializada', 'CR'),
+(3, 'Ceba y Levante', 'CL');
+
+INSERT INTO fgan.dependencias_sistemas_produccion (dpe_id, spr_id) VALUES 
+(1, 1), (1, 2), (2, 2), (2, 3);
+EOF
+
+```
+
+## Ejercicios de implementación física DDL y migración espacial
+
+1. Auditoría geodésica del catálogo y reproyección condicionada:
+Escriba un bloque de comandos SQL que inspeccione el catálogo del sistema espacial `geometry_columns` para identificar cualquier tabla del esquema `divpol` que resida bajo el sistema de referencia obsoleto `SRID = 21892`.
+* Formule una sentencia DDL/DML que ejecute la transformación hacia el origen único nacional `EPSG:9377`.
+* Condicione la actualización de cada geometría a que la primitiva resultante satisfaga estrictamente el predicado de validez topológica (`ST_IsValid(the_geom) = TRUE`).
+
+2. Implementación física DDL con integridad referencial y restricciones declarativas:
+Materialice el subsistema ambiental de predios y rondas hídricas en la base de datos `bde_territorio_nacional` dentro de un esquema dedicado denominado `ambiental`:
+* Escriba las sentencias DDL para crear las tablas `ambiental.predios`, `ambiental.rondas_hidricas` y la tabla puente `ambiental.predios_rondas_afectacion`.
+* Configure claves primarias compuestas, reglas `ON DELETE RESTRICT` y `ON UPDATE CASCADE`.
+* Declare una restricción `CHECK` que asegure que el porcentaje de afectación resida estrictamente en el rango numérico continuo $[0.0, 100.0]$.
+* Cree los índices relacionales B-Tree sobre las claves foráneas y los índices espaciales GiST sobre las columnas `the_geom`.
+
+3. Geometría derivada y agregación topológica mediante vistas espaciales:
+En la arquitectura del clúster relacional, la cobertura de límites departamentales se utiliza para derivar la frontera territorial continua del país:
+* Escriba la sentencia DDL que cree la vista espacial `divpol.v_nacion_espacial`.
+* Utilice la función `ST_Union` para disolver los límites interdepartamentales de `divpol.departamentos` y aplique `ST_Multi` para forzar la salida como `MultiPolygon`.
+* Asegure que la columna geométrica resultante se registre con tipo y SRID explícito (`GEOMETRY(MultiPolygon, 9377)`), permitiendo su visualización acelerada en clientes SIG de escritorio (QGIS).
+
+4. Evaluación analítica de planes de ejecución: Attribute Join frente a Spatial Join:
+Diseñe un experimento comparativo en `psql` para contrastar dos estrategias de consulta que cuantifican la cantidad de municipios por departamento:
+* Consulta A (Attribute Join): Cruce relacional tradicional mediante `INNER JOIN ... ON mun.dep_id = dep.dep_id`.
+* Consulta B (Spatial Join): Cruce topológico mediante `INNER JOIN ... ON ST_Intersects(mun.the_geom, dep.the_geom)`.
+* Ejecute ambas sentencias anteponiendo `EXPLAIN ANALYZE` y compare: costo de planificación, costo de ejecución, tiempo total y el uso de índices (B-Tree frente a GiST).
+* Explique por qué el cruce relacional por clave foránea supera en varios órdenes de magnitud la velocidad del cruce espacial.

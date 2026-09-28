@@ -9,6 +9,14 @@ project:
     - "!slides/**/*.qmd"
     - "images/**"
 
+filters:
+  - diagram
+
+diagram:
+  engine:
+    plantuml:
+      execpath: plantuml
+
 lang: es  # <--- VITAL: Esto activa el español para todo el proyecto (HTML y PDF)
 
 # CONFIGURACIÓN DEL LIBRO
@@ -61,16 +69,21 @@ book:
     - part: "Fundamentos y diseño de bases de datos espaciales"
       chapters:
         - chapters/20-arquitectura_y_estandares_ogc.qmd
-        - chapters/21-modelado_conceptual_logico_fisico.qmd
-      #  - chapters/22-algebra_relacional_ddl_y_modelado_visual.qmd
-
-    #- part: "PostgreSQL, PostGIS y análisis espacial avanzado"
+        - chapters/21-modelado_conceptual_espacial.qmd
+        - chapters/22-diseno_logico_y_normalizacion_espacial.qmd
+        - chapters/23-implementacion_fisica_ddl_y_migracion_espacial.qmd
+        - chapters/24-algebra_relacional_y_modelado_visual_pgmodeler.qmd
+    - part: "PostgreSQL, PostGIS y análisis espacial vectorial"
+      chapters:
+        - chapters/25-spatial_sql_de9im_y_vistas_analiticas.qmd
+        #- chapters/26-indexacion_gist_optimizacion_y_respaldos_toc.qmd
+        - chapters/27-topologia_vectorial_persistente_y_pgrouting.qmd
+    #- part: "Geodatabases corporativas, ráster y gestión de datos"
     #  chapters:
-    #    - chapters/23-implementacion_fisica_cli_y_conexion_poliglota.qmd
-    #    - chapters/24-spatial_sql_de9im_y_vistas_analiticas.qmd
-    #    - chapters/25-indexacion_gist_optimizacion_y_respaldos_toc.qmd
-    #    - chapters/26-topologia_vectorial_persistente_y_pgrouting.qmd
-        
+    #    - chapters/29-enterprise_geodatabases_y_diseno_moderno.qmd
+    #    - chapters/30-postgis_raster_y_algebra_de_mapas.qmd
+    #    - chapters/31-logica_procedural_plpgsql_y_disparadores.qmd
+    #    - chapters/32-flujos_etl_espaciales_y_automatizacion.qmd
     - part: "Proyectos aplicados"
       chapters:
         - chapters/proyectos/00-guia_proyecto_final.qmd

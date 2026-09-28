@@ -342,6 +342,25 @@ El directorio de trabajo local queda montado bidireccionalmente en la ruta `/hom
 La topología garantiza que la caída del sistema anfitrión no comprometa las tablas almacenadas en el catálogo PostGIS ni los scripts depositados en `/home/rstudio/work`. El volumen configurado actúa como punto de montaje asíncrono.
 :::
 
+### Persistencia de modificaciones en la imagen base {#sec-persistencia-capa-docker}
+
+Las herramientas instaladas en la sesión de trabajo mediante `apt-get` residen exclusivamente en la capa de lectura y escritura del contenedor activo. Si los servicios se detienen mediante `docker compose stop`, estas herramientas se conservan. No obstante, si se ejecuta un desmontaje con `docker compose down`, la capa mutable se descarta y las utilidades añadidas se pierden.
+
+Para hacer permanentes estas modificaciones frente a cualquier ciclo de vida del contenedor, se debe congelar la capa activa sobre la imagen base mediante la instrucción `docker commit`. 
+
+Desde la terminal del sistema anfitrión (no dentro del contenedor), ejecute:
+
+```{bash}
+#| label: docker-commit-persistencia
+#| eval: false
+#| echo: true
+docker commit -m "Aprovisionamiento de psql 18, graphviz y plantuml" contenedor_sig_unal image_sig_unal:v1.11_produccion_final
+
+```
+
+Esta instrucción actualiza el registro local de la imagen `image_sig_unal:v1.11_produccion_final`. Las recreaciones posteriores originadas por `docker compose up -d` dispondrán de los binarios instalados de forma nativa e inmediata.
+
+
 ## Vinculación de contenedores en la terminal integrada {#sec-cargar-contenedores-vscode}
 
 Para consolidar el entorno de desarrollo, acople el editor de texto (VSCode) directamente al núcleo del contenedor:

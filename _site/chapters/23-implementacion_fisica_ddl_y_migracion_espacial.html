@@ -1,0 +1,1800 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.550">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Bases de datos espaciales - 9&nbsp; Implementación física DDL y migración espacial</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/24-algebra_relacional_y_modelado_visual_pgmodeler.html" rel="next">
+<link href="../chapters/22-diseno_logico_y_normalizacion_espacial.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Bases de datos espaciales</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../slides/index.html"> 
+<span class="menu-text">Diapositivas</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/alexyshr/bde2026"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/20-arquitectura_y_estandares_ogc.html">Fundamentos y diseño de bases de datos espaciales</a></li><li class="breadcrumb-item"><a href="../chapters/23-implementacion_fisica_ddl_y_migracion_espacial.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Implementación física DDL y migración espacial</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bienvenida</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/00-prefacio.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-syllabus.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Syllabus: bases de datos espaciales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../chapters/04-introduccion_instalacion_entornos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Instalación y entornos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-guia_instalacion_vscode_docker.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Guía de instalación</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-instalacion_postgresql_18_windows.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Instalación y aprovisionamiento de PostgreSQL 18 y PostGIS 3.6</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13-infraestructura_docker_y_base_datos_espacial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Despliegue Docker y verificación de la base de datos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14-respaldo_y_recuperacion_bd.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Respaldo y recuperación de la base de datos sig_db_unal</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Fundamentos y diseño de bases de datos espaciales</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/20-arquitectura_y_estandares_ogc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Arquitectura de bases de datos espaciales y estándares OGC</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/21-modelado_conceptual_espacial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Modelado conceptual espacial</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/22-diseno_logico_y_normalizacion_espacial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Diseño lógico y normalización espacial</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/23-implementacion_fisica_ddl_y_migracion_espacial.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Implementación física DDL y migración espacial</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/24-algebra_relacional_y_modelado_visual_pgmodeler.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Spatial SQL, modelo DE-9IM y vistas analíticas (Taller 2)</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">PostgreSQL, PostGIS y análisis espacial vectorial</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/25-spatial_sql_de9im_y_vistas_analiticas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Indexación GiST, optimización y respaldos avanzados con TOC</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/27-topologia_vectorial_persistente_y_pgrouting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Topología vectorial persistente y análisis de redes con pgRouting (Taller 3)</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+ <span class="menu-text">Proyectos aplicados</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/proyectos/00-guia_proyecto_final.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Guía metodológica para el proyecto final</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/proyectos/01-temas_proyecto_final.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Temas de proyecto final en bases de datos espaciales</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/proyectos/tema_02_apache_sedona/02-proyecto_apache_sedona.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Ficha de propuesta de tema de investigación</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/proyectos/tema_02_apache_sedona/02-rubrica_proyecto_apache_sedona.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Rúbrica de evaluación para el reporte en QMD y el código</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text">Apéndices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/82-quarto.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Quarto: orquestación y configuración</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/83-docker.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Docker: gestión de contenedores e imágenes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/84-git_github.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Git y GitHub: Sincronización Local-Remota</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/85-vscode.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Visual Studio Code (VScode): Extensiones e Interfaz</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/86-windows.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Temas técnicos sobre Windows</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/87-linux_ubuntu.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Temas Técnicos sobre Linux</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/93-postgresql.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">PostgreSQL</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/97-glosario.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Lista de acrónimos y glosario de conceptos técnicos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/98-errata.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Errata</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/99-referencias.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Referencias Bibliográficas</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#objetivos-del-capítulo" id="toc-objetivos-del-capítulo" class="nav-link active" data-scroll-target="#objetivos-del-capítulo"><span class="header-section-number">9.1</span> Objetivos del capítulo</a></li>
+  <li><a href="#implementación-física-y-migración-espacial-desde-el-repositorio-legado" id="toc-implementación-física-y-migración-espacial-desde-el-repositorio-legado" class="nav-link" data-scroll-target="#implementación-física-y-migración-espacial-desde-el-repositorio-legado"><span class="header-section-number">9.2</span> Implementación física y migración espacial desde el repositorio legado</a>
+  <ul class="collapse">
+  <li><a href="#arquitectura-de-la-base-de-datos-legado-frente-al-nuevo-repositorio-local" id="toc-arquitectura-de-la-base-de-datos-legado-frente-al-nuevo-repositorio-local" class="nav-link" data-scroll-target="#arquitectura-de-la-base-de-datos-legado-frente-al-nuevo-repositorio-local">Arquitectura de la base de datos legado frente al nuevo repositorio local</a></li>
+  <li><a href="#creación-del-catálogo-físico-y-extensiones-espaciales" id="toc-creación-del-catálogo-físico-y-extensiones-espaciales" class="nav-link" data-scroll-target="#creación-del-catálogo-físico-y-extensiones-espaciales">Creación del catálogo físico y extensiones espaciales</a></li>
+  <li><a href="#actualización-del-sistema-de-referencia-espacial-magna-sirgas-origen-nacional-epsg9377" id="toc-actualización-del-sistema-de-referencia-espacial-magna-sirgas-origen-nacional-epsg9377" class="nav-link" data-scroll-target="#actualización-del-sistema-de-referencia-espacial-magna-sirgas-origen-nacional-epsg9377">Actualización del sistema de referencia espacial MAGNA-SIRGAS Origen Nacional (EPSG:9377)</a></li>
+  <li><a href="#estructura-ddl-con-restricciones-declarativas-e-índices" id="toc-estructura-ddl-con-restricciones-declarativas-e-índices" class="nav-link" data-scroll-target="#estructura-ddl-con-restricciones-declarativas-e-índices">Estructura DDL con restricciones declarativas e índices</a></li>
+  <li><a href="#migración-de-datos-y-reproyección-de-coordenadas" id="toc-migración-de-datos-y-reproyección-de-coordenadas" class="nav-link" data-scroll-target="#migración-de-datos-y-reproyección-de-coordenadas">Migración de datos y reproyección de coordenadas</a></li>
+  <li><a href="#geometría-derivada-disolución-topológica-de-microrregiones" id="toc-geometría-derivada-disolución-topológica-de-microrregiones" class="nav-link" data-scroll-target="#geometría-derivada-disolución-topológica-de-microrregiones">Geometría derivada: disolución topológica de microrregiones</a></li>
+  <li><a href="#operaciones-de-combinación-relacional-y-espacial-en-el-nuevo-esquema" id="toc-operaciones-de-combinación-relacional-y-espacial-en-el-nuevo-esquema" class="nav-link" data-scroll-target="#operaciones-de-combinación-relacional-y-espacial-en-el-nuevo-esquema">Operaciones de combinación relacional y espacial en el nuevo esquema</a></li>
+  <li><a href="#asociación-muchos-a-muchos-en-el-modelo-conceptual" id="toc-asociación-muchos-a-muchos-en-el-modelo-conceptual" class="nav-link" data-scroll-target="#asociación-muchos-a-muchos-en-el-modelo-conceptual">Asociación muchos a muchos en el modelo conceptual</a></li>
+  </ul></li>
+  <li><a href="#ejercicios-de-implementación-física-ddl-y-migración-espacial" id="toc-ejercicios-de-implementación-física-ddl-y-migración-espacial" class="nav-link" data-scroll-target="#ejercicios-de-implementación-física-ddl-y-migración-espacial"><span class="header-section-number">9.3</span> Ejercicios de implementación física DDL y migración espacial</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/20-arquitectura_y_estandares_ogc.html">Fundamentos y diseño de bases de datos espaciales</a></li><li class="breadcrumb-item"><a href="../chapters/23-implementacion_fisica_ddl_y_migracion_espacial.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Implementación física DDL y migración espacial</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-diseño-fisico" class="quarto-section-identifier"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Implementación física DDL y migración espacial</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-simple callout-note callout-titled" title="Presentación de la sesión">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Presentación de la sesión
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Las diapositivas interactivas correspondientes al presente capítulo se encuentran disponibles en: <a href="https://www.google.com/search?q=../slides/20-d_arquitectura_y_estandares_ogc.html" target="_blank">Presentación interactiva: Arquitectura y estándares OGC</a>.</p>
+</div>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">Terminal integrada</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">psql (Docker)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">psql (anfitrión)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false">Python (SQLAlchemy)</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<p>Para la interacción interactiva mediante la consola de comandos o la terminal integrada de Visual Studio Code, se configuran las variables de entorno estándar de <code>libpq</code> para apuntar al clúster correspondiente. Ver el fundamento técnico en la <a href="13-infraestructura_docker_y_base_datos_espacial.html#sec-gestion-variables-entorno" class="quarto-xref"><span>Sección 4.3</span></a>.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Parámetros para la instancia física en el sistema anfitrión (host local)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LOCAL_PGHOST</span><span class="op">=</span><span class="st">"host.docker.internal"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LOCAL_PGPORT</span><span class="op">=</span><span class="st">"5432"</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LOCAL_PGUSER</span><span class="op">=</span><span class="st">"postgres"</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LOCAL_PGPASSWORD</span><span class="op">=</span><span class="st">'geomatica2025'</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LOCAL_PGDATABASE</span><span class="op">=</span><span class="st">"sig_db_unal"</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Parámetros para la instancia dockerizada (red bridge interna)</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">DOCKER_PGHOST</span><span class="op">=</span><span class="st">"db-postgis"</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">DOCKER_PGPORT</span><span class="op">=</span><span class="st">"5432"</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">DOCKER_PGUSER</span><span class="op">=</span><span class="st">"profe_unal"</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">DOCKER_PGPASSWORD</span><span class="op">=</span><span class="st">'geomatica2025'</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">DOCKER_PGDATABASE</span><span class="op">=</span><span class="st">"sig_db_unal"</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Asignación de variables estándar de libpq por defecto (apuntando al host local)</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGHOST</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGHOST}</span><span class="st">"</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPORT</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGPORT}</span><span class="st">"</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGUSER</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGUSER}</span><span class="st">"</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGPASSWORD}</span><span class="st">"</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGDATABASE</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGDATABASE}</span><span class="st">"</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Verificación de endpoints configurados en la sesión</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Endpoint anfitrión (host):   </span><span class="va">${LOCAL_PGUSER}</span><span class="st">@</span><span class="va">${LOCAL_PGHOST}</span><span class="st">:</span><span class="va">${LOCAL_PGPORT}</span><span class="st">/</span><span class="va">${LOCAL_PGDATABASE}</span><span class="st">"</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Endpoint contenedor (docker): </span><span class="va">${DOCKER_PGUSER}</span><span class="st">@</span><span class="va">${DOCKER_PGHOST}</span><span class="st">:</span><span class="va">${DOCKER_PGPORT}</span><span class="st">/</span><span class="va">${DOCKER_PGDATABASE}</span><span class="st">"</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Sesión a vincular por defecto: </span><span class="va">${PGUSER}</span><span class="st">@</span><span class="va">${PGHOST}</span><span class="st">:</span><span class="va">${PGPORT}</span><span class="st">/</span><span class="va">${PGDATABASE}</span><span class="st">"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Endpoint anfitrión (host):   postgres@host.docker.internal:5432/sig_db_unal
+Endpoint contenedor (docker): profe_unal@db-postgis:5432/sig_db_unal
+Sesión a vincular por defecto: postgres@host.docker.internal:5432/sig_db_unal</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p>Configuración de variables de sesión <code>libpq</code> para conectar al clúster en la red interna del contenedor:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGHOST</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGHOST}</span><span class="st">"</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPORT</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGPORT}</span><span class="st">"</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGUSER</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGUSER}</span><span class="st">"</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGPASSWORD}</span><span class="st">"</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGDATABASE</span><span class="op">=</span><span class="st">"</span><span class="va">${DOCKER_PGDATABASE}</span><span class="st">"</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Sesión lista para conectar a contenedor Docker: </span><span class="va">${PGUSER}</span><span class="st">@</span><span class="va">${PGHOST}</span><span class="st">:</span><span class="va">${PGPORT}</span><span class="st">/</span><span class="va">${PGDATABASE}</span><span class="st">"</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Ejecute el comando psql"</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Dentro de psql Use </span><span class="dt">\`</span><span class="st">\conninfo</span><span class="dt">\`</span><span class="st"> o </span><span class="dt">\`</span><span class="st">SHOW data_directory;</span><span class="dt">\`</span><span class="st"> para chequear la conexión"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Sesión lista para conectar a contenedor Docker: profe_unal@db-postgis:5432/sig_db_unal
+Ejecute el comando psql
+Dentro de psql Use `\conninfo` o `SHOW data_directory;` para chequear la conexión</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<p>Configuración de variables de sesión <code>libpq</code> para conectar al clúster ejecutado directamente en el sistema anfitrión:</p>
+<p>Base de datos: <code>sig_db_unal</code>:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGHOST</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGHOST}</span><span class="st">"</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPORT</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGPORT}</span><span class="st">"</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGUSER</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGUSER}</span><span class="st">"</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGPASSWORD}</span><span class="st">"</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGDATABASE</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGDATABASE}</span><span class="st">"</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Sesión lista para conectar al host anfitrión: </span><span class="va">${PGUSER}</span><span class="st">@</span><span class="va">${PGHOST}</span><span class="st">:</span><span class="va">${PGPORT}</span><span class="st">/</span><span class="va">${PGDATABASE}</span><span class="st">"</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Ejecute el comando psql"</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Dentro de psql Use </span><span class="dt">\`</span><span class="st">\conninfo</span><span class="dt">\`</span><span class="st"> o </span><span class="dt">\`</span><span class="st">SHOW data_directory;</span><span class="dt">\`</span><span class="st"> para chequear la conexión"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Sesión lista para conectar al host anfitrión: postgres@host.docker.internal:5432/sig_db_unal
+Ejecute el comando psql
+Dentro de psql Use `\conninfo` o `SHOW data_directory;` para chequear la conexión</code></pre>
+</div>
+</div>
+<p>Base de datos: <code>bde_territorio_nacional</code> (a crear en este capítulo):</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGHOST</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGHOST}</span><span class="st">"</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPORT</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGPORT}</span><span class="st">"</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGUSER</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGUSER}</span><span class="st">"</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">${LOCAL_PGPASSWORD}</span><span class="st">"</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PGDATABASE</span><span class="op">=</span><span class="st">"bde_territorio_nacional"</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Sesión lista para conectar al host anfitrión: </span><span class="va">${PGUSER}</span><span class="st">@</span><span class="va">${PGHOST}</span><span class="st">:</span><span class="va">${PGPORT}</span><span class="st">/</span><span class="va">${PGDATABASE}</span><span class="st">"</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Ejecute el comando psql"</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Dentro de psql Use </span><span class="dt">\`</span><span class="st">\conninfo</span><span class="dt">\`</span><span class="st"> o </span><span class="dt">\`</span><span class="st">SHOW data_directory;</span><span class="dt">\`</span><span class="st"> para chequear la conexión"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Sesión lista para conectar al host anfitrión: postgres@host.docker.internal:5432/bde_territorio_nacional
+Ejecute el comando psql
+Dentro de psql Use `\conninfo` o `SHOW data_directory;` para chequear la conexión</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
+<div class="cell">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sqlalchemy <span class="im">import</span> create_engine</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Parámetros y motor para la instancia anfitriona (host local)</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>host_local <span class="op">=</span> os.getenv(<span class="st">"LOCAL_PGHOST"</span>, <span class="st">"host.docker.internal"</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>port_local <span class="op">=</span> os.getenv(<span class="st">"LOCAL_PGPORT"</span>, <span class="st">"5432"</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>user_local <span class="op">=</span> os.getenv(<span class="st">"LOCAL_PGUSER"</span>, <span class="st">"postgres"</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>pass_local <span class="op">=</span> os.getenv(<span class="st">"LOCAL_PGPASSWORD"</span>, <span class="st">"geomatica2025"</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>db_local   <span class="op">=</span> os.getenv(<span class="st">"LOCAL_PGDATABASE"</span>, <span class="st">"sig_db_unal"</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>cadena_local <span class="op">=</span> <span class="ss">f"postgresql+psycopg2://</span><span class="sc">{</span>user_local<span class="sc">}</span><span class="ss">:</span><span class="sc">{</span>pass_local<span class="sc">}</span><span class="ss">@</span><span class="sc">{</span>host_local<span class="sc">}</span><span class="ss">:</span><span class="sc">{</span>port_local<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>db_local<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>engine_local <span class="op">=</span> create_engine(cadena_local)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Parámetros y motor para la instancia en red interna (Docker)</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>host_docker <span class="op">=</span> os.getenv(<span class="st">"DOCKER_PGHOST"</span>, <span class="st">"db-postgis"</span>)</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>port_docker <span class="op">=</span> os.getenv(<span class="st">"DOCKER_PGPORT"</span>, <span class="st">"5432"</span>)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>user_docker <span class="op">=</span> os.getenv(<span class="st">"DOCKER_PGUSER"</span>, <span class="st">"profe_unal"</span>)</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>pass_docker <span class="op">=</span> os.getenv(<span class="st">"DOCKER_PGPASSWORD"</span>, <span class="st">"geomatica2025"</span>)</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>db_docker   <span class="op">=</span> os.getenv(<span class="st">"DOCKER_PGDATABASE"</span>, <span class="st">"sig_db_unal"</span>)</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>cadena_docker <span class="op">=</span> <span class="ss">f"postgresql+psycopg2://</span><span class="sc">{</span>user_docker<span class="sc">}</span><span class="ss">:</span><span class="sc">{</span>pass_docker<span class="sc">}</span><span class="ss">@</span><span class="sc">{</span>host_docker<span class="sc">}</span><span class="ss">:</span><span class="sc">{</span>port_docker<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>db_docker<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>engine_docker <span class="op">=</span> create_engine(cadena_docker)</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificación de endpoints sin credenciales enmascaradas</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Motor local instanciado:</span><span class="ch">\n</span><span class="st">  "</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"</span><span class="sc">{</span>engine_local<span class="sc">.</span>url<span class="sc">.</span>render_as_string(hide_password<span class="op">=</span><span class="va">False</span>)<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Motor local instanciado:
+  postgresql+psycopg2://postgres:geomatica2025@host.docker.internal:5432/sig_db_unal</code></pre>
+</div>
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Motor docker instanciado:</span><span class="ch">\n</span><span class="st">  "</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"</span><span class="sc">{</span>engine_docker<span class="sc">.</span>url<span class="sc">.</span>render_as_string(hide_password<span class="op">=</span><span class="va">False</span>)<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Motor docker instanciado:
+  postgresql+psycopg2://profe_unal:geomatica2025@db-postgis:5432/sig_db_unal</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<section id="objetivos-del-capítulo" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="objetivos-del-capítulo"><span class="header-section-number">9.1</span> Objetivos del capítulo</h2>
+</section>
+<section id="implementación-física-y-migración-espacial-desde-el-repositorio-legado" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="implementación-física-y-migración-espacial-desde-el-repositorio-legado"><span class="header-section-number">9.2</span> Implementación física y migración espacial desde el repositorio legado</h2>
+<p>El paso del modelo lógico al plano físico demanda materializar las relaciones en el gestor relacional y resolver la interoperabilidad con repositorios preexistentes. En los sistemas de información geográfica es habitual enfrentarse a bases de datos heredadas (<em>legacy</em>) que no se ajustan a las normas cartográficas vigentes ni a los principios de normalización relacional.</p>
+<section id="arquitectura-de-la-base-de-datos-legado-frente-al-nuevo-repositorio-local" class="level3">
+<h3 class="anchored" data-anchor-id="arquitectura-de-la-base-de-datos-legado-frente-al-nuevo-repositorio-local">Arquitectura de la base de datos legado frente al nuevo repositorio local</h3>
+<p>El entorno de experimentación dispone de la base de datos <code>sig_db_unal</code>, la cual opera como repositorio de origen (<em>staging</em>). Al auditar su estructura técnica se constatan dos condiciones determinantes:</p>
+<ul>
+<li><p><strong>Sistema de referencia de coordenadas en desuso:</strong> La totalidad de sus capas vectoriales está almacenada nativamente bajo el elipsoide Bogotá (origen Colombia Central, código <strong>EPSG:21892</strong>), sistema deprecado por la autoridad cartográfica nacional (IGAC) mediante la Resolución 471 de 2020 en favor del sistema unificado <strong>EPSG:9377</strong> (MAGNA-SIRGAS Origen Nacional).</p></li>
+<li><p><strong>Estructura tabular de origen:</strong> A diferencia de esquemas cartográficos planos desarticulados, las tablas <code>divpol.departamentos</code> y <code>divpol.municipios</code> en <code>sig_db_unal</code> ya implementan identificadores DIVIPOLA (<code>dep_id</code>, <code>mun_id</code>) y nombres normalizados (<code>dep_nombre</code>, <code>mun_nombre</code>). Sin embargo, carecen del atributo <code>mun_categoria</code> y requieren la migración formal hacia claves foráneas declarativas con integridad referencial en el nuevo motor.</p></li>
+</ul>
+<p>Para subsanar estas limitaciones, se implementa en la instancia local la base de datos <code>bde_territorio_nacional</code>. Este nuevo repositorio adopta el estándar EPSG:9377, formaliza las claves foráneas del subsistema territorial (<code>departamentos</code>, <code>municipios</code>, <code>microregiones</code>) y resuelve la espacialidad de las entidades agregadas mediante álgebra computacional en el servidor.</p>
+</section>
+<section id="creación-del-catálogo-físico-y-extensiones-espaciales" class="level3">
+<h3 class="anchored" data-anchor-id="creación-del-catálogo-físico-y-extensiones-espaciales">Creación del catálogo físico y extensiones espaciales</h3>
+<p>La inicialización del repositorio operacional requiere la conexión administrativa a la base de datos por defecto del motor local (<code>postgres</code>), la terminación de sesiones concurrentes para garantizar idempotencia, la creación de la base de datos física y la posterior habilitación de la extensión PostGIS:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Importante: Usaremos la base de datos local!!</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">-- Terminación de conexiones activas y recreación limpia del repositorio</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> pg_terminate_backend(pid) </span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> pg_stat_activity </span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> datname <span class="op">=</span> <span class="st">'bde_territorio_nacional'</span> <span class="kw">AND</span> pid <span class="op">&lt;&gt;</span> pg_backend_pid();</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">DATABASE</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> bde_territorio_nacional;</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">DATABASE</span> bde_territorio_nacional </span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">WITH</span> ENCODING <span class="op">=</span> <span class="st">'UTF8'</span> </span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    TEMPLATE <span class="op">=</span> template0;</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>\<span class="kw">connect</span> bde_territorio_nacional</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co">-- Habilitación del motor espacial PostGIS y esquemas temáticos</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> EXTENSION <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> postgis;</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">SCHEMA</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> divpol;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code> pg_terminate_backend 
+----------------------
+(0 rows)
+
+DROP DATABASE
+CREATE DATABASE
+CREATE EXTENSION
+CREATE SCHEMA</code></pre>
+</div>
+</div>
+</section>
+<section id="actualización-del-sistema-de-referencia-espacial-magna-sirgas-origen-nacional-epsg9377" class="level3">
+<h3 class="anchored" data-anchor-id="actualización-del-sistema-de-referencia-espacial-magna-sirgas-origen-nacional-epsg9377">Actualización del sistema de referencia espacial MAGNA-SIRGAS Origen Nacional (EPSG:9377)</h3>
+<p>Al crear un catálogo nuevo a partir de una plantilla básica, la tabla <code>spatial_ref_sys</code> no incluye por defecto la definición oficial del origen único nacional. Se asegura su registro en <code>bde_territorio_nacional</code> mediante la cláusula <code>ON CONFLICT</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Importante: Estamos usando la base de datos local!!</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">-- Inserción o actualización del sistema MAGNA-SIRGAS Origen Nacional</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="kw">VALUES</span> (</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="dv">9377</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'EPSG'</span>,</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="dv">9377</span>,</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'PROJCS["MAGNA-SIRGAS / Origen-Nacional",GEOGCS["MAGNA-SIRGAS",DATUM["Marco_Geocentrico_Nacional_de_Referencia",SPHEROID["GRS 1980",6378137,298.257222101,AUTHORITY["EPSG","7019"]],AUTHORITY["EPSG","6686"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4686"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",4],PARAMETER["central_meridian",-73],PARAMETER["scale_factor",0.9992],PARAMETER["false_easting",5000000],PARAMETER["false_northing",2000000],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AUTHORITY["EPSG","9377"]]'</span>,</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">'+proj=tmerc +lat_0=4 +lon_0=-73 +k=0.9992 +x_0=5000000 +y_0=2000000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs'</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="kw">ON</span> CONFLICT (srid) DO <span class="kw">UPDATE</span> </span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="kw">SET</span> srtext <span class="op">=</span> EXCLUDED.srtext, proj4text <span class="op">=</span> EXCLUDED.proj4text;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>INSERT 0 1</code></pre>
+</div>
+</div>
+</section>
+<section id="estructura-ddl-con-restricciones-declarativas-e-índices" class="level3">
+<h3 class="anchored" data-anchor-id="estructura-ddl-con-restricciones-declarativas-e-índices">Estructura DDL con restricciones declarativas e índices</h3>
+<p>Siguiendo la signatura formal del modelo lógico territorial, se definen las tablas respetando el orden de dependencias referenciales: entidades padre (<code>departamentos</code> y <code>microregiones</code>) seguidas de la entidad dependiente (<code>municipios</code>). Se implementa la estrategia híbrida de identificadores mediante una columna artificial <code>gid SERIAL</code> para compatibilidad con SIG de escritorio, complementada por la clave primaria natural sobre el código oficial DIVIPOLA:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Importante: Estamos usando la base de datos local!!</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">-- 1. Entidad departamental (Clase espacial primaria)</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> divpol.departamentos (</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    gid SERIAL,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    dep_id <span class="dt">VARCHAR</span>(<span class="dv">2</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    dep_nombre <span class="dt">VARCHAR</span>(<span class="dv">100</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    dep_region <span class="dt">VARCHAR</span>(<span class="dv">50</span>) <span class="kw">NULL</span>,</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    the_geom GEOMETRY(MultiPolygon, <span class="dv">9377</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CONSTRAINT</span> pk_divpol_departamentos <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (dep_id),</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CONSTRAINT</span> uq_departamentos_gid <span class="kw">UNIQUE</span> (gid)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="co">-- 2. Entidad microrregiones (Entidad alfanumérica pura sin the_geom)</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="kw">public</span>.microregiones (</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>    mic_id <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>    mic_nombre <span class="dt">VARCHAR</span>(<span class="dv">100</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>    mic_descripcion TEXT <span class="kw">NULL</span>,</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CONSTRAINT</span> pk_public_microregiones <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (mic_id),</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CONSTRAINT</span> uq_microregiones_nombre <span class="kw">UNIQUE</span> (mic_nombre)</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a><span class="co">-- 3. Entidad municipal (Clase espacial subordinada)</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> divpol.municipios (</span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>    gid SERIAL,</span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>    mun_id <span class="dt">VARCHAR</span>(<span class="dv">5</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>    mun_nombre <span class="dt">VARCHAR</span>(<span class="dv">100</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>    mun_categoria <span class="dt">VARCHAR</span>(<span class="dv">10</span>) <span class="kw">NULL</span>,</span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>    dep_id <span class="dt">VARCHAR</span>(<span class="dv">2</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>    mic_id <span class="dt">INTEGER</span> <span class="kw">NULL</span>,</span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>    the_geom GEOMETRY(MultiPolygon, <span class="dv">9377</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CONSTRAINT</span> pk_divpol_municipios <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (mun_id),</span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CONSTRAINT</span> uq_municipios_gid <span class="kw">UNIQUE</span> (gid),</span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CONSTRAINT</span> fk_municipios_departamentos <span class="kw">FOREIGN</span> <span class="kw">KEY</span> (dep_id)</span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a>        <span class="kw">REFERENCES</span> divpol.departamentos (dep_id)</span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> <span class="kw">UPDATE</span> <span class="kw">CASCADE</span></span>
+<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">RESTRICT</span>,</span>
+<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CONSTRAINT</span> fk_municipios_microregiones <span class="kw">FOREIGN</span> <span class="kw">KEY</span> (mic_id)</span>
+<span id="cb17-39"><a href="#cb17-39" aria-hidden="true" tabindex="-1"></a>        <span class="kw">REFERENCES</span> <span class="kw">public</span>.microregiones (mic_id)</span>
+<span id="cb17-40"><a href="#cb17-40" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> <span class="kw">UPDATE</span> <span class="kw">CASCADE</span></span>
+<span id="cb17-41"><a href="#cb17-41" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">SET</span> <span class="kw">NULL</span>,</span>
+<span id="cb17-42"><a href="#cb17-42" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CONSTRAINT</span> chk_mun_categoria <span class="kw">CHECK</span> (</span>
+<span id="cb17-43"><a href="#cb17-43" aria-hidden="true" tabindex="-1"></a>        mun_categoria <span class="kw">IN</span> (<span class="st">'ESPECIAL'</span>, <span class="st">'PRIMERA'</span>, <span class="st">'SEGUNDA'</span>, <span class="st">'TERCERA'</span>, <span class="st">'CUARTA'</span>, <span class="st">'QUINTA'</span>, <span class="st">'SEXTA'</span>)</span>
+<span id="cb17-44"><a href="#cb17-44" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb17-45"><a href="#cb17-45" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb17-46"><a href="#cb17-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-47"><a href="#cb17-47" aria-hidden="true" tabindex="-1"></a><span class="co">-- Índices B-Tree para optimización de cruces relacionales (FK)</span></span>
+<span id="cb17-48"><a href="#cb17-48" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> idx_municipios_dep_id <span class="kw">ON</span> divpol.municipios <span class="kw">USING</span> btree (dep_id);</span>
+<span id="cb17-49"><a href="#cb17-49" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> idx_municipios_mic_id <span class="kw">ON</span> divpol.municipios <span class="kw">USING</span> btree (mic_id);</span>
+<span id="cb17-50"><a href="#cb17-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-51"><a href="#cb17-51" aria-hidden="true" tabindex="-1"></a><span class="co">-- Índices espaciales GiST sobre cajas delimitadoras mínimas</span></span>
+<span id="cb17-52"><a href="#cb17-52" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> sidx_departamentos_geom <span class="kw">ON</span> divpol.departamentos <span class="kw">USING</span> gist (the_geom);</span>
+<span id="cb17-53"><a href="#cb17-53" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> sidx_municipios_geom <span class="kw">ON</span> divpol.municipios <span class="kw">USING</span> gist (the_geom);</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>NOTICE:  table "municipios" does not exist, skipping
+DROP TABLE
+NOTICE:  table "microregiones" does not exist, skipping
+DROP TABLE
+NOTICE:  table "departamentos" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX</code></pre>
+</div>
+</div>
+</section>
+<section id="migración-de-datos-y-reproyección-de-coordenadas" class="level3">
+<h3 class="anchored" data-anchor-id="migración-de-datos-y-reproyección-de-coordenadas">Migración de datos y reproyección de coordenadas</h3>
+<p>La transferencia de las coberturas vectoriales desde <code>sig_db_unal</code> hacia <code>bde_territorio_nacional</code> aplica transformaciones de coordenadas en vuelo. La función <code>ST_Transform(the_geom, 9377)</code> efectúa el cambio de datum y proyección cartográfica desde el elipsoide Bogotá (EPSG:21892) hacia el marco unificado nacional, mientras que <code>ST_Multi</code> garantiza la homogeneidad del tipo geométrico en caso de que existan polígonos simples en la tabla de origen:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Importante: Estamos usando la base de datos local!!</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">-- Ingesta y reproyección de departamentos desde sig_db_unal</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> divpol.departamentos (dep_id, dep_nombre, the_geom)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    dep_id,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">UPPER</span>(<span class="fu">TRIM</span>(dep_nombre)) <span class="kw">AS</span> dep_nombre,</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    ST_Multi(ST_Transform(the_geom, <span class="dv">9377</span>)) <span class="kw">AS</span> the_geom</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> dblink(</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">'dbname=sig_db_unal user=postgres password=geomatica2025 host=127.0.0.1 port=5432'</span>,</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">'SELECT dep_id, dep_nombre, the_geom FROM divpol.departamentos'</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>) <span class="kw">AS</span> d(dep_id <span class="dt">VARCHAR</span>(<span class="dv">2</span>), dep_nombre <span class="dt">VARCHAR</span>(<span class="dv">100</span>), the_geom GEOMETRY);</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>CREATE EXTENSION
+DELETE 0
+INSERT 0 32</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Resolución de nombres de red en dblink: cliente Docker frente a servidor anfitrión">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Resolución de nombres de red en dblink: cliente Docker frente a servidor anfitrión
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>La aparente contradicción al configurar los parámetros de red radica en el contexto de ejecución de cada componente del flujo de trabajo:</p>
+<ul>
+<li><strong>Invocación del cliente de línea de comandos (<code>psql</code>):</strong> Cuando la sentencia se dispara desde la terminal integrada dentro del contenedor de desarrollo, el comando <code>psql</code> requiere el parámetro <code>-h "${LOCAL_PGHOST}"</code> (resuelto como <code>host.docker.internal</code>). Este nombre de dominio especial es provisto por el motor de Docker para permitir que un proceso cliente contenerizado enrute sus paquetes hacia el sistema operativo anfitrión.</li>
+<li><strong>Ejecución interna de la función <code>dblink()</code>:</strong> A diferencia del comando de terminal, la instrucción <code>SELECT * FROM dblink(...)</code> no la ejecuta el cliente en Docker, sino el proceso del servidor PostgreSQL que reside en el sistema anfitrión. Desde la perspectiva de ese motor, la base de datos de origen (<code>sig_db_unal</code>) está alojada localmente en su misma instancia física.</li>
+</ul>
+<p>Si dentro de la cadena de conexión de <code>dblink</code> se declara <code>host=host.docker.internal</code>, el sistema operativo anfitrión intentará resolver ese dominio a través de su servidor DNS convencional, fallando con el error <code>could not translate host name "host.docker.internal"</code>. Por esta razón, la cadena de conexión interna de <code>dblink</code> debe declarar estrictamente <code>host=127.0.0.1</code> (o <code>localhost</code>), garantizando que la conexión interbase ocurra a través de la interfaz de bucle invertido (<em>loopback</em>) del propio equipo.</p>
+</div>
+</div>
+<p>Para el poblamiento de <code>public.microregiones</code>, se insertan las delimitaciones operativas y se vinculan a la tabla de municipios durante la migración. La categorización municipal (<code>mun_categoria</code>) se asigna formalmente para cumplir con la restricción <code>chk_mun_categoria</code>, clasificando las ciudades principales en <code>ESPECIAL</code>, Chía en <code>PRIMERA</code> y el resto en <code>SEXTA</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Importante: Estamos usando la base de datos local!!</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co">-- Inserción de catálogo temático de microrregiones</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> <span class="kw">public</span>.microregiones (mic_id, mic_nombre, mic_descripcion) <span class="kw">VALUES</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>(<span class="dv">1</span>, <span class="st">'Bajo Cauca'</span>, <span class="st">'Región ganadera del norte de Antioquia y sur de Córdoba'</span>),</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>(<span class="dv">2</span>, <span class="st">'Valle del Sinú'</span>, <span class="st">'Zona ganadera intensiva de la cuenca del río Sinú'</span>),</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>(<span class="dv">3</span>, <span class="st">'Sabanas de Sucre y Bolívar'</span>, <span class="st">'Sistemas de doble propósito en sabanas del Caribe'</span>),</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>(<span class="dv">4</span>, <span class="st">'Altillanura Plana'</span>, <span class="st">'Sabana nativa y pasturas mejoradas del oriente del Meta'</span>);</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="co">-- Ingesta de municipios con reproyección y asignación de claves foráneas</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> divpol.municipios (mun_id, mun_nombre, mun_categoria, dep_id, mic_id, the_geom)</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    m.mun_id,</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">UPPER</span>(<span class="fu">TRIM</span>(m.mun_nombre)) <span class="kw">AS</span> mun_nombre,</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">CASE</span> </span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> m.mun_id <span class="kw">IN</span> (<span class="st">'05001'</span>, <span class="st">'11001'</span>, <span class="st">'76001'</span>, <span class="st">'08001'</span>) <span class="cf">THEN</span> <span class="st">'ESPECIAL'</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> m.mun_id <span class="op">=</span> <span class="st">'25175'</span> <span class="cf">THEN</span> <span class="st">'PRIMERA'</span></span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">ELSE</span> <span class="st">'SEXTA'</span></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">END</span> <span class="kw">AS</span> mun_categoria,</span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>    m.dep_id,</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">CASE</span> </span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> m.mun_id <span class="kw">IN</span> (<span class="st">'05154'</span>, <span class="st">'05250'</span>, <span class="st">'05495'</span>, <span class="st">'05790'</span>, <span class="st">'05837'</span>, <span class="st">'05893'</span>) <span class="cf">THEN</span> <span class="dv">1</span></span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> m.mun_id <span class="kw">IN</span> (<span class="st">'23001'</span>, <span class="st">'23079'</span>, <span class="st">'23168'</span>, <span class="st">'23182'</span>, <span class="st">'23417'</span>, <span class="st">'23555'</span>) <span class="cf">THEN</span> <span class="dv">2</span></span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> m.mun_id <span class="kw">IN</span> (<span class="st">'50006'</span>, <span class="st">'50226'</span>, <span class="st">'50568'</span>, <span class="st">'50577'</span>) <span class="cf">THEN</span> <span class="dv">4</span></span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">ELSE</span> <span class="kw">NULL</span> </span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">END</span> <span class="kw">AS</span> mic_id,</span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>    ST_Multi(ST_Transform(m.the_geom, <span class="dv">9377</span>)) <span class="kw">AS</span> the_geom</span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> dblink(</span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>    <span class="st">'dbname=sig_db_unal user=postgres password=geomatica2025 host=127.0.0.1 port=5432'</span>,</span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>    <span class="st">'SELECT mun_id, mun_nombre, dep_id, the_geom FROM divpol.municipios'</span></span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>) <span class="kw">AS</span> m(mun_id <span class="dt">VARCHAR</span>(<span class="dv">5</span>), mun_nombre <span class="dt">VARCHAR</span>(<span class="dv">50</span>), dep_id <span class="dt">VARCHAR</span>(<span class="dv">2</span>), the_geom GEOMETRY);</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>DELETE 0
+DELETE 0
+INSERT 0 4
+INSERT 0 1121</code></pre>
+</div>
+</div>
+</section>
+<section id="geometría-derivada-disolución-topológica-de-microrregiones" class="level3">
+<h3 class="anchored" data-anchor-id="geometría-derivada-disolución-topológica-de-microrregiones">Geometría derivada: disolución topológica de microrregiones</h3>
+<p>Tal como se formalizó en el modelo conceptual UML y en el diseño lógico, la entidad <code>public.microregiones</code> carece de almacenamiento geométrico redundante. La extensión geográfica de cada microrregión se computa dinámicamente agregando las geometrías de sus municipios subordinados mediante <code>ST_Union</code> y se publica en el catálogo como una vista espacial:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Importante: Estamos usando la base de datos local!!</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">-- Creación de la vista espacial con agregación topológica en tiempo de consulta</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">OR</span> <span class="kw">REPLACE</span> <span class="kw">VIEW</span> <span class="kw">public</span>.v_microregiones_espacial <span class="kw">AS</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    mic.mic_id,</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    mic.mic_nombre,</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    mic.mic_descripcion,</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COUNT</span>(mun.mun_id):<span class="ch">:integer</span> <span class="kw">AS</span> total_municipios,</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ROUND</span>((ST_Area(ST_Union(mun.the_geom)) <span class="op">/</span> <span class="fl">10000.0</span>):<span class="ch">:numeric</span>, <span class="dv">2</span>) <span class="kw">AS</span> area_total_ha,</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>    ST_Multi(ST_Union(mun.the_geom)):<span class="ch">:GEOMETRY</span>(MultiPolygon, <span class="dv">9377</span>) <span class="kw">AS</span> the_geom</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="kw">public</span>.microregiones mic</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> divpol.municipios mun <span class="kw">ON</span> mic.mic_id <span class="op">=</span> mun.mic_id</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> mic.mic_id, mic.mic_nombre, mic.mic_descripcion;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>NOTICE:  view "v_microregiones_espacial" does not exist, skipping
+DROP VIEW
+CREATE VIEW</code></pre>
+</div>
+</div>
+</section>
+<section id="operaciones-de-combinación-relacional-y-espacial-en-el-nuevo-esquema" class="level3">
+<h3 class="anchored" data-anchor-id="operaciones-de-combinación-relacional-y-espacial-en-el-nuevo-esquema">Operaciones de combinación relacional y espacial en el nuevo esquema</h3>
+<p>Una vez poblado el repositorio, es posible contrastar los dos mecanismos de articulación de información analizados en el diseño lógico: la combinación relacional gobernada por claves foráneas (<em>Attribute Join</em>) y la combinación espacial asistida por predicados topológicos (<em>Spatial Join</em>).</p>
+<section id="combinación-relacional-cuantificación-municipal-por-departamento" class="level4">
+<h4 class="anchored" data-anchor-id="combinación-relacional-cuantificación-municipal-por-departamento">Combinación relacional: cuantificación municipal por departamento</h4>
+<p>La consulta siguiente evalúa la igualdad estricta <code>mun.dep_id = dep.dep_id</code> aprovechando el índice B-Tree creado sobre la clave foránea:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Importante: Estamos usando la base de datos local!!</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    dep.dep_id,</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    dep.dep_nombre,</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COUNT</span>(mun.mun_id) <span class="kw">AS</span> total_municipios,</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ROUND</span>((ST_Area(dep.the_geom) <span class="op">/</span> <span class="fl">1000000.0</span>):<span class="ch">:numeric</span>, <span class="dv">2</span>) <span class="kw">AS</span> area_dep_km2</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> divpol.departamentos dep</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> divpol.municipios mun <span class="kw">ON</span> dep.dep_id <span class="op">=</span> mun.dep_id</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> dep.dep_id, dep.dep_nombre, dep.the_geom</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> total_municipios <span class="kw">DESC</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">5</span>;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code> dep_id |  dep_nombre  | total_municipios | area_dep_km2 
+--------+--------------+------------------+--------------
+ 05     | ANTIOQUIA    |              125 |     63830.23
+ 15     | BOYACÁ       |              123 |     22915.50
+ 25     | CUNDINAMARCA |              117 |     22510.08
+ 68     | SANTANDER    |               87 |     30387.59
+ 52     | NARIÑO       |               65 |     32826.21
+(5 rows)</code></pre>
+</div>
+</div>
+</section>
+<section id="combinación-espacial-adscripción-territorial-independiente-de-identificadores" class="level4">
+<h4 class="anchored" data-anchor-id="combinación-espacial-adscripción-territorial-independiente-de-identificadores">Combinación espacial: adscripción territorial independiente de identificadores</h4>
+<p>A diferencia de la combinación por atributos, un <em>Spatial Join</em> evalúa la inclusión topológica euclidiana mediante <code>ST_Intersects</code> sobre los índices GiST, permitiendo articular capas que no comparten claves foráneas explícitas:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Importante: Estamos usando la base de datos local!!</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co">-- Verificación de contigüidad espacial entre la microrregión Valle del Sinú y municipios</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    vm.mic_nombre,</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    mun.mun_nombre,</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ROUND</span>((ST_Area(ST_Intersection(mun.the_geom, vm.the_geom)) <span class="op">/</span> <span class="fl">10000.0</span>):<span class="ch">:numeric</span>, <span class="dv">2</span>) <span class="kw">AS</span> area_traslape_ha</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="kw">public</span>.v_microregiones_espacial vm</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> divpol.municipios mun <span class="kw">ON</span> ST_Intersects(mun.the_geom, vm.the_geom)</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> vm.mic_id <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> area_traslape_ha <span class="kw">DESC</span>;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>   mic_nombre   |       mun_nombre        | area_traslape_ha 
+----------------+-------------------------+------------------
+ Valle del Sinú | MONTERÍA                |        302703.78
+ Valle del Sinú | PLANETA RICA            |        115764.43
+ Valle del Sinú | LORICA                  |         93630.86
+ Valle del Sinú | BUENAVISTA              |         75494.56
+ Valle del Sinú | CHINÚ                   |         53512.25
+ Valle del Sinú | CHIMÁ                   |         34246.79
+ Valle del Sinú | VALENCIA                |             0.00
+ Valle del Sinú | PUERTO ESCONDIDO        |             0.00
+ Valle del Sinú | SAHAGÚN                 |             0.00
+ Valle del Sinú | SAN ANDRÉS DE SOTAVENTO |             0.00
+ Valle del Sinú | SAN ANTERO              |             0.00
+ Valle del Sinú | MOMIL                   |             0.00
+ Valle del Sinú | MOÑITOS                 |             0.00
+ Valle del Sinú | PUEBLO NUEVO            |             0.00
+ Valle del Sinú | AYAPEL                  |             0.00
+ Valle del Sinú | CANALETE                |             0.00
+ Valle del Sinú | COTORRA                 |             0.00
+ Valle del Sinú | ARBOLETES               |             0.00
+ Valle del Sinú | LA APARTADA             |             0.00
+ Valle del Sinú | SAN PEDRO DE URABÁ      |             0.00
+ Valle del Sinú | TIERRALTA               |             0.00
+ Valle del Sinú | SAN BENITO ABAD         |             0.00
+ Valle del Sinú | SAN BERNARDO DEL VIENTO |             0.00
+ Valle del Sinú | CERETÉ                  |             0.00
+ Valle del Sinú | SAN PELAYO              |             0.00
+ Valle del Sinú | CIÉNAGA DE ORO          |             0.00
+ Valle del Sinú | PURÍSIMA                |             0.00
+ Valle del Sinú | SAMPUÉS                 |             0.00
+ Valle del Sinú | EL ROBLE                |             0.00
+ Valle del Sinú | CAIMITO                 |             0.00
+ Valle del Sinú | LA UNIÓN                |             0.00
+ Valle del Sinú | MONTELÍBANO             |             0.00
+ Valle del Sinú | SAN CARLOS              |             0.00
+ Valle del Sinú | LOS CÓRDOBAS            |             0.00
+(34 rows)</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Semántica topológica de ST_Intersects frente a colindancias de frontera">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Semántica topológica de ST_Intersects frente a colindancias de frontera
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>La presencia de 34 registros en el resultado obedece a la definición matemática del predicado <code>ST_Intersects(A, B)</code> según el modelo estándar DE-9IM del OGC:</p>
+<ul>
+<li><strong>Superposición superficial (<span class="math inline">\(D = 2\)</span>):</strong> Los 6 municipios constitutivos de la microrregión comparten área interior bidimensional, registrando superficies de traslape calculadas en miles de hectáreas.</li>
+<li><strong>Contacto perimetral (<span class="math inline">\(D \le 1\)</span>):</strong> Los 28 municipios restantes son unidades vecinas que únicamente tocan la frontera exterior de la microrregión a lo largo de un límite compartido (<code>LineString</code>, satisfaciendo la condición topológica <code>ST_Touches</code>). Al evaluar <code>ST_Intersection</code> sobre entidades colindantes que solo comparten bordes, la geometría resultante es puramente lineal; en consecuencia, <code>ST_Area</code> evalúa su superficie como <span class="math inline">\(0.00\text{ ha}\)</span>.</li>
+</ul>
+<p>Para aislar exclusivamente los municipios miembros y descartar colindancias de borde, la consulta puede restringirse añadiendo <code>AND ST_Area(ST_Intersection(mun.the_geom, vm.the_geom)) &gt; 0</code> o evaluando la dimensión interior mediante <code>ST_Relate(mun.the_geom, vm.the_geom, '2********')</code>.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="asociación-muchos-a-muchos-en-el-modelo-conceptual" class="level3">
+<h3 class="anchored" data-anchor-id="asociación-muchos-a-muchos-en-el-modelo-conceptual">Asociación muchos a muchos en el modelo conceptual</h3>
+<p>…</p>
+<div class="diagrama-ancho">
+<div class="cell" data-fig-width="6.5" data-fig-height="7" data-out-width="100%" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-uml-conceptual-fgan-mm" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-uml-conceptual-fgan-mm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<svg width="624" height="672" viewbox="0.00 0.00 629.60 550.60" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 539.8)">
+<title>UML_Conceptual_MM</title>
+<g id="clust2" class="cluster">
+<title>cluster_public</title>
+<polygon fill="transparent" stroke="darkgray" stroke-dasharray="5,2" points="208,-379.9 208,-510.5 362,-510.5 362,-379.9 208,-379.9"></polygon>
+<text text-anchor="middle" x="285" y="-497.05" font-family="Helvetica,Arial,sans-serif" font-size="10.50">Paquete conceptual: public</text>
+</g>
+<g id="clust3" class="cluster">
+<title>cluster_fgan</title>
+<polygon fill="transparent" stroke="darkgray" stroke-dasharray="5,2" points="375,-206.7 375,-510.5 600,-510.5 600,-206.7 375,-206.7"></polygon>
+<text text-anchor="middle" x="487.5" y="-497.05" font-family="Helvetica,Arial,sans-serif" font-size="10.50">Paquete conceptual: fgan (subsistema productivo)</text>
+</g>
+<g id="clust1" class="cluster">
+<title>cluster_divpol</title>
+<polygon fill="transparent" stroke="darkgray" stroke-dasharray="5,2" points="8,-196.2 8,-521 200,-521 200,-196.2 8,-196.2"></polygon>
+<text text-anchor="middle" x="104" y="-507.55" font-family="Helvetica,Arial,sans-serif" font-size="10.50">Paquete conceptual: divpol</text>
+</g>
+<!-- enum_categoria -->
+<g id="node1" class="node">
+<title>enum_categoria</title>
+<polygon fill="white" stroke="transparent" points="57.5,0 57.5,-146 150.5,-146 150.5,0 57.5,0"></polygon>
+<polyline fill="none" stroke="gray" points="59,-120 150,-120 "></polyline>
+<text text-anchor="start" x="72.82" y="-134.8" font-family="Helvetica,Arial,sans-serif" font-style="italic" font-size="8.00" fill="dimgray">&lt;&lt;Enumeration&gt;&gt;</text>
+<text text-anchor="start" x="62.81" y="-125.45" font-family="Helvetica,Arial,sans-serif" font-weight="bold" font-size="9.50">dom_mun_categoria</text>
+<text text-anchor="start" x="62" y="-108.45" font-family="Helvetica,Arial,sans-serif" font-size="9.50">ESPECIAL</text>
+<text text-anchor="start" x="62" y="-91.45" font-family="Helvetica,Arial,sans-serif" font-size="9.50">PRIMERA</text>
+<text text-anchor="start" x="62" y="-74.45" font-family="Helvetica,Arial,sans-serif" font-size="9.50">SEGUNDA</text>
+<text text-anchor="start" x="62" y="-57.45" font-family="Helvetica,Arial,sans-serif" font-size="9.50">TERCERA</text>
+<text text-anchor="start" x="62" y="-40.45" font-family="Helvetica,Arial,sans-serif" font-size="9.50">CUARTA</text>
+<text text-anchor="start" x="62" y="-23.45" font-family="Helvetica,Arial,sans-serif" font-size="9.50">QUINTA</text>
+<text text-anchor="start" x="62" y="-6.45" font-family="Helvetica,Arial,sans-serif" font-size="9.50">SEXTA</text>
+<polygon fill="none" stroke="gray" points="57.5,0 57.5,-146 150.5,-146 150.5,0 57.5,0"></polygon>
+</g>
+<!-- departamentos -->
+<g id="node2" class="node">
+<title>departamentos</title>
+<polygon fill="white" stroke="transparent" points="35.5,-377.4 35.5,-492.4 172.5,-492.4 172.5,-377.4 35.5,-377.4"></polygon>
+<polyline fill="none" stroke="black" points="37,-461.9 172,-461.9 "></polyline>
+<text text-anchor="start" x="73.27" y="-478.7" font-family="Helvetica,Arial,sans-serif" font-style="italic" font-size="8.00" fill="dimgray">&lt;&lt;FeatureType&gt;&gt;</text>
+<text text-anchor="start" x="74.16" y="-469.35" font-family="Helvetica,Arial,sans-serif" font-weight="bold" font-size="9.50">departamentos</text>
+<text text-anchor="start" x="42" y="-448.35" font-family="Helvetica,Arial,sans-serif" font-size="9.50">dep_id : Character(2) [1]</text>
+<text text-anchor="start" x="41.59" y="-427.35" font-family="Helvetica,Arial,sans-serif" font-size="9.50">dep_nombre : Character(100) [1]</text>
+<text text-anchor="start" x="41.59" y="-406.35" font-family="Helvetica,Arial,sans-serif" font-size="9.50">dep_region : Character(50) [0..1]</text>
+<text text-anchor="start" x="42" y="-386.35" font-family="Helvetica,Arial,sans-serif" font-weight="bold" font-size="9.50">the_geom : MultiPolygon [1]</text>
+<polygon fill="none" stroke="black" points="35.5,-377.4 35.5,-492.4 172.5,-492.4 172.5,-377.4 35.5,-377.4"></polygon>
+</g>
+<!-- municipios -->
+<g id="node3" class="node">
+<title>municipios</title>
+<polygon fill="white" stroke="transparent" points="16,-204.2 16,-319.2 192,-319.2 192,-204.2 16,-204.2"></polygon>
+<polyline fill="none" stroke="black" points="17,-288.7 191,-288.7 "></polyline>
+<text text-anchor="start" x="72.77" y="-305.5" font-family="Helvetica,Arial,sans-serif" font-style="italic" font-size="8.00" fill="dimgray">&lt;&lt;FeatureType&gt;&gt;</text>
+<text text-anchor="start" x="81.83" y="-296.15" font-family="Helvetica,Arial,sans-serif" font-weight="bold" font-size="9.50">municipios</text>
+<text text-anchor="start" x="22" y="-275.15" font-family="Helvetica,Arial,sans-serif" font-size="9.50">mun_id : Character(5) [1]</text>
+<text text-anchor="start" x="22" y="-254.15" font-family="Helvetica,Arial,sans-serif" font-size="9.50">mun_nombre : Character(100) [1]</text>
+<text text-anchor="start" x="21.56" y="-233.15" font-family="Helvetica,Arial,sans-serif" font-size="9.50">mun_categoria : dom_mun_categoria [0..1]</text>
+<text text-anchor="start" x="22" y="-213.15" font-family="Helvetica,Arial,sans-serif" font-weight="bold" font-size="9.50">the_geom : MultiPolygon [1]</text>
+<polygon fill="none" stroke="black" points="16,-204.2 16,-319.2 192,-319.2 192,-204.2 16,-204.2"></polygon>
+</g>
+<!-- departamentos&#45;&gt;municipios -->
+<g id="edge2" class="edge">
+<title>departamentos-&gt;municipios</title>
+<path fill="none" stroke="black" stroke-width="1.5" d="M104,-377.37C104,-358.77 104,-338.08 104,-319.46"></path>
+<text text-anchor="middle" x="133.39" y="-345.75" font-family="Helvetica,Arial,sans-serif" font-size="8.50">compuesto por ►</text>
+<text text-anchor="middle" x="97.62" y="-322.01" font-family="Helvetica,Arial,sans-serif" font-size="8.50">1..*</text>
+<text text-anchor="middle" x="101.88" y="-369.72" font-family="Helvetica,Arial,sans-serif" font-size="8.50">1</text>
+</g>
+<!-- municipios&#45;&gt;enum_categoria -->
+<g id="edge1" class="edge">
+<title>municipios-&gt;enum_categoria</title>
+<path fill="none" stroke="gray" stroke-dasharray="5,2" d="M104,-204.18C104,-189.07 104,-172.43 104,-156.24"></path>
+<polygon fill="gray" stroke="gray" points="104,-146.23 108.5,-156.23 104,-151.23 104,-156.23 104,-156.23 104,-156.23 104,-151.23 99.5,-156.23 104,-146.23 104,-146.23"></polygon>
+<text text-anchor="middle" x="119.25" y="-172.55" font-family="Helvetica,Arial,sans-serif" font-size="8.50">&lt;&lt;use&gt;&gt;</text>
+</g>
+<!-- microregiones -->
+<g id="node4" class="node">
+<title>microregiones</title>
+<polygon fill="white" stroke="transparent" points="216,-387.9 216,-481.9 354,-481.9 354,-387.9 216,-387.9"></polygon>
+<polyline fill="none" stroke="black" points="217,-451.9 353,-451.9 "></polyline>
+<text text-anchor="start" x="255.77" y="-468.7" font-family="Helvetica,Arial,sans-serif" font-style="italic" font-size="8.00" fill="dimgray">&lt;&lt;ObjectType&gt;&gt;</text>
+<text text-anchor="start" x="256.25" y="-459.35" font-family="Helvetica,Arial,sans-serif" font-weight="bold" font-size="9.50">microregiones</text>
+<text text-anchor="start" x="222" y="-438.35" font-family="Helvetica,Arial,sans-serif" font-size="9.50">mic_id : Integer [1]</text>
+<text text-anchor="start" x="221.82" y="-417.35" font-family="Helvetica,Arial,sans-serif" font-size="9.50">mic_nombre : Character(100) [1]</text>
+<text text-anchor="start" x="222" y="-396.35" font-family="Helvetica,Arial,sans-serif" font-size="9.50">mic_descripcion : Text [0..1]</text>
+<polygon fill="none" stroke="black" points="216,-387.9 216,-481.9 354,-481.9 354,-387.9 216,-387.9"></polygon>
+</g>
+<!-- microregiones&#45;&gt;municipios -->
+<g id="edge3" class="edge">
+<title>microregiones-&gt;municipios</title>
+<path fill="none" stroke="black" stroke-width="1.5" d="M236.02,-387.57C213.82,-366.58 187.37,-341.56 164,-319.45"></path>
+<text text-anchor="middle" x="209.81" y="-345.75" font-family="Helvetica,Arial,sans-serif" font-size="8.50">agrupa ►</text>
+<text text-anchor="middle" x="157.62" y="-322" font-family="Helvetica,Arial,sans-serif" font-size="8.50">1..*</text>
+<text text-anchor="middle" x="229.64" y="-379.92" font-family="Helvetica,Arial,sans-serif" font-size="8.50">0..1</text>
+</g>
+<!-- dependencias -->
+<g id="node5" class="node">
+<title>dependencias</title>
+<polygon fill="white" stroke="transparent" points="390.5,-387.9 390.5,-481.9 527.5,-481.9 527.5,-387.9 390.5,-387.9"></polygon>
+<polyline fill="none" stroke="black" points="392,-451.9 527,-451.9 "></polyline>
+<text text-anchor="start" x="430.27" y="-468.7" font-family="Helvetica,Arial,sans-serif" font-style="italic" font-size="8.00" fill="dimgray">&lt;&lt;ObjectType&gt;&gt;</text>
+<text text-anchor="start" x="432.32" y="-459.35" font-family="Helvetica,Arial,sans-serif" font-weight="bold" font-size="9.50">dependencias</text>
+<text text-anchor="start" x="397" y="-438.35" font-family="Helvetica,Arial,sans-serif" font-size="9.50">dpe_id : Integer [1]</text>
+<text text-anchor="start" x="396.59" y="-417.35" font-family="Helvetica,Arial,sans-serif" font-size="9.50">dpe_nombre : Character(100) [1]</text>
+<text text-anchor="start" x="397" y="-396.35" font-family="Helvetica,Arial,sans-serif" font-size="9.50">dpe_descripcion : Text [0..1]</text>
+<polygon fill="none" stroke="black" points="390.5,-387.9 390.5,-481.9 527.5,-481.9 527.5,-387.9 390.5,-387.9"></polygon>
+</g>
+<!-- sistemas_produccion -->
+<g id="node6" class="node">
+<title>sistemas_produccion</title>
+<polygon fill="white" stroke="transparent" points="387,-214.7 387,-308.7 531,-308.7 531,-214.7 387,-214.7"></polygon>
+<polyline fill="none" stroke="black" points="388,-278.7 530,-278.7 "></polyline>
+<text text-anchor="start" x="429.77" y="-295.5" font-family="Helvetica,Arial,sans-serif" font-style="italic" font-size="8.00" fill="dimgray">&lt;&lt;ObjectType&gt;&gt;</text>
+<text text-anchor="start" x="416.78" y="-286.15" font-family="Helvetica,Arial,sans-serif" font-weight="bold" font-size="9.50">sistemas_produccion</text>
+<text text-anchor="start" x="393" y="-265.15" font-family="Helvetica,Arial,sans-serif" font-size="9.50">spr_id : Integer [1]</text>
+<text text-anchor="start" x="393" y="-244.15" font-family="Helvetica,Arial,sans-serif" font-size="9.50">spr_nombre : Character(100) [1]</text>
+<text text-anchor="start" x="392.66" y="-223.15" font-family="Helvetica,Arial,sans-serif" font-size="9.50">spr_abreviatura : Character(10) [1]</text>
+<polygon fill="none" stroke="black" points="387,-214.7 387,-308.7 531,-308.7 531,-214.7 387,-214.7"></polygon>
+</g>
+<!-- dependencias&#45;&gt;sistemas_produccion -->
+<g id="edge4" class="edge">
+<title>dependencias-&gt;sistemas_produccion</title>
+<path fill="none" stroke="black" stroke-width="1.5" d="M459,-387.57C459,-363.11 459,-333.19 459,-308.77"></path>
+<text text-anchor="middle" x="477.41" y="-345.75" font-family="Helvetica,Arial,sans-serif" font-size="8.50">gestiona ►</text>
+<text text-anchor="middle" x="452.62" y="-311.32" font-family="Helvetica,Arial,sans-serif" font-size="8.50">1..*</text>
+<text text-anchor="middle" x="452.62" y="-379.92" font-family="Helvetica,Arial,sans-serif" font-size="8.50">1..*</text>
+</g>
+</g>
+</svg>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-uml-conceptual-fgan-mm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;9.1: Modelo conceptual UML con paquetes temáticos y asociación muchos a muchos directa en el subsistema productivo.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<section id="resolución-lógica-mediante-tabla-asociativa-intermedia" class="level4">
+<h4 class="anchored" data-anchor-id="resolución-lógica-mediante-tabla-asociativa-intermedia">Resolución lógica mediante tabla asociativa intermedia</h4>
+<p>…</p>
+<div class="diagrama-ancho">
+<div class="cell" data-fig-width="6.5" data-fig-height="7" data-out-width="100%" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-resolucion-logica-mn-fgan" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-resolucion-logica-mn-fgan-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<svg width="624" height="672" viewbox="0.00 0.00 634.70 507.40" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 496.6)">
+<title>Resolucion_Logica_MM</title>
+<g id="clust1" class="cluster">
+<title>cluster_logico_fgan</title>
+<polygon fill="transparent" stroke="lightblue" stroke-dasharray="5,2" points="22.1,-8 22.1,-477.8 605.1,-477.8 605.1,-8 22.1,-8"></polygon>
+<text text-anchor="middle" x="313.6" y="-464.35" font-family="Helvetica,Arial,sans-serif" font-size="10.50" fill="blue">Nivel lógico relacional: resolución asociativa M:N (esquema fgan)</text>
+</g>
+<!-- t_dep -->
+<g id="node1" class="node">
+<title>t_dep</title>
+<polygon fill="white" stroke="transparent" points="30.6,-351.2 30.6,-449.2 243.6,-449.2 243.6,-351.2 30.6,-351.2"></polygon>
+<polygon fill="lightgray" stroke="transparent" points="32.1,-424.2 32.1,-448.2 243.1,-448.2 243.1,-424.2 32.1,-424.2"></polygon>
+<polygon fill="none" stroke="black" points="32.1,-424.2 32.1,-448.2 243.1,-448.2 243.1,-424.2 32.1,-424.2"></polygon>
+<text text-anchor="start" x="98.29" y="-434.2" font-family="Helvetica,Arial,sans-serif" font-weight="bold" font-size="10.00">fgan.dependencias</text>
+<polygon fill="none" stroke="black" points="32.1,-400.2 32.1,-424.2 109.1,-424.2 109.1,-400.2 32.1,-400.2"></polygon>
+<text text-anchor="start" x="38.1" y="-410.2" font-family="Helvetica,Arial,sans-serif" font-weight="bold" text-decoration="underline" font-size="10.00" fill="green">dpe_id</text>
+<polygon fill="none" stroke="black" points="109.1,-400.2 109.1,-424.2 243.1,-424.2 243.1,-400.2 109.1,-400.2"></polygon>
+<text text-anchor="start" x="115.1" y="-409.2" font-family="Helvetica,Arial,sans-serif" font-size="10.00">INTEGER (PK)</text>
+<polygon fill="none" stroke="black" points="32.1,-376.2 32.1,-400.2 109.1,-400.2 109.1,-376.2 32.1,-376.2"></polygon>
+<text text-anchor="start" x="38.1" y="-385.2" font-family="Helvetica,Arial,sans-serif" font-size="10.00">dpe_nombre</text>
+<polygon fill="none" stroke="black" points="109.1,-376.2 109.1,-400.2 243.1,-400.2 243.1,-376.2 109.1,-376.2"></polygon>
+<text text-anchor="start" x="114.72" y="-385.2" font-family="Helvetica,Arial,sans-serif" font-size="10.00">VARCHAR(100) NOT NULL</text>
+<polygon fill="none" stroke="black" points="32.1,-352.2 32.1,-376.2 109.1,-376.2 109.1,-352.2 32.1,-352.2"></polygon>
+<text text-anchor="start" x="37.84" y="-361.2" font-family="Helvetica,Arial,sans-serif" font-size="10.00">dpe_descripcion</text>
+<polygon fill="none" stroke="black" points="109.1,-352.2 109.1,-376.2 243.1,-376.2 243.1,-352.2 109.1,-352.2"></polygon>
+<text text-anchor="start" x="115.1" y="-361.2" font-family="Helvetica,Arial,sans-serif" font-size="10.00">TEXT NULL</text>
+<polygon fill="none" stroke="black" points="30.6,-351.2 30.6,-449.2 243.6,-449.2 243.6,-351.2 30.6,-351.2"></polygon>
+</g>
+<!-- t_sis -->
+<g id="node2" class="node">
+<title>t_sis</title>
+<polygon fill="white" stroke="transparent" points="387.1,-351.2 387.1,-449.2 597.1,-449.2 597.1,-351.2 387.1,-351.2"></polygon>
+<polygon fill="lightgray" stroke="transparent" points="388.1,-424.2 388.1,-448.2 596.1,-448.2 596.1,-424.2 388.1,-424.2"></polygon>
+<polygon fill="none" stroke="black" points="388.1,-424.2 388.1,-448.2 596.1,-448.2 596.1,-424.2 388.1,-424.2"></polygon>
+<text text-anchor="start" x="436.96" y="-434.2" font-family="Helvetica,Arial,sans-serif" font-weight="bold" font-size="10.00">fgan.sistemas_produccion</text>
+<polygon fill="none" stroke="black" points="388.1,-400.2 388.1,-424.2 462.1,-424.2 462.1,-400.2 388.1,-400.2"></polygon>
+<text text-anchor="start" x="394.1" y="-410.2" font-family="Helvetica,Arial,sans-serif" font-weight="bold" text-decoration="underline" font-size="10.00" fill="green">spr_id</text>
+<polygon fill="none" stroke="black" points="462.1,-400.2 462.1,-424.2 596.1,-424.2 596.1,-400.2 462.1,-400.2"></polygon>
+<text text-anchor="start" x="468.1" y="-409.2" font-family="Helvetica,Arial,sans-serif" font-size="10.00">INTEGER (PK)</text>
+<polygon fill="none" stroke="black" points="388.1,-376.2 388.1,-400.2 462.1,-400.2 462.1,-376.2 388.1,-376.2"></polygon>
+<text text-anchor="start" x="394.1" y="-385.2" font-family="Helvetica,Arial,sans-serif" font-size="10.00">spr_nombre</text>
+<polygon fill="none" stroke="black" points="462.1,-376.2 462.1,-400.2 596.1,-400.2 596.1,-376.2 462.1,-376.2"></polygon>
+<text text-anchor="start" x="467.72" y="-385.2" font-family="Helvetica,Arial,sans-serif" font-size="10.00">VARCHAR(100) NOT NULL</text>
+<polygon fill="none" stroke="black" points="388.1,-352.2 388.1,-376.2 462.1,-376.2 462.1,-352.2 388.1,-352.2"></polygon>
+<text text-anchor="start" x="394.01" y="-361.2" font-family="Helvetica,Arial,sans-serif" font-size="10.00">spr_abreviatura</text>
+<polygon fill="none" stroke="black" points="462.1,-352.2 462.1,-376.2 596.1,-376.2 596.1,-352.2 462.1,-352.2"></polygon>
+<text text-anchor="start" x="468.1" y="-361.2" font-family="Helvetica,Arial,sans-serif" font-size="10.00">VARCHAR(10) NOT NULL</text>
+<polygon fill="none" stroke="black" points="387.1,-351.2 387.1,-449.2 597.1,-449.2 597.1,-351.2 387.1,-351.2"></polygon>
+</g>
+<!-- t_dep&#45;&gt;t_sis -->
+<!-- t_puente -->
+<g id="node3" class="node">
+<title>t_puente</title>
+<polygon fill="white" stroke="transparent" points="178.1,-195 178.1,-293 374.1,-293 374.1,-195 178.1,-195"></polygon>
+<polygon fill="lightgray" stroke="transparent" points="179.1,-268 179.1,-292 373.1,-292 373.1,-268 179.1,-268"></polygon>
+<polygon fill="none" stroke="black" points="179.1,-268 179.1,-292 373.1,-292 373.1,-268 179.1,-268"></polygon>
+<text text-anchor="start" x="189.85" y="-278" font-family="Helvetica,Arial,sans-serif" font-weight="bold" font-size="10.00">fgan.dependencias_sistemas_produccion</text>
+<polygon fill="none" stroke="black" points="179.1,-244 179.1,-268 279.1,-268 279.1,-244 179.1,-244"></polygon>
+<text text-anchor="start" x="185.1" y="-254" font-family="Helvetica,Arial,sans-serif" font-weight="bold" text-decoration="underline" font-size="10.00" fill="red">dpe_id</text>
+<polygon fill="none" stroke="black" points="279.1,-244 279.1,-268 373.1,-268 373.1,-244 279.1,-244"></polygon>
+<text text-anchor="start" x="284.86" y="-253" font-family="Helvetica,Arial,sans-serif" font-size="10.00" fill="red">INTEGER (PK, FK)</text>
+<polygon fill="none" stroke="black" points="179.1,-220 179.1,-244 279.1,-244 279.1,-220 179.1,-220"></polygon>
+<text text-anchor="start" x="185.1" y="-230" font-family="Helvetica,Arial,sans-serif" font-weight="bold" text-decoration="underline" font-size="10.00" fill="red">spr_id</text>
+<polygon fill="none" stroke="black" points="279.1,-220 279.1,-244 373.1,-244 373.1,-220 279.1,-220"></polygon>
+<text text-anchor="start" x="284.86" y="-229" font-family="Helvetica,Arial,sans-serif" font-size="10.00" fill="red">INTEGER (PK, FK)</text>
+<polygon fill="none" stroke="black" points="179.1,-196 179.1,-220 279.1,-220 279.1,-196 179.1,-196"></polygon>
+<text text-anchor="start" x="184.95" y="-205" font-family="Helvetica,Arial,sans-serif" font-size="10.00">dps_fecha_asignacion</text>
+<polygon fill="none" stroke="black" points="279.1,-196 279.1,-220 373.1,-220 373.1,-196 279.1,-196"></polygon>
+<text text-anchor="start" x="285.1" y="-205" font-family="Helvetica,Arial,sans-serif" font-size="10.00">DATE NOT NULL</text>
+<polygon fill="none" stroke="black" points="178.1,-195 178.1,-293 374.1,-293 374.1,-195 178.1,-195"></polygon>
+</g>
+<!-- t_dep&#45;&gt;t_puente -->
+<g id="edge2" class="edge">
+<title>t_dep:w-&gt;t_puente:w</title>
+<path fill="none" stroke="red" stroke-width="1.5" d="M22.87,-411.75C-55.09,-402.59 85.75,-256 178.1,-256"></path>
+<polygon fill="red" stroke="red" stroke-width="1.5" points="31.1,-412.2 22.92,-415.36 27.1,-412.23 23.1,-412.01 23.12,-411.77 23.13,-411.52 27.12,-411.73 23.31,-408.17 31.1,-412.2 31.1,-412.2"></polygon>
+<text text-anchor="middle" x="73.71" y="-319.55" font-family="Helvetica,Arial,sans-serif" font-size="8.50"> &nbsp;referencia PK</text>
+</g>
+<!-- t_sis&#45;&gt;t_puente -->
+<g id="edge3" class="edge">
+<title>t_sis:e-&gt;t_puente:e</title>
+<path fill="none" stroke="red" stroke-width="1.5" d="M470.18,-410.86C566.38,-402.27 389.75,-233 279.1,-233"></path>
+<polygon fill="red" stroke="red" stroke-width="1.5" points="462.1,-411.2 469.95,-407.27 466.09,-410.78 470.09,-410.61 470.1,-410.86 470.11,-411.11 466.11,-411.28 470.25,-414.46 462.1,-411.2 462.1,-411.2"></polygon>
+<text text-anchor="middle" x="480.71" y="-319.55" font-family="Helvetica,Arial,sans-serif" font-size="8.50">referencia PK &nbsp;</text>
+</g>
+<!-- signaturas_fgan -->
+<g id="node4" class="node">
+<title>signaturas_fgan</title>
+<path fill="white" stroke="transparent" d="M103.1,-16C103.1,-16 449.1,-16 449.1,-16 455.1,-16 461.1,-22 461.1,-28 461.1,-28 461.1,-134 461.1,-134 461.1,-140 455.1,-146 449.1,-146 449.1,-146 103.1,-146 103.1,-146 97.1,-146 91.1,-140 91.1,-134 91.1,-134 91.1,-28 91.1,-28 91.1,-22 97.1,-16 103.1,-16"></path>
+<polygon fill="aliceblue" stroke="transparent" points="92.1,-119 92.1,-145 460.1,-145 460.1,-119 92.1,-119"></polygon>
+<polyline fill="none" stroke="blue" points="92.1,-119 460.1,-119 "></polyline>
+<text text-anchor="start" x="160.13" y="-130" font-family="Helvetica,Arial,sans-serif" font-weight="bold" font-size="10.00" fill="blue">Signatura relacional formal del subsistema productivo</text>
+<text text-anchor="start" x="191.87" y="-100" font-family="Helvetica,Arial,sans-serif" font-weight="bold" font-size="10.00">dependencias</text>
+<text text-anchor="start" x="266.44" y="-99" font-family="Helvetica,Arial,sans-serif" font-size="10.00">(</text>
+<text text-anchor="start" x="274.65" y="-100" font-family="Helvetica,Arial,sans-serif" font-weight="bold" text-decoration="underline" font-size="10.00" fill="green">dpe_id</text>
+<text text-anchor="start" x="307.85" y="-99" font-family="Helvetica,Arial,sans-serif" font-size="10.00">,</text>
+<text text-anchor="start" x="314.61" y="-99" font-family="Helvetica,Arial,sans-serif" font-size="10.00">dpe_nombre</text>
+<text text-anchor="start" x="368.85" y="-99" font-family="Helvetica,Arial,sans-serif" font-size="10.00">,</text>
+<text text-anchor="start" x="375.84" y="-99" font-family="Helvetica,Arial,sans-serif" font-size="10.00">dpe_descripcion</text>
+<text text-anchor="start" x="445.94" y="-99" font-family="Helvetica,Arial,sans-serif" font-size="10.00">)</text>
+<text text-anchor="start" x="160.21" y="-66" font-family="Helvetica,Arial,sans-serif" font-weight="bold" font-size="10.00">sistemas_produccion</text>
+<text text-anchor="start" x="266.44" y="-65" font-family="Helvetica,Arial,sans-serif" font-size="10.00">(</text>
+<text text-anchor="start" x="275.49" y="-66" font-family="Helvetica,Arial,sans-serif" font-weight="bold" text-decoration="underline" font-size="10.00" fill="green">spr_id</text>
+<text text-anchor="start" x="308.35" y="-65" font-family="Helvetica,Arial,sans-serif" font-size="10.00">,</text>
+<text text-anchor="start" x="316.22" y="-65" font-family="Helvetica,Arial,sans-serif" font-size="10.00">spr_nombre</text>
+<text text-anchor="start" x="369.35" y="-65" font-family="Helvetica,Arial,sans-serif" font-size="10.00">,</text>
+<text text-anchor="start" x="377.51" y="-65" font-family="Helvetica,Arial,sans-serif" font-size="10.00">spr_abreviatura</text>
+<text text-anchor="start" x="445.44" y="-65" font-family="Helvetica,Arial,sans-serif" font-size="10.00">)</text>
+<text text-anchor="start" x="98.04" y="-32" font-family="Helvetica,Arial,sans-serif" font-weight="bold" font-size="10.00">dependencias_sistemas_produccion</text>
+<text text-anchor="start" x="265.94" y="-31" font-family="Helvetica,Arial,sans-serif" font-size="10.00">(</text>
+<text text-anchor="start" x="273.65" y="-32" font-family="Helvetica,Arial,sans-serif" font-weight="bold" text-decoration="underline" font-size="10.00" fill="red">dpe_id</text>
+<text text-anchor="start" x="306.85" y="-31" font-family="Helvetica,Arial,sans-serif" font-size="10.00">,</text>
+<text text-anchor="start" x="313.99" y="-32" font-family="Helvetica,Arial,sans-serif" font-weight="bold" text-decoration="underline" font-size="10.00" fill="red">spr_id</text>
+<text text-anchor="start" x="345.85" y="-31" font-family="Helvetica,Arial,sans-serif" font-size="10.00">,</text>
+<text text-anchor="start" x="352.95" y="-31" font-family="Helvetica,Arial,sans-serif" font-size="10.00">dps_fecha_asignacion</text>
+<text text-anchor="start" x="445.94" y="-31" font-family="Helvetica,Arial,sans-serif" font-size="10.00">)</text>
+<path fill="none" stroke="blue" d="M103.1,-16C103.1,-16 449.1,-16 449.1,-16 455.1,-16 461.1,-22 461.1,-28 461.1,-28 461.1,-134 461.1,-134 461.1,-140 455.1,-146 449.1,-146 449.1,-146 103.1,-146 103.1,-146 97.1,-146 91.1,-140 91.1,-134 91.1,-134 91.1,-28 91.1,-28 91.1,-22 97.1,-16 103.1,-16"></path>
+</g>
+<!-- t_puente&#45;&gt;signaturas_fgan -->
+</g>
+</svg>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-resolucion-logica-mn-fgan-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;9.2: Resolución del esquema relacional M:N mediante tabla intermedia asociativa, código cromático y signatura formal.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="implementación-física-ddl-del-subsistema-productivo" class="level4">
+<h4 class="anchored" data-anchor-id="implementación-física-ddl-del-subsistema-productivo">Implementación física DDL del subsistema productivo</h4>
+<p>Para materializar este diseño en la base de datos operacional <code>bde_territorio_nacional</code>, se declara el esquema <code>fgan</code>, se implementan los catálogos y se codifica la tabla asociativa intermedia con sus restricciones declarativas de clave primaria compuesta e integridad referencial en cascada:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Importante: Estamos usando la base de datos local!!</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">SCHEMA</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> fgan;</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="co">-- 1. Catálogo de dependencias maestras</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> fgan.dependencias (</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    dpe_id <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    dpe_nombre <span class="dt">VARCHAR</span>(<span class="dv">100</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>    dpe_descripcion TEXT <span class="kw">NULL</span>,</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CONSTRAINT</span> pk_fgan_dependencias <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (dpe_id)</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a><span class="co">-- 2. Catálogo de sistemas de producción</span></span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> fgan.sistemas_produccion (</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>    spr_id <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>    spr_nombre <span class="dt">VARCHAR</span>(<span class="dv">100</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>    spr_abreviatura <span class="dt">VARCHAR</span>(<span class="dv">10</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CONSTRAINT</span> pk_fgan_sistemas_produccion <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (spr_id)</span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a><span class="co">-- 3. Tabla asociativa intermedia (Resolución física M:N)</span></span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> fgan.dependencias_sistemas_produccion (</span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>    dpe_id <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a>    spr_id <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a>    dps_fecha_asignacion <span class="dt">DATE</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="fu">CURRENT_DATE</span>,</span>
+<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CONSTRAINT</span> pk_dependencias_sistemas <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (dpe_id, spr_id),</span>
+<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CONSTRAINT</span> fk_dps_dependencias <span class="kw">FOREIGN</span> <span class="kw">KEY</span> (dpe_id)</span>
+<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a>        <span class="kw">REFERENCES</span> fgan.dependencias (dpe_id)</span>
+<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> <span class="kw">UPDATE</span> <span class="kw">CASCADE</span> <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">CASCADE</span>,</span>
+<span id="cb29-30"><a href="#cb29-30" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CONSTRAINT</span> fk_dps_sistemas <span class="kw">FOREIGN</span> <span class="kw">KEY</span> (spr_id)</span>
+<span id="cb29-31"><a href="#cb29-31" aria-hidden="true" tabindex="-1"></a>        <span class="kw">REFERENCES</span> fgan.sistemas_produccion (spr_id)</span>
+<span id="cb29-32"><a href="#cb29-32" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> <span class="kw">UPDATE</span> <span class="kw">CASCADE</span> <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">RESTRICT</span></span>
+<span id="cb29-33"><a href="#cb29-33" aria-hidden="true" tabindex="-1"></a>);</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>CREATE SCHEMA
+NOTICE:  table "dependencias_sistemas_produccion" does not exist, skipping
+DROP TABLE
+NOTICE:  table "sistemas_produccion" does not exist, skipping
+DROP TABLE
+NOTICE:  table "dependencias" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+INSERT 0 2
+INSERT 0 3
+INSERT 0 4</code></pre>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="ejercicios-de-implementación-física-ddl-y-migración-espacial" class="level2" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="ejercicios-de-implementación-física-ddl-y-migración-espacial"><span class="header-section-number">9.3</span> Ejercicios de implementación física DDL y migración espacial</h2>
+<ol type="1">
+<li>Auditoría geodésica del catálogo y reproyección condicionada: Escriba un bloque de comandos SQL que inspeccione el catálogo del sistema espacial <code>geometry_columns</code> para identificar cualquier tabla del esquema <code>divpol</code> que resida bajo el sistema de referencia obsoleto <code>SRID = 21892</code>.</li>
+</ol>
+<ul>
+<li>Formule una sentencia DDL/DML que ejecute la transformación hacia el origen único nacional <code>EPSG:9377</code>.</li>
+<li>Condicione la actualización de cada geometría a que la primitiva resultante satisfaga estrictamente el predicado de validez topológica (<code>ST_IsValid(the_geom) = TRUE</code>).</li>
+</ul>
+<ol start="2" type="1">
+<li>Implementación física DDL con integridad referencial y restricciones declarativas: Materialice el subsistema ambiental de predios y rondas hídricas en la base de datos <code>bde_territorio_nacional</code> dentro de un esquema dedicado denominado <code>ambiental</code>:</li>
+</ol>
+<ul>
+<li>Escriba las sentencias DDL para crear las tablas <code>ambiental.predios</code>, <code>ambiental.rondas_hidricas</code> y la tabla puente <code>ambiental.predios_rondas_afectacion</code>.</li>
+<li>Configure claves primarias compuestas, reglas <code>ON DELETE RESTRICT</code> y <code>ON UPDATE CASCADE</code>.</li>
+<li>Declare una restricción <code>CHECK</code> que asegure que el porcentaje de afectación resida estrictamente en el rango numérico continuo <span class="math inline">\([0.0, 100.0]\)</span>.</li>
+<li>Cree los índices relacionales B-Tree sobre las claves foráneas y los índices espaciales GiST sobre las columnas <code>the_geom</code>.</li>
+</ul>
+<ol start="3" type="1">
+<li>Geometría derivada y agregación topológica mediante vistas espaciales: En la arquitectura del clúster relacional, la cobertura de límites departamentales se utiliza para derivar la frontera territorial continua del país:</li>
+</ol>
+<ul>
+<li>Escriba la sentencia DDL que cree la vista espacial <code>divpol.v_nacion_espacial</code>.</li>
+<li>Utilice la función <code>ST_Union</code> para disolver los límites interdepartamentales de <code>divpol.departamentos</code> y aplique <code>ST_Multi</code> para forzar la salida como <code>MultiPolygon</code>.</li>
+<li>Asegure que la columna geométrica resultante se registre con tipo y SRID explícito (<code>GEOMETRY(MultiPolygon, 9377)</code>), permitiendo su visualización acelerada en clientes SIG de escritorio (QGIS).</li>
+</ul>
+<ol start="4" type="1">
+<li>Evaluación analítica de planes de ejecución: Attribute Join frente a Spatial Join: Diseñe un experimento comparativo en <code>psql</code> para contrastar dos estrategias de consulta que cuantifican la cantidad de municipios por departamento:</li>
+</ol>
+<ul>
+<li>Consulta A (Attribute Join): Cruce relacional tradicional mediante <code>INNER JOIN ... ON mun.dep_id = dep.dep_id</code>.</li>
+<li>Consulta B (Spatial Join): Cruce topológico mediante <code>INNER JOIN ... ON ST_Intersects(mun.the_geom, dep.the_geom)</code>.</li>
+<li>Ejecute ambas sentencias anteponiendo <code>EXPLAIN ANALYZE</code> y compare: costo de planificación, costo de ejecución, tiempo total y el uso de índices (B-Tree frente a GiST).</li>
+<li>Explique por qué el cruce relacional por clave foránea supera en varios órdenes de magnitud la velocidad del cruce espacial.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/22-diseno_logico_y_normalizacion_espacial.html" class="pagination-link" aria-label="Diseño lógico y normalización espacial">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Diseño lógico y normalización espacial</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/24-algebra_relacional_y_modelado_visual_pgmodeler.html" class="pagination-link" aria-label="Spatial SQL, modelo DE-9IM y vistas analíticas (Taller 2)">
+        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Spatial SQL, modelo DE-9IM y vistas analíticas (Taller 2)</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,2 +1,0 @@
-# Álgebra relacional, DDL y modelado visual con pgModeler (Taller 1)
-

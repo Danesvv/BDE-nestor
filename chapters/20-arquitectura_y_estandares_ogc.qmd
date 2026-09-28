@@ -1,3 +1,28 @@
+---
+engine: knitr
+execute:
+  echo: true
+  warning: false
+  message: false
+filters:
+  #- diagram
+  - ../_extensions/pandoc-ext/diagram/diagram.lua
+diagram:
+  engine:
+    plantuml:
+      #execpath: ["java", "-jar", "D:/Classes/Unal_2025/Bases_de_Datos_Espaciales/GitHub/plantuml.jar"]
+      execpath: plantuml
+format:
+  html:
+    css: ../styles.css
+    toc: true
+    number-sections: true
+  pdf:
+    documentclass: scrreprt
+    number-sections: true
+    toc: false
+---
+
 # Arquitectura de bases de datos espaciales y estándares OGC
 
 ```{r}
@@ -22,24 +47,22 @@ Sys.setenv(
 
 ::: {.content-visible when-format="html"}
 
-```{=html}
+<!-- ```{=html}
 <style>
-.diagrama-ancho svg {
+.diagrama-ancho svg,
+.diagrama-ancho img {
   width: 100% !important;
-  height: auto !important;
   max-width: 100% !important;
+  height: auto !important;
+  display: block;
+  margin: 0 auto;
 }
 </style>
-
-```
-
-:::
+``` -->
 
 
-::: {.content-visible when-format="html"}
 ::: {.callout-note appearance="simple" title="Presentación de la sesión"}
 Las diapositivas interactivas correspondientes al presente capítulo se encuentran disponibles en: [Presentación interactiva: Arquitectura y estándares OGC](https://www.google.com/search?q=../slides/20-d_arquitectura_y_estandares_ogc.html){target="_blank"}.
-:::
 :::
 
 ```{r}
@@ -73,7 +96,7 @@ Sys.setenv(
 
 ::: {.panel-tabset}
 
-### Terminal integrada (psql)
+### Terminal Integrada
 
 Para la interacción interactiva mediante la consola de comandos o la terminal integrada de Visual Studio Code, se configuran las variables de entorno estándar de `libpq` para apuntar al clúster correspondiente. Ver el fundamento técnico en la @sec-gestion-variables-entorno.
 
@@ -110,8 +133,57 @@ echo "Sesión vinculada por defecto: ${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}
 
 ```
 
+### psql (Docker)
 
-### Python (SQLAlchemy, Pandas y GeoPandas)
+Configuración de variables de sesión `libpq` para conectar al clúster en la red interna del contenedor:
+
+```{bash}
+#| label: setup-variables-sesion-docker
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+
+
+export PGHOST="${DOCKER_PGHOST}"
+export PGPORT="${DOCKER_PGPORT}"
+export PGUSER="${DOCKER_PGUSER}"
+export PGPASSWORD="${DOCKER_PGPASSWORD}"
+export PGDATABASE="${DOCKER_PGDATABASE}"
+
+echo "Sesión lista para conectar a contenedor Docker: ${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}"
+echo "Ejecute el comando psql"
+echo "Dentro de psql Use \`\conninfo\` o \`SHOW data_directory;\` para chequear la conexión"
+
+```
+
+
+### psql (anfitrión)
+
+Configuración de variables de sesión `libpq` para conectar al clúster ejecutado directamente en el sistema anfitrión:
+
+```{bash}
+#| label: setup-variables-sesion-local1
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+
+
+export PGHOST="${LOCAL_PGHOST}"
+export PGPORT="${LOCAL_PGPORT}"
+export PGUSER="${LOCAL_PGUSER}"
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+export PGDATABASE="${LOCAL_PGDATABASE}"
+
+echo "Sesión lista para conectar al host anfitrión: ${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}"
+echo "Ejecute el comando psql"
+echo "Dentro de psql Use \`\conninfo\` o \`SHOW data_directory;\` para chequear la conexión"
+
+```
+
+
+### Python (SQLAlchemy)
 
 **Aprovisionamiento del entorno virtual en Conda:**
 
@@ -167,6 +239,8 @@ print(
 ```
 
 ###  pgAdmin 4
+
+:::
 
 :::
 
@@ -949,29 +1023,27 @@ Para asegurar que las utilidades de línea de comandos (`psql`, `pg_dump`, `pg_r
 
 Para comprobar que el entorno espacial se encuentra habilitado y operativo en la base de datos de trabajo `sig_db_unal`, se consulta la firma completa de dependencias compiladas contra el motor relacional:
 
-<!-- ```{bash}
-#| label: audit-verificacion-postgis-host
-#| eval: true
-#| echo: true
-export PGPASSWORD="${LOCAL_PGPASSWORD}"
 
-# Inspección de versión y librerías geoespaciales vinculadas a PostGIS
-psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATABASE} \
-  -x -P format=wrapped -P columns=90 \
-  -c "SELECT postgis_full_version();"
-
-
-``` -->
-
+::: {.content-visible when-format="html"}
 
 ::: {.panel-tabset}
 
-### Terminal (psql)
+### psql (anfitrión)
+
+```{sql}
+--| label: audit-verificacion-postgis-sql
+--| eval: false
+--| echo: true
+-- Ámbito: clúster PostgreSQL en el sistema anfitrión (sig_db_unal)
+
+-- Verificación de las versiones de PostGIS y todas sus dependencias
+SELECT postgis_full_version();
+```
 
 ```{bash}
 #| label: audit-verificacion-postgis-psql
 #| eval: true
-#| echo: true
+#| echo: false
 export PGPASSWORD="${LOCAL_PGPASSWORD}"
 
 # Inspección de versión y librerías geoespaciales vinculadas a PostGIS
@@ -979,6 +1051,7 @@ psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATAB
   -x -P format=wrapped -P columns=90 \
   -c "SELECT postgis_full_version();"
 ```
+
 
 ### Python (SQLAlchemy)
 
@@ -1018,7 +1091,38 @@ cadena_version = df_version.iloc[0, 0]
 print(textwrap.fill(cadena_version, width=90))
 
 ```
+
 :::
+
+:::
+
+
+::: {.content-visible when-format="pdf"}
+
+```{sql}
+--| label: audit-verificacion-postgis-sql-pdf
+--| eval: false
+--| echo: true
+-- Ámbito: clúster PostgreSQL en el sistema anfitrión (sig_db_unal)
+
+-- Verificación de las versiones de PostGIS y todas sus dependencias
+SELECT postgis_full_version();
+```
+
+```{bash}
+#| label: audit-verificacion-postgis-psql-pdf
+#| eval: true
+#| echo: false
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+# Inspección de versión y librerías geoespaciales vinculadas a PostGIS
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATABASE} \
+  -x -P format=wrapped -P columns=90 \
+  -c "SELECT postgis_full_version();"
+```
+
+:::
+
 
 El resultado de esta función expone las librerías base sobre las cuales opera el motor espacial:
 
@@ -1037,96 +1141,128 @@ El Open Geospatial Consortium (OGC) y la Organización Internacional de Normaliz
 
 El estándar define una taxonomía orientada a objetos en la que la clase abstracta raíz es `Geometry`. En la @fig-jerarquia-ogc-uml se presenta el diagrama de clases conforme a la especificación formal ISO 19125 / OGC SFA.
 
-::: {.diagrama-ancho}
 
-```{dot}
-//| label: fig-jerarquia-ogc-uml
-//| fig-cap: "Diagrama de clases UML para la jerarquía de geometrías según ISO 19125 / OGC Simple Feature Access."
-//| fig-align: center
-//| fig-width: 6.5
-//| fig-height: 7.0
-//| out-width: "100%"
-//| echo: false
+::: {#fig-jerarquia-ogc-uml .diagrama-ancho}
 
-digraph SQL_Geometry_Hierarchy {
-    graph [rankdir=BT, nodesep=0.25, ranksep=0.55, fontname="Helvetica", bgcolor="transparent"];
-    node [shape=record, fontname="Helvetica", fontsize=8, style="filled", fillcolor="#ffffff", color="#334155", penwidth=0.8];
-    edge [fontname="Helvetica", fontsize=7, color="#475569", penwidth=0.8];
+```{.plantuml width="100%"}
+@startuml
+skinparam dpi 300
+skinparam style strictuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 9
+skinparam classFontSize 10
+skinparam nodesep 30
+skinparam ranksep 40
+skinparam classAttributeIconSize 0
 
-    // Sistemas de referencia espacial
-    srs [label="{ReferenceSystems::\nSpatialReferenceSystem}", fillcolor="#f8fafc"];
-    mrs [label="{ReferenceSystems::\nMeasureReferenceSystem}", fillcolor="#f8fafc"];
+' Nivel 0: Clase raíz flanqueada bilateralmente por los sistemas de referencia
 
-    // Clase raíz
-    geom [label="{Geometry\n«Abstract»}", fillcolor="#f1f5f9", penwidth=1.2];
+class "ReferenceSystems::\nSpatialReferenceSystem" as SpatialReferenceSystem
+class "ReferenceSystems::\nMeasureReferenceSystem" as MeasureReferenceSystem
+abstract class Geometry
 
-    // Nivel 1: Subclases principales
-    point [label="{Point}"];
-    curve [label="{Curve\n«Abstract»}", fillcolor="#f8fafc"];
-    surface [label="{Surface\n«Abstract»}", fillcolor="#f8fafc"];
-    geomcoll [label="{GeometryCollection}"];
 
-    // Nivel 2: Tipos intermedios y derivados
-    linestring [label="{LineString}"];
-    polygon [label="{Polygon}"];
-    polyhedralsurface [label="{PolyhedralSurface}"];
+' Enlaces horizontales directos (izquierda y derecha)
+Geometry -left-> "1\n " SpatialReferenceSystem : "<U+002B>spatialRS     "
+Geometry -right-> " \n0..1" MeasureReferenceSystem : "     <U+002B>mesureRS"
 
-    multisurface [label="{MultiSurface\n«Abstract»}", fillcolor="#f8fafc"];
-    multicurve [label="{MultiCurve\n«Abstract»}", fillcolor="#f8fafc"];
-    multipoint [label="{MultiPoint}"];
+' Nivel 1: Subclases principales directas de Geometry
+class Point
+abstract class Curve
+abstract class Surface
+class GeometryCollection
 
-    // Nivel 3: Subtipos concretos de Curve y colecciones
-    line [label="{Line}"];
-    linearring [label="{LinearRing}"];
-    multipolygon [label="{MultiPolygon}"];
-    multilinestring [label="{MultiLineString}"];
+Geometry <|-- Point
+Geometry <|-- Curve
+Geometry <|-- Surface
+Geometry <|-- GeometryCollection
 
-    // Asociaciones con SRS (con cardinalidad OGC)
-    geom -> srs [arrowhead=none, headlabel="1  +spatialRS", labeldistance=2.0];
-    geom -> mrs [arrowhead=none, headlabel="0..1  +mesureRS", labeldistance=2.0];
+' Nivel 2: Especializaciones de Curve y Surface
+class LineString
+Curve <|-- LineString
 
-    // Generalización / Herencia (flechas con punta triangular hacia la superclase)
-    edge [arrowhead=onormal, arrowsize=1.0];
-    point -> geom;
-    curve -> geom;
-    surface -> geom;
-    geomcoll -> geom;
+class Polygon
+class PolyhedralSurface
+Surface <|-- Polygon
+Surface <|-- PolyhedralSurface
 
-    linestring -> curve;
-    line -> linestring;
-    linearring -> linestring;
+' Nivel 2: Especializaciones de GeometryCollection
+abstract class MultiSurface
+abstract class MultiCurve
+class MultiPoint
 
-    polygon -> surface;
-    polyhedralsurface -> surface;
+GeometryCollection <|-- MultiSurface
+GeometryCollection <|-- MultiCurve
+GeometryCollection <|-- MultiPoint
 
-    multisurface -> geomcoll;
-    multicurve -> geomcoll;
-    multipoint -> geomcoll;
+' Nivel 3: Subclases terminales
+class Line
+class LinearRing
+LineString <|-- Line
+LineString <|-- LinearRing
 
-    multipolygon -> multisurface;
-    multilinestring -> multicurve;
+class MultiPolygon
+MultiSurface <|-- MultiPolygon
 
-    // Agregaciones estructurales (rombo vacío en el contenedor)
-    edge [arrowhead=none, arrowtail=odiamond, dir=back, arrowsize=1.0];
-    linestring -> point [headlabel="2..*  +vertex", labeldistance=1.7];
-    polygon -> linearring [headlabel="1..*  +ring", labeldistance=1.7];
-    polyhedralsurface -> polygon [headlabel="1..*  +patch", labeldistance=1.7];
+class MultiLineString
+MultiCurve <|-- MultiLineString
 
-    multipoint -> point [headlabel="0..*  +element", labeldistance=1.7];
-    multilinestring -> linestring [headlabel="0..*  +element", labeldistance=1.7];
-    multipolygon -> polygon [headlabel="0..*  +element", labeldistance=1.7];
-}
+' Agregaciones estructurales
+Point "2..*       \n     <U+002B>vertex\n \n" --o LineString
+Point --o MultiPoint
 
+Polygon o-- "1..*  <U+002B>ring" LinearRing
+PolyhedralSurface o-left- "1..*" Polygon : "<U+002B>patch     "
+
+LineString "0..*  <U+002B>element               " --o MultiLineString
+Polygon "0..*  <U+002B>element" --o MultiPolygon
+@enduml
 ```
-
+Diagrama de clases UML para la jerarquía de geometrías según ISO 19125 / OGC Simple Feature Access.
 :::
 
-Para la interpretación de la @fig-jerarquia-ogc-uml se deben considerar las siguientes convenciones de la notación UML:
+### Convenciones de notación y reglas estructurales en ISO 19125-1
 
-* **Clases abstractas (`«Abstract»`):** Entidades conceptuales que no admiten instanciación directa (`Geometry`, `Curve`, `Surface`, `MultiSurface`, `MultiCurve`). Definen contratos de métodos y propiedades que heredan las clases concretas.
-* **Generalización ($\triangle$):** Relación de herencia (*es-un*). La flecha orientada hacia la superclase indica que la subclase adquiere sus atributos, operaciones y restricciones topológicas.
-* **Agregación ($\diamond$):** Relación estructural (*compuesto-por*). El rombo ubicado en el extremo de la clase contenedora indica que esta se compone de una colección de elementos de la clase vinculada.
-* **Multiplicidad:** Restricción cardinal de las asociaciones; por ejemplo, `2..*` denota la obligatoriedad de al menos dos vértices para instanciar un `LineString`, mientras que `1..*` exige al menos un anillo delimitador para un `Polygon`.
+Para la interpretación de la @fig-jerarquia-ogc-uml se deben considerar las convenciones formales de UML y la norma ISO 19125-1 (*Simple Feature Access - Part 1: Common Architecture*):
+
+* **Clases abstractas:** Tipos conceptuales representados con el nombre en cursiva (*Geometry*, *Curve*, *Surface*, *MultiSurface*, *MultiCurve*). No admiten instanciación directa en el gestor relacional y operan como contratos polimórficos que definen métodos canónicos del modelo espacial (`Dimension()`, `GeometryType()`, `SRID()`, `Envelope()`, `AsText()`, `Boundary()`, `IsEmpty()`, `IsSimple()`).
+
+* **Generalización ($\triangle$):** Relación taxonómica de especialización (*es-un*). La flecha cerrada y hueca orientada hacia la superclase formaliza que la subclase derivada asume íntegramente las operaciones, métodos y axiomas topológicos del clasificador base (por ejemplo, `Polygon` adquiere las funciones de medición areal y perimetral definidas en la interfaz `Surface`).
+
+* **Agregación y composición ($\diamond$ frente a $\blacklozenge$):** La agregación con rombo hueco ($\diamond$) representa una relación estructural débil donde las partes son independientes y pueden pertenecer simultáneamente a múltiples instancias, sin ligar su ciclo de vida al contenedor (como los vértices `Point` que definen la trayectoria de un `LineString`). Por el contrario, la composición con rombo relleno ($\blacklozenge$) formaliza una relación fuerte con subordinación existencial estricta: las partes no pueden coexistir en múltiples contenedores y su ciclo de vida concluye solidariamente con la eliminación del objeto padre (principio equivalente a `ON DELETE CASCADE` en el modelo relacional).
+
+* **Visibilidad en extremos de asociación:** El prefijo `+` antepuesto a los roles (`+vertex`, `+ring`, `+patch`, `+element`, `+spatialRS`) denota visibilidad pública (*public visibility*), exponiendo el acceso a las propiedades internas de la geometría. En la notación formal UML se contemplan asimismo los niveles de visibilidad privada (`-`), protegida (`#`) y de paquete (`~`).
+
+
+* **Multiplicidad cardinal:** Cotas numéricas que imponen restricciones de validez topológica verificadas por el motor espacial:
+    * `2..*` en el rol `+vertex`: Exige una secuencia ordenada mínima de dos puntos para definir la interpolación lineal de un `LineString`.
+    * `1..*` en los roles `+ring` y `+patch`: Condiciona la conformación de un `Polygon` a poseer al menos un anillo exterior delimitador, o de un `PolyhedralSurface` a contar con al menos una faceta poligonal coplanar.
+    * `0..*` en el rol `+element`: Modela conjuntos agregados homogéneos (`MultiPoint`, `MultiLineString`, `MultiPolygon`), admitiendo colecciones vacías (`0`) o múltiples componentes discretos (`*`).
+
+
+### Vinculación con sistemas de coordenadas y medición lineal
+
+En el nivel superior, la clase raíz `Geometry` gobierna el marco geodésico y temporal de las instancias espaciales:
+
+* **Sistema de referencia espacial (`+spatialRS`):** Multiplicidad cardinal fija de `1` hacia `ReferenceSystems::SpatialReferenceSystem`. Ninguna geometría puede existir en el clúster relacional sin estar explícitamente parametrizada bajo un identificador numérico de referencia espacial (SRID), el cual determina el datum geodésico, el elipsoide de revolución, la proyección cartográfica y las unidades lineales de cálculo.
+
+* **Sistema de medición lineal (`+mesureRS`):** Multiplicidad facultativa de `0..1` hacia `ReferenceSystems::MeasureReferenceSystem`. Habilita el registro de una coordenada de medición continua (dimensión M) para direccionamiento lineal (LRS) sobre los vértices (kilometraje, cota de elevación o tiempo), sin alterar la dimensión topológica intrínseca de la entidad.
+
+
+
+### Invariantes topológicas y restricciones de frontera
+
+El metamodelo aplica operadores de frontera geométrica para salvaguardar la consistencia espacial en el gestor relacional:
+
+* **Topología de `LinearRing`:** Subclase cerrada y simple de `LineString`. Su primer y último vértice deben coincidir rigurosamente en coordenadas espaciales ($x_1 = x_n$, $y_1 = y_n$), prohibiendo autointersecciones o puntos de tangencia interna entre segmentos.
+
+* **Frontera en `Polygon`:** Superficie plana delimitada obligatoriamente por un anillo exterior continuo (`LinearRing`) y cero o más anillos interiores disjuntos que modelan huecos. Los anillos interiores no pueden intersectarse entre sí ni cruzar la frontera exterior, garantizando que el interior topológico sea un conjunto conexo en el plano euclidiano.
+
+* **Colecciones homogéneas y heterogéneas:** Subclases directas como `MultiPoint`, `MultiCurve` y `MultiSurface` fuerzan homogeneidad dimensional en sus componentes. Por su parte, la clase genérica `GeometryCollection` admite registros heterogéneos (puntos, líneas y polígonos concurrentes) agrupados dentro de un mismo registro tabular.
+
 
 ### Representación espacial de primitivas y colecciones
 
@@ -1285,14 +1421,53 @@ El siguiente bloque de instrucciones DDL y DML ejecuta el aprovisionamiento y po
 * **Definición del esquema de la tabla:** Crea la relación especificando una clave primaria serial, identificadores de ordenamiento, atributos descriptivos y una columna espacial de tipo genérico `geometry` sin restricción de subtipo (*typmod*).
 * **Inserción de atributos y geometrías:** Registra los datos alfanuméricos e instancia físicamente cada objeto geométrico a partir de literales WKT mediante la función constructora `ST_GeomFromText`.
 
+::: {.content-visible when-format="html"}
+
 ::: {.panel-tabset}
 
 ### Terminal (psql)
 
+```{sql}
+--| label: ddl-poblar-muestras-ogc-sql
+--| eval: false
+--| echo: true
+-- Ámbito: clúster PostgreSQL en el sistema anfitrión (sig_db_unal)
+
+SET client_min_messages = warning;
+DROP TABLE IF EXISTS public.muestras_geometrias_ogc;
+RESET client_min_messages;
+
+CREATE TABLE public.muestras_geometrias_ogc (
+    id serial PRIMARY KEY,
+    orden integer NOT NULL,
+    nombre varchar(30) NOT NULL,
+    descripcion varchar(50) NOT NULL,
+    geom geometry NOT NULL
+);
+
+INSERT INTO public.muestras_geometrias_ogc (orden, nombre, descripcion, geom) VALUES
+(1, 'Point', 'Point (Dim 0)', 
+    ST_GeomFromText('POINT(2 1.5)')),
+(2, 'LineString', 'LineString (Dim 1)', 
+    ST_GeomFromText('LINESTRING(0.5 0.8, 1.8 2.4, 3.2 1.0)')),
+(3, 'LinearRing', 'LinearRing (Dim 1, cerrado)', 
+    ST_GeomFromText('LINESTRING(0.8 0.6, 3.0 1.0, 2.0 2.4, 0.8 0.6)')),
+(4, 'Polygon', 'Polygon (Dim 2)', 
+    ST_GeomFromText('POLYGON((0.5 0.5, 3.3 0.5, 3.3 2.5, 0.5 2.5, 0.5 0.5), (1.2 1.0, 2.5 1.0, 2.5 2.0, 1.2 2.0, 1.2 1.0))')),
+(5, 'MultiPoint', 'MultiPoint (Dim 0)', 
+    ST_GeomFromText('MULTIPOINT(0.8 2.0, 1.7 0.8, 2.8 2.2)')),
+(6, 'MultiLineString', 'MultiLineString (Dim 1)', 
+    ST_GeomFromText('MULTILINESTRING((0.5 2.2, 2.0 2.5), (1.2 1.0, 3.2 0.6))')),
+(7, 'MultiPolygon', 'MultiPolygon (Dim 2)', 
+    ST_GeomFromText('MULTIPOLYGON(((0.5 0.7, 1.8 0.7, 1.8 2.3, 0.5 2.3, 0.5 0.7)), ((2.2 1.1, 3.3 0.5, 3.3 2.0, 2.2 1.1)))')),
+(8, 'GeometryCollection', 'GeometryCollection (Heterogénea)', 
+    ST_GeomFromText('GEOMETRYCOLLECTION(POLYGON((1.2 0.5, 3.2 0.5, 2.2 1.6, 1.2 0.5)), LINESTRING(0.6 2.0, 1.6 2.5), POINT(0.8 1.0))'));
+```
+
 ```{bash}
 #| label: ddl-poblar-muestras-ogc-psql
 #| eval: true
-#| echo: true
+#| echo: false
 export PGPASSWORD="${LOCAL_PGPASSWORD}"
 
 query_muestras="
@@ -1380,6 +1555,95 @@ with engine_local.begin() as conn:
 
 :::
 
+:::
+
+::: {.content-visible when-format="pdf"}
+
+```{sql}
+--| label: ddl-poblar-muestras-ogc-sql-pdf
+--| eval: false
+--| echo: true
+-- Ámbito: clúster PostgreSQL en el sistema anfitrión (sig_db_unal)
+
+SET client_min_messages = warning;
+DROP TABLE IF EXISTS public.muestras_geometrias_ogc;
+RESET client_min_messages;
+
+CREATE TABLE public.muestras_geometrias_ogc (
+    id serial PRIMARY KEY,
+    orden integer NOT NULL,
+    nombre varchar(30) NOT NULL,
+    descripcion varchar(50) NOT NULL,
+    geom geometry NOT NULL
+);
+
+INSERT INTO public.muestras_geometrias_ogc (orden, nombre, descripcion, geom) VALUES
+(1, 'Point', 'Point (Dim 0)', 
+    ST_GeomFromText('POINT(2 1.5)')),
+(2, 'LineString', 'LineString (Dim 1)', 
+    ST_GeomFromText('LINESTRING(0.5 0.8, 1.8 2.4, 3.2 1.0)')),
+(3, 'LinearRing', 'LinearRing (Dim 1, cerrado)', 
+    ST_GeomFromText('LINESTRING(0.8 0.6, 3.0 1.0, 2.0 2.4, 0.8 0.6)')),
+(4, 'Polygon', 'Polygon (Dim 2)', 
+    ST_GeomFromText('POLYGON((0.5 0.5, 3.3 0.5, 3.3 2.5, 0.5 2.5, 0.5 0.5), (1.2 1.0, 2.5 1.0, 2.5 2.0, 1.2 2.0, 1.2 1.0))')),
+(5, 'MultiPoint', 'MultiPoint (Dim 0)', 
+    ST_GeomFromText('MULTIPOINT(0.8 2.0, 1.7 0.8, 2.8 2.2)')),
+(6, 'MultiLineString', 'MultiLineString (Dim 1)', 
+    ST_GeomFromText('MULTILINESTRING((0.5 2.2, 2.0 2.5), (1.2 1.0, 3.2 0.6))')),
+(7, 'MultiPolygon', 'MultiPolygon (Dim 2)', 
+    ST_GeomFromText('MULTIPOLYGON(((0.5 0.7, 1.8 0.7, 1.8 2.3, 0.5 2.3, 0.5 0.7)), ((2.2 1.1, 3.3 0.5, 3.3 2.0, 2.2 1.1)))')),
+(8, 'GeometryCollection', 'GeometryCollection (Heterogénea)', 
+    ST_GeomFromText('GEOMETRYCOLLECTION(POLYGON((1.2 0.5, 3.2 0.5, 2.2 1.6, 1.2 0.5)), LINESTRING(0.6 2.0, 1.6 2.5), POINT(0.8 1.0))'));
+```
+
+
+
+```{bash}
+#| label: ddl-poblar-muestras-ogc-psql-pdf
+#| eval: true
+#| echo: false
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+query_muestras="
+SET client_min_messages = warning;
+DROP TABLE IF EXISTS public.muestras_geometrias_ogc;
+RESET client_min_messages;
+
+CREATE TABLE public.muestras_geometrias_ogc (
+    id serial PRIMARY KEY,
+    orden integer NOT NULL,
+    nombre varchar(30) NOT NULL,
+    descripcion varchar(50) NOT NULL,
+    geom geometry NOT NULL
+);
+
+INSERT INTO public.muestras_geometrias_ogc (orden, nombre, descripcion, geom) VALUES
+(1, 'Point', 'Point (Dim 0)', 
+    ST_GeomFromText('POINT(2 1.5)')),
+(2, 'LineString', 'LineString (Dim 1)', 
+    ST_GeomFromText('LINESTRING(0.5 0.8, 1.8 2.4, 3.2 1.0)')),
+(3, 'LinearRing', 'LinearRing (Dim 1, cerrado)', 
+    ST_GeomFromText('LINESTRING(0.8 0.6, 3.0 1.0, 2.0 2.4, 0.8 0.6)')),
+(4, 'Polygon', 'Polygon (Dim 2)', 
+    ST_GeomFromText('POLYGON((0.5 0.5, 3.3 0.5, 3.3 2.5, 0.5 2.5, 0.5 0.5), (1.2 1.0, 2.5 1.0, 2.5 2.0, 1.2 2.0, 1.2 1.0))')),
+(5, 'MultiPoint', 'MultiPoint (Dim 0)', 
+    ST_GeomFromText('MULTIPOINT(0.8 2.0, 1.7 0.8, 2.8 2.2)')),
+(6, 'MultiLineString', 'MultiLineString (Dim 1)', 
+    ST_GeomFromText('MULTILINESTRING((0.5 2.2, 2.0 2.5), (1.2 1.0, 3.2 0.6))')),
+(7, 'MultiPolygon', 'MultiPolygon (Dim 2)', 
+    ST_GeomFromText('MULTIPOLYGON(((0.5 0.7, 1.8 0.7, 1.8 2.3, 0.5 2.3, 0.5 0.7)), ((2.2 1.1, 3.3 0.5, 3.3 2.0, 2.2 1.1)))')),
+(8, 'GeometryCollection', 'GeometryCollection (Heterogénea)', 
+    ST_GeomFromText('GEOMETRYCOLLECTION(POLYGON((1.2 0.5, 3.2 0.5, 2.2 1.6, 1.2 0.5)), LINESTRING(0.6 2.0, 1.6 2.5), POINT(0.8 1.0))'));
+"
+
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATABASE} \
+  -c "${query_muestras}"
+```
+
+
+:::
+
+::: {.content-visible when-format="html"}
 
 Una vez confirmada la inserción en el motor, el bloque subsecuente recupera las geometrías en WKB, reconstruye los objetos topológicos e ilustra la morfología de cada tipo en Python (@fig-geometrias-graficas-postgis-py-shapely-ejecucion), R (@fig-geometrias-graficas-postgis-r-ejecucion) y Julia (@fig-geometrias-graficas-postgis-jl-ejecucion):
 
@@ -2037,9 +2301,6 @@ for (i in seq_len(nrow(registros))) {
 
 ### Julia
 
-
-::: {.content-visible when-format="html"}
-
 ```{julia}
 #| label: fig-geometrias-graficas-postgis-jl-codigo
 #| eval: false
@@ -2138,8 +2399,6 @@ catch fallo_proceso
     )
 end
 ```
-
-:::
 
 
 ```{r}
@@ -2254,6 +2513,7 @@ end
 
 :::
 
+:::
 
 
 ## Catálogos de metadatos espaciales
@@ -2268,14 +2528,29 @@ En un motor relacional espacial, el clúster administra la información cartogr�
 
 El catálogo `spatial_ref_sys` materializa la especificación formal descrita en la cláusula 7.1.2 de la norma OGC SFA Parte 2, la cual exige la persistencia de los identificadores y definiciones WKT de los marcos geodésicos:
 
+::: {.content-visible when-format="html"}
+
 ::: {.panel-tabset}
 
 ### Terminal (psql)
 
+```{sql}
+--| label: query-spatial-ref-sys-sql
+--| eval: false
+--| echo: true
+-- Ámbito: clúster PostgreSQL en el sistema anfitrión (sig_db_unal)
+
+SELECT column_name, data_type 
+FROM information_schema.columns 
+WHERE table_name = 'spatial_ref_sys';
+
+```
+
+
 ```{bash}
 #| label: query-spatial-ref-sys-psql
 #| eval: true
-#| echo: true
+#| echo: false
 export PGPASSWORD="${LOCAL_PGPASSWORD}"
 
 query_cols="
@@ -2338,6 +2613,42 @@ df_columnas
 
 :::
 
+:::
+
+::: {.content-visible when-format="pdf"}
+
+```{sql}
+--| label: query-spatial-ref-sys-sql-pdf
+--| eval: false
+--| echo: true
+-- Ámbito: clúster PostgreSQL en el sistema anfitrión (sig_db_unal)
+
+SELECT column_name, data_type 
+FROM information_schema.columns 
+WHERE table_name = 'spatial_ref_sys';
+
+```
+
+```{bash}
+#| label: query-spatial-ref-sys-psql-pdf
+#| eval: true
+#| echo: false
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+query_cols="
+SELECT column_name, data_type 
+FROM information_schema.columns 
+WHERE table_name = 'spatial_ref_sys';
+"
+
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATABASE} \
+  -P format=wrapped -P columns=90 \
+  -c "${query_cols}"
+
+```
+
+:::
+
 Sus columnas clave comprenden:
 
 * `srid`: Identificador entero del sistema de referencia espacial (habitualmente alineado con el estándar internacional EPSG).
@@ -2348,14 +2659,33 @@ Sus columnas clave comprenden:
 
 Al consultar las definiciones preinstaladas para Colombia, el motor lista los marcos geodésicos históricos y las fajas Gauss-Krüger tradicionales:
 
+::: {.content-visible when-format="html"}
+
 ::: {.panel-tabset}
 
 ### Terminal (psql)
 
+```{sql}
+--| label: query-crs-colombia-docker-sql
+--| eval: false
+--| echo: true
+
+-- Importante: Usaremos la base de datos del contenedor!!
+
+SELECT 
+    srid, 
+    auth_name, 
+    split_part(srtext, '\"', 2) AS nombre_sistema
+FROM spatial_ref_sys
+WHERE srtext ILIKE '%Colombia%' OR srtext ILIKE '%MAGNA-SIRGAS%'
+ORDER BY srid;
+```
+
+
 ```{bash}
 #| label: query-crs-colombia-docker-psql
 #| eval: true
-#| echo: true
+#| echo: false
 export PGPASSWORD="${DOCKER_PGPASSWORD}"
 
 query_sistemas_colombia="
@@ -2439,6 +2769,51 @@ df_sistemas
 
 :::
 
+:::
+
+::: {.content-visible when-format="pdf"}
+
+```{sql}
+--| label: query-crs-colombia-docker-sql-pdf
+--| eval: false
+--| echo: true
+
+-- Importante: Usaremos la base de datos del contenedor!!
+
+SELECT 
+    srid, 
+    auth_name, 
+    split_part(srtext, '\"', 2) AS nombre_sistema
+FROM spatial_ref_sys
+WHERE srtext ILIKE '%Colombia%' OR srtext ILIKE '%MAGNA-SIRGAS%'
+ORDER BY srid;
+```
+
+```{bash}
+#| label: query-crs-colombia-docker-psql-pdf
+#| eval: true
+#| echo: false
+export PGPASSWORD="${DOCKER_PGPASSWORD}"
+
+query_sistemas_colombia="
+SELECT 
+    srid, 
+    auth_name, 
+    split_part(srtext, '\"', 2) AS nombre_sistema
+FROM spatial_ref_sys
+WHERE srtext ILIKE '%Colombia%' OR srtext ILIKE '%MAGNA-SIRGAS%'
+ORDER BY srid;
+"
+
+psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} \
+  -P format=wrapped -P columns=90 \
+  -c "${query_sistemas_colombia}"
+
+```
+
+
+:::
+
 ::: {.callout-warning title="Ausencia del código EPSG 9377 en volcados iniciales de spatial_ref_sys"}
 La tabla `spatial_ref_sys` es una tabla relacional física en disco poblada a partir de los scripts iniciales de PostGIS o volcados históricos (como `init_unal_spatialdb.sql`). A diferencia del software de escritorio moderno o la biblioteca PROJ (que actualizan sus parámetros en cada compilación contra `proj.db`), el catálogo relacional en PostgreSQL es estático y no se actualiza de forma automática.
 
@@ -2449,14 +2824,37 @@ Aunque el tipado declarativo de PostgreSQL permite crear columnas con `geometry(
 
 Como labor fundamental de administración de bases de datos (DBA), el registro oficial debe ser incorporado al catálogo. **Esta instrucción DML solo requiere ejecutarse una única vez en la base de datos**, pues la cláusula `ON CONFLICT` garantiza su persistencia permanente sin duplicación:
 
+::: {.content-visible when-format="html"}
+
+
 ::: {.panel-tabset}
 
 ### Terminal (psql)
 
+
+```{sql}
+--| label: dml-insert-crs-9377-sql
+--| eval: false
+--| echo: true
+-- Ámbito: clúster PostgreSQL en el sistema anfitrión (sig_db_unal)
+
+INSERT INTO spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text)
+VALUES (
+    9377,
+    'EPSG',
+    9377,
+    'PROJCS[\"MAGNA-SIRGAS / Origen-Nacional\",GEOGCS[\"MAGNA-SIRGAS\",DATUM[\"Marco_Geocentrico_Nacional_de_Referencia\",SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],AUTHORITY[\"EPSG\",\"6686\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4686\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",4],PARAMETER[\"central_meridian\",-73],PARAMETER[\"scale_factor\",0.9992],PARAMETER[\"false_easting\",5000000],PARAMETER[\"false_northing\",2000000],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AUTHORITY[\"EPSG\",\"9377\"]]',
+    '+proj=tmerc +lat_0=4 +lon_0=-73 +k=0.9992 +x_0=5000000 +y_0=2000000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs'
+)
+ON CONFLICT (srid) DO UPDATE 
+SET srtext = EXCLUDED.srtext, proj4text = EXCLUDED.proj4text;
+```
+
+
 ```{bash}
 #| label: dml-insert-crs-9377-psql
 #| eval: true
-#| echo: true
+#| echo: false
 export PGPASSWORD="${LOCAL_PGPASSWORD}"
 
 query_insert_9377="
@@ -2506,6 +2904,55 @@ with engine_local.begin() as conn:
 
 :::
 
+:::
+
+
+::: {.content-visible when-format="pdf"}
+
+```{sql}
+--| label: dml-insert-crs-9377-sql-pdf
+--| eval: false
+--| echo: true
+
+-- Ámbito: clúster PostgreSQL en el sistema anfitrión (sig_db_unal)
+INSERT INTO spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text)
+VALUES (
+    9377,
+    'EPSG',
+    9377,
+    'PROJCS[\"MAGNA-SIRGAS / Origen-Nacional\",GEOGCS[\"MAGNA-SIRGAS\",DATUM[\"Marco_Geocentrico_Nacional_de_Referencia\",SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],AUTHORITY[\"EPSG\",\"6686\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4686\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",4],PARAMETER[\"central_meridian\",-73],PARAMETER[\"scale_factor\",0.9992],PARAMETER[\"false_easting\",5000000],PARAMETER[\"false_northing\",2000000],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AUTHORITY[\"EPSG\",\"9377\"]]',
+    '+proj=tmerc +lat_0=4 +lon_0=-73 +k=0.9992 +x_0=5000000 +y_0=2000000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs'
+)
+ON CONFLICT (srid) DO UPDATE 
+SET srtext = EXCLUDED.srtext, proj4text = EXCLUDED.proj4text;
+```
+
+
+```{bash}
+#| label: dml-insert-crs-9377-psql-pdf
+#| eval: true
+#| echo: false
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+query_insert_9377="
+INSERT INTO spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text)
+VALUES (
+    9377,
+    'EPSG',
+    9377,
+    'PROJCS[\"MAGNA-SIRGAS / Origen-Nacional\",GEOGCS[\"MAGNA-SIRGAS\",DATUM[\"Marco_Geocentrico_Nacional_de_Referencia\",SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],AUTHORITY[\"EPSG\",\"6686\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4686\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",4],PARAMETER[\"central_meridian\",-73],PARAMETER[\"scale_factor\",0.9992],PARAMETER[\"false_easting\",5000000],PARAMETER[\"false_northing\",2000000],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AUTHORITY[\"EPSG\",\"9377\"]]',
+    '+proj=tmerc +lat_0=4 +lon_0=-73 +k=0.9992 +x_0=5000000 +y_0=2000000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs'
+)
+ON CONFLICT (srid) DO UPDATE 
+SET srtext = EXCLUDED.srtext, proj4text = EXCLUDED.proj4text;
+"
+
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATABASE} \
+  -c "${query_insert_9377}"
+```
+
+:::
+
 Mediante la cláusula `ON CONFLICT (srid) DO UPDATE`, la sentencia formaliza una operación atómica de tipo **UPSERT**, confiriendo **idempotencia** a la ejecución:
 
 * **Primera compilación**: Al no existir el identificador `9377`, el motor ejecuta la inserción estándar (`INSERT`) en el catálogo físico.
@@ -2515,14 +2962,29 @@ Este diseño garantiza que los ciclos continuos de renderizado en Quarto manteng
 
 Una vez registrada la tupla en disco, la inspección detallada de los sistemas cartográficos de referencia para el país expone sus parámetros elipsoidales y de proyección:
 
+::: {.content-visible when-format="html"}
+
 ::: {.panel-tabset}
 
 ### Terminal (psql)
 
+```{sql}
+--| label: query-colombia-srid-sql
+--| eval: false
+--| echo: true
+-- Ámbito: clúster PostgreSQL en el sistema anfitrión (sig_db_unal)
+
+SELECT srid, auth_name, auth_srid, srtext 
+FROM spatial_ref_sys 
+WHERE srid IN (4326, 3116, 9377)
+ORDER BY srid;
+```
+
+
 ```{bash}
 #| label: query-colombia-srid-psql
 #| eval: true
-#| echo: true
+#| echo: false
 export PGPASSWORD="${LOCAL_PGPASSWORD}"
 
 query_colombia="
@@ -2597,6 +3059,44 @@ df_colombia
 
 :::
 
+:::
+
+::: {.content-visible when-format="pdf"}
+
+```{sql}
+--| label: query-colombia-srid-sql-pdf
+--| eval: false
+--| echo: true
+-- Ámbito: clúster PostgreSQL en el sistema anfitrión (sig_db_unal)
+
+SELECT srid, auth_name, auth_srid, srtext 
+FROM spatial_ref_sys 
+WHERE srid IN (4326, 3116, 9377)
+ORDER BY srid;
+```
+
+
+```{bash}
+#| label: query-colombia-srid-psql-pdf
+#| eval: true
+#| echo: false
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+query_colombia="
+SELECT srid, auth_name, auth_srid, srtext 
+FROM spatial_ref_sys 
+WHERE srid IN (4326, 3116, 9377)
+ORDER BY srid;
+"
+
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATABASE} \
+  -x -P format=wrapped -P columns=90 \
+  -c "${query_colombia}"
+
+```
+
+:::
+
 Entre estos identificadores fundamentales destacan:
 
 * **SRID 4326**: Sistema geográfico global WGS 84 (coordenadas angulares en grados decimales de latitud y longitud).
@@ -2610,14 +3110,28 @@ La especificación OGC SFA Parte 2 (cláusula 7.1.3) establece que toda relació
 
 En implementaciones tempranas de bases de datos espaciales, este catálogo operaba como una tabla física estática cuyo registro exigía procedimientos imperativos como `AddGeometryColumn()` o disparadores (*triggers*). A partir de PostGIS 2.0, y en concordancia con la cláusula 7.1.1 de la norma, `geometry_columns` se materializa como una vista del sistema construida dinámicamente por introspección sobre los catálogos relacionales de PostgreSQL (`pg_class`, `pg_attribute`, `pg_type`, `pg_namespace` y `pg_constraint`).
 
+::: {.content-visible when-format="html"}
+
 ::: {.panel-tabset}
 
 ### Terminal (psql)
 
+```{sql}
+--| label: query-geometry-columns-catalog-sql
+--| eval: false
+--| echo: true
+
+-- Ámbito: clúster PostgreSQL en el sistema anfitrión (sig_db_unal)
+SELECT f_table_schema, f_table_name, f_geometry_column, coord_dimension, srid, type 
+FROM geometry_columns 
+LIMIT 10;
+```
+
+
 ```{bash}
 #| label: query-geometry-columns-catalog-psql
 #| eval: true
-#| echo: true
+#| echo: false
 export PGPASSWORD="${LOCAL_PGPASSWORD}"
 
 query_geom_cols="
@@ -2685,6 +3199,44 @@ df_geom_cols
 
 :::
 
+:::
+
+
+
+
+::: {.content-visible when-format="pdf"}
+
+```{sql}
+--| label: query-geometry-columns-catalog-sql-pdf
+--| eval: false
+--| echo: true
+
+-- Ámbito: clúster PostgreSQL en el sistema anfitrión (sig_db_unal)
+SELECT f_table_schema, f_table_name, f_geometry_column, coord_dimension, srid, type 
+FROM geometry_columns 
+LIMIT 10;
+```
+
+```{bash}
+#| label: query-geometry-columns-catalog-psql-pdf
+#| eval: true
+#| echo: false
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+query_geom_cols="
+SELECT f_table_schema, f_table_name, f_geometry_column, coord_dimension, srid, type 
+FROM geometry_columns 
+LIMIT 10;
+"
+
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATABASE} \
+  -P format=wrapped -P columns=90 \
+  -c "${query_geom_cols}"
+
+```
+
+:::
+
 Los campos descriptivos obligatorios según la norma OGC son:
 
 * `f_table_schema`: Esquema relacional donde reside la tabla (ej. `public`, `base750`, `divpol`).
@@ -2696,14 +3248,35 @@ Los campos descriptivos obligatorios según la norma OGC son:
 
 Para realizar una auditoría integral de la base de datos pedagógica `sig_db_unal`, se combina la vista `geometry_columns` con la tabla `spatial_ref_sys`. Esta consulta consolida los marcos de referencia en uso real, identificando las capas cartográficas existentes por esquema y detectando capas sin proyección asignada (`srid: 0`):
 
+::: {.content-visible when-format="html"}
+
 ::: {.panel-tabset}
 
 ### Terminal (psql)
 
+```{sql}
+--| label: query-crs-en-uso-docker-sql
+--| eval: false
+--| echo: true
+
+-- Importante: Usaremos la base de datos del contenedor!!
+SELECT 
+    g.srid, 
+    COALESCE(s.auth_name, 'LOCAL') AS autoridad, 
+    COALESCE(split_part(s.srtext, '\"', 2), 'Sin CRS asignado (Plano / Indefinido)') AS descripcion_crs, 
+    count(*) AS numero_de_capas, 
+    string_agg(g.f_table_schema || '.' || g.f_table_name, ', ') AS capas_asociadas
+FROM geometry_columns g
+LEFT JOIN spatial_ref_sys s ON g.srid = s.srid
+GROUP BY g.srid, s.auth_name, s.srtext
+ORDER BY g.srid;
+```
+
+
 ```{bash}
 #| label: query-crs-en-uso-docker-psql
 #| eval: true
-#| echo: true
+#| echo: false
 export PGPASSWORD="${DOCKER_PGPASSWORD}"
 
 query_crs_en_uso="
@@ -2798,20 +3371,107 @@ df_crs_en_uso
 
 :::
 
+:::
+
+::: {.content-visible when-format="pdf"}
+
+```{sql}
+--| label: query-crs-en-uso-docker-sql-pdf
+--| eval: false
+--| echo: true
+
+-- Importante: Usaremos la base de datos del contenedor!!
+SELECT 
+    g.srid, 
+    COALESCE(s.auth_name, 'LOCAL') AS autoridad, 
+    COALESCE(split_part(s.srtext, '\"', 2), 'Sin CRS asignado (Plano / Indefinido)') AS descripcion_crs, 
+    count(*) AS numero_de_capas, 
+    string_agg(g.f_table_schema || '.' || g.f_table_name, ', ') AS capas_asociadas
+FROM geometry_columns g
+LEFT JOIN spatial_ref_sys s ON g.srid = s.srid
+GROUP BY g.srid, s.auth_name, s.srtext
+ORDER BY g.srid;
+```
+
+
+```{bash}
+#| label: query-crs-en-uso-docker-psql-pdf
+#| eval: true
+#| echo: false
+export PGPASSWORD="${DOCKER_PGPASSWORD}"
+
+query_crs_en_uso="
+SELECT 
+    g.srid, 
+    COALESCE(s.auth_name, 'LOCAL') AS autoridad, 
+    COALESCE(split_part(s.srtext, '\"', 2), 'Sin CRS asignado (Plano / Indefinido)') AS descripcion_crs, 
+    count(*) AS numero_de_capas, 
+    string_agg(g.f_table_schema || '.' || g.f_table_name, ', ') AS capas_asociadas
+FROM geometry_columns g
+LEFT JOIN spatial_ref_sys s ON g.srid = s.srid
+GROUP BY g.srid, s.auth_name, s.srtext
+ORDER BY g.srid;
+"
+
+psql -h ${DOCKER_PGHOST} -p ${DOCKER_PGPORT} -U ${DOCKER_PGUSER} -d ${DOCKER_PGDATABASE} \
+  -x -P format=wrapped -P columns=90 \
+  -c "${query_crs_en_uso}"
+
+```
+
+:::
+
 ### Asignación de identificador espacial en las vistas del esquema
 
 Al examinar los resultados de la consulta cruzada anterior, se constata que las relaciones `capa_departamentos` y `capa_municipios` del esquema `divpol` reportan `srid: 0`. Esto ocurre porque ambos objetos son vistas relacionales (consultas almacenadas) en las que la columna geométrica fue proyectada sin un identificador de referencia explícito, lo que ocasiona que los clientes SIG interpreten la proyección como indefinida.
 
 Aunque los fundamentos formales de DDL y DML para el diseño avanzado de vistas espaciales se estudiarán detalladamente en capítulos posteriores, es indispensable regularizar el catálogo desde esta primera sesión. La solución consiste en redefinir ambas vistas forzando la conversión explícita de la columna geométrica al sistema de coordenadas de la cartografía base de la base de datos `sig_db_unal`, es decir `EPSG:21892`, *Bogotá 1975 / Colombia Bogotá* zone (asociado al elipsoide Internacional 1924 / Hayford y datum Bogotá 1975):
 
+::: {.content-visible when-format="html"}
+
 ::: {.panel-tabset}
 
 ### Terminal (psql)
 
+```{sql}
+--| label: ddl-remediacion-vistas-divpol-sql
+--| eval: false
+--| echo: true
+-- Ámbito: clúster PostgreSQL en el sistema anfitrión (sig_db_unal)
+
+DROP VIEW IF EXISTS divpol.capa_departamentos;
+CREATE VIEW divpol.capa_departamentos AS
+SELECT 
+    d.gid,
+    d.gid AS oid,
+    d.dep_id AS id_dane,
+    d.dep_nombre AS departamento,
+    d.the_geom::geometry(Geometry, 21892) AS the_geom
+FROM divpol.departamentos d
+WHERE d.the_geom IS NOT NULL
+ORDER BY d.dep_id;
+
+DROP VIEW IF EXISTS divpol.capa_municipios;
+CREATE VIEW divpol.capa_municipios AS
+SELECT 
+    m.gid,
+    m.gid AS oid,
+    m.mun_id AS id_dane,
+    d.dep_id AS dep_codigo_dane,
+    initcap(d.dep_nombre::text) AS departamento,
+    m.mun_nombre AS municipio,
+    m.the_geom::geometry(Geometry, 21892) AS the_geom
+FROM divpol.municipios m
+LEFT JOIN divpol.departamentos d ON d.dep_id::text = m.dep_id::text
+WHERE m.the_geom IS NOT NULL
+ORDER BY m.mun_id;
+```
+
+
 ```{bash}
 #| label: ddl-remediacion-vistas-divpol-psql
 #| eval: true
-#| echo: true
+#| echo: false
 export PGPASSWORD="${LOCAL_PGPASSWORD}"
 
 # Redefinición de vistas con asignación explícita de SRID 21892
@@ -2899,17 +3559,120 @@ with engine_local.begin() as conn:
 
 :::
 
+:::
+
+
+::: {.content-visible when-format="pdf"}
+
+```{sql}
+--| label: ddl-remediacion-vistas-divpol-sql-pdf
+--| eval: false
+--| echo: true
+
+-- Ámbito: clúster PostgreSQL en el sistema anfitrión (sig_db_unal)
+DROP VIEW IF EXISTS divpol.capa_departamentos;
+CREATE VIEW divpol.capa_departamentos AS
+SELECT 
+    d.gid,
+    d.gid AS oid,
+    d.dep_id AS id_dane,
+    d.dep_nombre AS departamento,
+    d.the_geom::geometry(Geometry, 21892) AS the_geom
+FROM divpol.departamentos d
+WHERE d.the_geom IS NOT NULL
+ORDER BY d.dep_id;
+
+DROP VIEW IF EXISTS divpol.capa_municipios;
+CREATE VIEW divpol.capa_municipios AS
+SELECT 
+    m.gid,
+    m.gid AS oid,
+    m.mun_id AS id_dane,
+    d.dep_id AS dep_codigo_dane,
+    initcap(d.dep_nombre::text) AS departamento,
+    m.mun_nombre AS municipio,
+    m.the_geom::geometry(Geometry, 21892) AS the_geom
+FROM divpol.municipios m
+LEFT JOIN divpol.departamentos d ON d.dep_id::text = m.dep_id::text
+WHERE m.the_geom IS NOT NULL
+ORDER BY m.mun_id;
+```
+
+
+```{bash}
+#| label: ddl-remediacion-vistas-divpol-psql-pdf
+#| eval: true
+#| echo: false
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+# Redefinición de vistas con asignación explícita de SRID 21892
+query_recreacion_vistas="
+DROP VIEW IF EXISTS divpol.capa_departamentos;
+CREATE VIEW divpol.capa_departamentos AS
+SELECT 
+    d.gid,
+    d.gid AS oid,
+    d.dep_id AS id_dane,
+    d.dep_nombre AS departamento,
+    d.the_geom::geometry(Geometry, 21892) AS the_geom
+FROM divpol.departamentos d
+WHERE d.the_geom IS NOT NULL
+ORDER BY d.dep_id;
+
+DROP VIEW IF EXISTS divpol.capa_municipios;
+CREATE VIEW divpol.capa_municipios AS
+SELECT 
+    m.gid,
+    m.gid AS oid,
+    m.mun_id AS id_dane,
+    d.dep_id AS dep_codigo_dane,
+    initcap(d.dep_nombre::text) AS departamento,
+    m.mun_nombre AS municipio,
+    m.the_geom::geometry(Geometry, 21892) AS the_geom
+FROM divpol.municipios m
+LEFT JOIN divpol.departamentos d ON d.dep_id::text = m.dep_id::text
+WHERE m.the_geom IS NOT NULL
+ORDER BY m.mun_id;
+"
+
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATABASE} \
+  -c "${query_recreacion_vistas}"
+
+```
+
+::: 
 
 Tras la ejecución del bloque anterior, se audita nuevamente el catálogo `geometry_columns` para validar la correcta inscripción del identificador espacial:
+
+::: {.content-visible when-format="html"}
 
 ::: {.panel-tabset}
 
 ### Terminal (psql)
 
+```{sql}
+--| label: audit-verificacion-vistas-srid-sql
+--| eval: false
+--| echo: true
+-- Ámbito: clúster PostgreSQL en el sistema anfitrión (sig_db_unal)
+
+SELECT 
+    f_table_schema, 
+    f_table_name, 
+    f_geometry_column, 
+    coord_dimension, 
+    srid, 
+    type 
+FROM geometry_columns 
+WHERE f_table_schema = 'divpol' 
+  AND f_table_name IN ('capa_departamentos', 'capa_municipios');
+```
+
+
 ```{bash}
 #| label: audit-verificacion-vistas-srid-psql
 #| eval: true
-#| echo: true
+#| echo: false
 export PGPASSWORD="${LOCAL_PGPASSWORD}"
 
 query_verif_vistas="
@@ -2998,6 +3761,56 @@ df_vistas_srid
 
 :::
 
+:::
+
+::: {.content-visible when-format="pdf"}
+
+```{sql}
+--| label: audit-verificacion-vistas-srid-sql-pdf
+--| eval: false
+--| echo: true
+
+-- Ámbito: clúster PostgreSQL en el sistema anfitrión (sig_db_unal)
+SELECT
+    f_table_schema, 
+    f_table_name, 
+    f_geometry_column, 
+    coord_dimension, 
+    srid, 
+    type 
+FROM geometry_columns 
+WHERE f_table_schema = 'divpol' 
+  AND f_table_name IN ('capa_departamentos', 'capa_municipios');
+```
+
+
+```{bash}
+#| label: audit-verificacion-vistas-srid-psql-pdf
+#| eval: true
+#| echo: false
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+query_verif_vistas="
+SELECT 
+    f_table_schema, 
+    f_table_name, 
+    f_geometry_column, 
+    coord_dimension, 
+    srid, 
+    type 
+FROM geometry_columns 
+WHERE f_table_schema = 'divpol' 
+  AND f_table_name IN ('capa_departamentos', 'capa_municipios');
+"
+
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATABASE} \
+  -P format=wrapped -P columns=90 \
+  -c "${query_verif_vistas}"
+
+```
+
+:::
+
 El catálogo reporta ahora el identificador `21892`, garantizando la interoperabilidad con clientes de escritorio y servicios web.
 
 ::: {.callout-tip title="Persistencia del catálogo mediante respaldo"}
@@ -3010,14 +3823,47 @@ Para preservar estas modificaciones frente a eventuales destrucciones del volume
 
 A continuación se demuestra la secuencia operativa para comprobar la disponibilidad de la extensión espacial, aprovisionar una tabla pedagógica con tipado geométrico estricto, insertar una entidad mediante sintaxis WKT y auditar su catalogación automática:
 
+::: {.content-visible when-format="html"}
+
 ::: {.panel-tabset}
 
 ### Terminal (psql)
 
+```{sql}
+--| label: ddl-verify-spatial-schema-sql
+--| eval: false
+--| echo: true
+
+-- Ámbito: clúster PostgreSQL en el sistema anfitrión (sig_db_unal)
+
+-- Creación e inserción pedagógica (con limpieza previa para asegurar idempotencia)
+DROP TABLE IF EXISTS public.infraestructura_referencia;
+
+CREATE TABLE public.infraestructura_referencia (
+    id serial PRIMARY KEY,
+    codigo varchar(10) NOT NULL UNIQUE,
+    descripcion text,
+    geom geometry(Point, 9377) NOT NULL
+);
+
+INSERT INTO public.infraestructura_referencia (codigo, descripcion, geom) 
+VALUES (
+    'EST-001', 
+    'Estación de monitoreo central', 
+    ST_GeomFromText('POINT(5000000 2000000)', 9377)
+);
+
+-- Auditoría de registro automático en geometry_columns
+SELECT f_table_schema, f_table_name, f_geometry_column, coord_dimension, srid, type 
+FROM geometry_columns 
+WHERE f_table_name = 'infraestructura_referencia';
+```
+
+
 ```{bash}
 #| label: ddl-verify-spatial-schema-psql
 #| eval: true
-#| echo: true
+#| echo: false
 export PGPASSWORD="${LOCAL_PGPASSWORD}"
 
 # 1. Inspección de extensiones espaciales activas
@@ -3170,6 +4016,89 @@ WHERE f_table_name = 'infraestructura_referencia';
 
 df_audit = pd.read_sql(query_audit, con=engine_local)
 df_audit
+
+```
+
+:::
+
+:::
+
+::: {.content-visible when-format="pdf"}
+
+```{sql}
+--| label: ddl-verify-spatial-schema-sql-pdf
+--| eval: false
+--| echo: true
+
+-- Ámbito: clúster PostgreSQL en el sistema anfitrión (sig_db_unal)
+
+-- Creación e inserción pedagógica (con limpieza previa para asegurar idempotencia)
+DROP TABLE IF EXISTS public.infraestructura_referencia;
+
+CREATE TABLE public.infraestructura_referencia (
+    id serial PRIMARY KEY,
+    codigo varchar(10) NOT NULL UNIQUE,
+    descripcion text,
+    geom geometry(Point, 9377) NOT NULL
+);
+
+INSERT INTO public.infraestructura_referencia (codigo, descripcion, geom) 
+VALUES (
+    'EST-001', 
+    'Estación de monitoreo central', 
+    ST_GeomFromText('POINT(5000000 2000000)', 9377)
+);
+
+-- Auditoría de registro automático en geometry_columns
+SELECT f_table_schema, f_table_name, f_geometry_column, coord_dimension, srid, type 
+FROM geometry_columns 
+WHERE f_table_name = 'infraestructura_referencia';
+```
+
+
+```{bash}
+#| label: ddl-verify-spatial-schema-psql-pdf
+#| eval: true
+#| echo: false
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+# 1. Inspección de extensiones espaciales activas
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATABASE} \
+  -P format=wrapped -P columns=90 \
+  -c "SELECT extname, extversion FROM pg_extension WHERE extname = 'postgis';"
+
+# 2. Creación e inserción pedagógica (con limpieza previa para asegurar idempotencia)
+query_ddl="
+DROP TABLE IF EXISTS public.infraestructura_referencia;
+
+CREATE TABLE public.infraestructura_referencia (
+    id serial PRIMARY KEY,
+    codigo varchar(10) NOT NULL UNIQUE,
+    descripcion text,
+    geom geometry(Point, 9377) NOT NULL
+);
+
+INSERT INTO public.infraestructura_referencia (codigo, descripcion, geom) 
+VALUES (
+    'EST-001', 
+    'Estación de monitoreo central', 
+    ST_GeomFromText('POINT(5000000 2000000)', 9377)
+);
+"
+
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATABASE} \
+  -c "${query_ddl}"
+
+# 3. Auditoría de registro automático en geometry_columns
+query_audit="
+SELECT f_table_schema, f_table_name, f_geometry_column, coord_dimension, srid, type 
+FROM geometry_columns 
+WHERE f_table_name = 'infraestructura_referencia';
+"
+
+psql -h ${LOCAL_PGHOST} -p ${LOCAL_PGPORT} -U ${LOCAL_PGUSER} -d ${LOCAL_PGDATABASE} \
+  -P format=wrapped -P columns=90 \
+  -c "${query_audit}"
 
 ```
 

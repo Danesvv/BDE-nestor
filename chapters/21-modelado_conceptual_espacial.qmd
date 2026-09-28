@@ -1,0 +1,2478 @@
+---
+engine: knitr
+execute:
+  echo: true
+  warning: false
+  message: false
+filters:
+  #- diagram
+  - ../_extensions/pandoc-ext/diagram/diagram.lua
+diagram:
+  engine:
+    plantuml:
+      #execpath: ["java", "-jar", "D:/Classes/Unal_2025/Bases_de_Datos_Espaciales/GitHub/plantuml.jar"]
+      execpath: plantuml
+format:
+  html:
+    css: ../styles.css
+    toc: true
+    number-sections: true
+  pdf:
+    documentclass: scrreprt
+    number-sections: true
+    toc: false
+---
+
+
+# Modelado conceptual espacial {#sec-conceptual-model}
+
+
+::: {.content-visible when-format="html"}
+
+::: {.callout-note appearance="simple" title="Presentación de la sesión"}
+Las diapositivas interactivas correspondientes al presente capítulo se encuentran disponibles en: [Presentación interactiva: Arquitectura y estándares OGC](https://www.google.com/search?q=../slides/20-d_arquitectura_y_estandares_ogc.html){target="_blank"}.
+:::
+
+:::
+
+
+## Objetivos del capítulo
+
+Al finalizar el presente capítulo, el estudiante estará en capacidad de:
+
+* Comprender el papel del modelado conceptual como la fase de mayor nivel de abstracción e independencia tecnológica en el ciclo de vida de una base de datos espacial.
+* Dominar la formulación de diagramas Entidad-Relación bajo la notación de Richard Barker [@barker1990case], aplicando reglas de opcionalidad, grado y lectura canónica bidireccional sobre entidades territoriales.
+* Formalizar especificaciones conceptuales mediante el perfil de diagramas de clases UML estandarizado por el consorcio OGC y las normas ISO 19103 (Lenguaje de esquema conceptual, [@ISO19103_2024]) e ISO 19109 (Reglas para esquemas de aplicación, [@ISO19109_2015]).
+* Discernir entre clases espaciales primarias provistas de contorno cartográfico directo y entidades temáticas agregadas cuya espacialidad es una propiedad derivada.
+* Resolver conceptualmente asociaciones no jerárquicas muchos a muchos ($M:N$) mediante la emergencia de entidades asociativas o de intersección.
+* Estructurar modelos conceptuales modulares organizados por paquetes de dominio temático y acompañados por su correspondiente documentación de soporte (diccionario de datos y reglas de negocio territoriales).
+
+
+## Fases en el ciclo de vida de una base de datos espacial
+
+Una base de datos se define formalmente como una colección integrada y estructurada de datos interrelacionados, almacenados sin redundancias perjudiciales, cuya finalidad es servir concurrentemente a múltiples aplicaciones y perfiles de usuario de forma independiente a los programas que gestionan su procesamiento. En los sistemas de información geográfica (SIG), el diseño de una base de datos espacial no se reduce a la digitalización o conversión directa de capas cartográficas aisladas, sino que constituye un proceso metodológico de modelado de datos e ingeniería de software. Siguiendo el marco metodológico planteado por [@yeung2007spatial] en *Spatial Database Systems: Design, Implementation, and Project Management*, el desarrollo de una base de datos espacial debe transformar las demandas y dinámicas del territorio en un repositorio operacional eficiente, coherente y mantenible.
+
+### De la abstracción territorial al esquema operacional
+
+El punto de partida ineludible en el desarrollo de una base de datos espacial son los **requerimientos de información** y las **reglas operativas** de la organización o del problema territorial en estudio. La base de datos no debe estructurarse a partir de los formatos de archivo preexistentes (como capas Shapefile o GeoPackage dispersas), sino desde la **identificación** rigurosa de las **entidades** del mundo real, sus **propiedades** espaciales y alfanuméricas, y las **relaciones** topológicas y funcionales que las articulan.
+
+El espacio geográfico presenta una continuidad multidimensional compleja. Para gestionar esta complejidad, el diseño descompone la realidad en **niveles progresivos de abstracción**, filtrando el detalle innecesario para consolidar un modelo estructurado capaz de responder a consultas analíticas, procesos de ordenamiento territorial y transacciones concurrentes.
+
+```{mermaid}
+%%| label: fig-fases-desarrollo-bd
+%%| fig-cap: "Fases en el desarrollo de una base de datos espacial operacional."
+%%| fig-width: 6
+%%| fig-align: center
+%%| out-width: "100%"
+%%| echo: false
+
+flowchart TD
+    REQ["Requerimientos del sistema territorial<br><i>(Preguntas espaciales, actores y normatividad)</i>"]
+
+    subgraph DATO ["Eje de modelado y gestión de datos"]
+        direction TB
+        MC["<b>Modelado conceptual</b><br>Identificación de entidades, atributos espaciales y relaciones"]
+        DL["<b>Diseño lógico</b><br>Normalización relacional, tablas, tipos atómicos y claves"]
+        DF["<b>Diseño físico</b><br>DDL en PostgreSQL/PostGIS, SRID, particiones e índices GiST"]
+        CD["<b>Migración y cargue de datos</b><br>ETL espacial, reproyección, limpieza y consistencia topológica"]
+    end
+
+    subgraph PROC ["Eje funcional y de aplicaciones"]
+        direction TB
+        MF["<b>Modelado funcional</b><br>Especificación de casos de uso y flujos de trabajo"]
+        DA["<b>Diseño de aplicaciones</b><br>Arquitectura cliente/servidor, servicios OGC y API"]
+        CA["<b>Construcción de aplicaciones</b><br>Desarrollo de scripts, dashboards e integración SIG"]
+    end
+
+    BDO["<b>Base de datos espacial operacional</b><br><i>(Repositorio corporativo en explotación)</i>"]
+
+    REQ -->|Datos del territorio| MC
+    REQ -->|Procesos y análisis| MF
+
+    MC --> DL
+    DL --> DF
+    DF --> CD
+
+    MF --> DA
+    DA --> CA
+
+    CD --> BDO
+    CA --> BDO
+
+    style REQ fill:#f8f9fa,stroke:#333,stroke-width:1px
+    style BDO fill:#f8f9fa,stroke:#333,stroke-width:1px
+    style DATO fill:#ffffff,stroke:#0d6efd,stroke-width:1px,stroke-dasharray: 5 5
+    style PROC fill:#ffffff,stroke:#6c757d,stroke-width:1px,stroke-dasharray: 5 5
+
+
+```
+
+El ciclo de desarrollo recorre etapas secuenciales e iterativas:
+
+* **Levantamiento y análisis de requerimientos:** Identificación formal de los problemas espaciales a resolver, los actores involucrados, los flujos de información y los límites del sistema.
+
+* **Modelado conceptual:** Abstracción del dominio territorial en entidades, atributos y relaciones, sin vincularse a plataformas tecnológicas o gestores de bases de datos específicos.
+
+* **Diseño lógico:** Traducción de las estructuras conceptuales al paradigma relacional u objeto-relacional mediante tablas, columnas tipificadas y restricciones de integridad referencial.
+
+* **Diseño e implementación física:** Materialización del esquema lógico en un motor de base de datos (PostgreSQL/PostGIS) utilizando sentencias DDL, configuración de tipos geométricos, SRID, particiones e índices espaciales.
+
+* **Construcción, migración y explotación:** Carga inicial de datos, auditoría de consistencia topológica, definición de vistas analíticas e integración con clientes GIS y servicios web geográficos.
+
+
+
+### Niveles de modelado: conceptual, lógico y físico
+
+Para asegurar la independencia entre las reglas de negocio del territorio y los mecanismos computacionales de almacenamiento, el proceso de diseño se articula en tres niveles de abstracción:
+
+* **Modelo conceptual:** Corresponde a la fase con el nivel de abstracción más elevado. Su objetivo es identificar las **clases** de objetos del territorio, también llamados **entidades** relevantes para el sistema (por ejemplo: municipios, departamentos, cuencas, redes de transporte o zonas de reserva) y las **relaciones** que existen entre ellas. Este modelo es completamente independiente de cualquier consideración de hardware, software o sistema de gestión de bases de datos (SGBD/DBMS). Se formaliza comúnmente mediante el modelo **Entidad-Relación (E-R)** (donde se utiliza el término *entidades*) o **diagramas de clases** (donde se utiliza el término *clases*) del Lenguaje Unificado de Modelado (UML).
+
+
+* **Diseño lógico:** Traduce las entidades y relaciones del modelo conceptual a las **estructuras canónicas** del paradigma relacional. En esta etapa, las **entidades** se transforman en **relaciones (tablas)**, los **atributos** en **columnas** con tipos de datos atómicos, los **identificadores únicos** en **claves primarias (PK)**, y las **asociaciones** en **claves foráneas (FK)** o **tablas de asociación** para cardinalidades muchos a muchos ($N:M$). Aunque este modelo estandariza la integridad de los datos, permanece desacoplado de las extensiones internas o particularidades de un motor específico.
+
+
+
+::: {.diagrama-70ancho}
+
+```{mermaid}
+%%| label: fig-conceptual-vs-logico
+%%| fig-cap: "Correspondencia entre los componentes del modelo conceptual y el diseño lógico relacional."
+%%| fig-width: 4.5
+%%| fig-align: center
+%%| out-width: "100%"
+%%| echo: false
+
+flowchart LR
+    subgraph MC ["Modelo conceptual (Abstracción)"]
+        direction TB
+        C_FA["Fase de análisis"]
+        C_EN["Entidad / Clase"]
+        C_AT["Atributo / Propiedad"]
+        C_ID["Identificador único (UID)"]
+        C_RE["Relación / Asociación"]
+    end
+
+    subgraph DL ["Diseño lógico (Estructura relacional)"]
+        direction TB
+        L_FA["Fase de diseño"]
+        L_TA["Tabla / Relación"]
+        L_CO["Columna / Tipo de dato"]
+        L_PK["Clave primaria (PK)"]
+        L_FK["Clave foránea (FK) / Tabla intermedia"]
+    end
+
+    C_FA --> L_FA
+    C_EN --> L_TA
+    C_AT --> L_CO
+    C_ID --> L_PK
+    C_RE --> L_FK
+
+    style MC fill:#ffffff,stroke:#0d6efd,stroke-width:1px
+    style DL fill:#ffffff,stroke:#198754,stroke-width:1px
+
+
+```
+
+:::
+
+* **Diseño físico:** Implementa el diseño lógico sobre un sistema gestor de bases de datos concreto, como PostgreSQL con la extensión PostGIS. Implica la codificación del esquema mediante sentencias **DDL** (SQL estándar y dialectos propios del motor), la selección de **tipos de datos** nativos para coordenadas y geometrías (`geometry`, SRID específicos como el estándar actual EPSG:9377 o el legado EPSG:21892), la creación de **secuencias** para identificadores, la parametrización de **restricciones** (`CHECK`, `UNIQUE`, `NOT NULL`) y el diseño de **índices** espaciales (GiST). Asimismo, contempla decisiones de bajo nivel de almacenamiento físico: asignación de **espacios de tablas** (*tablespaces*), **tamaño de bloques**, estrategias de **compresión** y **configuración de memoria** de búfer para optimizar el rendimiento de las consultas espaciales.
+
+
+### Hoja de ruta
+
+Para garantizar el rigor metodológico en la abstracción territorial, el presente capítulo formaliza progresivamente los siguientes bloques conceptuales:
+
+1. **Fundamentos de modelado y abstracción territorial:** Entidades, atributos descriptivos, identificadores únicos y dominios de valores.
+2. **Semántica espacial en el nivel conceptual:** Primitivas geométricas OGC, sistemas de referencia y principio de no redundancia métrica.
+3. **Asociaciones territoriales en notación de Barker:** Nombres de relación, opcionalidad, grado, lectura canónica y entidades de intersección.
+4. **Diseño conceptual geoespacial mediante diagramas de clases UML:** Perfil ISO 19103/ISO 19109, paquetes temáticos y multiplicidades Look-Across.
+5. **Caso de estudio integral:** Zonificación biofísica y gobernanza institucional en la Guía Ambiental de FEDEGAN.
+6. **Documentación de soporte:** Diccionario de datos conceptual y matriz de reglas de integridad del negocio.
+
+Con el propósito de asegurar continuidad pedagógica, el capítulo adopta como hilo conductor el modelado de la gobernanza territorial y productiva en Colombia. Los constructos teóricos se ejemplifican inicialmente a partir del subsistema de división político-administrativa oficial (`departamentos` y `municipios`) y su articulación con zonificaciones técnicas agregadas (`microregiones`). Este esquema incremental sirve de base para consolidar, en la @sec-conceptual-caso_estudio, la arquitectura conceptual integral del caso de estudio de la Guía Ambiental pecuaria, donde convergen gradientes biofísicos, redes de transporte y dependencias de supervisión institucional.
+
+## Modelado conceptual y abstracción territorial (modelo E-R) {#sec-modelado-conceptual}
+
+El modelado conceptual constituye la fase de **mayor nivel de abstracción** dentro del ciclo de desarrollo de una base de datos espacial. Su objetivo primordial es identificar los **elementos de importancia** para el territorio y la organización, abstrayéndose por completo de las restricciones de hardware, plataformas tecnológicas o sistemas de gestión de bases de datos (SGBD).
+
+En esta etapa se genera un modelo formal a partir de los requerimientos del sistema territorial, identificando las **entidades** críticas y las **relaciones lógicas** y espaciales que las articulan. La calidad del modelado conceptual determina la estabilidad, extensibilidad y consistencia de las fases subsiguientes de diseño lógico e implementación física.
+
+La técnica estándar en esta etapa es el **modelo Entidad-Relación (E-R)**, el cual representa formalmente los datos y las dinámicas del sistema. Un modelo E-R formal se compone de dos elementos interdependientes:
+
+* **Diagrama E-R:** Representación gráfica estructurada de las **entidades**, **atributos**, **identificadores** y **asociaciones**.
+
+* **Documentación de soporte:** Especificación descriptiva de **dominios de valores**, **reglas** operativas de negocio, **restricciones** de integridad y **variables derivadas**.
+
+
+
+::: {.diagrama-ancho}
+
+```{dot}
+//| label: fig-er-componentes-departamentos-municipios
+//| fig-cap: "Componentes estructurales y reglas de anotación formal en un diagrama Entidad-Relación (1:M)."
+//| fig-width: 6.5
+//| fig-height: 3.5
+//| fig-align: center
+//| echo: false
+
+digraph ER_Territorial {
+    graph [rankdir=TB, bgcolor="transparent", pad="0.15", nodesep=0.55, ranksep=0.55];
+    node [fontname="Helvetica,Arial,sans-serif", fontsize=9.5];
+    edge [fontname="Helvetica,Arial,sans-serif", fontsize=8.5];
+
+    // Rango superior: Anotaciones de identificador y relación
+    {
+        rank = same;
+        ANNO_UID [shape=plaintext, fontcolor="blue", label="IDENTIFICADOR ÚNICO (UID)\n(#* Mandatorio e irrepetible)"];
+        ANNO_REL [shape=plaintext, fontcolor="blue", label="RELACIÓN (1:M)\n(Línea continua: obligatoria)\n(Pata de gallo: uno o más)"];
+    }
+
+    // Rango intermedio: Entidades territoriales (1:M de izquierda a derecha)
+    {
+        rank = same;
+        departamentos [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="8" CELLSPACING="0" COLOR="#212529" STYLE="ROUNDED">
+                <TR><TD ALIGN="CENTER" PORT="tit">&nbsp;&nbsp;<B>departamentos</B>&nbsp;&nbsp;</TD></TR>
+                <HR/>
+                <TR><TD ALIGN="LEFT" PORT="uid"><B>#* </B>dep_id&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT" PORT="nom"><B>*  </B>dep_nombre&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT" PORT="reg">º  dep_region&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+
+        MID [shape=point, width=0.01, height=0.01, style=invis];
+
+        municipios [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="8" CELLSPACING="0" COLOR="#212529" STYLE="ROUNDED">
+                <TR><TD ALIGN="CENTER" PORT="tit">&nbsp;&nbsp;<B>municipios</B>&nbsp;&nbsp;</TD></TR>
+                <HR/>
+                <TR><TD ALIGN="LEFT" PORT="uid"><B>#* </B>mun_id&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT" PORT="nom"><B>*  </B>mun_nombre&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT" PORT="cat">º  mun_categoria&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT" PORT="area">º  mun_area&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+    }
+
+    // Rango inferior: Anotaciones de entidad, prefijo y atributos
+    {
+        rank = same;
+        ANNO_ENTIDAD   [shape=plaintext, fontcolor="blue", label="ENTIDAD\n(Contenedor redondeado,\nsustantivo en minúsculas)"];
+        ANNO_PREFIJO   [shape=plaintext, fontcolor="blue", label="PREFIJO MNEMOTÉCNICO\n(dep_, mun_: trazabilidad)"];
+        ANNO_ATRIBUTOS [shape=plaintext, fontcolor="blue", label="ATRIBUTOS\n(* Mandatorio / º Opcional)"];
+    }
+
+    // Traza de relación horizontal continua 1:M
+    departamentos -> MID [
+        arrowhead=none,
+        style=solid,
+        penwidth=1.8,
+        color="#212529",
+        label="compuesto por ►  "
+    ];
+
+    MID -> municipios [
+        arrowhead=crow,
+        style=solid,
+        penwidth=1.8,
+        color="#212529",
+        label="  ◄ pertenece a"
+    ];
+
+    // Apuntadores didácticos directos
+    edge [color="blue", style=dashed, penwidth=1.0, arrowhead=vee, arrowsize=0.6];
+
+    ANNO_UID -> departamentos:uid;
+    ANNO_REL -> MID;
+
+    departamentos:tit -> ANNO_ENTIDAD [dir=back];
+    departamentos:nom -> ANNO_PREFIJO [dir=back];
+    municipios:cat -> ANNO_ATRIBUTOS [dir=back];
+}
+
+```
+
+:::
+
+### Modelado de entidades y taxonomía de identificadores
+
+Una entidad representa un **objeto**, **fenómeno** o **concepto** del mundo real sobre el cual la organización necesita registrar y mantener información estructurada. En el análisis de requerimientos territoriales, las entidades se identifican sistemáticamente a partir de **sustantivos** (ej. municipios, predios, cuencas hidrográficas, estaciones climáticas).
+
+Las reglas fundamentales para la definición de entidades establecen:
+
+* **Pertinencia contextual:** La entidad debe poseer **relevancia** explícita en el ámbito del problema espacial u organizacional que se modela.
+
+* **Unicidad léxica:** Cada entidad debe identificarse con un **nombre unívoco** dentro del modelo.
+
+* **Estructura descriptiva:** Toda entidad debe estar descrita por un conjunto de **atributos**.
+
+* **Conjunto de instancias:** Una entidad define una **clase** o conjunto de ocurrencias individuales que comparten las **mismas propiedades**.
+
+* **Identificación inequívoca:** Cada instancia de una entidad debe poder **individualizarse** mediante el valor de un atributo o combinación de atributos (identificador único).
+
+
+Gráficamente, la entidad se representa mediante un contenedor de bordes redondeados con su nombre en minúsculas y en plural, seguido por el listado de sus atributos descriptivos:
+
+::: {.diagrama-ancho}
+
+```{dot}
+//| label: fig-estructura-entidad-er-anotada
+//| fig-cap: "Estructura conceptual de una entidad con convenciones de nomenclatura y atributos."
+//| fig-width: 6.5
+//| fig-height: 2.3
+//| fig-align: center
+//| echo: false
+
+digraph Estructura_Entidad_Anotada {
+    graph [rankdir=LR, bgcolor="transparent", pad="0.15", nodesep=0.5, ranksep=0.85];
+    node [fontname="Helvetica,Arial,sans-serif", fontsize=10];
+    edge [fontname="Helvetica,Arial,sans-serif", fontsize=9];
+
+    // Columna izquierda: Anotación de la cabecera
+    subgraph {
+        rank = same;
+        ANNO_ENT [shape=plaintext, fontcolor="blue", label="NOMBRE DE LA\nENTIDAD\n(Sustantivo en\nminúsculas\ny plural)"];
+    }
+
+    // Columna central: Contenedor conceptual genérico
+    entidad [shape=plain, label=<
+        <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="7" CELLSPACING="0" COLOR="#212529" STYLE="ROUNDED">
+            <TR><TD ALIGN="CENTER" BORDER="1" PORT="tit" SIDES="B">&nbsp;&nbsp;&nbsp;&nbsp;<B>nombre_entidad</B>&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT" BORDER="0" PORT="at1"><FONT FACE="Helvetica,Arial,sans-serif">prf_atributo_1&nbsp;&nbsp;</FONT></TD></TR>
+            <TR><TD ALIGN="LEFT" BORDER="0" PORT="at2"><FONT FACE="Helvetica,Arial,sans-serif">prf_atributo_2&nbsp;&nbsp;</FONT></TD></TR>
+            <TR><TD ALIGN="LEFT" BORDER="0" PORT="at3"><FONT FACE="Helvetica,Arial,sans-serif">prf_...&nbsp;&nbsp;</FONT></TD></TR>
+            <TR><TD ALIGN="LEFT" BORDER="0" PORT="at4"><FONT FACE="Helvetica,Arial,sans-serif">prf_atributo_n&nbsp;&nbsp;</FONT></TD></TR>
+        </TABLE>
+    >];
+
+    // Columna derecha: Anotaciones de prefijo y atributos
+    subgraph {
+        rank = same;
+        ANNO_PRE [shape=plaintext, fontcolor="blue", label="PREFIJO MNEMOTÉCNICO\n(3 LETRAS)\n(prf_: código unívoco\nde la entidad)"];
+        ANNO_ATR [shape=plaintext, fontcolor="blue", label="ATRIBUTOS\n(Propiedades\nque caracterizan\na la entidad)"];
+    }
+
+    // Flechas de señalamiento en color azul
+    edge [color="blue", style=dashed, penwidth=1.0, arrowhead=vee, arrowsize=0.6];
+
+    ANNO_ENT -> entidad:tit;
+    entidad:at1 -> ANNO_PRE;
+    entidad:at4 -> ANNO_ATR;
+}
+
+```
+
+:::
+
+**Taxonomía conceptual de identificadores únicos (UID).** Para garantizar que cada ocurrencia de una entidad sea inequívocamente individualizable respecto a las demás, el modelo conceptual distingue entre dos naturalezas ontológicas de identificadores:
+
+* **Identificadores naturales:** Atributos intrínsecos al dominio normativo, censal o geográfico del objeto (por ejemplo, el código DIVIPOLA del DANE `dep_id` o el número predial nacional). Poseen significado semántico directo para la organización y facilitan la interoperabilidad externa, aunque son vulnerables a reformas administrativas o mutaciones de nomenclatura toponímica.
+
+* **Identificadores artificiales (subrogados o sintéticos):** Atributos abstractos generados exclusivamente con el propósito de garantizar la unicidad e invariabilidad temporal de cada registro (por ejemplo, un código correlativo interno). Se justifican cuando los atributos naturales del fenómeno son extensos, volátiles o inexistentes.
+
+Asimismo, cuando un único descriptor resulta insuficiente para individualizar a la instancia, se formaliza un **identificador único compuesto**, conformado por la combinación mínima de dos o más atributos (por ejemplo, un vértice geodésico identificado por sus coordenadas nominales de cuadrícula).
+
+**Dependencia de existencia y entidades subordinadas.** Ciertas entidades del territorio carecen de autonomía ontológica: su existencia y persistencia dependen estrictamente de su vinculación con una entidad padre (como los sectores catastrales respecto al municipio, o los contornos individuales que conforman un polígono territorial discontinuo). En el modelado conceptual, cuando la relación que conecta a la entidad subordinada con su padre forma parte de su propio mecanismo de identificación unívoca, la entidad se tipifica como **entidad débil o dependiente de identificación**. En la notación propuesta por @barker1990case, este vínculo de subordinación existencial se denota mediante un trazo perpendicular cruzado sobre la línea de relación (*barbed relationship*), formalizando que la entidad subordinada no puede existir ni identificarse en el sistema de manera desvinculada de su entidad contenedora.
+
+### Modelado de relaciones y reglas de lectura canónica
+
+Una relación es una asociación lógica y significativa que vincula instancias de una entidad con instancias de otra entidad. En la etapa preliminar de análisis conceptual, las relaciones deben concebirse considerando siempre su flujo bidireccional:
+
+```{dot}
+//| label: fig-relacion-bidireccional-er
+//| fig-cap: "Flujo bidireccional de análisis en la asociación conceptual entre entidades espaciales."
+//| fig-width: 5
+//| fig-height: 1.8
+//| fig-align: center
+//| echo: false
+
+digraph Relacion_Bidireccional {
+    graph [rankdir=LR, bgcolor="transparent", pad="0.15", nodesep=0.5, ranksep=1.8];
+    node [fontname="Helvetica,Arial,sans-serif", fontsize=9.5];
+    edge [fontname="Helvetica,Arial,sans-serif", fontsize=8.5, color="#212529"];
+
+    rios [shape=plain, label=<
+        <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="7" CELLSPACING="0" COLOR="#212529" STYLE="ROUNDED">
+            <TR><TD ALIGN="CENTER" PORT="tit">&nbsp;&nbsp;&nbsp;&nbsp;<B>rios</B>&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+            <HR/>
+            <TR><TD ALIGN="LEFT" PORT="p1">rio_id&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT" PORT="p2">rio_nombre&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT" PORT="p3">...&nbsp;&nbsp;</TD></TR>
+        </TABLE>
+    >];
+
+    cuencas [shape=plain, label=<
+        <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="7" CELLSPACING="0" COLOR="#212529" STYLE="ROUNDED">
+            <TR><TD ALIGN="CENTER" PORT="tit">&nbsp;&nbsp;&nbsp;&nbsp;<B>cuencas</B>&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+            <HR/>
+            <TR><TD ALIGN="LEFT" PORT="p1">cue_id&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT" PORT="p2">cue_nombre&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT" PORT="p3">...&nbsp;&nbsp;</TD></TR>
+        </TABLE>
+    >];
+
+    rios:p1:e -> cuencas:p1:w [
+        label="  pertenece a  ",
+        penwidth=1.2,
+        arrowhead=vee,
+        arrowsize=0.7
+    ];
+
+    cuencas:p3:w -> rios:p3:e [
+        label="  compuesta por  ",
+        penwidth=1.2,
+        arrowhead=vee,
+        arrowsize=0.7,
+        constraint=false,
+        style=dashed
+    ];
+}
+
+```
+
+Aunque analíticamente el flujo opera en dos direcciones, en el diagrama formal no se trazan dos flechas independientes. La metodología sintetiza la relación en una **única línea física compartida** entre ambas entidades, parametrizada a partir de tres componentes estructurales:
+
+* **Nombre de la relación:** Verbo o descripción concisa en minúsculas que formaliza la regla operativa para cada sentido de lectura (ej. "compuesta por", "pertenece a").
+
+* **Opcionalidad (cardinalidad mínima):** Expresa si la participación de una instancia en la asociación es mandatoria ($1$) o contingente ($0$).
+
+* **Grado (cardinalidad máxima):** Establece el límite superior de instancias correlacionadas que pueden vincularse ($1$ o $N$).
+
+
+Las convenciones gráficas estandarizadas por Richard Barker en el marco del *CASE*Method* traducen estos componentes en elementos visuales estandarizados:
+
+```{dot}
+//| label: fig-simbologia-relaciones-er
+//| fig-cap: "Simbología gráfica normalizada para relaciones en el modelo conceptual (Barker)."
+//| fig-width: 5.5
+//| fig-height: 2.5
+//| fig-align: center
+//| echo: false
+
+digraph Simbologia_Relaciones {
+    graph [rankdir=LR, bgcolor="transparent", pad="0.1", nodesep=0.35, ranksep=1.4];
+    node [fontname="Helvetica,Arial,sans-serif", fontsize=10, shape=rect, color="#212529", fillcolor="#FFFFFF", style="filled,rounded", height=0.35];
+    edge [fontname="Helvetica,Arial,sans-serif", fontsize=9, color="#212529"];
+
+    O1 [label="entidad_origen"];
+    O2 [label="entidad_origen"];
+    O3 [label="entidad_origen"];
+    O4 [label="entidad_origen"];
+
+    D1 [label="entidad_destino"];
+    D2 [label="entidad_destino"];
+    D3 [label="entidad_destino"];
+    D4 [label="entidad_destino"];
+
+    O1 -> D1 [arrowhead=none, style=solid, penwidth=1.8, label="Línea continua: obligatoria (debe ser)"];
+    O2 -> D2 [arrowhead=none, style=dashed, penwidth=1.8, label="Línea discontinua: opcional (puede ser)"];
+    O3 -> D3 [arrowhead=crow, style=solid, penwidth=1.8, label="Pata de gallo: uno o más (1..*)"];
+    O4 -> D4 [arrowhead=none, style=solid, penwidth=1.8, label="Trazo simple: uno y solo uno (1..1)"];
+}
+
+```
+
+| Componente formal | Modalidad / Grado | Notación | Significado formal y regla de lectura |
+| -- | -- | - | --- |
+| **Nombre** | Regla operativa | *texto* | Verbo en minúsculas adyacente a la entidad de origen. |
+| **Opcionalidad** | Obligatoria *(mandatoria)* | `——————` | **Debe ser:** La participación de la entidad es obligatoria ($1$). |
+| **Opcionalidad** | Opcional *(contingente)* | `- - - - -` | **Puede ser:** La participación es contingente ($0$, tolera valores nulos). |
+| **Grado** | Múltiple | `————<` | **Uno o más ($1..*$):** Pata de gallo (*crow's foot*). |
+| **Grado** | Singular | `——————` | **Uno y solo uno ($1..1$):** Trazo simple sin bifurcación. |
+
+: Convenciones gráficas y semánticas para relaciones en el modelo conceptual {#tbl-convenciones-relaciones}
+
+::: {.callout-note title="Regla de composición de semirrectas"}
+En el diagrama Entidad-Relación, la línea de relación se compone de dos semirrectas unidas en un punto medio. Cada semirrecta codifica de forma independiente la **opcionalidad** en el tramo de salida de la entidad de origen (trazo sólido o discontinuo) y el **grado** en el contacto con la entidad de llegada (trazo simple o pata de gallo).
+:::
+
+::: {.callout-note title="Regla canónica de lectura conceptual"}
+Para verificar la validez semántica de una asociación, se formula una proposición estructurada en cada uno de los sentidos de navegación:
+
+$$\text{Cada } [\text{Entidad}_1] \;\; (\text{debe ser} \mid \text{puede ser}) \;\; [\text{Nombre de la relación}] \;\; (\text{una y solo una} \mid \text{una o más}) \;\; [\text{Entidad}_2]$$
+
+
+:::
+
+**Ejemplo 1: asociación 1:M obligatoria en ambos extremos.** En la @fig-relacion-cuencas-rios-continua se modela la jerarquía hidrológica continua entre cuencas y drenajes. La línea es 100% sólida debido a que la participación es mandatoria en ambos sentidos de navegación:
+
+* Cada **cuenca** *debe estar compuesta por* *uno o más* **ríos** (tramo continuo de salida y pata de gallo en el extremo de ríos).
+
+
+* Cada **río** *debe pertenecer a* *una y solo una* **cuenca** (tramo continuo de salida y trazo simple en el extremo de cuencas).
+
+
+
+```{dot}
+//| label: fig-relacion-cuencas-rios-continua
+//| fig-cap: "Asociación 1:M obligatoria en ambos extremos con línea 100% continua."
+//| fig-width: 5
+//| fig-height: 1.8
+//| fig-align: center
+//| echo: false
+
+digraph ER_Cuencas_Rios {
+    graph [rankdir=LR, bgcolor="transparent", pad="0.15", nodesep=0.5, ranksep=0.4];
+    node [fontname="Helvetica,Arial,sans-serif", fontsize=9.5];
+    edge [fontname="Helvetica,Arial,sans-serif", fontsize=8.5];
+
+    cuencas [shape=plain, label=<
+        <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="7" CELLSPACING="0" COLOR="#212529" STYLE="ROUNDED">
+            <TR><TD ALIGN="CENTER"><B>cuencas</B></TD></TR>
+            <HR/>
+            <TR><TD ALIGN="LEFT">#* cue_id&nbsp;&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT">*  cue_nombre&nbsp;&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT">º  cue_area&nbsp;&nbsp;&nbsp;</TD></TR>
+        </TABLE>
+    >];
+
+    MID [shape=point, width=0.01, height=0.01, style=invis];
+
+    rios [shape=plain, label=<
+        <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="7" CELLSPACING="0" COLOR="#212529" STYLE="ROUNDED">
+            <TR><TD ALIGN="CENTER"><B>rios</B></TD></TR>
+            <HR/>
+            <TR><TD ALIGN="LEFT">#* rio_id&nbsp;&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT">*  rio_nombre&nbsp;&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT">º  rio_longitud&nbsp;&nbsp;&nbsp;</TD></TR>
+        </TABLE>
+    >];
+
+    cuencas -> MID [
+        arrowhead=none,
+        style=solid,
+        penwidth=1.6,
+        color="#212529",
+        label="compuesta por  ►  "
+    ];
+
+    MID -> rios [
+        arrowhead=crow,
+        style=solid,
+        penwidth=1.6,
+        color="#212529",
+        label="  ◄ pertenece a",
+        style=dashed
+    ];
+}
+
+```
+
+
+**Ejemplo 2: asociación 1:M con opcionalidad.** En el ordenamiento territorial y la gestión sectorial, no todas las entidades corresponden a delimitaciones político-administrativas rígidas consagradas en la ley. Frecuentemente se definen unidades de gestión técnica o ambiental —denominadas en este estudio como `microregiones`— que agrupan conjuntos continuos de municipios bajo criterios de homogeneidad agroecológica o logística. 
+
+A diferencia de la subordinación constitucional de un municipio hacia su departamento, la adscripción a una microrregión no es necesariamente universal ni mandatoria para todas las entidades territoriales locales. En la @fig-relacion-opcional-microregiones se formaliza esta delimitación técnica combinando un tramo continuo con un tramo discontinuo:
+
+```{dot}
+//| label: fig-relacion-opcional-microregiones
+//| fig-cap: "Asociación 1:M con opcionalidad mediante tramo continuo y tramo discontinuo."
+//| fig-width: 5.5
+//| fig-height: 1.8
+//| fig-align: center
+//| echo: false
+
+digraph ER_Opcionalidad {
+    graph [rankdir=LR, bgcolor="transparent", pad="0.15", nodesep=0.5, ranksep=0.5];
+    node [fontname="Helvetica,Arial,sans-serif", fontsize=9.5];
+    edge [fontname="Helvetica,Arial,sans-serif", fontsize=8.5];
+
+    microregiones [shape=plain, label=<
+        <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="7" CELLSPACING="0" COLOR="#212529" STYLE="ROUNDED">
+            <TR><TD ALIGN="CENTER">&nbsp;&nbsp;&nbsp;&nbsp;<B>microregiones</B>&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+            <HR/>
+            <TR><TD ALIGN="LEFT">#* mic_id&nbsp;&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT">*  mic_nombre&nbsp;&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT">º  mic_descripcion&nbsp;&nbsp;&nbsp;</TD></TR>
+        </TABLE>
+    >];
+
+    MID [shape=point, width=0.01, height=0.01, style=invis];
+
+    municipios [shape=plain, label=<
+        <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="7" CELLSPACING="0" COLOR="#212529" STYLE="ROUNDED">
+            <TR><TD ALIGN="CENTER">&nbsp;&nbsp;&nbsp;&nbsp;<B>municipios</B>&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+            <HR/>
+            <TR><TD ALIGN="LEFT">#* mun_id&nbsp;&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT">*  mun_nombre&nbsp;&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT">º  mun_categoria&nbsp;&nbsp;&nbsp;</TD></TR>
+        </TABLE>
+    >];
+
+    microregiones -> MID [
+        arrowhead=none,
+        style=solid,
+        penwidth=1.6,
+        color="#212529",
+        label="agrupa  ►  "
+    ];
+
+    MID -> municipios [
+        arrowhead=crow,
+        style=dashed,
+        penwidth=1.6,
+        color="#212529",
+        label="  ◄ puede pertenecer a"
+    ];
+}
+
+```
+
+La evaluación sintáctica de esta asociación ratifica las reglas de negocio del territorio:
+
+* **Lectura directa (`microregiones` $\rightarrow$ `municipios`):**
+
+1. Sujeto: `microregiones`.
+2. Opcionalidad (trazo sólido continuo `———`): Condición mandatoria $\rightarrow$ *debe*.
+3. Verbo adyacente: `agrupa ►`.
+4. Grado en el extremo de destino: Pata de gallo (`crow`) $\rightarrow$ *uno o más*.
+5. Objeto de destino: `municipios`.
+
+$$\text{«Cada }\mathbf{microregi\acute{o}n}\text{ debe agrupar a }\mathbf{uno\text{ }o\text{ }m\acute{a}s}\text{ }\mathbf{municipios}»$$
+
+* **Lectura inversa (`municipios` $\rightarrow$ `microregiones`):**
+
+1. Sujeto: `municipios`.
+2. Opcionalidad (trazo discontinuo `- - -`): Condición contingente $\rightarrow$ *puede*.
+3. Verbo adyacente: `◄ puede pertenecer a`.
+4. Grado en el extremo de destino: Trazo simple $\rightarrow$ *una y solo una*.
+5. Objeto de destino: `microregiones`.
+
+$$\text{«Cada }\mathbf{municipio}\text{ puede pertenecer a }\mathbf{una\text{ }y\text{ }solo\text{ }una}\text{ }\mathbf{microregi\acute{o}n}»$$
+
+Esta formulación admite que existan municipios que no integran ninguna delimitación gremial o ambiental (anticipando la presencia de valores `NULL` en la clave foránea en la fase lógica), garantizando al mismo tiempo que aquellos adscritos participen a lo sumo en una microrregión.
+
+**Clasificación formal por grado y procedimiento de modelado.** Atendiendo a su grado máximo de cardinalidad, las relaciones se tipifican en:
+
+* **Relaciones uno a muchos ($1:M$):** Presentan grado "uno y solo uno" en un sentido y "uno o más" en el opuesto. Constituyen el patrón jerárquico predominante en coberturas territoriales y estructuras padre-hijo.
+
+* **Relaciones muchos a muchos ($M:M$):** Presentan grado "uno o más" en ambas direcciones de navegación.
+
+* **Relaciones uno a uno ($1:1$):** Presentan grado "uno y solo uno" en ambos sentidos. En el modelado espacial frecuentemente sugieren una fragmentación innecesaria de atributos que pertenecen a una misma entidad física.
+
+
+El modelado formal de relaciones sigue un procedimiento secuencial de cuatro pasos:
+
+1. **Determinar la existencia:** Constatar la necesidad operativa de conectar ambas entidades a partir de los requerimientos.
+
+2. **Nombrar la relación:** Asignar verbos precisos y activos en ambos sentidos de navegación.
+
+3. **Establecer el grado:** Evaluar la cardinalidad máxima ($1:1$, $1:M$, $M:M$).
+
+4. **Determinar la opcionalidad:** Identificar si cada extremo es mandatorio u opcional mediante trazos continuos o discontinuos.
+
+
+
+### Asociaciones muchos a muchos y entidades de intersección
+
+En el análisis territorial frecuentemente surgen interacciones no jerárquicas donde múltiples instancias de una entidad geográfica o temática se relacionan concurrentemente con múltiples instancias de otra. A diferencia de las estructuras jerárquicas uno a muchos ($1:M$), en una **asociación muchos a muchos ($M:N$)** el grado máximo es múltiple en ambos sentidos de navegación.
+
+Considérese el caso de la gestión ambiental de cuencas y la planificación predial: una cuenca hidrográfica alberga decenas o cientos de predios rurales, mientras que un predio de gran extensión o ubicado sobre divisorias de aguas puede extenderse sobre dos o más cuencas simultáneamente.
+
+**Regla canónica de lectura bidireccional en asociaciones M:N.** En la notación de Richard Barker, una relación $M:N$ directa se representa mediante una única línea continua o discontinua con bifurcaciones en forma de **pata de gallo en ambos extremos**. La formulación canónica evalúa la cardinalidad y opcionalidad en ambos sentidos:
+
+* **Lectura directa (`cuencas` $\rightarrow$ `predios`):**
+
+$$\text{«Cada }\mathbf{cuenca}\text{ debe contener a }\mathbf{uno\text{ }o\text{ }m\acute{a}s}\text{ }\mathbf{predios}»$$
+
+* **Lectura inversa (`predios` $\rightarrow$ `cuencas`):**
+
+$$\text{«Cada }\mathbf{predio}\text{ debe intersectar a }\mathbf{una\text{ }o\text{ }m\acute{a}s}\text{ }\mathbf{cuencas}»$$
+
+```{dot}
+//| label: fig-er-mn-directa-barker
+//| fig-cap: "Asociación muchos a muchos directa en notación Barker con pata de gallo en ambos extremos."
+//| fig-width: 5
+//| fig-height: 1.8
+//| fig-align: center
+//| echo: false
+
+digraph ER_MN_Directa {
+    graph [rankdir=TB, bgcolor="transparent", pad="0.2", nodesep=0.4, ranksep=0.4];
+    node [fontname="Helvetica,Arial,sans-serif", fontsize=10];
+    edge [fontname="Helvetica,Arial,sans-serif", fontsize=9];
+
+    {
+        rank = same;
+        cuencas [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="6" CELLSPACING="0" COLOR="#212529" STYLE="ROUNDED">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><B>&nbsp;&nbsp;&nbsp;cuencas&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT">#* cue_id</TD></TR>
+                <TR><TD ALIGN="LEFT">*  cue_nombre</TD></TR>
+                <TR><TD ALIGN="LEFT">*  the_geom</TD></TR>
+            </TABLE>
+        >];
+
+        MID [shape=point, width=0.01, height=0.01, style=invis];
+
+        predios [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="6" CELLSPACING="0" COLOR="#212529" STYLE="ROUNDED">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><B>&nbsp;&nbsp;&nbsp;predios&nbsp;&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT">#* pre_codigo</TD></TR>
+                <TR><TD ALIGN="LEFT">*  pre_area_ha</TD></TR>
+                <TR><TD ALIGN="LEFT">*  the_geom</TD></TR>
+            </TABLE>
+        >];
+    }
+
+    cuencas -> MID [
+        arrowtail=crow,
+        arrowhead=none,
+        dir=both,
+        style=solid,
+        penwidth=1.6,
+        color="#212529",
+        minlen=1,
+        label="contiene  ►  "
+    ];
+
+    MID -> predios [
+        arrowhead=crow,
+        style=solid,
+        penwidth=1.6,
+        color="#212529",
+        minlen=1,
+        label="  ◄ intersecta"
+    ];
+}
+
+```
+
+**Emergencia de la entidad asociativa (de intersección).** La asociación $M:N$ binaria directa es conceptualmente válida únicamente cuando el vínculo no posee propiedades descriptivas propias. Sin embargo, en el mundo real la superposición o interacción espacial genera hechos que no pertenecen intrínsecamente a ninguna de las dos entidades de forma aislada:
+
+* El área específica de superposición o el porcentaje del predio que cae dentro de la cuenca no es una propiedad del predio (este puede tener distintas áreas en distintas cuencas) ni de la cuenca (el valor varía para cada predio).
+
+* La fecha en que la autoridad ambiental certificó la delimitación de dicha afectación corresponde al evento de enlace.
+
+
+Cuando se identifican atributos que describen la interacción, el modelo conceptual exige promover la asociación a una **entidad asociativa** (o entidad de intersección).
+
+En el diagrama conceptual, la entidad asociativa se modela como una entidad formal con su propio prefijo mnemotécnico, atributos descriptivos y vinculada mediante dos relaciones $1:M$ obligatorias provenientes de las entidades maestras participantes. Su identidad depende de las entidades que conecta (identificador único compuesto conceptual):
+
+::: {.diagrama-ancho}
+
+```{dot}
+//| label: fig-er-entidad-asociativa-horizontal
+//| fig-cap: "Resolución conceptual de una relación M:N mediante entidad asociativa intermedia en disposición horizontal."
+//| fig-width: 6.5
+//| fig-height: 1.8
+//| fig-align: center
+//| echo: false
+
+digraph ER_Entidad_Asociativa_Horizontal {
+    graph [rankdir=LR, bgcolor="transparent", pad="0.1", nodesep=0.4, ranksep=0.2];
+    node [fontname="Helvetica,Arial,sans-serif", fontsize=9.5];
+    edge [fontname="Helvetica,Arial,sans-serif", fontsize=8.5, color="#212529"];
+
+    cuencas [shape=plain, label=<
+        <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="6" CELLSPACING="0" COLOR="#212529" STYLE="ROUNDED">
+            <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><B>&nbsp;&nbsp;&nbsp;cuencas&nbsp;&nbsp;&nbsp;</B></TD></TR>
+            <TR><TD ALIGN="LEFT">#* cue_id</TD></TR>
+            <TR><TD ALIGN="LEFT">*  cue_nombre</TD></TR>
+            <TR><TD ALIGN="LEFT">*  the_geom</TD></TR>
+        </TABLE>
+    >];
+
+    MID1 [shape=point, width=0.01, height=0.01, style=invis];
+
+    predios_cuencas [shape=plain, label=<
+        <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="6" CELLSPACING="0" COLOR="#0d6efd" STYLE="ROUNDED">
+            <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><B>&nbsp;&nbsp;&nbsp;&nbsp;predios_cuencas&nbsp;&nbsp;&nbsp;&nbsp;</B></TD></TR>
+            <TR><TD ALIGN="LEFT"><FONT COLOR="#6c757d"><I>#* (cue_id + pre_codigo)</I></FONT></TD></TR>
+            <TR><TD ALIGN="LEFT">*  prc_area_traslape_ha</TD></TR>
+            <TR><TD ALIGN="LEFT">*  prc_porcentaje_predio</TD></TR>
+            <TR><TD ALIGN="LEFT">*  prc_fecha_calculo</TD></TR>
+        </TABLE>
+    >];
+
+    MID2 [shape=point, width=0.01, height=0.01, style=invis];
+
+    predios [shape=plain, label=<
+        <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="6" CELLSPACING="0" COLOR="#212529" STYLE="ROUNDED">
+            <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><B>&nbsp;&nbsp;&nbsp;predios&nbsp;&nbsp;&nbsp;</B></TD></TR>
+            <TR><TD ALIGN="LEFT">#* pre_codigo</TD></TR>
+            <TR><TD ALIGN="LEFT">*  pre_area_ha</TD></TR>
+            <TR><TD ALIGN="LEFT">*  the_geom</TD></TR>
+        </TABLE>
+    >];
+
+    cuencas -> MID1 [
+        arrowhead=none,
+        style=solid,
+        penwidth=1.6,
+        label="evaluada en ►  "
+    ];
+
+    MID1 -> predios_cuencas [
+        arrowhead=crow,
+        style=solid,
+        penwidth=1.6,
+        label="  ◄ registra"
+    ];
+
+    predios_cuencas -> MID2 [
+        arrowtail=crow,
+        arrowhead=none,
+        dir=both,
+        style=solid,
+        penwidth=1.6,
+        label="cuantifica ►  "
+    ];
+
+    MID2 -> predios [
+        arrowhead=none,
+        style=solid,
+        penwidth=1.6,
+        label="  ◄ traslapa en"
+    ];
+}
+
+```
+
+:::
+
+::: {.callout-note title="Pureza del nivel conceptual frente a claves foráneas"}
+En la entidad asociativa `predios_cuencas` no se declaran claves foráneas relacionales ni tipos SQL. La identificación única se define conceptualmente a partir de la concurrencia de las entidades maestras que intervienen en la asociación. La migración de identificadores foráneos y la materialización de una clave primaria compuesta representan decisiones técnicas que pertenecen formalmente a la fase subsiguiente de **diseño lógico relacional**.
+:::
+
+### Cardinalidad mediante rangos numéricos y equivalencia con Barker
+
+En herramientas de ingeniería inversa (como pgModeler) y en el estándar de diagramas de clases UML avalado por el Open Geospatial Consortium (OGC) y las normas ISO 19100, la cardinalidad se formaliza mediante pares ordenados de límites numéricos $[min..max]$ en lugar de trazos discontinuos o patas de gallo.
+
+El límite inferior ($min$) formaliza la **opcionalidad** ($0$ para opcional, $1$ para mandatorio), mientras que el límite superior ($max$) restringe el **grado** ($1$ para singular, $*$ o $N$ para múltiple). La correspondencia matemática con la notación de Barker es directa:
+
+| Notación gráfica de Barker | Rango numérico $[min..max]$ | Modalidad conceptual | Interpretación en la base de datos |
+| -- | - | - | --- |
+| Línea continua + trazo simple | $1..1$ | Obligatoria singular | Participación mandatoria única; restringe la clave foránea a `NOT NULL`. |
+| Línea discontinua + trazo simple | $0..1$ | Opcional singular | Participación contingente; admite valores `NULL` en la clave foránea. |
+| Línea continua + pata de gallo | $1..*$ | Obligatoria múltiple | Participación mandatoria múltiple; exige al menos una tupla asociada. |
+| Línea discontinua + pata de gallo | $0..*$ | Opcional múltiple | Participación contingente múltiple; admite cero o muchas asociaciones. |
+
+: Mapeo formal entre la simbología de Barker y la notación de rangos numéricos {#tbl-correspondencia-cardinalidades}
+
+::: {.callout-note title="Perspectiva de ubicación Look-Across"}
+Al emplear rangos numéricos en esquemas conceptuales y relacionales, la etiqueta se ubica en el **extremo de destino** de la asociación (*filosofía Look-Across*, adoptada por UML y Barker): al evaluar la entidad `departamentos`, la multiplicidad $[1..*]$ y la etiqueta se posicionan sobre el contenedor de `municipios`, indicando que un departamento agrupa de una a múltiples subdivisiones municipales.
+:::
+
+```{dot}
+//| label: fig-er-cardinalidad-numerica-comparada
+//| fig-cap: "Concurrencia entre la notación gráfica de Barker y los rangos numéricos Look-Across."
+//| fig-width: 5
+//| fig-height: 1.8
+//| fig-align: center
+//| echo: false
+
+digraph ER_Cardinalidad_Numerica {
+    graph [rankdir=TB, bgcolor="transparent", pad="0.2", nodesep=0.4, ranksep=0.6];
+    node [fontname="Helvetica,Arial,sans-serif", fontsize=10];
+    edge [fontname="Helvetica,Arial,sans-serif", fontsize=9];
+
+    {
+        rank = same;
+        departamentos [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="6" CELLSPACING="0" COLOR="#212529" STYLE="ROUNDED">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><B>&nbsp;&nbsp;&nbsp;departamentos&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT">#* dep_id</TD></TR>
+                <TR><TD ALIGN="LEFT">*  dep_nombre</TD></TR>
+            </TABLE>
+        >];
+
+        MID [shape=point, width=0.01, height=0.01, style=invis];
+
+        municipios [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="6" CELLSPACING="0" COLOR="#212529" STYLE="ROUNDED">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><B>&nbsp;&nbsp;&nbsp;municipios&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT">#* mun_id</TD></TR>
+                <TR><TD ALIGN="LEFT">*  mun_nombre</TD></TR>
+            </TABLE>
+        >];
+    }
+
+    departamentos -> MID [
+        arrowhead=none,
+        style=solid,
+        penwidth=1.6,
+        color="#212529",
+        minlen=1,
+        label="◄ pertenece a\n[1..1]"
+    ];
+
+    MID -> municipios [
+        arrowhead=crow,
+        style=solid,
+        penwidth=1.6,
+        color="#212529",
+        minlen=1,
+        label="compuesto por ►\n[1..*]"
+    ];
+}
+
+```
+
+### Modelado de atributos, dominios y componentes espaciales
+
+En el nivel de abstracción conceptual, las entidades representan conjuntos o clases de objetos del dominio, mientras que los atributos constituyen las **propiedades** elementales, **descriptivas**, **cuantitativas** o **identificadoras** que caracterizan a dichas entidades. Formalmente, una entidad define la estructura invariante o contrato de información, y cada **instancia u ocurrencia** particular de la entidad queda **materializada** por el **conjunto** específico de **valores** asignados a sus **atributos**.
+
+Para preservar la pureza del diseño conceptual, la representación gráfica debe centrarse en la plantilla formal de la entidad (especificación) y en la noción de instancia como ocurrencia del mundo real, evitando la introducción prematura de tablas relacionales o estructuras físicas de almacenamiento.
+
+::: {.diagrama-ancho}
+
+```{dot}
+//| label: fig-er-modelado-atributos-municipios
+//| fig-cap: "Correspondencia conceptual entre la especificación formal de la entidad municipios y la materialización de sus instancias territoriales."
+//| fig-width: 6.5
+//| fig-height: 4
+//| out-width: "100%"
+//| fig-align: center
+//| echo: false
+
+digraph ER_Atributos_Municipios {
+    graph [rankdir=LR, bgcolor="transparent", pad="0.2", nodesep=0.4, ranksep=0.8];
+    node [fontname="Helvetica,Arial,sans-serif", fontsize=9];
+    edge [fontname="Helvetica,Arial,sans-serif", fontsize=8];
+
+    subgraph cluster_esquema {
+        label = "&nbsp;&nbsp;&nbsp;Especificación conceptual (Plantilla de entidad)&nbsp;&nbsp;&nbsp;";
+        fontname = "Helvetica,Arial,sans-serif";
+        fontsize = 10;
+        fontcolor = "#495057";
+        color = "#ced4da";
+        style = "dashed";
+        
+        municipios [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="6" CELLSPACING="0" COLOR="#212529" STYLE="ROUNDED">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><B>&nbsp;&nbsp;&nbsp;municipios&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT"><B>#* </B>mun_id</TD></TR>
+                <TR><TD ALIGN="LEFT"><B>*  </B>mun_nombre</TD></TR>
+                <TR><TD ALIGN="LEFT">º  mun_categoria</TD></TR>
+            </TABLE>
+        >];
+    }
+
+    subgraph cluster_instancias {
+        label = "&nbsp;&nbsp;&nbsp;Instancias de la entidad (Ocurrencias del mundo real)&nbsp;&nbsp;&nbsp;";
+        fontname = "Helvetica,Arial,sans-serif";
+        fontsize = 10;
+        fontcolor = "#495057";
+        color = "#ced4da";
+        style = "dashed";
+
+        inst_1 [shape=plain, label=<
+            <TABLE BGCOLOR="#F8F9FA" BORDER="1" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#ADB5BD" STYLE="ROUNDED">
+                <TR><TD ALIGN="CENTER" BORDER="1" COLOR="#DEE2E6" SIDES="B"><FONT COLOR="#6C757D" POINT-SIZE="8"><I>&nbsp;&nbsp;&nbsp;&nbsp;Instancia m₁ (Medellín)&nbsp;&nbsp;&nbsp;</I></FONT></TD></TR>
+                <TR><TD ALIGN="LEFT">mun_id: '05001'</TD></TR>
+                <TR><TD ALIGN="LEFT">mun_nombre: 'MEDELLÍN'</TD></TR>
+                <TR><TD ALIGN="LEFT">mun_categoria: 'ESPECIAL'</TD></TR>
+            </TABLE>
+        >];
+
+        inst_2 [shape=plain, label=<
+            <TABLE BGCOLOR="#F8F9FA" BORDER="1" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#ADB5BD" STYLE="ROUNDED">
+                <TR><TD ALIGN="CENTER" BORDER="1" COLOR="#DEE2E6" SIDES="B"><FONT COLOR="#6C757D" POINT-SIZE="8"><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Instancia m₂ (Chía)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</I></FONT></TD></TR>
+                <TR><TD ALIGN="LEFT">mun_id: '25175'</TD></TR>
+                <TR><TD ALIGN="LEFT">mun_nombre: 'CHÍA'</TD></TR>
+                <TR><TD ALIGN="LEFT">mun_categoria: 'PRIMERA'</TD></TR>
+            </TABLE>
+        >];
+
+        inst_3 [shape=plain, label=<
+            <TABLE BGCOLOR="#F8F9FA" BORDER="1" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#ADB5BD" STYLE="ROUNDED">
+                <TR><TD ALIGN="CENTER" BORDER="1" COLOR="#DEE2E6" SIDES="B"><FONT COLOR="#6C757D" POINT-SIZE="8"><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Instancia m₃ (Mogotes)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</I></FONT></TD></TR>
+                <TR><TD ALIGN="LEFT">mun_id: '68464'</TD></TR>
+                <TR><TD ALIGN="LEFT">mun_nombre: 'MOGOTES'</TD></TR>
+                <TR><TD ALIGN="LEFT"><FONT COLOR="#868E96"><I>mun_categoria: [no asignada]</I></FONT></TD></TR>
+            </TABLE>
+        >];
+    }
+
+    edge [color="#6c757d", style=dashed, penwidth=1.0, arrowhead=open, arrowsize=0.6];
+    municipios -> inst_1 [label="instancia"];
+    municipios -> inst_2 [label="instancia"];
+    municipios -> inst_3 [label="instancia"];
+}
+
+```
+
+:::
+
+::: {.callout-note title="Semántica y opcionalidad de la categorización municipal"}
+En Colombia, la categorización de los distritos y municipios se fundamenta en el artículo 6 de la Ley 136 de 1994, modificado por el artículo 2 de la Ley 617 de 2000, y es certificada anualmente por la Contaduría General de la Nación con base en la población censada por el DANE y los Ingresos Corrientes de Libre Destinación (ICLD) dictaminados por la Contraloría General de la República. La clasificación define rangos que van desde la categoría Especial (ciudades principales como Medellín) hasta las categorías 1 a 6 (donde Chía califica en primera categoría y Mogotes en sexta categoría).
+
+El atributo `mun_categoria` se modela formalmente con carácter opcional (`º`) debido a que representa una propiedad fiscal y administrativa dinámica sujeta a recertificación periódica. En consecuencia, durante las fases preliminares de ingesta cartográfica, levantamiento predial o integración de capas geográficas base, este atributo puede no estar asignado o registrarse temporalmente como un valor nulo sin invalidar la existencia de la unidad territorial en la base de datos espacial.
+:::
+
+**Criterios de identificación y atomicidad de atributos.** La detección de atributos parte del levantamiento formal de requerimientos y del análisis de especificaciones cartográficas, formularios oficiales y actos administrativos. Los patrones lingüísticos más frecuentes corresponden a sustantivos calificativos (*categoría*, *vigencia*), construcciones preposicionales (*área por predio*, *población por municipio*) y estructuras posesivas (*nombre del departamento*, *geometría del polígono*).
+
+Todo atributo conceptual debe cumplir con el **principio de atomicidad y valor único**: para una instancia particular, cada descriptor debe asumir un valor indivisible en un instante dado. Si una característica exige registrar simultáneamente múltiples valores (por ejemplo, múltiples normatividades de uso del suelo o varios códigos postales en un municipio), el elemento no califica como atributo atómico de la entidad. Debe abstraerse como una entidad independiente y vincularse mediante una asociación formal 1:M, sentando las bases de la normalización desde la fase conceptual.
+
+**Modalidad, opcionalidad y dominios conceptuales.** La modalidad establece si un atributo es estrictamente indispensable para la validez de la instancia (`*` obligatorio) o si tolera ausencia de información (`º` opcional). A su vez, los atributos quedan acotados por un **dominio**, formalizado como el conjunto exhaustivo de valores homogéneos y válidos que pueden asumir: primitivos (enteros, reales, cadenas, fechas), estructurados por patrón o máscara fija (como la codificación DIVIPOLA), discretos o enumerados (listas cerradas como las categorías municipales) o acotados por rangos numéricos.
+
+| Atributo | Tipo conceptual de dominio | Definición y regla semántica del dominio | Expresión formal / Restricción |
+| - | - | --- | -- |
+| `mun_id` | Estructurado por patrón (cadena fija) | Código oficial DIVIPOLA municipal normalizado por el DANE. Cadena alfanumérica de exactamente 5 caracteres numéricos. Los primeros 2 caracteres corresponden al código del departamento (`dep_id`) y los 3 restantes a la subcodificación municipal. | Texto de longitud $= 5$, patrón `^[0-9]{5}$`, donde los caracteres $1..2 \equiv \text{dep\_id}$ |
+| `mun_nombre` | Primitivo textual general | Denominación toponímica oficial del municipio en el territorio nacional. Cadena alfabética estándar. | Longitud $\in [1, 100]$ caracteres |
+| `mun_categoria` | Enumerado / Discreto | Clasificación fiscal y administrativa asignada bajo los criterios de la Ley 617 de 2000 y certificada anualmente por la Contaduría General de la Nación. | `{'ESPECIAL', 'PRIMERA', 'SEGUNDA', 'TERCERA', 'CUARTA', 'QUINTA', 'SEXTA'}` |
+
+: Especificación de dominios conceptuales para la entidad municipios {#tbl-especificacion-dominios-municipios}
+
+::: {.callout-note title="Gobernanza de dominios en la notación de Barker: atributo frente a entidad catálogo"}
+En la notación conceptual de Richard Barker no existe un elemento gráfico específico para representar dominios o listas de valores admisibles (a diferencia del constructo `<<Enumeration>>` estandarizado en los diagramas de clases UML). La especificación detallada de los dominios pertenece a la **documentación de soporte** (diccionario de datos conceptual).
+
+Al modelar atributos cualitativos discretos en el diagrama E-R, se debe aplicar el siguiente criterio de abstracción territorial:
+
+* **Dominio restringido del atributo (sin entidad adicional):** Se mantiene como un descriptor interno de la entidad si la lista de valores es cerrada, estática, universalmente reconocida en la normativa (ej. las categorías de la Ley 617 en `mun_categoria`) y no exige registrar información descriptiva suplementaria.
+* **Promoción a entidad independiente (entidad de catálogo o referencia):** El dominio debe abstraerse como una entidad formal con identificador y prefijo propio (ej. `categorias_municipales`), articulada mediante una relación $1:M$, cuando se presenta alguna de las siguientes condiciones:
+  1. Los valores admisibles poseen atributos propios que requieren persistencia (ej. porcentaje de transferencias, límites de gasto o base legal).
+  2. La lista es dinámica y administrable por los usuarios del sistema sin alterar la estructura del esquema.
+  3. El dominio actúa como clasificador transversal compartido por múltiples entidades del territorio.
+:::
+
+::: {.callout-note title="Naturaleza alfanumérica del código municipal DIVIPOLA"}
+El modelado conceptual de identificadores espaciales o administrativos (como `mun_id` o `dep_id`) impone el uso estricto de dominios textuales o de caracteres, descartando categorizaciones numéricas enteras:
+
+* **Preservación del cero a la izquierda:** En departamentos como Antioquia (`'05'`), Atlántico (`'08'`) o Arauca (`'81'`), un tipo numérico escalar truncaría el cero inicial por optimización aritmética, convirtiendo el código de Medellín `'05001'` en `5001`. Esto fractura la cardinalidad posicional fija (5 dígitos) y corrompe los cruces espaciales por coincidencia de subcadenas.
+
+
+* **Ausencia de semántica cuantitativa:** Los códigos geográficos no representan magnitudes medibles ni admiten operaciones aritméticas (calcular sumas o promedios de códigos DIVIPOLA carece de sentido analítico). Corresponden a etiquetas nominales regidas por una composición jerárquica:
+
+
+
+$$\text{mun\_id} = \text{dep\_id} \,\Vert{}\, \text{cod\_municipio}$$
+
+Donde $\text{dep\_id} \in [0-9]{2}$ (ej. `'05'` para Antioquia, `'25'` para Cundinamarca, `'68'` para Santander) y $\text{cod\_municipio} \in [0-9]{3}$ (ej. `'001'` para Medellín, `'175'` para Chía, `'464'` para Mogotes).
+:::
+
+**Clases espaciales y componentes geométricos.** Las entidades se dividen en dos categorías según la presencia de atributos geográficos:
+
+* **Clases espaciales (entidades geográficas):** Objetos caracterizados por una localización explícita y contorno cartográfico directo en el territorio. Incorporan el atributo geométrico abstracto denominado convencionalmente en este texto como `the_geom`.
+
+
+* **Entidades alfanuméricas (temáticas o de agregación):** Objetos conceptuales que carecen de columna geométrica propia; su propósito radica en estructurar agrupaciones lógicas, clasificaciones normativas o dimensiones cronológicas.
+
+
+
+::: {.diagrama-ancho}
+
+```{dot}
+//| label: fig-er-clases-espaciales-territorio
+//| fig-cap: "Integración conceptual de clases espaciales primarias y entidades alfanuméricas agregadas en notación Barker."
+//| fig-width: 6.5
+//| fig-height: 1.8
+//| fig-align: center
+//| echo: false
+
+digraph ER_Clases_Espaciales {
+    graph [rankdir=LR, bgcolor="transparent", pad="0.1", nodesep=0.4, ranksep=0.2];
+    node [fontname="Helvetica,Arial,sans-serif", fontsize=9.5];
+    edge [fontname="Helvetica,Arial,sans-serif", fontsize=8.5, color="#212529"];
+
+    departamentos [shape=plain, label=<
+        <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="7" CELLSPACING="0" COLOR="#212529" STYLE="ROUNDED">
+            <TR><TD ALIGN="CENTER">&nbsp;&nbsp;&nbsp;&nbsp;<B>departamentos</B>&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+            <HR/>
+            <TR><TD ALIGN="LEFT"><B>#* </B>dep_id&nbsp;&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT"><B>*  </B>dep_nombre&nbsp;&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT">º  dep_region&nbsp;&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT"><B>*  </B>the_geom&nbsp;&nbsp;&nbsp;</TD></TR>
+        </TABLE>
+    >];
+
+    MID1 [shape=point, width=0.01, height=0.01, style=invis];
+
+    municipios [shape=plain, label=<
+        <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="7" CELLSPACING="0" COLOR="#212529" STYLE="ROUNDED">
+            <TR><TD ALIGN="CENTER">&nbsp;&nbsp;&nbsp;&nbsp;<B>municipios</B>&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+            <HR/>
+            <TR><TD ALIGN="LEFT"><B>#* </B>mun_id&nbsp;&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT"><B>*  </B>mun_nombre&nbsp;&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT">º  mun_categoria&nbsp;&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT"><B>*  </B>the_geom&nbsp;&nbsp;&nbsp;</TD></TR>
+        </TABLE>
+    >];
+
+    MID2 [shape=point, width=0.01, height=0.01, style=invis];
+
+    microregiones [shape=plain, label=<
+        <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="7" CELLSPACING="0" COLOR="#212529" STYLE="ROUNDED">
+            <TR><TD ALIGN="CENTER">&nbsp;&nbsp;&nbsp;&nbsp;<B>microregiones</B>&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+            <HR/>
+            <TR><TD ALIGN="LEFT"><B>#* </B>mic_id&nbsp;&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT"><B>*  </B>mic_nombre&nbsp;&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT">º  mic_descripcion&nbsp;&nbsp;&nbsp;</TD></TR>
+        </TABLE>
+    >];
+
+    departamentos -> MID1 [
+        arrowhead=none,
+        style=solid,
+        penwidth=1.6,
+        label="compuesto por ►  "
+    ];
+
+    MID1 -> municipios [
+        arrowhead=crow,
+        style=solid,
+        penwidth=1.6,
+        label=" ◄ pertenece"
+    ];
+
+    municipios -> MID2 [
+        arrowtail=crow,
+        arrowhead=none,
+        dir=both,
+        style=dashed,
+        penwidth=1.6,
+        label=" pertenece ► "
+    ];
+
+    MID2 -> microregiones [
+        arrowhead=none,
+        style=solid,
+        penwidth=1.6,
+        label="  ◄ agrupa"
+    ];
+}
+
+```
+
+:::
+
+**El dominio espacial y derivación geométrica.** El dominio del atributo `the_geom` queda unívocamente definido por tres restricciones ontológicas: la primitiva topológica del estándar ISO 19125 / OGC [@ogc_sfa_part1_2011; @ogc_sfa_part2_2010] (`MultiPolygon` para modelar divisiones territoriales compuestas por islas, archipiélagos y enclaves), la dimensión de coordenadas (bidimensional $XY$ para límites administrativos) y el código identificador de referencia espacial (SRID).
+
+Al estructurar `departamentos`, `municipios` y `microregiones`, se aplica el **principio de no redundancia métrica y espacial**:
+
+* `municipios` y `departamentos` son clases espaciales primarias delimitadas por un contorno geométrico obligatorio (`* the_geom`).
+
+* `microregiones` se modela estrictamente como una entidad alfanumérica sin atributo geométrico propio. Su extensión territorial es una **propiedad espacial derivada** que surge conceptualmente a partir de la suma de las geometrías de los municipios subordinados.
+
+De igual forma, magnitudes escalares dependientes de la forma (como área o perímetro) constituyen propiedades derivadas que no deben registrarse como descriptores estáticos si pueden computarse algorítmicamente a partir de la geometría. A diferencia de UML, donde se identifican anteponiendo una barra inclinada (`/area_ha`), la notación de Barker no contempla una convención gráfica para atributos derivados. Por ende, la práctica estándar consiste en omitirlos del diagrama conceptual y documentar su regla de cálculo en el diccionario de datos; si resulta indispensable visibilizarlos, se incorporan como descriptores opcionales con un sufijo aclaratorio (ej. o area_ha (derivado)) cuya función de derivación se especifica a nivel de especificación técnica.
+
+### Convenciones de diseño para entidades y prefijos mnemotécnicos
+
+En la ingeniería de bases de datos espaciales, antes de formalizar la transición hacia los modelos lógico y físico, es indispensable consolidar un conjunto homogéneo de convenciones léxicas y de nomenclatura a nivel conceptual. En esquemas territoriales complejos que integran múltiples coberturas geográficas, catálogos y dominios temáticos, la ausencia de acuerdos estructurales compartidos genera ambigüedad semántica, dificulta la lectura del diccionario de datos y entorpece la interoperabilidad de las especificaciones.
+
+Para estructurar de manera uniforme las entidades, atributos y dominios dentro del modelo conceptual, se adoptan cuatro reglas metodológicas fundamentales:
+
+* **Uso exclusivo de caracteres en minúscula (`lowercase`):** Todos los nombres de entidades y atributos deben definirse en minúsculas, prescindiendo de tildes, caracteres diacríticos, espacios intermedios o caracteres especiales. Esta práctica garantiza la neutralidad y portabilidad universal del esquema entre herramientas CASE, plataformas de diseño y motores de renderizado documental.
+
+* **Separación de términos mediante guion bajo (`snake_case`):** Los términos compuestos deben articularse mediante guiones bajos (ej. `dep_nombre`, `mun_categoria`, `zonas_reserva`). Esta convención maximiza la legibilidad visual en diagramas conceptuales, diccionarios de datos y matrices de requerimientos, evitando la ambigüedad tipográfica de notaciones mixtas como CamelCase o PascalCase.
+
+* **Entidades en plural y atributos en singular:** Una entidad define una clase, categoría o conjunto de objetos del mundo real (instancias) que comparten propiedades homogéneas; por tanto, se designa mediante sustantivos en plural o términos colectivos (ej. `departamentos`, `municipios`, `microregiones`). Por el contrario, un atributo describe una propiedad atómica o cualidad que caracteriza a una instancia individual particular, debiendo formularse rigurosamente en singular (ej. `id`, `nombre`, `categoria`, `the_geom`).
+
+* **Prefijo mnemotécnico de tres letras en atributos:** Todo atributo conceptual debe comenzar con un prefijo mnemotécnico uniforme de tres letras (seguido de un guion bajo) que identifique de forma unívoca a la entidad a la que califica (ej. `dep_` para `departamentos`, `mun_` para `municipios`, `mic_` para `microregiones`). Esta convención aporta ventajas analíticas directas desde la etapa conceptual: trazabilidad léxica inmediata, eliminación de colisiones semánticas y homonimias, y facilitación del mapeo estructural hacia el diseño lógico.
+
+
+| Entidad conceptual | Prefijo | Identificador único (UID) | Atributos descriptivos | Atributo espacial (`the_geom`) |
+| :- | :- | :- | :-- | :--- |
+| `departamentos` | `dep_` | `#* dep_id` | `* dep_nombre`<br>`º dep_region` | `* the_geom` *(superficie compuesta 2D)* |
+| `municipios` | `mun_` | `#* mun_id` | `* mun_nombre`<br>`º mun_categoria` | `* the_geom` *(superficie compuesta 2D)* |
+| `microregiones` | `mic_` | `#* mic_id` | `* mic_nombre`<br>`º mic_descripcion` | *(Ninguno: extensión derivada)* |
+
+: Convenciones de nomenclatura conceptual y prefijos mnemotécnicos en entidades territoriales. {#tbl-ejemplo-prefijos}
+
+
+::: {.callout-note title="Ausencia de claves foráneas en el esquema conceptual"}
+En la @tbl-ejemplo-prefijos no existe una columna para «claves foráneas» (FK). En el nivel de abstracción conceptual, las vinculaciones territoriales (como la subordinación de un municipio a su departamento) no se resuelven agregando atributos artificiales en la entidad hija, sino a través de **asociaciones formales** con nombre, grado y opcionalidad. La inserción de identificadores externos como atributos escalares (`dep_id` dentro de `municipios`) constituye una decisión de implementación relacional que pertenece estrictamente a la fase subsiguiente de **diseño lógico**.
+:::
+
+### Paradigmas y alternativas de representación conceptual
+
+El diseño conceptual dispone de diversas convenciones gráficas estandarizadas para abstraer las entidades del territorio y sus interacciones. La selección de la notación determina el nivel de compacidad visual, la precisión matemática de las restricciones y la facilidad de comunicación técnica entre especialistas temáticos y administradores de bases de datos. En la práctica profesional coexisten tres escuelas predominantes:
+
+**Notación clásica de Peter Chen (1976).** Concibe el esquema mediante una separación topológica estricta entre tres constructos gráficos: rectángulos para las entidades, rombos intercalados para las relaciones y elipses radiales para cada atributo (con el identificador primario subrayado) [@chen1976entity].
+
+::: {.diagrama-80ancho}
+
+```{dot}
+//| label: fig-er-notacion-chen-ejemplo
+//| fig-cap: "Representación de una asociación territorial binaria (1:N) bajo la notación clásica de Peter Chen."
+//| fig-width: 5
+//| fig-height: 5
+//| out-width: "100%"
+//| fig-align: center
+//| echo: false
+
+digraph ER_Chen_Territorial {
+    graph [rankdir=LR, bgcolor="transparent", pad="0.2", nodesep=0.4, ranksep=0.7];
+    node [fontname="Helvetica,Arial,sans-serif", fontsize=9];
+    edge [fontname="Helvetica,Arial,sans-serif", fontsize=8, color="#212529", penwidth=1.2];
+
+    subgraph clusters_entidades {
+        node [shape=box, style="solid", color="#212529", fillcolor="#FFFFFF", penwidth=1.5];
+        departamentos [label="DEPARTAMENTOS"];
+        municipios    [label="MUNICIPIOS"];
+    }
+
+    rel_compuesto [shape=diamond, style="solid", color="#212529", fillcolor="#FFFFFF", penwidth=1.5, label="compuesto\npor"];
+
+    node [shape=ellipse, style="solid", color="#495057", fillcolor="#F8F9FA", penwidth=1.0, fontsize=8];
+    dep_id     [label=<<u>dep_id</u>>];
+    dep_nombre [label="dep_nombre"];
+    dep_geom   [label="the_geom"];
+
+    mun_id        [label=<<u>mun_id</u>>];
+    mun_nombre    [label="mun_nombre"];
+    mun_categoria [label="mun_categoria"];
+    mun_geom      [label="the_geom"];
+
+    edge [arrowhead=none, style=solid, penwidth=1.0, color="#6c757d"];
+    dep_id -> departamentos;
+    dep_nombre -> departamentos;
+    dep_geom -> departamentos;
+
+    mun_id -> municipios;
+    mun_nombre -> municipios;
+    mun_categoria -> municipios;
+    mun_geom -> municipios;
+
+    edge [arrowhead=none, style=solid, penwidth=1.5, color="#212529"];
+    departamentos -> rel_compuesto [label="1"];
+    rel_compuesto -> municipios    [label="N"];
+}
+
+```
+
+:::
+
+A pesar de su valor histórico y pedagógico en la introducción formal a las bases de datos, la notación de Chen resulta poco práctica en proyectos geoespaciales reales. La representación de cada atributo como un nodo independiente genera dispersión gráfica: un esquema territorial corporativo compuesto por 20 entidades y un promedio de 15 atributos por cobertura requeriría cientos de elipses dispersas, saturando el espacio visual y oscureciendo la comprensión de la topología relacional del modelo.
+
+**Notación de ingeniería de la información y Barker (*Crow's Foot*).** Para superar la dispersión visual del modelo de Chen, las corrientes de ingeniería de la información —particularmente la formalización de Richard Barker para el modelado conceptual— compactaron el diagrama. En este enfoque, los atributos se confinan verticalmente dentro del cuerpo de la propia entidad y los rombos intermedios se suprimen, expresando la asociación y la cardinalidad de manera directa sobre los extremos de la línea de enlace. Esta estructura ofrece una alta densidad de información en un diseño visualmente sobrio, constituyendo el estándar adoptado a lo largo de las secciones precedentes de este capítulo y en las herramientas CASE para el análisis y diseño conceptual de bases de datos.
+
+**Perfil conceptual geoespacial en diagramas de clases UML.** Aunque la notación de Barker es óptima para transitar hacia motores relacionales transaccionales, carece de mecanismos formales para agrupar coberturas por paquetes de dominio, tipificar primitivas métricas o modelar la herencia de comportamientos espaciales. Para superar esta limitación, el consorcio OGC y el comité ISO/TC 211 estandarizaron el uso de perfiles de clases del Lenguaje Unificado de Modelado (UML), formalizando una aproximación orientada a objetos geográficos que se examina en detalle a continuación.
+
+## Diseño conceptual geoespacial mediante diagramas de clases UML
+
+El Lenguaje Unificado de Modelado (UML, *Unified Modeling Language*) representa el estándar formal adoptado por la industria geográfica internacional, respaldado formalmente por el Open Geospatial Consortium (OGC) y el comité técnico ISO/TC 211 mediante las normas **ISO 19103** (*Conceptual schema language*) e **ISO 19109** (*Rules for application schema*).
+
+A diferencia de los esquemas relacionales tradicionales, UML concibe el territorio como un conjunto de clases de objetos interactuantes. Esta aproximación permite agrupar clases en **paquetes conceptuales** (equivalentes directos a **esquemas** de base de datos como `divpol` o `public`), explicitar el comportamiento métrico y tipológico de los datos espaciales mediante **estereotipos** y definir multiplicidades numéricas exactas bajo la perspectiva *Look-Across*.
+
+::: {.callout-note title="Definición de esquema en un SGBD"}
+Contenedor lógico y espacio de nombres (*namespace*) dentro de una base de datos que define la estructura formal de la información y agrupa un conjunto cohesivo de objetos (tablas, vistas, funciones, dominios y secuencias), permitiendo la prevención de colisiones léxicas, la segregación temática y la administración granular de privilegios de acceso.
+:::
+
+### Fundamentos del perfil geoespacial (normas ISO 19103 e ISO 19109)
+
+El modelado conceptual en UML transfiere los principios cardinales del paradigma orientado a objetos (POO) hacia la ingeniería de datos espaciales:
+
+* **Clase frente a instancia:** Una **clase** define el contrato estructural, los atributos descriptivos y las restricciones espaciales invariantes para un tipo de fenómeno geográfico (`municipios`). Una **instancia** u objeto representa una ocurrencia particular y tangible sobre la superficie terrestre (como el municipio de Chía o de Mogotes).
+
+* **Abstracción territorial:** Proceso de selección y aislamiento de los atributos físicos, jurídicos o administrativos relevantes para el universo del discurso, descartando el detalle irrelevante de la realidad continua.
+
+* **Encapsulamiento conceptual:** Los descriptores alfanuméricos y la delimitación geométrica conforman una unidad semántica indivisible dentro del contenedor de la clase.
+
+* **Generalización y especialización:** Capacidad de estructurar taxonomías mediante jerarquías de herencia, donde subclases concretas heredan atributos y relaciones de superclases abstractas (como la derivación de tipos de superficie a partir de la clase abstracta `Geometry`).
+
+Para articular el diseño conceptual desarrollado previamente mediante la notación de Barker con el estándar formal UML, la @tbl-paralelo-er-uml sistematiza la correspondencia entre ambos lenguajes de especificación:
+
+| Concepto de modelado | Notación Entidad-Relación (Barker / CASE) | Perfil conceptual UML (ISO 19109 / OGC) | Significado en bases de datos espaciales |
+| :-- | :--- | :--- | :--- |
+| **Unidad de modelado** | **Entidad:** Contenedor redondeado; sustantivo en plural o colectivo (ej. `municipios`). | **Clase:** Contenedor rectangular; sustantivo en plural con estereotipo (`<<FeatureType>>`). | Define la estructura formal invariante para una cobertura o clase de entidad del territorio. |
+| **Atributo espacial** | Atributo convencional obligatorio con identificador metodológico `* the_geom`. | Atributo tipado con primitiva abstracta: `the_geom : MultiPolygon [1]`. | Define la signatura métrica, la dimensión topológica y la obligatoriedad geométrica. |
+| **Identificador único** | Símbolo `#*` antepuesto al atributo (ej. `#* mun_id`). | Atributo tipado con multiplicidad unitaria obligatoria: `mun_id : Character(5) [1]`. | Propiedad que individualiza unívocamente a cada ocurrencia en el universo del discurso. |
+| **Opcionalidad** | Trazo continuo (mandatorio) o discontinuo (opcional / contingente). | Multiplicidad mínima en el rango: `0` para opcional o `1` para mandatorio. | Determina si la participación de una instancia en la asociación admite ausencia de dato. |
+| **Grado de cardinalidad** | Línea simple (singular) o pata de gallo (múltiple / `crow's foot`). | Multiplicidad máxima en el rango: `1` para singular o `*` para múltiple. | Establece el límite superior de instancias correlacionadas en la asociación. |
+| **Perspectiva de lectura** | Semirrectas con verbos direccionales (`►`, `◄`) evaluados de origen a destino. | Rangos numéricos ubicados en el extremo opuesto según la convención *Look-Across*. | Sintaxis estructurada para validar la integridad semántica de la asociación. |
+| **Espacio de nombres** | No formalizado en el diagrama (delimitación implícita por contexto). | **Paquete (`<<Package>>`):** Contenedor estructural con etiqueta de dominio (ej. `divpol`). | Agrupa clases afines y prefigura la creación de esquemas relacionales independientes. |
+
+: Correspondencia formal entre el modelo Entidad-Relación de Barker y el diagrama de clases UML {#tbl-paralelo-er-uml}
+
+### Componentes y convenciones del perfil geoespacial UML
+
+En los diagramas de clases orientados al diseño conceptual de bases de datos territoriales, las especificaciones se rigen por las siguientes directivas estructurales:
+
+* **Paquetes conceptuales (`<<Package>>`):** Agrupaciones lógicas de alto nivel que delimitan dominios temáticos de gobernanza de información. En el diseño de bases de datos espaciales, prefiguran la creación de esquemas relacionales dentro del clúster (por ejemplo, segregando la división político-administrativa oficial `divpol` de las entidades operativas en `public`).
+
+* **Contenedor de clase:** Rectángulo dividido en dos compartimentos en la fase conceptual: la cabecera (que incluye el estereotipo aplicable y el nombre de la clase) y el cuerpo de atributos tipados.
+
+* **Estereotipos (`<<...>>`):** Modificadores semánticos que establecen la naturaleza ontológica del elemento dentro del modelo geográfico:
+
+* `<<FeatureType>>` (Clase espacial): Modela fenómenos del territorio provistos de localización explícita y contorno cartográfico directo.
+
+* `<<ObjectType>>` (Clase alfanumérica): Modela conceptos temáticos, agregaciones o catálogos administrativos que carecen de una columna geométrica propia en su estructura.
+
+* `<<Enumeration>>`: Formaliza dominios discretos y cerrados conformados por una lista taxativa de literales válidos.
+
+* **Sintaxis conceptual de atributos:** A diferencia del desarrollo de software orientado a objetos —donde se emplean modificadores de visibilidad como público (`+`), privado (`-`) o protegido (`#`) para gobernar el encapsulamiento de métodos—, en el diseño conceptual de bases de datos territoriales todos los atributos son consultables por definición. Para prevenir colisiones visuales con la simbología de identificadores (`#`) u obligatoriedad de Barker, se prescinde de modificadores de acceso de software y se formula la signatura conceptual:
+
+
+$$\text{nombre\_atributo} : \text{Dominio/Tipo } [\text{multiplicidad}]$$
+
+Donde la multiplicidad especifica la opcionalidad mediante `[1]` para mandatorio ($1..1$) o `[0..1]` para opcional.
+
+* **Atributo espacial `the_geom`:** Las clases tipificadas como `<<FeatureType>>` incorporan el atributo geométrico estandarizado bajo la denominación uniforme `the_geom`. Su dominio referencia la jerarquía formal de tipos geométricos ISO 19107 / OGC (ej. `MultiPolygon`, `Point`, `LineString`), con una dimensión métrica 2D explícita y sujeción a un sistema de referencia de coordenadas (SRS).
+
+* **Multiplicidad de asociaciones (*Look-Across*):** Las asociaciones binarias vinculan las clases mediante aristas sólidas acompañadas de un **verbo rector direccional**. Las etiquetas numéricas se disponen en el extremo opuesto (*target*) respecto a la clase de referencia:
+
+    * `1`: Exactamente una instancia obligatoria ($1..1$).
+    * `0..1`: A lo sumo una instancia contingente.
+    * `1..*`: Una o muchas instancias obligatorias.
+    * `0..*`: Cero, una o múltiples instancias.
+
+
+
+### Modelado territorial integrado en UML
+
+En el siguiente diagrama se formaliza el subsistema territorial compuesto por `departamentos`, `municipios` y la agrupación temática `microregiones`:
+
+* El paquete conceptual **`divpol`** confina a las clases espaciales primarias de la división territorial oficial (`departamentos` y `municipios`).
+
+* El paquete conceptual **`public`** aloja a la entidad alfanumérica agregada `microregiones`.
+
+
+Se ratifica que `microregiones` se modela estrictamente como una entidad temática: **carece de una columna espacial `the_geom` en su especificación**. Su extensión territorial no surge de un levantamiento cartográfico aislado, sino que constituye una **propiedad espacial derivada** que emerge conceptualmente a partir de la agregación de los municipios que la componen.
+
+::: {.diagrama-ancho}
+
+```{dot}
+//| label: fig-uml-clases-territoriales
+//| fig-cap: "Esquema conceptual territorial en notación de clases UML (ISO 19109) estructurado por paquetes temáticos y dominios discretos."
+//| fig-width: 6.5
+//| fig-height: 3
+//| fig-align: center
+//| echo: false
+
+digraph UML_Territorial {
+    graph [rankdir=LR, bgcolor="transparent", pad="0.2", nodesep=0.5, ranksep=0.8];
+    node [fontname="Helvetica,Arial,sans-serif", fontsize=9];
+    edge [fontname="Helvetica,Arial,sans-serif", fontsize=8, color="#212529"];
+
+    // Dominio Enumerado
+    enum_categoria [shape=plain, label=<
+        <TABLE BGCOLOR="#FFFFFF" BORDER="1.0" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0" COLOR="#6C757D">
+            <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT POINT-SIZE="8" COLOR="#495057"><I>&lt;&lt;Enumeration&gt;&gt;</I></FONT><BR/><B>&nbsp;&nbsp;dom_mun_categoria&nbsp;&nbsp;</B></TD></TR>
+            <TR><TD ALIGN="LEFT">ESPECIAL</TD></TR>
+            <TR><TD ALIGN="LEFT">PRIMERA</TD></TR>
+            <TR><TD ALIGN="LEFT">SEGUNDA</TD></TR>
+            <TR><TD ALIGN="LEFT">TERCERA</TD></TR>
+            <TR><TD ALIGN="LEFT">CUARTA</TD></TR>
+            <TR><TD ALIGN="LEFT">QUINTA</TD></TR>
+            <TR><TD ALIGN="LEFT">SEXTA</TD></TR>
+        </TABLE>
+    >];
+
+    // Paquete conceptual public
+    subgraph cluster_public {
+        label = "Paquete conceptual: public";
+        fontname = "Helvetica,Arial,sans-serif";
+        fontsize = 10;
+        fontcolor = "#212529";
+        color = "#ADB5BD";
+        style = "dashed";
+
+        // 1. microregiones (Entidad temática / agregada en public)
+        microregiones [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT POINT-SIZE="8" COLOR="#495057"><I>&lt;&lt;ObjectType&gt;&gt;</I></FONT><BR/><B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;microregiones&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT">mic_id : Integer [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">mic_nombre : Character(100) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">mic_descripcion : Character(250) [0..1]</TD></TR>
+            </TABLE>
+        >];
+    }
+
+    // Paquete conceptual divpol
+    subgraph cluster_divpol {
+        label = "Paquete conceptual: divpol";
+        fontname = "Helvetica,Arial,sans-serif";
+        fontsize = 10;
+        fontcolor = "#212529";
+        color = "#ADB5BD";
+        style = "dashed";
+
+        // 2. municipios (Clase espacial primaria)
+        municipios [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT POINT-SIZE="8" COLOR="#495057"><I>&lt;&lt;FeatureType&gt;&gt;</I></FONT><BR/><B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;municipios&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT">mun_id : Character(5) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">mun_nombre : Character(100) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">mun_categoria : dom_mun_categoria [0..1]</TD></TR>
+                <TR><TD ALIGN="LEFT"><B>the_geom : MultiPolygon [1]</B></TD></TR>
+            </TABLE>
+        >];
+
+        // 3. departamentos (Clase espacial primaria)
+        departamentos [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT POINT-SIZE="8" COLOR="#495057"><I>&lt;&lt;FeatureType&gt;&gt;</I></FONT><BR/><B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;departamentos&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT">dep_id : Character(2) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">dep_nombre : Character(100) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">dep_region : Character(50) [0..1]</TD></TR>
+                <TR><TD ALIGN="LEFT"><B>the_geom : MultiPolygon [1]</B></TD></TR>
+            </TABLE>
+        >];
+    }
+
+    // Dependencia de dominio conceptual (UML Dependency)
+    edge [arrowhead=vee, style=dashed, penwidth=1.0, color="#6C757D"];
+    municipios -> enum_categoria [label="<<use>>"];
+
+    // Asociaciones binarias
+    edge [arrowhead=none, style=solid, penwidth=1.5, color="#212529"];
+
+    // Asociación interpaquete: public.microregiones -> divpol.municipios
+    microregiones -> municipios [
+        taillabel="0..1",
+        headlabel="1..*",
+        label="agrupa ↗",
+        labeldistance=1.5,
+        labelangle=-50
+    ];
+
+    // Asociación intrapaquete: divpol.departamentos -> divpol.municipios
+    departamentos -> municipios [
+        taillabel="1",
+        headlabel="1..*",
+        label="compuesto por ►",
+        labeldistance=1.5,
+        labelangle=-50
+    ];
+}
+
+```
+
+:::
+
+| Elemento UML | Mapeo conceptual y esquema | Interpretación semántica y regla territorial |
+| :- | :-- | :---- |
+| `<<Package>> public` | Esquema relacional `public` | Espacio de nombres para tablas temáticas, agregaciones de gestión o entidades generales del sistema. |
+| `<<Package>> divpol` | Esquema relacional `divpol` | Espacio de nombres reservado para la cartografía oficial de la división político-administrativa. |
+| `<<FeatureType>>` | `divpol.departamentos`, `divpol.municipios` | Entidades territoriales primarias provistas de contorno cartográfico explícito (`the_geom`). |
+| `<<ObjectType>>` | `public.microregiones` | Entidad alfanumérica temática. Carece de columna `the_geom`; su cobertura territorial se deriva espacialmente a partir de los municipios asociados. |
+| `<<Enumeration>>` | `dom_mun_categoria` | Dominio discreto cerrado conforme a la categorización administrativa de la Ley 617 de 2000. |
+| `the_geom: MultiPolygon [1]` | Atributo espacial obligatorio | Primitiva de superficie compuesta 2D que modela enclaves, áreas continuas e islas municipales o departamentales. |
+| `0..1` $\longleftrightarrow$ `1..*` | `public.microregiones` $\leftrightarrow$ `divpol.municipios` | **Asociación interpaquete:** Una microrregión agrupa de uno a muchos municipios. Un municipio puede pertenecer a lo sumo a una microrregión o a ninguna. |
+| `1` $\longleftrightarrow$ `1..*` | `divpol.departamentos` $\leftrightarrow$ `divpol.municipios` | **Asociación intrapaquete:** Cada departamento se compone de al menos un municipio. Todo municipio debe adscribirse estrictamente a un único departamento. |
+
+: Convenciones semánticas y estructurales del perfil conceptual UML {#tbl-convenciones-uml-territorial}
+
+::: {.callout-note title="Resolución conceptual de relaciones interpaquete"}
+La articulación entre `public.microregiones` y `divpol.municipios` evidencia la capacidad de UML para modelar dependencias entre distintos dominios de gobernanza. En el diseño conceptual, la relación expresa que la delimitación territorial de la microrregión emerge de la agregación topológica de unidades pertenecientes a otro paquete temático. Las decisiones sobre si esta cobertura espacial se resolverá de forma dinámica bajo demanda o si se persistirá como una capa calculada de manera periódica corresponden estrictamente a las fases posteriores de diseño lógico e implementación física.
+:::
+
+::: {.callout-note title="Complementariedad entre el metamodelo geométrico (ISO 19125) y el esquema de aplicación (ISO 19109)"}
+La diferencia estructural entre los diagramas UML empleados a lo largo del texto responde a dos niveles de abstracción complementarios en el diseño de bases de datos espaciales:
+
+* **Metamodelo de tipos geométricos (ISO 19125 / OGC SFA):** Ilustrado en la @fig-jerarquia-ogc-uml, define la taxonomía interna y el comportamiento algorítmico del motor espacial. Se enfoca en la herencia orientada a objetos ($\triangle$), los contratos polimórficos de clases abstractas (*Geometry*, *Curve*, *Surface*) y los vínculos de agregación y composición topológica ($\lozenge$ y $\blacklozenge$) de geometrías a partir de vértices y anillos.
+
+* **Esquema conceptual de aplicación (ISO 19109):** Ejemplificado en la @fig-uml-clases-territoriales, modela la realidad geográfica y productiva del dominio temático previa a la definición relacional (DDL). Utiliza estereotipos normativos (`<<FeatureType>>`, `<<ObjectType>>`, `<<Enumeration>>`), define atributos escalares con sus multiplicidades y agrupa las clases en paquetes lógicos que prefiguran la separación por esquemas en PostgreSQL.
+
+Ambos diagramas son formalmente válidos y se articulan directamente: el esquema de aplicación no redefine la geometría desde sus axiomas topológicos, sino que tipifica los atributos espaciales (`the_geom : MultiPolygon`) utilizando como tipos de datos a las clases concretas especificadas en el metamodelo ISO 19125.
+:::
+
+
+### Convenciones avanzadas de asociación: rombos frente a multiplicidades ISO 19109
+
+En la literatura de ingeniería de software (OMG UML) y en los metamodelos de tipos abstractos (ISO 19125), es común encontrar conectores adornados con rombos para calificar la naturaleza de las relaciones "todo-parte". No obstante, en la ingeniería conceptual de bases de datos territoriales regida por la norma ISO 19109, se privilegia el uso de **asociaciones binarias directas con multiplicidades numéricas explícitas**.
+
+Para comprender la correspondencia entre ambas escuelas de modelado y anticipar su traducción hacia el modelo relacional, la @tbl-equivalencia-rombos-asociaciones sintetiza la semántica de cada constructo:
+
+::: {#tbl-equivalencia-rombos-asociaciones}
+
+| Simbología UML (OMG / ISO 19125) | Denominación y semántica | Perfil conceptual (ISO 19109) | Modelo E-R (Barker) | Regla de existencia territorial |
+| :- | :-- | :-- | :-- | :-- |
+| **Composición** (◆) | Relación "todo-parte" fuerte con ciclo de vida atado. | Asociación directa obligatoria: `1` $\longleftrightarrow$ `1..*` | Línea continua con pata de gallo obligatoria. | Dependencia existencial absoluta¹ |
+| **Agregación compartida** (◇) | Relación "todo-parte" débil sin ciclo de vida atado. | Asociación directa contingente: `0..1` $\longleftrightarrow$ `1..*` | Línea discontinua en el extremo padre. | Existencia autónoma² |
+| **Generalización / Herencia** (△) | Relación taxonómica de especialización (*is-a*). | Conector de generalización hacia superclase. | Subtipos anidados en el supertipo. | Identidad taxonómica³ |
+| **Asociación binaria** (`—`) | Conexión funcional o espacial simétrica. | Línea simple con multiplicidad y verbos. | Línea continua o discontinua simple. | Coexistencia operativa⁴ |
+
+: Correspondencia semántica entre conectores UML de software y el perfil conceptual geoespacial
+
+::: {style="font-size: 0.85em; color: #495057; border-top: 1px solid #dee2e6; padding-top: 4px; margin-top: 4px;"}
+¹ La entidad parte no puede subsistir conceptualmente si la entidad contenedora desaparece del modelo territorial.  
+² La entidad parte conserva su identidad territorial y puede desvincularse o reasignarse a otro contenedor.  
+³ Toda ocurrencia de la clase especializada es simultáneamente una instancia de la clase general y hereda sus atributos espaciales.  
+⁴ Las entidades interactúan funcionalmente sin condicionar mutuamente su existencia ontológica en el sistema.
+:::
+
+:::
+
+
+::: {.callout-note title="Directiva metodológica para bases de datos espaciales"}
+Aunque el consorcio OMG admite el uso de rombos de agregación y composición, el comité técnico ISO/TC 211 y el OGC aconsejan prescindir de ellos en esquemas de aplicación territorial debido a la ambigüedad inherente al delimitarlos sobre el espacio geográfico. Por ejemplo, en la jerarquía territorial, un municipio no se "destruye" físicamente si se reorganiza una delimitación departamental o microrregional. 
+
+En este texto se adopta como estándar la formulación canónica de la norma **ISO 19109**: asociaciones binarias directas calificadas con multiplicidades exactas y verbos rectores, delegando las decisiones sobre destrucción en cascada o conservación de registros huérfanos a las cláusulas declarativas del **diseño lógico relacional**.
+:::
+
+### Modelado conceptual de relaciones complejas en UML
+
+El Lenguaje Unificado de Modelado (UML) y las especificaciones ISO 19109/OGC disponen de dos mecanismos estandarizados para modelar la cardinalidad muchos a muchos:
+
+1. **Asociación binaria directa con multiplicidad múltiple:** Se traza una línea continua entre ambas clases tipificando los extremos con rangos `1..*` $\longleftrightarrow$ `1..*` bajo la convención *Look-Across*. Se aplica cuando la relación carece de atributos descriptivos propios.
+
+2. **Clase de asociación (`AssociationClass`) o clase asociativa intermedia:** Se utiliza cuando la relación porta atributos que describen el vínculo (por ejemplo, fechas de vigencia o indicadores específicos).
+
+En el paquete temático `fgan` se modela un escenario institucional y gremial:
+
+* Múltiples **dependencias técnicas** (`dependencias`) gestionan de forma concurrente una cartera diversa de **sistemas de producción** pecuaria (`sistemas_produccion`).
+
+* Un sistema de producción (doble propósito, cría o ceba intensiva) es abordado simultáneamente por múltiples dependencias.
+
+
+
+::: {.diagrama-ancho}
+
+```{dot}
+//| label: fig-uml-conceptual-fgan-mm
+//| fig-cap: "Modelo conceptual territorial y subsistema productivo en notación UML (ISO 19109) con asociación muchos a muchos directa."
+//| fig-width: 6.5
+//| fig-height: 5
+//| out-width: "100%"
+//| fig-align: center
+//| echo: false
+
+digraph UML_Conceptual_MM {
+    graph [rankdir=TB, bgcolor="transparent", pad="0.15", nodesep=0.5, ranksep=0.65];
+    node [fontname="Helvetica,Arial,sans-serif", fontsize=9.5];
+    edge [fontname="Helvetica,Arial,sans-serif", fontsize=8.5, color="#212529"];
+
+    enum_categoria [shape=plain, label=<
+        <TABLE BGCOLOR="#FFFFFF" BORDER="1.0" CELLBORDER="0" CELLPADDING="3" CELLSPACING="0" COLOR="#6C757D">
+            <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="8"><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;&lt;Enumeration&gt;&gt;</I></FONT><BR/><B>dom_mun_categoria</B></TD></TR>
+            <TR><TD ALIGN="LEFT">ESPECIAL</TD></TR>
+            <TR><TD ALIGN="LEFT">PRIMERA</TD></TR>
+            <TR><TD ALIGN="LEFT">SEGUNDA</TD></TR>
+            <TR><TD ALIGN="LEFT">TERCERA</TD></TR>
+            <TR><TD ALIGN="LEFT">CUARTA</TD></TR>
+            <TR><TD ALIGN="LEFT">QUINTA</TD></TR>
+            <TR><TD ALIGN="LEFT">SEXTA</TD></TR>
+        </TABLE>
+    >];
+
+    subgraph cluster_divpol {
+        label = "Paquete conceptual:\ndivpol";
+        fontname = "Helvetica,Arial,sans-serif";
+        fontsize = 10.5;
+        fontcolor = "#212529";
+        color = "#ADB5BD";
+        style = "dashed";
+
+        departamentos [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="8"><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;&lt;FeatureType&gt;&gt;&nbsp;</I></FONT><BR/><B>departamentos</B></TD></TR>
+                <TR><TD ALIGN="LEFT">dep_id : Character(2) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">dep_nombre : Character(100) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">dep_region : Character(50) [0..1]</TD></TR>
+                <TR><TD ALIGN="LEFT"><B>the_geom : MultiPolygon [1]</B></TD></TR>
+            </TABLE>
+        >];
+
+        municipios [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="8"><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;&lt;FeatureType&gt;&gt;&nbsp;&nbsp;&nbsp;&nbsp;</I></FONT><BR/><B>municipios</B></TD></TR>
+                <TR><TD ALIGN="LEFT">mun_id : Character(5) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">mun_nombre : Character(100) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">mun_categoria : dom_mun_categoria [0..1]</TD></TR>
+                <TR><TD ALIGN="LEFT"><B>the_geom : MultiPolygon [1]</B></TD></TR>
+            </TABLE>
+        >];
+    }
+
+    subgraph cluster_public {
+        label = "Paquete conceptual:\npublic";
+        fontname = "Helvetica,Arial,sans-serif";
+        fontsize = 10.5;
+        fontcolor = "#212529";
+        color = "#ADB5BD";
+        style = "dashed";
+
+        microregiones [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="8"><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;&lt;ObjectType&gt;&gt;&nbsp;</I></FONT><BR/><B>microregiones</B></TD></TR>
+                <TR><TD ALIGN="LEFT">mic_id : Integer [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">mic_nombre : Character(100) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">mic_descripcion : Character(250) [0..1]</TD></TR>
+            </TABLE>
+        >];
+    }
+
+    subgraph cluster_fgan {
+        label = "Paquete conceptual:\nfgan (subsistema productivo)";
+        fontname = "Helvetica,Arial,sans-serif";
+        fontsize = 10.5;
+        fontcolor = "#212529";
+        color = "#ADB5BD";
+        style = "dashed";
+
+        dependencias [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="8"><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;&lt;ObjectType&gt;&gt;</I></FONT><BR/><B>dependencias</B></TD></TR>
+                <TR><TD ALIGN="LEFT">dpe_id : Integer [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">dpe_nombre : Character(100) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">dpe_descripcion : Character(120) [0..1]</TD></TR>
+            </TABLE>
+        >];
+
+        sistemas_produccion [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="8"><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;&lt;ObjectType&gt;&gt;</I></FONT><BR/><B>sistemas_produccion</B></TD></TR>
+                <TR><TD ALIGN="LEFT">spr_id : Integer [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">spr_nombre : Character(100) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">spr_descripcion : Character(180) [0..1]</TD></TR>
+                <TR><TD ALIGN="LEFT">spr_abreviatura : Character(10) [1]</TD></TR>
+            </TABLE>
+        >];
+    }
+
+    edge [arrowhead=vee, style=dashed, penwidth=1.0, color="#6C757D"];
+    municipios -> enum_categoria [label="  <<use>>"];
+
+    edge [arrowhead=none, style=solid, penwidth=1.5, color="#212529"];
+    departamentos -> municipios [
+        taillabel="1", 
+        headlabel="1..*", 
+        label="    compuesto por ▼",
+        labeldistance=1.2,
+        labelangle=-50
+    ];
+    microregiones -> municipios [
+        taillabel="0..1", 
+        headlabel="1..*",
+        label="    agrupa ↙",
+        labeldistance=1.2,
+        labelangle=50
+    ];
+
+    dependencias -> sistemas_produccion [
+        taillabel="1..*", 
+        headlabel="1..*", 
+        label="   gestiona ▼",
+        labeldistance=1.2,
+        labelangle=50
+    ];
+}
+
+```
+
+:::
+
+La evaluación semántica ratifica las multiplicidades *Look-Across* en el subsistema productivo:
+
+* **De `dependencias` hacia `sistemas_produccion`:** Una dependencia técnica debe gestionar al menos un sistema productivo y puede coordinar múltiples de ellos ($1..*$).
+
+* **De `sistemas_produccion` hacia `dependencias`:** Todo sistema productivo reconocido en la guía debe ser supervisado por al menos una dependencia y puede involucrar a varias ($1..*$).
+
+
+**Reificación ontológica y resolución conceptual de asociaciones complejas**: La asociación directa muchos a muchos entre `dependencias` y `sistemas_produccion` ilustrada en la figura anterior es conceptualmente válida cuando el objetivo del modelo se restringe a declarar la compatibilidad funcional entre ambas entidades. No obstante, este constructo binario resulta insuficiente cuando el acto administrativo de vinculación genera información descriptiva propia del evento.
+
+En el contexto sectorial, la asignación de una línea zootécnica a una dependencia institucional no es estática ni atemporal; responde a resoluciones administrativas formalizadas en un momento determinado del calendario operacional. La aparición del atributo **`dps_fecha_asignacion`** exige transformar la arista abstracta en una entidad concreta:
+
+* **Insuficiencia del enlace simple:** Un atributo escalar no puede asociarse directamente a una línea de conexión binaria sin una estructura que lo encapsule formalmente.
+
+* **Reificación a nivel conceptual:** La norma ISO 19109 permite modelar este fenómeno mediante una clase asociativa o una entidad intermedia reificada (`dependencias_sistemas_produccion`). En este nivel de abstracción conceptual pura, dicha clase contiene exclusivamente el atributo propio del evento (`dps_fecha_asignacion : Date [1]`), descomponiendo la relación $M:N$ original en dos asociaciones binarias subordinadas de cardinalidad $1 \longleftrightarrow 1..*$ gobernadas por multiplicidades *Look-Across*.
+
+
+La migración de identificadores foráneos (`dpe_id`, `spr_id`) y la definición de claves primarias compuestas se omiten rigurosamente en este diagrama, preservando la pureza conceptual hasta la formalización del diseño lógico relacional.
+
+::: {.diagrama-ancho}
+
+```{dot}
+//| label: fig-uml-conceptual-fgan-asociativa
+//| fig-cap: "Modelo conceptual territorial y formalización de la clase asociativa en el subsistema productivo según ISO 19109."
+//| fig-width: 6.5
+//| fig-height: 5.8
+//| out-width: "100%"
+//| fig-align: center
+//| echo: false
+
+digraph UML_Conceptual_Asociativa {
+    graph [rankdir=TB, bgcolor="transparent", pad="0.15", nodesep=0.5, ranksep=0.65];
+    node [fontname="Helvetica,Arial,sans-serif", fontsize=9.5];
+    edge [fontname="Helvetica,Arial,sans-serif", fontsize=8.5, color="#212529"];
+
+    enum_categoria [shape=plain, label=<
+        <TABLE BGCOLOR="#FFFFFF" BORDER="1.0" CELLBORDER="0" CELLPADDING="3" CELLSPACING="0" COLOR="#6C757D">
+            <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="8"><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;&lt;Enumeration&gt;&gt;</I></FONT><BR/><B>dom_mun_categoria</B></TD></TR>
+            <TR><TD ALIGN="LEFT">ESPECIAL</TD></TR>
+            <TR><TD ALIGN="LEFT">PRIMERA</TD></TR>
+            <TR><TD ALIGN="LEFT">SEGUNDA</TD></TR>
+            <TR><TD ALIGN="LEFT">TERCERA</TD></TR>
+            <TR><TD ALIGN="LEFT">CUARTA</TD></TR>
+            <TR><TD ALIGN="LEFT">QUINTA</TD></TR>
+            <TR><TD ALIGN="LEFT">SEXTA</TD></TR>
+        </TABLE>
+    >];
+
+    subgraph cluster_divpol {
+        label = "Paquete conceptual:\ndivpol";
+        fontname = "Helvetica,Arial,sans-serif";
+        fontsize = 10.5;
+        fontcolor = "#212529";
+        color = "#ADB5BD";
+        style = "dashed";
+
+        departamentos [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="8"><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;&lt;FeatureType&gt;&gt;&nbsp;</I></FONT><BR/><B>departamentos</B></TD></TR>
+                <TR><TD ALIGN="LEFT">dep_id : Character(2) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">dep_nombre : Character(100) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">dep_region : Character(50) [0..1]</TD></TR>
+                <TR><TD ALIGN="LEFT"><B>the_geom : MultiPolygon [1]</B></TD></TR>
+            </TABLE>
+        >];
+
+        municipios [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="8"><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;&lt;FeatureType&gt;&gt;&nbsp;&nbsp;&nbsp;&nbsp;</I></FONT><BR/><B>municipios</B></TD></TR>
+                <TR><TD ALIGN="LEFT">mun_id : Character(5) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">mun_nombre : Character(100) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">mun_categoria : dom_mun_categoria [0..1]</TD></TR>
+                <TR><TD ALIGN="LEFT"><B>the_geom : MultiPolygon [1]</B></TD></TR>
+            </TABLE>
+        >];
+    }
+
+    subgraph cluster_public {
+        label = "Paquete conceptual:\npublic";
+        fontname = "Helvetica,Arial,sans-serif";
+        fontsize = 10.5;
+        fontcolor = "#212529";
+        color = "#ADB5BD";
+        style = "dashed";
+
+        microregiones [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="8"><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;&lt;ObjectType&gt;&gt;&nbsp;</I></FONT><BR/><B>microregiones</B></TD></TR>
+                <TR><TD ALIGN="LEFT">mic_id : Integer [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">mic_nombre : Character(100) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">mic_descripcion : Character(250) [0..1]</TD></TR>
+            </TABLE>
+        >];
+    }
+
+    subgraph cluster_fgan {
+        label = "Paquete conceptual:\nfgan (subsistema productivo)";
+        fontname = "Helvetica,Arial,sans-serif";
+        fontsize = 10.5;
+        fontcolor = "#212529";
+        color = "#ADB5BD";
+        style = "dashed";
+
+        dependencias [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="8"><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;&lt;ObjectType&gt;&gt;</I></FONT><BR/><B>dependencias</B></TD></TR>
+                <TR><TD ALIGN="LEFT">dpe_id : Integer [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">dpe_nombre : Character(100) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">dpe_descripcion : Character(120) [0..1]</TD></TR>
+            </TABLE>
+        >];
+
+        dependencias_sistemas_produccion [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="6" CELLSPACING="0" COLOR="#0d6efd">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#0d6efd" POINT-SIZE="8"><I>&lt;&lt;ObjectType&gt;&gt;</I></FONT><BR/><B>&nbsp;&nbsp;&nbsp;dependencias_sistemas_produccion&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;dps_fecha_asignacion : Date [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;dps_descripcion : Character(130) [0..1]&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+
+        sistemas_produccion [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="8"><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;&lt;ObjectType&gt;&gt;</I></FONT><BR/><B>sistemas_produccion</B></TD></TR>
+                <TR><TD ALIGN="LEFT">spr_id : Integer [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">spr_nombre : Character(100) [1]</TD></TR>
+                <TR><TD ALIGN="LEFT">spr_descripcion : Character(180) [0..1]</TD></TR>
+                <TR><TD ALIGN="LEFT">spr_abreviatura : Character(10) [1]</TD></TR>
+            </TABLE>
+        >];
+    }
+
+    // Dependencia de dominio discreto
+    edge [arrowhead=vee, style=dashed, penwidth=1.0, color="#6C757D"];
+    municipios -> enum_categoria [label="  <<use>>"];
+
+    // Asociaciones binarias territoriales
+    edge [arrowhead=none, style=solid, penwidth=1.5, color="#212529"];
+    departamentos -> municipios [
+        taillabel="1", 
+        headlabel="1..*", 
+        label="    compuesto por ▼",
+        labeldistance=1.2,
+        labelangle=-50
+    ];
+    microregiones -> municipios [
+        taillabel="0..1", 
+        headlabel="1..*", 
+        label="    agrupa ↙",
+        labeldistance=1.2,
+        labelangle=50
+    ];
+
+    // Descomposición asociativa en fgan
+    dependencias -> dependencias_sistemas_produccion [
+        taillabel="1", 
+        headlabel="1..*", 
+        label="  asigna ▼",
+        labeldistance=1.3,
+        labelangle=-45
+    ];
+
+    dependencias_sistemas_produccion -> sistemas_produccion [
+        taillabel="1..*", 
+        headlabel="1", 
+        label="  tipifica ▲",
+        labeldistance=1.3,
+        labelangle=-45
+    ];
+}
+
+```
+
+:::
+
+
+## Caso de estudio: modelo conceptual integral y gobernanza de la Guía Ambiental {#sec-conceptual-caso_estudio}
+
+En sistemas de información geográfica corporativos, el catálogo de la base de datos no debe estructurarse como un repositorio plano donde todas las clases coexistan de forma indiferenciada. La formalización conceptual exige aplicar el principio de modularidad mediante **paquetes UML**, los cuales prefiguran la creación de **esquemas (*schemas*)** dentro del gestor relacional.
+
+A lo largo de las secciones previas de este capítulo se abordaron de forma progresiva y aislada diversos requerimientos territoriales, cartográficos y gremiales. En esta sección se consolida la arquitectura conceptual completa e integrada, tomando como referencia técnica y temática las dimensiones biofísicas, operativas e institucionales descritas en la **Guía Ambiental para el Sector Ganadero Bovino de Colombia** con el propósito de ejercitar el diseño formal sobre una problemática sectorial representativa.
+
+La estructura integral del caso de estudio se formaliza a través de dos esquemas conceptuales complementarios:
+
+* **Sustrato territorial, gradientes biofísicos e infraestructura de referencia (@fig-uml-biofisico-territorial):** Articula la jerarquía político-administrativa oficial (`divpol`), la zonificación ambiental continua de la Guía Ambiental (`guia`), la conectividad de transporte (`public`) y las redes físicas de soporte continuo (`base750`).
+
+* **Subsistema productivo pecuario y convergencia multidimensional (@fig-uml-actividad-ganadera-multidimensional):** Modela la gestión institucional interna de las áreas técnicas y las orientaciones zootécnicas (`fgan`), consolidando la clase asociativa central que captura la actividad productiva en el espacio municipal y en el tiempo de monitoreo.
+
+::: {.callout-note appearance="simple" title="Alcance pedagógico y descargo de responsabilidad"}
+El esquema conceptual y los datos utilizados a lo largo de este caso de estudio constituyen un modelo sintético diseñado exclusivamente para la docencia universitaria. El diseño no reproduce la infraestructura tecnológica ni los repositorios operacionales de la **Federación Colombiana de Ganaderos (FEDEGAN)**, y prescinde en su totalidad de datos reales, comerciales o sujetos a reserva de confidencialidad. Toda la información geográfica de soporte proviene de coberturas públicas abiertas del Estado colombiano o de capas vectoriales sintetizadas para las prácticas.
+:::
+
+### Arquitectura modular de paquetes y delimitación de esquemas
+
+La gobernanza de la información sectorial y territorial se articula a través de cinco dominios conceptuales:
+
+| Paquete UML / Esquema | Naturaleza ontológica | Propósito y alcance funcional | Clases principales |
+| - | - | --- | -- |
+| `divpol` | Territorial oficial | Modela la división político-administrativa legal de Colombia en su estructura jerárquica canónica. | `nacion`, `departamentos`, `municipios`. |
+| `base750` | Cartografía básica | Gestiona coberturas vectoriales continuas de referencia nacional cuya traza espacial es independiente de las fronteras municipales. | `vias_lineas`, `hidro_lineas`. |
+| `public` | Catálogos compartidos | Aloja dimensiones transversales, estructuras de zonificación agregada y redes de conectividad logística de uso común en el sistema. | `periodos`, `microregiones`, `rutas` (y el dominio `dom_estado_ruta`). |
+| `fgan` | Gremial y productivo | Estructura las variables productivas, tipologías zootécnicas y dependencias del subsistema gremial pecuario. | `sistemas_produccion`, `dependencias`, `actividad_ganadera`. |
+| `guia` | Biofísico y ambiental | Tipifica las condiciones del medio natural para el ordenamiento pecuario sostenible según la Guía Ambiental. | `ecorregiones`, `megapaisajes`, `pisos_termicos`, `provincias_humedad`. |
+
+: Organización modular de paquetes conceptuales UML y correspondencia con esquemas temáticos {#tbl-paquetes-esquemas-fedegan}
+
+### Criterios de depuración ontológica y exclusión de artefactos CAD
+
+Al levantar los requerimientos a partir de repositorios cartográficos heredados (archivos CAD o coberturas Shapefile desestructuradas presentes en capas de cartografía base como `base750` de la base de datos `sig_db_unal` trabajada en capítulos anteriores), es habitual encontrar capas geométricas como `vias_puntos` (hitos de kilometraje aislados) o `vias_texto` (capas de texto de dibujo CAD).
+
+En la ingeniería de bases de datos espaciales, los textos de dibujo y etiquetas flotantes no se modelan como entidades espaciales independientes:
+
+* Las anotaciones toponímicas constituyen **atributos descriptivos alfanuméricos** (`dep_nombre`, `mun_nombre`, `via_nombre`) que pertenecen intrínsecamente a la entidad territorial o vial correspondiente.
+
+* La representación visual del texto en pantalla es una **responsabilidad de renderizado y rotulado dinámico** asumida por el motor de visualización cartográfica del cliente SIG (QGIS o MapLibre), no una tabla de geometrías en la base de datos.
+
+Por este motivo, las tablas de texto se excluyen rigurosamente del modelo conceptual, preservando la cohesión semántica del sistema.
+
+
+### Entidades biofísicas y agregaciones administrativas
+
+El modelo clasifica las entidades según el origen y la persistencia de su componente espacial en tres categorías de modelado:
+
+* **Zonificaciones agregadas (`public.microregiones`):** Entidad tabular que no almacena un atributo geométrico propio (`the_geom`). Representa una agrupación operativa de municipios completos, por lo que su contorno cartográfico es derivado y se resuelve mediante la unión y disolución espacial de los polígonos municipales miembros. La multiplicidad define que un municipio se vincula a lo sumo a una microrregión ($0..1$).
+
+* **Unidades con geometría propia (`guia.ecorregiones`):** Cobertura poligonal independiente cuyos límites están definidos por la confluencia de gradientes ambientales (`megapaisajes`, `pisos_termicos` y `provincias_humedad`). Al responder a factores biofísicos y no a divisiones legales, sus geometrías cortan transversalmente las fronteras municipales y departamentales.
+
+* **Infraestructura temática (`public.rutas`):** Cobertura lineal con geometría propia (`LineString`) orientada exclusivamente a la logística pecuaria. A diferencia de las capas continuas de ejes de transporte de la cartografía base (`base750.vias_lineas`), captura segmentos viales de interés con atributos de impedancia (`rut_distancia`, `rut_tiempo`, `rut_velocidad`) y un estado cualitativo restringido por el dominio `dom_estado_ruta`.
+
+:::{.diagrama-ancho}
+```{dot}
+//| label: fig-uml-biofisico-territorial
+//| fig-cap: "Modelo conceptual UML modular articulando la división territorial (divpol/public), la zonificación biofísica (guia) y la infraestructura básica (base750)."
+//| fig-width: 6.5
+//| fig-height: 7.5
+//| out-width: "100%"
+//| fig-align: center
+//| echo: false
+
+digraph UML_Biofisico_Territorial {
+    graph [
+        rankdir=LR, 
+        bgcolor="transparent", 
+        pad="0.15", 
+        nodesep=0.45, 
+        ranksep=0.75
+    ];
+    node [fontname="Helvetica,Arial,sans-serif", fontsize=9];
+    edge [fontname="Helvetica,Arial,sans-serif", fontsize=8.5, color="#212529"];
+
+    // =========================================================================
+    // COMPONENTE 1: PAQUETES divpol Y public
+    // =========================================================================
+
+    subgraph cluster_divpol {
+        label = "Paquete conceptual: divpol";
+        fontname = "Helvetica,Arial,sans-serif";
+        fontsize = 10;
+        fontcolor = "#212529";
+        color = "#ADB5BD";
+        style = "dashed";
+
+        nacion [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="7.5"><I>&lt;&lt;FeatureType&gt;&gt;</I></FONT><BR/><B>&nbsp;&nbsp;&nbsp;&nbsp;nacion&nbsp;&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;nac_id : Character(2) [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;nac_nombre : Character(100) [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;<B>the_geom : MultiPolygon [1]</B>&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+
+        departamentos [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="7.5"><I>&lt;&lt;FeatureType&gt;&gt;</I></FONT><BR/><B>&nbsp;&nbsp;&nbsp;&nbsp;departamentos&nbsp;&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;dep_id : Character(2) [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;dep_nombre : Character(100) [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;dep_region : Character(50) [0..1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;<B>the_geom : MultiPolygon [1]</B>&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+
+        municipios [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="7.5"><I>&lt;&lt;FeatureType&gt;&gt;</I></FONT><BR/><B>&nbsp;&nbsp;&nbsp;&nbsp;municipios&nbsp;&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;mun_id : Character(5) [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;mun_nombre : Character(100) [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;mun_categoria : dom_mun_categoria [0..1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;<B>the_geom : MultiPolygon [1]</B>&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+    }
+
+    subgraph cluster_public {
+        label = "Paquete conceptual: public";
+        fontname = "Helvetica,Arial,sans-serif";
+        fontsize = 10;
+        fontcolor = "#212529";
+        color = "#ADB5BD";
+        style = "dashed";
+
+        periodos [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="7.5"><I>&lt;&lt;ObjectType&gt;&gt;</I></FONT><BR/><B>&nbsp;&nbsp;&nbsp;&nbsp;periodos&nbsp;&nbsp;&nbsp;&nbsp;</B></TD></TR>                    
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;per_id : Integer [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;per_nombre : Character(50) [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;per_descripcion : Character(80) [0..1]&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+
+        microregiones [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="7.5"><I>&lt;&lt;ObjectType&gt;&gt;</I></FONT><BR/><B>&nbsp;&nbsp;&nbsp;&nbsp;microregiones&nbsp;&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;mic_id : Integer [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;mic_nombre : Character(100) [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;mic_descripcion : Character(250) [0..1]&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+
+        rutas [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="7.5"><I>&lt;&lt;FeatureType&gt;&gt;</I></FONT><BR/><B>&nbsp;&nbsp;&nbsp;&nbsp;rutas&nbsp;&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;rut_id : Integer [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;rut_distancia : Real [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;rut_tiempo : Real [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;rut_velocidad : Real [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;rut_estado : dom_estado_ruta [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;<B>the_geom : LineString [1]</B>&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+
+        dom_estado_ruta [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.0" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0" COLOR="#6C757D">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="7.5"><I>&lt;&lt;Enumeration&gt;&gt;</I></FONT><BR/><B>&nbsp;&nbsp;dom_estado_ruta&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;MUY BUENO&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;BUENO&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;MALO&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;MUY MALO&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+
+        // Alineación interna en dos columnas dentro de public
+        { rank = same; periodos; rutas; }
+        { rank = same; microregiones; dom_estado_ruta; }
+    }
+
+    // =========================================================================
+    // DOMINIO EXTERNO: UBICADO EN COLUMNA 3 DEBAJO DE MUNICIPIOS
+    // =========================================================================
+    dom_mun_categoria [shape=plain, label=<
+        <TABLE BGCOLOR="#FFFFFF" BORDER="1.0" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0" COLOR="#6C757D">
+            <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="7.5"><I>&lt;&lt;Enumeration&gt;&gt;</I></FONT><BR/><B>&nbsp;&nbsp;dom_mun_categoria&nbsp;&nbsp;</B></TD></TR>
+            <TR><TD ALIGN="LEFT">&nbsp;&nbsp;ESPECIAL&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT">&nbsp;&nbsp;PRIMERA&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT">&nbsp;&nbsp;SEGUNDA&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT">&nbsp;&nbsp;TERCERA&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT">&nbsp;&nbsp;CUARTA&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT">&nbsp;&nbsp;QUINTA&nbsp;&nbsp;</TD></TR>
+            <TR><TD ALIGN="LEFT">&nbsp;&nbsp;SEXTA&nbsp;&nbsp;</TD></TR>
+        </TABLE>
+    >];
+
+    // Enlace invisible que ubica a dom_mun_categoria en la Columna 3 al lado de public
+    microregiones -> dom_mun_categoria [style=invis];
+
+    // Asociaciones del bloque territorial (divpol y public)
+    nacion -> departamentos [
+        taillabel="1  ", 
+        headlabel="  1..*", 
+        label="  compone ►  ", 
+        minlen=1, 
+        labeldistance=1.6, 
+        labelangle=-30
+    ];
+    departamentos -> municipios [
+        taillabel="1  ", 
+        headlabel="  1..*", 
+        label="  compone ►  ", 
+        minlen=1, 
+        labeldistance=1.6, 
+        labelangle=-30
+    ];
+    microregiones -> municipios [
+        taillabel="0..1  ", 
+        headlabel="  1..*", 
+        label="  agrupa ↗  ", 
+        labeldistance=1.8, 
+        labelangle=45
+    ];
+
+    // Dependencia de enumeración interna en public
+    rutas -> dom_estado_ruta [
+        label="  <<use>>  ", 
+        style=dashed, 
+        arrowhead=vee, 
+        color="#6C757D", 
+        penwidth=1.0
+    ];
+
+    // Dependencia vertical hacia abajo (sin empujar columnas a la derecha)
+    municipios -> dom_mun_categoria [
+        label="  <<use>> ▼  ", 
+        style=dashed, 
+        arrowhead=vee, 
+        color="#6C757D", 
+        penwidth=1.0,
+        constraint=false
+    ];
+
+    // =========================================================================
+    // COMPONENTE 2: PAQUETES guia Y base750
+    // =========================================================================
+
+    subgraph cluster_guia {
+        label = "Paquete conceptual: guia";
+        fontname = "Helvetica,Arial,sans-serif";
+        fontsize = 10;
+        fontcolor = "#212529";
+        color = "#ADB5BD";
+        style = "dashed";
+
+        megapaisajes [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="7.5"><I>&lt;&lt;ObjectType&gt;&gt;</I></FONT><BR/><B>&nbsp;&nbsp;&nbsp;&nbsp;megapaisajes&nbsp;&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;mpa_id : Integer [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;mpa_nombre : Character(100) [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;mpa_descripcion : Character(200) [0..1]&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+
+        pisos_termicos [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="7.5"><I>&lt;&lt;ObjectType&gt;&gt;</I></FONT><BR/><B>&nbsp;&nbsp;&nbsp;&nbsp;pisos_termicos&nbsp;&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;pte_id : Integer [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;pte_nombre : Character(100) [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;pte_descripcion : Character(200) [0..1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;pte_acronimo : Character(10) [0..1]&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+
+        provincias_humedad [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="7.5"><I>&lt;&lt;ObjectType&gt;&gt;</I></FONT><BR/><B>&nbsp;&nbsp;&nbsp;&nbsp;provincias_humedad&nbsp;&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;hup_id : Integer [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;hup_nombre : Character(100) [1]&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+
+        ecorregiones [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="7.5"><I>&lt;&lt;FeatureType&gt;&gt;</I></FONT><BR/><B>&nbsp;&nbsp;&nbsp;&nbsp;ecorregiones&nbsp;&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;eco_id : Integer [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;eco_nombre : Character(100) [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;<B>the_geom : MultiPolygon [1]</B>&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+    }
+
+    subgraph cluster_base750 {
+        label = "Paquete conceptual: base750";
+        fontname = "Helvetica,Arial,sans-serif";
+        fontsize = 10;
+        fontcolor = "#212529";
+        color = "#ADB5BD";
+        style = "dashed";
+
+        vias_lineas [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="7.5"><I>&lt;&lt;FeatureType&gt;&gt;</I></FONT><BR/><B>&nbsp;&nbsp;&nbsp;&nbsp;vias_lineas&nbsp;&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;via_id : Integer [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;via_codigo : Character(20) [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;<B>the_geom : LineString [1]</B>&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+
+        hidro_lineas [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="7.5"><I>&lt;&lt;FeatureType&gt;&gt;</I></FONT><BR/><B>&nbsp;&nbsp;&nbsp;&nbsp;hidro_lineas&nbsp;&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;hid_id : Integer [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;hid_nombre : Character(100) [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;<B>the_geom : LineString [1]</B>&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+    }
+
+    // Enlaces invisibles de alineación entre filas
+    hidro_lineas -> provincias_humedad [style=invis, minlen=1];
+    periodos -> microregiones [style=invis, minlen=1];
+
+    // Asociaciones del paquete biofísico guia
+    megapaisajes -> ecorregiones [
+        taillabel="1  ", 
+        headlabel="  1..*", 
+        label="  caracteriza ↘  ", 
+        labeldistance=1.6, 
+        labelangle=35
+    ];
+    pisos_termicos -> ecorregiones [
+        taillabel="1  ", 
+        headlabel="  1..*", 
+        label="  clasifica ►  ", 
+        labeldistance=1.6, 
+        labelangle=-30
+    ];
+    provincias_humedad -> ecorregiones [
+        taillabel="1  ", 
+        headlabel="  1..*", 
+        label="  condiciona ↗  ", 
+        labeldistance=1.6, 
+        labelangle=-35
+    ];
+}
+
+```
+
+:::
+
+### Asociación multidimensional en el sistema productivo institucional
+
+El subsistema productivo pecuario no obedece a un esquema de contención cartográfica, sino a una gobernanza técnico-operativa multidimensional:
+
+* Múltiples dependencias técnicas (`fgan.dependencias`) gestionan concurrentemente múltiples orientaciones zootécnicas (`fgan.sistemas_produccion` como cría, ceba, levante o doble propósito).
+
+* La localización territorial de estos sistemas en los municipios no es estática: se encuentra bajo la supervisión de un área técnica responsable y su vigencia cronológica está determinada por la entidad temporal `public.periodos`.
+
+* Esta interacción compleja se formaliza mediante la clase asociativa central **`fgan.actividad_ganadera`**, la cual articula directamente a los municipios con los sistemas de producción, las dependencias institucionales y los ciclos temporales. En este nivel de abstracción conceptual, la clase asociativa se modela únicamente con su identificador propio (`aga_id`) y sus asociaciones estructurales.
+
+
+:::{.diagrama-70ancho}
+```{dot}
+//| label: fig-uml-actividad-ganadera-multidimensional
+//| fig-cap: "Modelo conceptual UML para la actividad ganadera como asociación multidimensional articulada por esquemas temáticos."
+//| fig-width: 4.5
+//| fig-height: 5.5
+//| out-width: "100%"
+//| fig-align: center
+//| echo: false
+
+digraph UML_Actividad_Ganadera {
+    graph [
+        rankdir=TB, 
+        bgcolor="transparent", 
+        pad="0.15", 
+        nodesep=0.55, 
+        ranksep=0.70
+    ];
+    node [fontname="Helvetica,Arial,sans-serif", fontsize=9.5];
+    edge [fontname="Helvetica,Arial,sans-serif", fontsize=8.5, color="#212529"];
+
+    // =========================================================================
+    // NIVELES 1, 2 Y 3: PAQUETE CONCEPTUAL fgan (SUBSISTEMA PRODUCTIVO)
+    // =========================================================================
+    subgraph cluster_fgan {
+        label = "Paquete conceptual: fgan (subsistema productivo)";
+        fontname = "Helvetica,Arial,sans-serif";
+        fontsize = 10.5;
+        fontcolor = "#212529";
+        color = "#ADB5BD";
+        style = "dashed";
+
+        // Nivel 1: Entidad intermedia reificada institucional
+        dependencias_sistemas_produccion [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#0d6efd">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#0d6efd" POINT-SIZE="7.5"><I>&lt;&lt;ObjectType&gt;&gt;</I></FONT><BR/><B>&nbsp;&nbsp;dependencias_sistemas_produccion&nbsp;&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;dps_fecha_asignacion : Date [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;dps_descripcion : Character(130) [0..1]&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+
+        // Nivel 2: Catálogos maestros de fgan
+        dependencias [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="7.5"><I>&lt;&lt;ObjectType&gt;&gt;</I></FONT><BR/><B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dependencias&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;dpe_id : Integer [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;dpe_nombre : Character(100) [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;dpe_descripcion : Character(120) [0..1]&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+
+        sistemas_produccion [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="7.5"><I>&lt;&lt;ObjectType&gt;&gt;</I></FONT><BR/><B>&nbsp;&nbsp;&nbsp;&nbsp;sistemas_produccion&nbsp;&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;spr_id : Integer [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;spr_nombre : Character(100) [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;spr_descripcion : Character(180) [0..1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;spr_abreviatura : Character(10) [1]&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+
+        // Nivel 3: Entidad asociativa central territorial
+        actividad_ganadera [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="6" CELLSPACING="0" COLOR="#0d6efd">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#0d6efd" POINT-SIZE="7.5"><I>&lt;&lt;ObjectType&gt;&gt;</I></FONT><BR/><B>&nbsp;&nbsp;&nbsp;actividad_ganadera&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;&nbsp;&nbsp;aga_id : Integer [1]&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+
+        // Alineación horizontal del Nivel 2 dentro de fgan
+        { rank = same; dependencias; sistemas_produccion; }
+    }
+
+    // =========================================================================
+    // NIVEL 4 (INFERIOR IZQUIERDA): PAQUETE CONCEPTUAL divpol
+    // =========================================================================
+    subgraph cluster_divpol {
+        label = "Paquete conceptual: divpol";
+        fontname = "Helvetica,Arial,sans-serif";
+        fontsize = 10;
+        fontcolor = "#212529";
+        color = "#ADB5BD";
+        style = "dashed";
+
+        municipios [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="7.5"><I>&lt;&lt;FeatureType&gt;&gt;</I></FONT><BR/><FONT COLOR="#6C757D" POINT-SIZE="8">divpol::</FONT><B>municipios</B></TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;mun_id : Character(5) [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;...&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+    }
+
+    // =========================================================================
+    // NIVEL 4 (INFERIOR DERECHA): PAQUETE CONCEPTUAL public
+    // =========================================================================
+    subgraph cluster_public {
+        label = "Paquete conceptual: public";
+        fontname = "Helvetica,Arial,sans-serif";
+        fontsize = 10;
+        fontcolor = "#212529";
+        color = "#ADB5BD";
+        style = "dashed";
+
+        periodos [shape=plain, label=<
+            <TABLE BGCOLOR="#FFFFFF" BORDER="1.5" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#212529">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><FONT COLOR="#495057" POINT-SIZE="7.5"><I>&lt;&lt;ObjectType&gt;&gt;</I></FONT><BR/><FONT COLOR="#6C757D" POINT-SIZE="8">public::</FONT><B>periodos</B></TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;per_id : Integer [1]&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;&nbsp;...&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+    }
+
+    // Alineación horizontal de paquetes externos en la base
+    { rank = same; municipios; periodos; }
+
+    // Enlaces invisibles que estructuran la jerarquía vertical estricta
+    dependencias_sistemas_produccion -> dependencias [style=invis];
+    dependencias_sistemas_produccion -> sistemas_produccion [style=invis];
+    actividad_ganadera -> municipios [style=invis];
+    actividad_ganadera -> periodos [style=invis];
+
+    // =========================================================================
+    // ASOCIACIONES Y MULTIPLICIDADES
+    // =========================================================================
+    // Resolución asociativa institucional hacia Nivel 1 (arriba)
+    dependencias -> dependencias_sistemas_produccion [
+        constraint=false,
+        taillabel="1  ", 
+        headlabel="  1..*", 
+        label="  asigna ▲  ", 
+        penwidth=1.3, 
+        labeldistance=2, 
+        labelangle=-35
+    ];
+
+    sistemas_produccion -> dependencias_sistemas_produccion [
+        constraint=false,
+        taillabel="1  ", 
+        headlabel="  1..*", 
+        label="  tipifica ↖  ", 
+        penwidth=1.3, 
+        labeldistance=1.8, 
+        labelangle=-30
+    ];
+
+    // Asociaciones directas hacia la actividad ganadera (Nivel 2 -> Nivel 3)
+    dependencias -> actividad_ganadera [
+        taillabel="1  ", 
+        headlabel="  0..*", 
+        label="  supervisa ▼  ", 
+        penwidth=1.3, 
+        labeldistance=1.8, 
+        labelangle=-30
+    ];
+
+    sistemas_produccion -> actividad_ganadera [
+        taillabel="1  ", 
+        headlabel="  0..*", 
+        label="  orienta ↙  ", 
+        penwidth=1.3, 
+        labeldistance=1.5, 
+        labelangle=30
+    ];
+
+    // Asociaciones espaciotemporales ascendentes (Nivel 4 -> Nivel 3)
+    municipios -> actividad_ganadera [
+        constraint=false,
+        taillabel="1  ", 
+        headlabel="0..*  ", 
+        label="  localiza ▲  ", 
+        penwidth=1.3, 
+        labeldistance=2.2, 
+        labelangle=-30
+    ];
+
+    periodos -> actividad_ganadera [
+        constraint=false,
+        taillabel="  1", 
+        headlabel="  0..*", 
+        label="  temporaliza ↖  ", 
+        penwidth=1.3, 
+        labeldistance=2.2, 
+        labelangle=-40
+    ];
+}
+```
+
+:::
+
+La articulación entre coberturas político-administrativas, mallas de infraestructura, variables zootécnicas y gradientes biofísicos consolida un esquema conceptual representativo del territorio. No obstante, para que este modelo sea completo y transferible hacia la fase de diseño lógico, los diagramas gráficos deben complementarse obligatoriamente con especificaciones descriptivas de dominio y reglas de integridad del negocio, las cuales se formalizan a continuación.
+
+## Documentación de soporte y reglas de integridad del negocio
+
+Tal como establece la metodología formal del modelo Entidad-Relación y las normas ISO 19100, un modelo conceptual es incompleto si se restringe exclusivamente al diagrama gráfico. Requiere una especificación descriptiva rigurosa que documente el significado contextual de sus atributos y las reglas operativas que gobiernan la integridad territorial.
+
+### Estructura formal del diccionario de datos conceptual
+
+El diccionario de datos define formalmente el catálogo de entidades y atributos del subsistema territorial base:
+
+| Entidad | Atributo | Mnemotécnico | Modalidad | Dominio conceptual | Significado semántico y reglas operativas |
+| -- | -- | -- | - | -- | -- |
+| `departamentos` | Código departamental | `dep_id` | Obligatorio (`#*`) | Patrón `^[0-9]{2}$` | Código oficial asignado por la codificación DIVIPOLA del DANE. |
+| `departamentos` | Nombre oficial | `dep_nombre` | Obligatorio (`*`) | Texto $[1, 100]$ | Topónimo oficial de la entidad territorial seccional. |
+| `departamentos` | Región geográfica | `dep_region` | Opcional (`º`) | Enumerado / Texto | Región geográfica o de planeación nacional (ej. 'Caribe', 'Andina'). |
+| `departamentos` | Componente espacial | `the_geom` | Obligatorio (`*`) | `MultiPolygon` 2D | Superficie poligonal compuesta referenciada a la cartografía oficial. |
+| `municipios` | Código municipal | `mun_id` | Obligatorio (`#*`) | Patrón `^[0-9]{5}$` | Código oficial DIVIPOLA ($dep\_id + cod\_local$). |
+| `municipios` | Nombre oficial | `mun_nombre` | Obligatorio (`*`) | Texto $[1, 100]$ | Topónimo oficial de la entidad local municipal. |
+| `municipios` | Categoría legal | `mun_categoria` | Opcional (`º`) | Enumerado legal | Categoría fiscal y administrativa bajo los criterios de la Ley 617 de 2000. |
+| `municipios` | Componente espacial | `the_geom` | Obligatorio (`*`) | `MultiPolygon` 2D | Superficie poligonal del municipio con tolerancia a enclaves e islas. |
+| `microregiones` | Identificador | `mic_id` | Obligatorio (`#*`) | Entero monotónico | Código numérico secuencial de control gremial o ambiental. |
+| `microregiones` | Nombre | `mic_nombre` | Obligatorio (`*`) | Texto $[1, 100]$ | Denominación toponímica asignada a la agregación municipal. |
+| `microregiones` | Descripción | `mic_descripcion` | Opcional (`º`) | Texto libre | Caracterización de las dinámicas productivas de la zona. |
+
+: Diccionario de datos conceptual para el subsistema territorial base {#tbl-diccionario-datos-conceptual}
+
+### Especificación de invariantes espaciales y reglas de negocio
+
+Las reglas de negocio formalizan condiciones de integridad semántica y geométrica que deben cumplirse conceptualmente:
+
+* **Invariante de partición político-administrativa:** Los polígonos correspondientes a los municipios que integran un departamento conforman una partición territorial estricta de dicho departamento:
+
+$$\bigcup_{m \in M_d} m.\text{the\_geom} = d.\text{the\_geom} \quad \wedge \quad \operatorname{int}(m_i) \cap \operatorname{int}(m_j) = \emptyset \quad (\forall i \neq j)$$
+
+No se admiten solapamientos superficiales ni vacíos espaciales entre límites municipales colindantes.
+
+* **Consistencia jerárquica de identificadores:** El código del departamento al que pertenece un municipio debe coincidir de forma unívoca con los primeros dos dígitos del código municipal:
+
+$$\text{mun\_id}[1..2] \equiv \text{dep\_id}$$
+
+* **Contención topológica estricta:** Todo fenómeno o punto de monitoreo asignado conceptualmente a un municipio debe estar estrictamente contenido dentro de su delimitación cartográfica:
+
+$$\operatorname{ST\_Within}(p.\text{the\_geom}, \, m.\text{the\_geom}) = \text{TRUE}$$
+
+* **Exclusividad de adscripción microrregional:** Un municipio puede no estar integrado en ninguna delimitación gremial, pero si se adscribe, solo puede pertenecer como máximo a una microrregión ganadera de forma concurrente.
+
+* **Transversalidad de fronteras biofísicas:** La delimitación de las ecorregiones pecuarias (`guia.ecorregiones`) responde a gradientes biofísicos continuos (`mpa_`, `pte_`, `hup_`) y no se encuentra restringida por las fronteras político-administrativas:
+
+$$\operatorname{ST\_Crosses}(e.\text{the\_geom}, \, d.\text{the\_geom}) = \text{TRUE} \quad \vee \quad \operatorname{ST\_Overlaps}(e.\text{the\_geom}, \, m.\text{the\_geom}) = \text{TRUE}$$
+
+Un polígono ecorregional puede interceptar transversalmente múltiples límites municipales y departamentales sin que ello constituya un error topológico.
+
+* **Integridad de dominio sobre el estado de la infraestructura vial:** El atributo cualitativo `rut_estado` en la entidad `public.rutas` queda restringido estrictamente al conjunto de literales tipificados en su enumeración conceptual:
+
+$$\text{rut\_estado} \in \{\text{'MUY BUENO'}, \, \text{'BUENO'}, \, \text{'MALO'}, \, \text{'MUY MALO'}\}$$
+
+
+
+## Ejercicios de modelado conceptual espacial
+
+1. Abstracción ontológica y lectura canónica en notación de Barker:
+Considérese el subsistema de monitoreo hidrometeorológico de una corporación ambiental compuesto por cuencas hidrográficas, estaciones de monitoreo y sensores telemétricos. Las reglas operativas establecen:
+
+
+
+* Cada cuenca contiene una o más estaciones de monitoreo; cada estación debe instalarse dentro de una y solo una cuenca.
+
+
+* Una estación puede albergar uno o más sensores (pluviométricos, de nivel o temperatura), pero pueden existir estaciones recién construidas sin instrumental instalado aún. Cada sensor debe estar asignado estrictamente a una única estación.
+
+
+
+Se solicita:
+
+* Construir el diagrama Entidad-Relación formal en notación de Barker, distinguiendo atributos obligatorios (*), opcionales (º) e identificadores únicos (#*).
+
+
+* Redactar las proposiciones estructuradas de lectura canónica en ambos sentidos de navegación para cada asociación identificada.
+
+
+
+2. Identificación de dominios y atomicidad conceptual:
+En el levantamiento catastral rural se propone registrar los predios con los siguientes atributos preliminares: `pre_codigo`, `pre_propietarios`, `pre_usos_suelo`, `pre_departamento` y `the_geom`.
+
+
+
+* Argumente por qué los descriptores `pre_propietarios` y `pre_usos_suelo` infringen el principio conceptual de valor único y atomicidad.
+
+
+* Formule la reestructuración conceptual requerida, especificando si las características descartadas deben promoverse a entidades independientes vinculadas mediante asociaciones 1:M o M:N.
+
+
+* Defina la especificación formal de dominios (primitivo, estructurado por patrón o enumerado) para los atributos atómicos resultantes.
+
+
+
+3. Modelado conceptual de relaciones M:N con atributos propios:
+Una autoridad ambiental requiere modelar la interacción entre predios rurales poligonales (`<<FeatureType>>`) y rondas hídricas de protección (`<<FeatureType>>`). La relación espacial es de superposición no jerárquica: un predio puede ser atravesado por múltiples rondas y una ronda afecta a decenas de predios. De dicha intersección surge una propiedad indispensable: el porcentaje de afectación predial (`porcentaje_afectacion`) y la fecha del levantamiento.
+
+
+
+* Diseñe el diagrama E-R en notación de Barker introduciendo una entidad asociativa intermedia que aloje las propiedades del vínculo.
+
+
+* Construya el diagrama de clases conforme al perfil geoespacial ISO 19109/OGC dentro del paquete temático `ambiental`, tipificando las primitivas geométricas, los estereotipos (`<<FeatureType>>`, `<<ObjectType>>`) y las multiplicidades Look-Across.
+
+
+
+4. Derivación geométrica y límites de paquetes conceptuales:
+Diseñe un modelo conceptual en UML estructurado en dos paquetes de dominio: `catastro` y `planeacion`. En `catastro` se definen las clases espaciales primarias `manzanas` y `predios`. En `planeacion` se define la entidad `unidades_actuacion_urbanistica`.
+
+
+
+* Justifique conceptualmente por qué `unidades_actuacion_urbanistica` debe modelarse como `<<ObjectType>>` (sin atributo `the_geom` propio) cuya extensión geográfica es derivada.
+
+
+* Trace las dependencias interpaquete y declare formalmente las multiplicidades Look-Across.

@@ -117,11 +117,13 @@ A continuación se detalla el inventario técnico de extensiones, categorizado s
 | | **Spanish - Code Spell Checker** | Diccionario en español para el corrector ortográfico | `streetsidesoftware.code-spell-checker-spanish` | Base (en contenedor) |
 | **Formato y modelado** | **Rainbow CSV** | Resaltado de columnas e inspección de geometrías WKT | `mechatroner.rainbow-csv` | Sistema anfitrión |
 | | **Mermaid Chart** | Modelado y previsualización de diagramas Entidad-Relación | `MermaidChart.vscode-mermaid-chart` | Sistema anfitrión |
+| | **PlantUML** | Previsualización y modelado de diagramas conceptuales y esquemas OGC | `jebbs.plantuml` | Sistema anfitrión |
 | | **YAML Language Support** | Validación de sintaxis en `_quarto.yml` y contenedores | `redhat.vscode-yaml` | Sistema anfitrión |
 | | **Geo Data Viewer** | Previsualización rápida de capas GeoJSON y WKT | `RandomFractalsInc.geo-data-viewer` | Sistema anfitrión |
 | **Formatos avanzados** | **XML Language Support** | Validación de esquemas XML Workspace y transformaciones | `redhat.vscode-xml` | Diferida (Semana 9) |
 | | **Parquet Viewer** | Inspección tabular de archivos Parquet y GeoParquet | `dvirtz.parquet-viewer` | Diferida (Semana 11) |
 | **Sistemas compilados** | **rust-analyzer** | Servidor de lenguaje para extensiones nativas con PGRX | `rust-lang.rust-analyzer` | Diferida (Semana 16) |
+
 
 : Extensiones de Visual Studio Code para el entorno de bases de datos espaciales {#tbl-extensiones}
 
@@ -137,6 +139,17 @@ En contraste, las herramientas analíticas (R, Python, Julia, PostgreSQL, Quarto
 **PostgreSQL (Chris Kolkman):** Permite conectarse directamente al motor espacial PostGIS del contenedor sin abandonar Visual Studio Code, facilitando la exploración de la estructura de tablas y catálogos espaciales.
 
 **Cliente de terminal `psql`:** La herramienta de línea de comandos `psql` se encuentra integrada de forma nativa en el sistema operativo del contenedor. No requiere configuración adicional para ejecutarse en la terminal integrada. La extensión `doublefint.pgsql` complementa esta utilidad canalizando bloques de código SQL desde el editor hacia la sesión activa mediante atajos de teclado.
+
+
+**PlantUML:** La presencia de la extensión `jebbs.plantuml` en el sistema anfitrión responde exclusivamente a la previsualización interactiva de diagramas conceptuales y esquemas OGC en tiempo de edición mediante el atajo `Alt + D`. Para la compilación en el contenedor de documentos `.qmd` hacia formatos de salida (HTML o PDF), el flujo editorial prescinde de la extensión de Visual Studio Code y opera a través de dos componentes desacoplados:
+
+* **Filtro de Pandoc:** Resuelto automáticamente por Quarto a partir de la carpeta `_extensions/pandoc-ext/diagram/` versionada en la raíz del repositorio Git, prescindiendo de la ejecución de `quarto add`.
+* **Motor de ejecución:** Delegado en los binarios del sistema operativo dentro del contenedor Linux, cuya instalación se detalla en la @sec-anexo-linux-instalacion-plantuml.
+
+::: {.callout-note collapse="true" title="Compilación optativa en el sistema anfitrión local"}
+Si se requiere compilar documentos que contengan bloques `{.plantuml}` directamente en la máquina local (fuera del contenedor de desarrollo), es indispensable disponer de un entorno Java (JRE) y el motor Graphviz registrados en las variables de entorno del sistema anfitrión, además de descargar el binario `plantuml.jar` en la raíz del proyecto y parametrizar su ruta en el encabezado YAML (`execpath: ["java", "-jar", "plantuml.jar"]`). Para el trabajo regular del curso, se recomienda realizar toda compilación dentro del contenedor para prescindir de esta configuración local.
+:::
+
 
 **Previsualización web con Live Server:** Instancia un servidor HTTP local con recarga automática (*live reload*). Es requerida para examinar artefactos HTML interactivos fuera del entorno Quarto (mapas exportados con Leaflet, OpenLayers o MapLibre) y para ejecutar la función de búsqueda del sitio compilado del curso (`_site/index.html`), evitando bloqueos originados por políticas CORS al abrir archivos locales directamente en el navegador.
 

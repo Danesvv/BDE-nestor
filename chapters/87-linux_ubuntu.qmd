@@ -85,6 +85,62 @@ which dot
 ```
 
 
+## Instalación y verificación de PlantUML en el contenedor {#sec-anexo-linux-instalacion-plantuml}
+
+Para la generación automatizada de diagramas de arquitectura y modelado UML en entornos reproducibles, se documenta a continuación el procedimiento de aprovisionamiento de PlantUML y sus dependencias de renderizado en el contenedor Linux.
+
+El flujo comprende el diagnóstico inicial de las dependencias requeridas (entorno de ejecución Java y motor Graphviz), la instalación limpia desde los repositorios oficiales de la distribución y la verificación final de ejecución.
+
+### Diagnóstico previo del entorno
+
+PlantUML requiere la máquina virtual de Java para procesar la sintaxis y el motor Graphviz (`dot`) para resolver la disposición espacial de los nodos. Antes de aprovisionar, se comprueba la presencia de dichos componentes y del binario de PlantUML en las rutas del sistema (`PATH`):
+
+```bash
+#| label: setup-check-plantuml
+#| eval: false
+# 1. Comprobar la disponibilidad de los ejecutables requeridos
+which java dot plantuml
+
+# 2. Verificar la versión y el estado del entorno de ejecución Java
+java -version
+
+# 3. Consultar el estado de los paquetes en el gestor dpkg
+dpkg -l | grep -E "openjdk|graphviz|plantuml"
+
+```
+
+Si `dot` (`graphviz`) no se encuentra en el sistema use @sec-anexo-linux-instalacion-graphviz, sin embargo, la instalación del paquete `plantuml` en distribuciones Debian/Ubuntu resuelve e incluye automáticamente la dependencia de `graphviz`.
+
+### Aprovisionamiento del paquete PlantUML
+
+Para asegurar metadatos actualizados y optimizar el tamaño de la capa del contenedor, se actualiza el índice de paquetes y se instala el paquete del sistema.
+
+```bash
+#| label: setup-install-plantuml
+#| eval: false
+# 1. Sincronizar el catálogo de paquetes
+apt-get update
+
+# 2. Instalar PlantUML y dependencias de renderizado
+apt-get install -y --no-install-recommends plantuml
+
+```
+
+### Verificación posterior de los binarios
+
+Finalizada la instalación, se valida la correcta resolución de rutas de los ejecutables y la capacidad de PlantUML para interactuar con la versión instalada de Graphviz:
+
+```bash
+#| label: setup-verify-plantuml
+#| eval: false
+# 1. Confirmar rutas absolutas de los binarios en el PATH
+which plantuml dot
+
+# 2. Comprobar versiones y vinculación operativa del motor
+dot -V
+plantuml -version
+
+```
 
 ## Comandos comúnes de terminal {#sec-comandos-so}
 

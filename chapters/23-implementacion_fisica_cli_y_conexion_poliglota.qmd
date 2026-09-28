@@ -1,2 +1,0 @@
-# Implementación física, interfaz CLI y conexión políglota
-

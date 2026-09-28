@@ -68,4 +68,11 @@ La puesta en marcha de los servicios orquestados se desarrolla mediante los sigu
 
 ## Instalación de herramientas cliente complementarias
 
-Una vez inicializado el contenedor analítico y abierta la sesión en la terminal integrada de Visual Studio Code, se deben ejecutar las directivas de aprovisionamiento descritas en la @sec-anexo-linux-instalacion-psql y la @sec-anexo-linux-instalacion-graphviz. Esto garantiza la disponibilidad del cliente nativo `psql` correspondiente a la versión mayor del clúster PostgreSQL (v18), así como las utilidades de renderizado topológico y grafos (Graphviz).
+Una vez inicializado el contenedor analítico y abierta la sesión en la terminal integrada de Visual Studio Code, se deben ejecutar las directivas de aprovisionamiento descritas en la @sec-anexo-linux-instalacion-psql, la @sec-anexo-linux-instalacion-graphviz y la @sec-anexo-linux-instalacion-plantuml. Esto garantiza la disponibilidad del cliente nativo `psql` correspondiente a la versión mayor del clúster PostgreSQL (v18), así como las utilidades de renderizado topológico y grafos (Graphviz, PlantUML).
+
+
+## Instalación de herramientas cliente complementarias
+
+Una vez inicializado el contenedor analítico y abierta la sesión en la terminal integrada de Visual Studio Code, se deben ejecutar las directivas de aprovisionamiento descritas en la @sec-anexo-linux-instalacion-psql, la @sec-anexo-linux-instalacion-graphviz y la @sec-anexo-linux-instalacion-plantuml. Esto garantiza la disponibilidad del cliente nativo `psql` correspondiente a la versión mayor del clúster PostgreSQL (v18), así como las utilidades de renderizado topológico y grafos (Graphviz, PlantUML).
+
+Dado que estos paquetes se instalan sobre la capa mutable del contenedor activo, cualquier desmantelamiento de servicios (`docker compose down`) retornará el entorno a la imagen inicial. Para congelar estas herramientas de forma definitiva en la imagen local sin requerir reinstalaciones futuras, se debe consolidar el estado mediante `docker commit`. Ver @sec-persistencia-capa-docker.

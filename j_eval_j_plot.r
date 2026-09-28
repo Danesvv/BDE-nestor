@@ -1,6 +1,62 @@
 # ==============================================================================
-# MOTOR DE INTEROPERABILIDAD GEOMÁTICA - VERSIÓN PRO (FINAL)
+# MOTOR DE INTEROPERABILIDAD GEOMÁTICA - VERSIÓN PRO (ESTABILIZADO 1.11.3)
+# UNIVERSIDAD NACIONAL DE COLOMBIA - BASES DE DATOS ESPACIALES
 # ==============================================================================
+
+# --- 1. VARIABLES DE ENTORNO DEL SISTEMA ---
+Sys.setenv(JULIA_BINDIR = "/opt/julia/bin")
+Sys.setenv(QUARTO_PYTHON = "/usr/bin/python3")
+Sys.setenv(QUARTO_CHROMIUM = "/root/.local/share/quarto/chromium/linux-869685/chrome-linux/chrome")
+Sys.setenv(QUARTO_CHROME_ARGUMENTS = "--no-sandbox --disable-gpu --disable-dev-shm-usage --headless")
+
+# --- 2. CÓDIGO NATIVO JULIA EMBEBIDO ---
+.unal_julia_code <- "
+using Suppressor, Plots, Statistics, LinearAlgebra
+function _unal_core_executor(code, is_plot, filename, dpi, w, h, fs)
+    @capture_out begin
+        if is_plot
+            default(dpi=dpi, size=(w, h), titlefontsize=fs+2, 
+                    guidefontsize=fs, tickfontsize=fs-2, legendfontsize=fs-1)
+        end
+        pos = 1
+        while pos <= lastindex(code)
+            start_idx = pos
+            try
+                ex, pos = Meta.parse(code, pos)
+                cmd_part = strip(code[start_idx:prevind(code, pos)])
+                if !isempty(cmd_part)
+                    println(\"julia> \", cmd_part)
+                    res = eval(ex)
+                    if res !== nothing && !(res isa Plots.Plot)
+                        show(stdout, MIME(\"text/plain\"), res)
+                        println()
+                    end
+                    println() 
+                end
+            catch e
+                println(\"julia> Error: \", e)
+                break
+            end
+        end
+        if is_plot && current() !== nothing; savefig(current(), filename); end
+    end
+end
+"
+
+.ensure_julia_ready <- function() {
+  if (!requireNamespace("JuliaConnectoR", quietly = TRUE)) {
+    stop("El paquete JuliaConnectoR no está instalado o no se encuentra disponible.")
+  }
+  tryCatch({
+    if (!JuliaConnectoR::juliaEval("isdefined(Main, :_unal_core_executor)")) {
+      JuliaConnectoR::juliaEval(.unal_julia_code)
+    }
+  }, error = function(e) {
+    JuliaConnectoR::juliaEval(.unal_julia_code)
+  })
+}
+
+# --- 3. FUNCIONES DE RENDERIZADO Y EVALUACIÓN ---
 
 .j_render_output <- function(res_raw, max_width = 90) {
   fmt_html <- FALSE; fmt_pdf <- FALSE
@@ -46,7 +102,6 @@
     if (length(leading_spaces) == 0) leading_spaces <- ""
     
     indent_len <- nchar(leading_spaces)
-    
     parts <- c()
     current_str <- line
     
@@ -69,11 +124,9 @@
         current_str <- ""
       }
     }
-    
     return(paste(parts, collapse = "\n"))
   }
 
-  # 1. Purga global de artefactos de formato
   res_raw <- gsub("\r", "", res_raw)
   res_raw <- gsub("\u00A0", " ", res_raw)
   res_raw <- gsub("\t", "    ", res_raw)
@@ -95,7 +148,6 @@
     }
     
     if (is_code) {
-      # Conservación matemática de la sangría original sin sustracciones erróneas
       if (is_prompt) {
         p_clean <- sub("^julia> ", "", p)
       } else {
@@ -360,7 +412,6 @@ j_plot <- function(cmd, n = "tmp_plot.png", dpi = 300, w = 800, h = NULL, ratio 
     }
     
     if (en_bloque <= 0 && en_comentario_multi <= 0 && en_triple_comilla == 0) {
-      
       es_ultimo_bloque <- (i == total_lineas) || all(trimws(lineas[(i+1):total_lineas]) == "")
       
       res_log <- JuliaConnectoR::juliaCall("_unal_core_executor", buffer, es_ultimo_bloque, n, dpi, as.integer(w), as.integer(h), as.integer(fontsize))
@@ -373,5 +424,33 @@ j_plot <- function(cmd, n = "tmp_plot.png", dpi = 300, w = 800, h = NULL, ratio 
     img <- png::readPNG(n)
     grid::grid.newpage(); grid::grid.raster(img)
   }
+}
+
+# --- 4. CARGA DE PAQUETES GRÁFICOS Y DISPOSITIVOS ---
+suppressPackageStartupMessages({
+  library(png)
+  library(grid)
+})
+
+if (interactive()) {
+  # Visor httpgd para Visual Studio Code
+  if (requireNamespace("httpgd", quietly = TRUE)) {
+    options(device = "httpgd", httpgd.host = "0.0.0.0", httpgd.port = 8787, httpgd.token = FALSE)
+  }
+  
+  # Hook de interoperabilidad para Matplotlib (Python) vía reticulate
+  setHook(packageEvent("reticulate", "onLoad"), function(...) {
+    try({
+      ret_py <- reticulate::import("reticulate", delay_load = TRUE)
+      reticulate::py_set_attr(ret_py, "r_graphic_command", function(path) {
+        if (file.exists(path)) {
+          img <- png::readPNG(path)
+          grid::grid.newpage()
+          grid::grid.raster(img)
+        }
+      })
+      reticulate::py_run_string("import matplotlib; matplotlib.use('module://reticulate.matplotlib.backend')")
+    }, silent = TRUE)
+  })
 }
 

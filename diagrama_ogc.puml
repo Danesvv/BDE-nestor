@@ -1,0 +1,67 @@
+@startuml
+skinparam style strictuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 9
+skinparam classFontSize 10
+skinparam nodesep 45
+skinparam ranksep 45
+
+package ReferenceSystems {
+    class SpatialReferenceSystem
+    class MeasureReferenceSystem
+}
+
+abstract class Geometry
+
+Geometry --> "1" SpatialReferenceSystem : +spatialRS
+Geometry --> "0..1" MeasureReferenceSystem : +mesureRS
+
+class Point
+abstract class Curve
+abstract class Surface
+class GeometryCollection
+
+Geometry <|-- Point
+Geometry <|-- Curve
+Geometry <|-- Surface
+Geometry <|-- GeometryCollection
+
+class LineString
+class Line
+class LinearRing
+
+Curve <|-- LineString
+LineString <|-- Line
+LineString <|-- LinearRing
+
+class Polygon
+class PolyhedralSurface
+
+Surface <|-- Polygon
+Surface <|-- PolyhedralSurface
+
+abstract class MultiSurface
+abstract class MultiCurve
+class MultiPoint
+class MultiPolygon
+class MultiLineString
+
+GeometryCollection <|-- MultiSurface
+GeometryCollection <|-- MultiCurve
+GeometryCollection <|-- MultiPoint
+
+MultiSurface <|-- MultiPolygon
+MultiCurve <|-- MultiLineString
+
+' Agregaciones estructurales
+LineString o-- "2..*" Point : +vertex
+Polygon o-- "1..*" LinearRing : +ring
+PolyhedralSurface o-- "1..*" Polygon : +patch
+
+MultiPoint o-- Point
+MultiLineString o-- "0..*" LineString : +element
+MultiPolygon o-- "0..*" Polygon : +element
+@enduml

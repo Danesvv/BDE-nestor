@@ -1,0 +1,2329 @@
+---
+engine: knitr
+execute:
+  echo: true
+  warning: false
+  message: false
+filters:
+  #- diagram
+  - ../_extensions/pandoc-ext/diagram/diagram.lua
+diagram:
+  engine:
+    plantuml:
+      #execpath: ["java", "-jar", "D:/Classes/Unal_2025/Bases_de_Datos_Espaciales/GitHub/plantuml.jar"]
+      execpath: plantuml
+format:
+  html:
+    css: ../styles.css
+    toc: true
+    number-sections: true
+  pdf:
+    documentclass: scrreprt
+    number-sections: true
+    toc: false
+    include-in-header:
+      text: |
+        \usepackage{xcolor}
+        \usepackage[normalem]{ulem}
+---
+
+# Diseño lógico y normalización espacial
+
+```{r}
+#| label: setup-j-eval-j-plot
+#| code-fold: true
+#| include: false
+source("../j_eval_j_plot.r")
+
+
+```
+
+```{r}
+#| label: setup-variables-sistema-r-1
+#| include: false
+
+# 1. Registro de variables en el proceso padre para persistencia y herencia en Knitr
+Sys.setenv(
+  # Directorio relativo de almacenamiento de respaldos (resuelto desde chapters/)
+  PLOTS_DIR = "../plots"
+)
+
+
+```
+
+::: {.content-visible when-format="html"}
+
+::: {.callout-note appearance="simple" title="Presentación de la sesión"}
+Las diapositivas interactivas correspondientes al presente capítulo se encuentran disponibles en: [Presentación interactiva: Arquitectura y estándares OGC](https://www.google.com/search?q=../slides/20-d_arquitectura_y_estandares_ogc.html&utm_source=gemini){target="_blank"}.
+:::
+
+```{r}
+#| label: setup-variables-sistema-r
+#| include: false
+
+# Registro de variables en el proceso padre para persistencia y herencia en Knitr
+Sys.setenv(
+  # Instancia física en el sistema anfitrión (accesible desde el contenedor)
+  LOCAL_PGHOST = "host.docker.internal",
+  LOCAL_PGPORT = "5432",
+  LOCAL_PGUSER = "postgres",
+  LOCAL_PGPASSWORD = "geomatica2025",
+  LOCAL_PGDATABASE = "sig_db_unal",
+  
+  # Instancia dockerizada (red bridge interna)
+  DOCKER_PGHOST = "db-postgis",
+  DOCKER_PGPORT = "5432",
+  DOCKER_PGUSER = "profe_unal",
+  DOCKER_PGPASSWORD = "geomatica2025",
+  DOCKER_PGDATABASE = "sig_db_unal",
+  
+  # Parámetros por defecto para el cliente interactivo libpq (apuntando al host local)
+  PGHOST = "host.docker.internal",
+  PGPORT = "5432",
+  PGUSER = "postgres",
+  PGPASSWORD = "geomatica2025",
+  PGDATABASE = "sig_db_unal"
+)
+
+```
+
+::: {.panel-tabset}
+
+### Terminal integrada
+
+Para la interacción interactiva mediante la consola de comandos o la terminal integrada de Visual Studio Code, se configuran las variables de entorno estándar de `libpq` para apuntar al clúster correspondiente. Ver el fundamento técnico en la @sec-gestion-variables-entorno.
+
+```{bash}
+#| label: setup-variables-sesion-bash-html
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+
+# 1. Parámetros para la instancia física en el sistema anfitrión (host local)
+export LOCAL_PGHOST="host.docker.internal"
+export LOCAL_PGPORT="5432"
+export LOCAL_PGUSER="postgres"
+export LOCAL_PGPASSWORD='geomatica2025'
+export LOCAL_PGDATABASE="sig_db_unal"
+
+# 2. Parámetros para la instancia dockerizada (red bridge interna)
+export DOCKER_PGHOST="db-postgis"
+export DOCKER_PGPORT="5432"
+export DOCKER_PGUSER="profe_unal"
+export DOCKER_PGPASSWORD='geomatica2025'
+export DOCKER_PGDATABASE="sig_db_unal"
+
+# 3. Asignación de variables estándar de libpq por defecto (apuntando al host local)
+export PGHOST="${LOCAL_PGHOST}"
+export PGPORT="${LOCAL_PGPORT}"
+export PGUSER="${LOCAL_PGUSER}"
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+export PGDATABASE="${LOCAL_PGDATABASE}"
+
+# 4. Verificación de endpoints configurados en la sesión
+echo "Endpoint anfitrión (host):   ${LOCAL_PGUSER}@${LOCAL_PGHOST}:${LOCAL_PGPORT}/${LOCAL_PGDATABASE}"
+echo "Endpoint contenedor (docker): ${DOCKER_PGUSER}@${DOCKER_PGHOST}:${DOCKER_PGPORT}/${DOCKER_PGDATABASE}"
+echo "Sesión a vincular por defecto: ${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}"
+
+
+```
+
+### psql (Docker)
+
+Configuración de variables de sesión `libpq` para conectar al clúster en la red interna del contenedor:
+
+```{bash}
+#| label: setup-variables-sesion-docker
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+
+
+export PGHOST="${DOCKER_PGHOST}"
+export PGPORT="${DOCKER_PGPORT}"
+export PGUSER="${DOCKER_PGUSER}"
+export PGPASSWORD="${DOCKER_PGPASSWORD}"
+export PGDATABASE="${DOCKER_PGDATABASE}"
+
+echo "Sesión lista para conectar a contenedor Docker: ${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}"
+echo "Ejecute el comando psql"
+echo "Dentro de psql Use \`\conninfo\` o \`SHOW data_directory;\` para chequear la conexión"
+
+
+```
+
+### psql (anfitrión)
+
+Configuración de variables de sesión `libpq` para conectar al clúster ejecutado directamente en el sistema anfitrión:
+
+Base de datos: `sig_db_unal`:
+
+```{bash}
+#| label: setup-variables-sesion-local1
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+
+
+export PGHOST="${LOCAL_PGHOST}"
+export PGPORT="${LOCAL_PGPORT}"
+export PGUSER="${LOCAL_PGUSER}"
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+export PGDATABASE="${LOCAL_PGDATABASE}"
+
+echo "Sesión lista para conectar al host anfitrión: ${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}"
+echo "Ejecute el comando psql"
+echo "Dentro de psql Use \`\conninfo\` o \`SHOW data_directory;\` para chequear la conexión"
+
+
+```
+
+Base de datos: `postgres`:
+
+```{bash}
+#| label: setup-variables-sesion-local2
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+
+
+export PGHOST="${LOCAL_PGHOST}"
+export PGPORT="${LOCAL_PGPORT}"
+export PGUSER="${LOCAL_PGUSER}"
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+export PGDATABASE="postgres"
+
+echo "Sesión lista para conectar al host anfitrión: ${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}"
+echo "Ejecute el comando psql"
+echo "Dentro de psql Use \`\conninfo\` o \`SHOW data_directory;\` para chequear la conexión"
+
+
+```
+
+
+Base de datos: `bde_territorio_nacional` (a crear en este capítulo):
+
+```{bash}
+#| label: setup-variables-sesion-local3
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+
+
+export PGHOST="${LOCAL_PGHOST}"
+export PGPORT="${LOCAL_PGPORT}"
+export PGUSER="${LOCAL_PGUSER}"
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+export PGDATABASE="bde_territorio_nacional"
+
+echo "Sesión lista para conectar al host anfitrión: ${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}"
+echo "Ejecute el comando psql"
+echo "Dentro de psql Use \`\conninfo\` o \`SHOW data_directory;\` para chequear la conexión"
+
+
+```
+
+Base de datos: `bde_fedegan` (a crear en este capítulo):
+
+```{bash}
+#| label: setup-variables-sesion-local4
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+
+
+export PGHOST="${LOCAL_PGHOST}"
+export PGPORT="${LOCAL_PGPORT}"
+export PGUSER="${LOCAL_PGUSER}"
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+export PGDATABASE="bde_fedegan"
+
+echo "Sesión lista para conectar al host anfitrión: ${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE}"
+echo "Ejecute el comando psql"
+echo "Dentro de psql Use \`\conninfo\` o \`SHOW data_directory;\` para chequear la conexión"
+
+
+```
+
+
+
+### Python (SQLAlchemy)
+
+```{python}
+#| label: setup-motores-python
+#| eval: true
+#| echo: true
+#| code-fold: true
+#| code-summary: "Mostrar código"
+
+import os
+from sqlalchemy import create_engine
+
+# 1. Parámetros y motor para la instancia anfitriona (host local)
+host_local = os.getenv("LOCAL_PGHOST", "host.docker.internal")
+port_local = os.getenv("LOCAL_PGPORT", "5432")
+user_local = os.getenv("LOCAL_PGUSER", "postgres")
+pass_local = os.getenv("LOCAL_PGPASSWORD", "geomatica2025")
+db_local   = os.getenv("LOCAL_PGDATABASE", "sig_db_unal")
+
+cadena_local = f"postgresql+psycopg2://{user_local}:{pass_local}@{host_local}:{port_local}/{db_local}"
+engine_local = create_engine(cadena_local)
+
+# 2. Parámetros y motor para la instancia en red interna (Docker)
+host_docker = os.getenv("DOCKER_PGHOST", "db-postgis")
+port_docker = os.getenv("DOCKER_PGPORT", "5432")
+user_docker = os.getenv("DOCKER_PGUSER", "profe_unal")
+pass_docker = os.getenv("DOCKER_PGPASSWORD", "geomatica2025")
+db_docker   = os.getenv("DOCKER_PGDATABASE", "sig_db_unal")
+
+cadena_docker = f"postgresql+psycopg2://{user_docker}:{pass_docker}@{host_docker}:{port_docker}/{db_docker}"
+engine_docker = create_engine(cadena_docker)
+
+# Verificación de endpoints sin credenciales enmascaradas
+print(
+    "Motor local instanciado:\n  "
+    f"{engine_local.url.render_as_string(hide_password=False)}"
+)
+print(
+    "Motor docker instanciado:\n  "
+    f"{engine_docker.url.render_as_string(hide_password=False)}"
+)
+
+
+```
+
+:::
+
+:::
+
+::: {.content-visible when-format="pdf"}
+::: {.callout-note appearance="simple"}
+**Entorno de ejecución interactivo:** Las consultas y sentencias DDL/DML de este capítulo asumen que la sesión de terminal o el entorno de ejecución de Python disponen de las variables de conexión estándar debidamente configuradas. Si ejecuta los bloques de forma manual en la consola, verifique la asignación de parámetros descrita en la @sec-gestion-variables-entorno.
+:::
+:::
+
+## Objetivos del capítulo
+
+Al finalizar el presente capítulo, el estudiante estará en capacidad de:
+
+* Comprender el papel del diseño lógico como la fase de formalización matemática y desacoplamiento tecnológico del paradigma relacional.
+
+* Dominar la sintaxis fundamental del lenguaje de definición de datos (DDL) para traducir especificaciones conceptuales a esquemas relacionales declarativos.
+
+* Diferenciar con rigor teórico y operativo los componentes del DDL que pertenecen al diseño lógico de aquellos orientados a la optimización del diseño físico bajo la arquitectura ANSI/SPARC.
+
+* Formalizar esquemas relacionales aplicando la notación estructural y el código cromático estandarizado de claves primarias, claves foráneas y claves compuestas de intersección.
+
+* Aplicar el principio de identificación híbrida, articulando claves naturales normativas (DIVIPOLA) con identificadores artificiales secuenciales para garantizar interoperabilidad con clientes SIG.
+
+* Resolver lógicamente asociaciones territoriales jerárquicas ($1:M$), relaciones muchos a muchos ($M:N$) mediante tablas puente y dependencias espaciotemporales mediante tablas de hechos.
+
+* Evaluar y aplicar la disciplina de normalización relacional (desde la 1FN hasta la Forma Normal de Dominio-Clave, DKNF) en coberturas espaciales y jerarquías administrativas.
+
+* Estructurar el esquema lógico relacional y su correspondiente DDL declarativo para los cinco paquetes temáticos del caso de estudio de la Guía Ambiental para el Sector Ganadero Bovino.
+
+
+## Fundamentos y sintaxis del lenguaje de definición de datos (DDL)
+
+El **Lenguaje de Definición de Datos** (DDL, *Data Definition Language*) constituye el subconjunto del estándar SQL destinado a definir, alterar y gestionar la estructura de los objetos dentro de un Sistema de Gestión de Bases de Datos (SGBD). A diferencia del Lenguaje de Manipulación de Datos (DML), que procesa los registros individuales (`INSERT`, `UPDATE`, `DELETE`, `SELECT`), el DDL opera directamente sobre los metadatos y el catálogo del sistema.
+
+### Componentes de DDL en el diseño lógico frente al diseño físico
+
+El DDL no pertenece de manera exclusiva al diseño lógico ni al diseño físico; abarca e implementa elementos de ambos niveles dentro de un motor de bases de datos. En la práctica del estándar SQL, el DDL sirve tanto para formalizar el esquema lógico (entidades, atributos y reglas de integridad del negocio) como para instrumentar las estructuras de almacenamiento, rendimiento y acceso del esquema interno (diseño físico).
+
+**Componentes de DDL en el diseño lógico:**
+
+El diseño lógico define la estructura relacional independiente de las características específicas de almacenamiento físico o hardware. En esta fase, las sentencias DDL se emplean para traducir el modelo relacional teórico a esquemas ejecutables:
+
+* **Estructura relacional básica:** Sentencias `CREATE TABLE` para definir relaciones, atributos y sus tipos de datos abstractos o estándar (`VARCHAR`, `NUMERIC`, `TIMESTAMP`, tipos geométricos/geográficos en extensiones espaciales).
+
+* **Integridad de entidad y referencial:** Definición explícita de claves primarias (`PRIMARY KEY`) y claves foráneas (`FOREIGN KEY ... REFERENCES`), las cuales preservan las dependencias funcionales y la integridad referencial identificadas durante la normalización (ej. 3FN o BCNF).
+
+* **Restricciones de dominio y reglas semánticas:** Cláusulas `NOT NULL`, `UNIQUE` y restricciones de validación `CHECK`, así como la creación de dominios personalizados (`CREATE DOMAIN`).
+
+* **Esquemas y vistas lógicas:** Agrupaciones modulares de tablas mediante `CREATE SCHEMA` y definición de abstracciones relacionales mediante `CREATE VIEW`.
+
+**Componentes de DDL en el diseño físico:**
+
+El diseño físico tiene como objetivo adaptar el esquema lógico para maximizar el rendimiento de las consultas, optimizar el uso del disco y gestionar la distribución de los datos según las cargas de trabajo (*workloads*). En esta etapa, el DDL incluye instrucciones que no alteran la semántica ni los resultados relacionales, pero condicionan el almacenamiento y las rutas de acceso:
+
+* **Estructuras de acceso e índices:** Sentencias `CREATE INDEX`, donde se seleccionan algoritmos de indexación específicos para optimizar operadores concretos (por ejemplo, índices B-Tree para rangos escalares, o índices GiST/BRIN para tipos de datos espaciales y temporales).
+
+* **Organización del almacenamiento en disco:** Creación y asignación de espacios de almacenamiento con `CREATE TABLESPACE` y la cláusula `TABLESPACE` en tablas o índices para distribuir las operaciones de entrada/salida entre diferentes dispositivos de almacenamiento.
+
+* **Estrategias de particionamiento:** Cláusulas declarativas de particionamiento (`PARTITION BY RANGE`, `LIST` o `HASH`), las cuales segmentan físicamente una relación lógica de gran volumen para optimizar el escaneo de tablas y el mantenimiento.
+
+* **Parámetros de almacenamiento interno y control de páginas:** Cláusulas en `CREATE TABLE` o `ALTER TABLE` que configuran parámetros a nivel de página o bloque de disco (como el `fillfactor` para amortiguar actualizaciones intensivas o configuraciones de compresión y almacenamiento extendido TOAST).
+
+* **Persistencia de cómputo:** Creación de vistas materializadas (`CREATE MATERIALIZED VIEW`) para almacenar físicamente en disco el resultado de operaciones relacionales costosas.
+
+### Correspondencia con la arquitectura ANSI/SPARC
+
+Desde la perspectiva teórica de la arquitectura de tres niveles ANSI/SPARC:
+
+* **Nivel conceptual/lógico:** La formulación de tablas, claves y restricciones en DDL materializa el esquema conceptual. Si se suprimieran todos los índices secundarios, tablespaces y particiones, la base de datos conservaría plenamente su coherencia lógica y matemática.
+
+* **Nivel interno/físico:** Las sentencias DDL orientadas a índices, particiones físicas y parámetros de bloque definen el esquema interno. Modificar estas sentencias no altera los resultados de las consultas (garantizando la independencia física de los datos), pero afecta drásticamente los costos de los planes de ejecución generados por el optimizador de consultas.
+
+Bajo este marco metodológico, el presente capítulo formaliza el esquema lógico, las signaturas relacionales y el DDL declarativo del modelo, reservando para el siguiente el siguiente @sec-diseño-fisico la instrumentación física (índices espaciales GiST, configuración de catálogos geodésicos en `spatial_ref_sys`, particionamiento y migración de datos con `dblink`).
+
+### Anatomía de una sentencia de definición de tabla
+
+La sentencia central del DDL lógico es `CREATE TABLE`. Su estructura básica organiza la definición de columnas y restricciones declarativas:
+
+```{sql}
+--| label: ddl-create-table
+--| eval: false
+--| echo: true
+CREATE TABLE nombre_esquema.nombre_tabla (
+    nombre_columna_1 tipo_dato [restricciones_columna],
+    nombre_columna_2 tipo_dato [restricciones_columna],
+    ...,
+    CONSTRAINT nombre_restriccion tipo_restriccion (columnas)
+);
+
+```
+
+Las restricciones pueden declararse a nivel de columna (cuando aplican a un único atributo, como `NOT NULL`) o a nivel de tabla (cuando involucran múltiples atributos o requieren asignación explícita de nombre mediante la cláusula `CONSTRAINT`). Para asegurar trazabilidad y facilitar el diagnóstico de errores durante la ejecución de transacciones, se adopta la convención de nomenclatura estándar para restricciones:
+
+* `pk_`: Clave primaria (`CONSTRAINT pk_departamentos PRIMARY KEY (dep_id)`).
+
+* `fk_`: Clave foránea (`CONSTRAINT fk_municipios_departamentos FOREIGN KEY (dep_id) REFERENCES ...`).
+
+* `uq_`: Unicidad (`CONSTRAINT uq_microregiones_nombre UNIQUE (mic_nombre)`).
+
+* `chk_`: Validación lógica (`CONSTRAINT chk_mun_categoria CHECK (mun_categoria IN (...))`).
+
+
+## Transformación conceptual a lógica relacional
+
+El diseño lógico constituye el proceso sistemático de traducir las entidades, atributos, dominios y asociaciones abstractas —definidas en el modelo conceptual mediante la notación de Barker o diagramas de clases UML— hacia las estructuras canónicas del **paradigma relacional**. En esta etapa se formalizan las **tablas**, **tuplas**, **columnas tipificadas** y **restricciones de integridad**, garantizando que el **esquema** quede preparado para su implementación física en el SGBD espacial sin incurrir en redundancias destructivas ni anomalías operacionales.
+
+::: {.callout-note title="Definiciones fundamentales del modelo relacional"}
+Las siguientes definiciones condensan los componentes estructurales elementales del paradigma relacional:
+
+* **Tabla (relación):** Estructura bidimensional de almacenamiento compuesta por un conjunto no ordenado de registros (tuplas) homogéneos y atributos (columnas), que materializa formalmente una clase de objetos o relación matemática en el esquema relacional.
+
+* **Tupla:** Registro o fila individual dentro de una tabla que alberga un conjunto de valores atómicos correspondientes a cada atributo, representando una instancia u ocurrencia particular del mundo real.
+
+* **Columna tipificada (atributo relacional):** Descriptor formal de la relación definido bajo un nombre unívoco y restringido a un tipo de dato o dominio específico (escalar o abstracto), garantizando la homogeneidad semántica de los valores almacenados en sus celdas.
+
+* **Restricciones de integridad:** Reglas y predicados lógicos declarativos (claves primarias, unicidad, restricciones de no nulidad `NOT NULL`, integridad referencial mediante claves foráneas y cláusulas `CHECK`) aplicados por el motor para preservar la consistencia interna y evitar anomalías transaccionales.
+
+* **Esquema:** Contenedor lógico y espacio de nombres (*namespace*) dentro de la base de datos que agrupa un conjunto cohesivo de objetos (tablas, vistas, funciones, secuencias, tipos y dominios), facilitando la prevención de colisiones léxicas y la segregación temática de los datos territoriales.
+:::
+
+### El modelo relacional y reglas de derivación estructural
+
+El modelo relacional, formulado originalmente por Edgar F. Codd @codd1970relational, estructura los datos en **relaciones** (término formal para las tablas), concebidas matemáticamente como subconjuntos del producto cartesiano de una lista de dominios:
+
+$$R \subseteq D_1 \times D_2 \times \dots \times D_n$$
+
+Cada fila o registro de la tabla constituye una **tupla** que materializa una instancia u objeto del mundo real, mientras que cada columna representa un **atributo** tipificado bajo un dominio escalar o abstracto específico.
+
+La transición desde el esquema conceptual hacia el esquema lógico relacional opera bajo un conjunto estricto de reglas formales de transformación:
+
+* **Entidades conceptuales $\rightarrow$ Relaciones (tablas):** Cada entidad o clase conceptual da origen a una tabla independiente ubicada en el esquema de base de datos que le corresponde por gobernanza temática (ej. `divpol.departamentos`, `divpol.municipios`, `public.microregiones`).
+
+* **Atributos conceptuales $\rightarrow$ Columnas atómicas:** Cada atributo conceptual se convierte en una columna con un tipo de dato explícito (`VARCHAR`, `NUMERIC`, `INTEGER`, `GEOMETRY`).
+
+* **Opcionalidad $\rightarrow$ Restricciones de nulidad:** Los atributos obligatorios (`*`) se definen formalmente mediante la cláusula `NOT NULL`; los atributos conceptualmente opcionales (`º`) admiten valores nulos (`NULL`).
+
+* **Identificador único (UID) $\rightarrow$ Clave primaria (*Primary Key*, PK):** El UID conceptual se materializa mediante una restricción `PRIMARY KEY`, asegurando unicidad física y obligatoriedad en todas las tuplas.
+
+* **Asociaciones 1:M $\rightarrow$ Claves foráneas (*Foreign Keys*, FK):** En las relaciones uno a muchos, la clave primaria de la entidad del extremo "uno" (padre) se migra como una columna adicional en la tabla del extremo "muchos" (hijo).
+
+* **Asociaciones M:M $\rightarrow$ Tablas de asociación intermedias:** Toda relación muchos a muchos se descompone obligatoriamente en dos relaciones 1:M asistidas por una tabla puente intermedia compuesta por las claves de las entidades participantes.
+
+
+### Notación estructural y código cromático de claves
+
+Para documentar esquemas relacionales sin ambigüedades antes de escribir código DDL, se adopta un estándar formal de representación textual y cromática para la signatura de relaciones:
+
+* **Nombre de la relación:** Se escribe en letras minúsculas en plural según el contexto del esquema, seguido de sus atributos entre paréntesis.
+
+* **Clave primaria (PK):** Toda columna que integre la clave primaria debe aparecer **siempre subrayada** y se resalta convencionalmente en color [verde]{style="color: green; text-decoration: underline; font-weight: bold;"} (`green`).
+
+* **Clave foránea (FK):** Toda columna que actúe como clave foránea referenciando a otra relación debe figurar **siempre en color** [rojo]{style="color: red; font-weight: bold;"} (`red`).
+
+* **Clave primaria compuesta con rol foráneo:** Cuando un atributo opera simultáneamente como clave primaria y clave foránea, se representa [subrayado y en color rojo]{style="color: red; text-decoration: underline; font-weight: bold;"}.
+
+Aplicando esta convención cromática al subsistema territorial desarrollado en el modelo conceptual (ver @fig-er-clases-espaciales-territorio y @fig-uml-clases-territoriales), el esquema lógico relacional se formula como:
+
+* $\text{departamentos} \,(\, \underline{\mathbf{\color{green}dep\_id}}, \, \text{dep\_nombre}, \, \text{dep\_region}, \, \text{the\_geom} \,)$
+
+* $\text{microregiones} \,(\, \underline{\mathbf{\color{green}mic\_id}}, \, \text{mic\_nombre}, \, \text{mic\_descripcion} \,)$
+
+* $\text{municipios} \,(\, \underline{\mathbf{\color{green}mun\_id}}, \, \text{mun\_nombre}, \, \text{mun\_categoria}, \, \mathbf{\color{red}dep\_id}, \, \mathbf{\color{red}mic\_id}, \, \text{the\_geom} \,)$
+
+
+En la relación `municipios`, la presencia de $\mathbf{\color{red}dep\_id}$ y $\mathbf{\color{red}mic\_id}$ materializa las dos asociaciones que en el diagrama conceptual se representaban como líneas conectadas: $\mathbf{\color{red}dep\_id}$ almacena un valor que debe coincidir con $\underline{\mathbf{\color{green}dep\_id}}$ en `departamentos`, mientras que $\mathbf{\color{red}mic\_id}$ enlaza con $\underline{\mathbf{\color{green}mic\_id}}$ en `microregiones`.
+
+El siguiente diagrama contrasta de manera directa la especificación conceptual inicial (Barker) con el esquema lógico relacional resultante, explicitando el código cromático de claves y la navegación de punteros referenciales:
+
+
+::: {.diagrama-ancho}
+
+```{dot}
+//| label: fig-er-a-logico-relacional
+//| fig-cap: "Transición del modelo conceptual (Barker) al diseño lógico relacional con código cromático de claves y signatura formal del esquema."
+//| fig-width: 6.5
+//| fig-height: 6.5
+//| out-width: "100%"
+//| fig-align: center
+//| echo: false
+
+digraph ER_a_Logico {
+    graph [rankdir=TB, bgcolor="transparent", pad="0.15", nodesep=0.6, ranksep=0.6];
+    node [fontname="Helvetica,Arial,sans-serif", fontsize=10];
+    edge [fontname="Helvetica,Arial,sans-serif", fontsize=8.5];
+
+    // =========================================================================
+    // SUBGRAFO 1: NIVEL CONCEPTUAL (BARKER)
+    // =========================================================================
+    subgraph cluster_conceptual {
+        label = "Nivel conceptual: diagrama entidad-relación (notación Barker)";
+        fontname = "Helvetica,Arial,sans-serif";
+        fontsize = 10.5;
+        fontcolor = "dimgray";
+        color = "gray";
+        style = "dashed";
+
+        // Fijación horizontal estricta del estrato conceptual
+        {
+            rank = same;
+            c_dept;
+            c_muni;
+            c_mid1;
+            c_micro;
+        }
+
+        c_dept [shape=plain, label=<
+            <TABLE BGCOLOR="white" BORDER="1.5" CELLBORDER="0" CELLPADDING="7" CELLSPACING="0" COLOR="black" STYLE="ROUNDED">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><B>&nbsp;&nbsp;departamentos&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT"><B>#*&nbsp;</B>dep_id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT"><B>*&nbsp;&nbsp;</B>dep_nombre&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">º&nbsp;&nbsp;dep_region&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT"><B>*&nbsp;&nbsp;</B>the_geom&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+
+        c_mid2 [shape=point, width=0.01, height=0.01, style=invis];
+
+        c_muni [shape=plain, label=<
+            <TABLE BGCOLOR="white" BORDER="1.5" CELLBORDER="0" CELLPADDING="7" CELLSPACING="0" COLOR="black" STYLE="ROUNDED">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><B>&nbsp;&nbsp;municipios&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT"><B>#*&nbsp;</B>mun_id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT"><B>*&nbsp;&nbsp;</B>mun_nombre&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">º&nbsp;&nbsp;mun_categoria&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT"><B>*&nbsp;&nbsp;</B>the_geom&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+
+        c_mid1 [shape=point, width=0.01, height=0.01, style=invis];
+
+        c_micro [shape=plain, label=<
+            <TABLE BGCOLOR="white" BORDER="1.5" CELLBORDER="0" CELLPADDING="7" CELLSPACING="0" COLOR="black" STYLE="ROUNDED">
+                <TR><TD ALIGN="CENTER" BORDER="1" SIDES="B"><B>&nbsp;&nbsp;microregiones&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT"><B>#*&nbsp;</B>mic_id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT"><B>*&nbsp;&nbsp;</B>mic_nombre&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">º&nbsp;&nbsp;mic_descripcion&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+
+        // Segmento horizontal 1: departamentos a municipios (relación 1:N obligatoria)
+        //c_dept:e -> c_mid2 [arrowhead=none, style=solid, penwidth=1.5, color="black", label="&nbsp;compuesto por ►&nbsp;"];
+        // Elimina c_mid2 del rank y conecta directo con taillabel y headlabel:
+        c_dept:e -> c_muni:w [
+            arrowhead=crow, 
+            arrowtail=none, 
+            dir=both, 
+            style=solid, 
+            penwidth=1.5, 
+            color="black", 
+            taillabel="&nbsp;&nbsp;&nbsp;&nbsp;compuesto por ►", 
+            headlabel="◄ pertenece&nbsp;&nbsp;&nbsp;&nbsp;"
+        ];
+        //c_mid2 -> c_muni:w [arrowhead=crow, style=solid, penwidth=1.5, color="black", label="&nbsp;◄ pertenece a&nbsp;"];
+
+        // Segmento horizontal 2: municipios a microregiones (relación N:1 opcional para municipio, obligatoria para microregión)
+        //c_muni:e -> c_mid1 [dir=back, arrowtail=crow, arrowhead=none, style=dashed, penwidth=1.5, color="black", label="&nbsp;puede pertenecer a ►&nbsp;"];
+        //c_mid1 -> c_micro:w [arrowhead=none, style=solid, penwidth=1.5, color="black", label="&nbsp;◄ agrupa&nbsp;"];
+        //c_muni:e -> c_mid1 [dir=back, arrowtail=crow, arrowhead=none, style=dashed, penwidth=1.5, color="black", xlabel="&nbsp;puede pertenecer a ►&nbsp;"];
+        c_muni:e -> c_mid1:w [dir=back, arrowtail=crow, style=dashed, penwidth=1.5, color="black", xlabel="pertenece ►&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"];
+        c_mid1 -> c_micro:w [arrowhead=none, style=solid, penwidth=1.5, color="black", xlabel="&nbsp;&nbsp;&nbsp;&nbsp;◄ agrupa"];
+    }
+
+    // =========================================================================
+    // SUBGRAFO 2: NIVEL LÓGICO RELACIONAL
+    // =========================================================================
+    subgraph cluster_logico {
+        label = "Nivel lógico relacional: esquema tabular y signaturas (código cromático)";
+        fontname = "Helvetica,Arial,sans-serif";
+        fontsize = 10.5;
+        fontcolor = "blue";
+        color = "lightblue";
+        style = "dashed";
+
+        {
+            rank = same;
+            t_dept [shape=plain, label=<
+                <TABLE BGCOLOR="white" BORDER="1.5" CELLBORDER="1" CELLPADDING="7" CELLSPACING="0" COLOR="black">
+                    <TR><TD ALIGN="CENTER" BGCOLOR="lightgray" COLSPAN="2"><B>&nbsp;&nbsp;divpol.departamentos&nbsp;&nbsp;</B></TD></TR>
+                    <TR><TD ALIGN="LEFT" PORT="dep_id"><FONT COLOR="green"><U><B>&nbsp;dep_id&nbsp;</B></U></FONT></TD><TD ALIGN="LEFT">&nbsp;VARCHAR(2) (PK)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+                    <TR><TD ALIGN="LEFT">&nbsp;dep_nombre&nbsp;</TD><TD ALIGN="LEFT">&nbsp;VARCHAR(100) NOT NULL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+                    <TR><TD ALIGN="LEFT">&nbsp;dep_region&nbsp;</TD><TD ALIGN="LEFT">&nbsp;VARCHAR(50) NULL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+                    <TR><TD ALIGN="LEFT">&nbsp;the_geom&nbsp;</TD><TD ALIGN="LEFT">&nbsp;GEOMETRY(MultiPolygon, 9377)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+                </TABLE>
+            >];
+
+            t_micro [shape=plain, label=<
+                <TABLE BGCOLOR="white" BORDER="1.5" CELLBORDER="1" CELLPADDING="7" CELLSPACING="0" COLOR="black">
+                    <TR><TD ALIGN="CENTER" BGCOLOR="lightgray" COLSPAN="2"><B>&nbsp;&nbsp;public.microregiones&nbsp;&nbsp;</B></TD></TR>
+                    <TR><TD ALIGN="LEFT" PORT="mic_id"><FONT COLOR="green"><U><B>&nbsp;mic_id&nbsp;</B></U></FONT></TD><TD ALIGN="LEFT">&nbsp;INTEGER (PK)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+                    <TR><TD ALIGN="LEFT">&nbsp;mic_nombre&nbsp;</TD><TD ALIGN="LEFT">&nbsp;VARCHAR(100) NOT NULL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+                    <TR><TD ALIGN="LEFT">&nbsp;mic_descripcion&nbsp;</TD><TD ALIGN="LEFT">&nbsp;VARCHAR(250) NULL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+                </TABLE>
+            >];
+        }
+
+        t_dept -> t_micro [style=invis, minlen=2];
+
+        t_muni [shape=plain, label=<
+            <TABLE BGCOLOR="white" BORDER="1.5" CELLBORDER="1" CELLPADDING="7" CELLSPACING="0" COLOR="black">
+                <TR><TD ALIGN="CENTER" BGCOLOR="lightgray" COLSPAN="2"><B>&nbsp;&nbsp;divpol.municipios&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT"><FONT COLOR="green"><U><B>&nbsp;mun_id&nbsp;</B></U></FONT></TD><TD ALIGN="LEFT">&nbsp;VARCHAR(5) (PK)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;mun_nombre&nbsp;</TD><TD ALIGN="LEFT">&nbsp;VARCHAR(100) NOT NULL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;mun_categoria&nbsp;</TD><TD ALIGN="LEFT">&nbsp;VARCHAR(10) NULL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+                <TR><TD ALIGN="LEFT" PORT="dep_id"><FONT COLOR="red"><B>&nbsp;dep_id&nbsp;</B></FONT></TD><TD ALIGN="LEFT"><FONT COLOR="red">&nbsp;VARCHAR(2) NOT NULL (FK)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</FONT></TD></TR>
+                <TR><TD ALIGN="LEFT" PORT="mic_id"><FONT COLOR="red"><B>&nbsp;mic_id&nbsp;</B></FONT></TD><TD ALIGN="LEFT"><FONT COLOR="red">&nbsp;INTEGER NULL (FK)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</FONT></TD></TR>
+                <TR><TD ALIGN="LEFT">&nbsp;the_geom&nbsp;</TD><TD ALIGN="LEFT">&nbsp;GEOMETRY(MultiPolygon, 9377)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+            </TABLE>
+        >];
+
+        // Punteros de integridad referencial
+        edge [color="red", penwidth=1.5, dir=back, arrowtail=vee, arrowhead=none, arrowsize=0.8];
+        t_dept:dep_id:w -> t_muni:dep_id:w [label="  referencia PK  "];
+        t_micro:mic_id:w -> t_muni:mic_id:w [label="  referencia PK  ", style=dashed];
+
+        // Signatura relacional formal
+        signaturas_esquema [shape=plain, label=<
+            <TABLE BGCOLOR="white" BORDER="1.5" CELLBORDER="0" CELLPADDING="7" CELLSPACING="0" COLOR="blue" STYLE="ROUNDED">
+                <TR>
+                    <TD ALIGN="CENTER" BGCOLOR="aliceblue" BORDER="1" COLSPAN="2" SIDES="B"><B><FONT COLOR="blue" POINT-SIZE="10">&nbsp;&nbsp;Signatura relacional formal del esquema territorial&nbsp;&nbsp;</FONT></B></TD>
+                </TR>
+                <TR>
+                    <TD ALIGN="RIGHT"><B>&nbsp;departamentos&nbsp;</B></TD>
+                    <TD ALIGN="LEFT">
+                        <TABLE BORDER="0" CELLBORDER="0" CELLPADDING="0" CELLSPACING="4">
+                            <TR>
+                                <TD>(&nbsp;</TD>
+                                <TD><FONT COLOR="green"><U><B>dep_id</B></U></FONT></TD>
+                                <TD>,&nbsp;</TD>
+                                <TD>dep_nombre</TD>
+                                <TD>,&nbsp;</TD>
+                                <TD>dep_region</TD>
+                                <TD>,&nbsp;</TD>
+                                <TD>the_geom</TD>
+                                <TD>&nbsp;)</TD>
+                            </TR>
+                        </TABLE>
+                    </TD>
+                </TR>
+                <TR>
+                    <TD ALIGN="RIGHT"><B>&nbsp;microregiones&nbsp;</B></TD>
+                    <TD ALIGN="LEFT">
+                        <TABLE BORDER="0" CELLBORDER="0" CELLPADDING="0" CELLSPACING="4">
+                            <TR>
+                                <TD>(&nbsp;</TD>
+                                <TD><FONT COLOR="green"><U><B>mic_id</B></U></FONT></TD>
+                                <TD>,&nbsp;</TD>
+                                <TD>mic_nombre</TD>
+                                <TD>,&nbsp;</TD>
+                                <TD>mic_descripcion</TD>
+                                <TD>&nbsp;)</TD>
+                            </TR>
+                        </TABLE>
+                    </TD>
+                </TR>
+                <TR>
+                    <TD ALIGN="RIGHT"><B>&nbsp;municipios&nbsp;</B></TD>
+                    <TD ALIGN="LEFT">
+                        <TABLE BORDER="0" CELLBORDER="0" CELLPADDING="0" CELLSPACING="4">
+                            <TR>
+                                <TD>(&nbsp;</TD>
+                                <TD><FONT COLOR="green"><U><B>mun_id</B></U></FONT></TD>
+                                <TD>,&nbsp;</TD>
+                                <TD>mun_nombre</TD>
+                                <TD>,&nbsp;</TD>
+                                <TD>mun_categoria</TD>
+                                <TD>,&nbsp;</TD>
+                                <TD><FONT COLOR="red"><B>dep_id</B></FONT></TD>
+                                <TD>,&nbsp;</TD>
+                                <TD><FONT COLOR="red"><B>mic_id</B></FONT></TD>
+                                <TD>,&nbsp;</TD>
+                                <TD>the_geom</TD>
+                                <TD>&nbsp;)</TD>
+                            </TR>
+                        </TABLE>
+                    </TD>
+                </TR>
+            </TABLE>
+        >];
+
+        edge [style=invis, weight=6, minlen=1];
+        t_muni -> signaturas_esquema;
+    }
+
+    // =========================================================================
+    // ESTRUCTURA DE APILAMIENTO VERTICAL (DOBLE RIEL EXTERNO EXCLUSIVO)
+    // =========================================================================
+    edge [style=invis, weight=100, minlen=1];
+    c_dept -> t_dept;
+    c_micro -> t_micro;
+}
+```
+
+:::
+
+### Reglas de integridad y gestión de identificadores
+
+El modelo relacional garantiza la robustez y consistencia interna de los datos mediante dos principios fundamentales de integridad estructural:
+
+1. **Integridad de entidad:** Toda tabla debe poseer una **clave primaria única** cuyos valores no admiten en ningún caso el valor nulo (`NULL`). La omisión o indeterminación de una clave primaria impediría distinguir una tupla de las demás, corrompiendo la noción matemática de relación.
+
+2. **Integridad referencial:** Toda **clave foránea** que resida en una relación subordinada debe coincidir de forma exacta con un valor válido existente en la **clave primaria** de la relación padre referenciada, o bien albergar un valor `NULL` si la asociación es conceptualmente opcional. El motor de base de datos **intercepta y prohíbe** cualquier **operación de inserción o actualización** que produzca tuplas **huérfanas** en el sistema.
+
+En la ingeniería de bases de datos territoriales, la formulación de claves primarias plantea una disyuntiva entre identificadores naturales y artificiales:
+
+* **Claves naturales:** Atributos intrínsecos al dominio normativo o censal, tales como la codificación oficial DIVIPOLA del DANE (`dep_id` con 2 caracteres alfanuméricos, `mun_id` con 5 caracteres alfanuméricos). Poseen significado semántico directo y facilitan el intercambio de registros entre entidades del estado sin recurrir a diccionarios intermedios.
+
+* **Claves artificiales o subrogadas:** Valores numéricos enteros secuenciales generados de forma automática por el sistema gestor (tipos `SERIAL` o secuencias `IDENTITY`). Maximizan la eficiencia computacional en índices B-Tree y cruces relacionales, y satisfacen los requerimientos operativos de software SIG de escritorio (como QGIS o ArcGIS Pro), los cuales demandan históricamente una columna entera positiva monotónica (típicamente designada como `gid` u `objectid`) para renderizado acelerado y selección interactiva en pantalla.
+
+En el diseño relacional del curso se adopta un **enfoque híbrido estandarizado**: para las capas cartográficas maestras se reserva la columna `gid SERIAL` para garantizar interoperabilidad técnica con clientes SIG de escritorio, complementada formalmente por una restricción de unicidad y no nulidad (`UNIQUE NOT NULL`) sobre la clave natural DIVIPOLA (`mun_id`, `dep_id`), blindando de manera concurrente la integridad espacial y administrativa.
+
+### Resolución lógica de asociaciones muchos a muchos
+
+En la especificación de requerimientos de la Guía Ambiental para el Sector Ganadero Bovino de Colombia, el subsistema productivo e institucional plantea una interacción no jerárquica: múltiples dependencias técnicas gestionan de manera simultánea y concurrente múltiples sistemas de producción pecuaria.
+
+El modelo relacional estándar prohíbe implementar de forma directa una cardinalidad muchos a muchos entre dos relaciones simples. Almacenar listas de identificadores foráneos en una celda violaría el principio de atomicidad de la primera forma normal (1FN) que estudiaremos mas adelante en este capítulo, mientras que duplicar filas de dependencias por cada sistema productivo induciría redundancias severas y anomalías de actualización.
+
+Para resolver esta limitación en el diseño lógico, la asociación $M:M$ se descompone formalmente en dos relaciones uno a muchos ($1:N$) mediante una **tabla asociativa intermedia** o tabla puente (`fgan.dependencias_sistemas_produccion`) la cual se solucionó desde el modelo conceptual en la @fig-uml-conceptual-fgan-asociativa:
+
+1. La tabla intermedia hereda los identificadores de ambas tablas maestras: $\mathbf{\color{red}dpe\_id}$ y $\mathbf{\color{red}spr\_id}$.
+
+2. Ambas columnas actúan simultáneamente como claves foráneas (referenciando a sus respectivos catálogos) y se combinan para conformar la **clave primaria compuesta** de la relación: $(\underline{\mathbf{\color{red}dpe\_id}}, \, \underline{\mathbf{\color{red}spr\_id}})$.
+
+3. La tabla intermedia permite incorporar atributos propios de la relación que no pertenecen a ninguna de las entidades maestras por separado, tales como la fecha de formalización operativa (`dps_fecha_asignacion`) y una descripción de la asignación (`dps_descripcion`).
+
+
+El siguiente diagrama formaliza la descomposición lógica en el esquema `fgan`, detallando el código cromático de claves (verde para claves primarias simples, rojo subrayado para claves compuestas foráneas) y la signatura relacional resultante con sus punteros de integridad referencial:
+
+::: {.diagrama-ancho}
+
+```{dot}
+//| label: fig-resolucion-logica-mn-fgan
+//| fig-cap: "Resolución del esquema relacional M:N mediante tabla intermedia asociativa, código cromático y signatura formal."
+//| fig-width: 6.5
+//| fig-height: 5.5
+//| out-width: "100%"
+//| fig-align: center
+//| echo: false
+
+digraph Resolucion_Logica_MM {
+    graph [rankdir=TB, bgcolor="transparent", pad="0.15", nodesep=0.5, ranksep=0.65];
+    node [fontname="Helvetica,Arial,sans-serif", fontsize=10];
+    edge [fontname="Helvetica,Arial,sans-serif", fontsize=8.5];
+
+    // =========================================================================
+    // SUBGRAFO: TABLAS FÍSICAS DEL SUBSISTEMA fgan
+    // =========================================================================
+    subgraph cluster_logico_fgan {
+        label = "Nivel lógico relacional: resolución asociativa M:N (esquema fgan)";
+        fontname = "Helvetica,Arial,sans-serif";
+        fontsize = 10.5;
+        fontcolor = "blue";
+        color = "lightblue";
+        style = "dashed";
+
+        // Tablas maestras independientes en el rango superior
+        {
+            rank = same;
+            t_dep [shape=plain, label=<
+                <TABLE BGCOLOR="white" BORDER="1.5" CELLBORDER="1" CELLPADDING="5" CELLSPACING="0" COLOR="black">
+                    <TR><TD ALIGN="CENTER" BGCOLOR="lightgray" COLSPAN="2"><B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fgan.dependencias&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                    <TR><TD ALIGN="LEFT" PORT="dpe_id"><FONT COLOR="green"><U><B>dpe_id</B></U></FONT></TD><TD ALIGN="LEFT">INTEGER (PK)</TD></TR>
+                    <TR><TD ALIGN="LEFT">dpe_nombre</TD><TD ALIGN="LEFT">VARCHAR(100) NOT NULL</TD></TR>
+                    <TR><TD ALIGN="LEFT">dpe_descripcion</TD><TD ALIGN="LEFT">VARCHAR(120) NULL</TD></TR>
+                </TABLE>
+            >];
+
+            t_sis [shape=plain, label=<
+                <TABLE BGCOLOR="white" BORDER="1.5" CELLBORDER="1" CELLPADDING="5" CELLSPACING="0" COLOR="black">
+                    <TR><TD ALIGN="CENTER" BGCOLOR="lightgray" COLSPAN="2"><B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fgan.sistemas_produccion&nbsp;&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                    <TR><TD ALIGN="LEFT" PORT="spr_id"><FONT COLOR="green"><U><B>spr_id</B></U></FONT></TD><TD ALIGN="LEFT">INTEGER (PK)</TD></TR>
+                    <TR><TD ALIGN="LEFT">spr_nombre</TD><TD ALIGN="LEFT">VARCHAR(100) NOT NULL</TD></TR>
+                    <TR><TD ALIGN="LEFT">spr_descripcion</TD><TD ALIGN="LEFT">VARCHAR(180) NULL</TD></TR>
+                    <TR><TD ALIGN="LEFT">spr_abreviatura</TD><TD ALIGN="LEFT">VARCHAR(10) NOT NULL</TD></TR>
+                </TABLE>
+            >];
+        }
+
+        // Tensión horizontal entre tablas padre
+        t_dep -> t_sis [style=invis, minlen=2];
+
+        // Tabla intermedia asociativa en el rango intermedio
+        t_puente [shape=plain, label=<
+            <TABLE BGCOLOR="white" BORDER="1.5" CELLBORDER="1" CELLPADDING="5" CELLSPACING="0" COLOR="black">
+                <TR><TD ALIGN="CENTER" BGCOLOR="lightgray" COLSPAN="2"><B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fgan.dependencias_sistemas_produccion&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</B></TD></TR>
+                <TR><TD ALIGN="LEFT" PORT="dpe_id"><FONT COLOR="red"><U><B>dpe_id</B></U></FONT></TD><TD ALIGN="LEFT"><FONT COLOR="red">INTEGER (PK, FK)</FONT></TD></TR>
+                <TR><TD ALIGN="LEFT" PORT="spr_id"><FONT COLOR="red"><U><B>spr_id</B></U></FONT></TD><TD ALIGN="LEFT"><FONT COLOR="red">INTEGER (PK, FK)</FONT></TD></TR>
+                <TR><TD ALIGN="LEFT">dps_fecha_asignacion</TD><TD ALIGN="LEFT">DATE NOT NULL</TD></TR>
+                <TR><TD ALIGN="LEFT">dps_descripcion</TD><TD ALIGN="LEFT">VARCHAR(130) NOT NULL</TD></TR>
+            </TABLE>
+        >];
+
+        // Punteros de integridad referencial hacia las tablas padre
+        edge [color="red", penwidth=1.5, dir=back, arrowtail=vee, arrowhead=none, arrowsize=0.8];
+        t_dep:dpe_id:w -> t_puente:dpe_id:w [label="  referencia PK"];
+        t_sis:spr_id:e  -> t_puente:spr_id:e  [label="referencia PK  "];
+
+        // =====================================================================
+        // SIGNATURA FORMAL RELACIONAL CON CÓDIGO CROMÁTICO
+        // =====================================================================
+        signaturas_fgan [shape=plain, label=<
+            <TABLE BGCOLOR="white" BORDER="1.5" CELLBORDER="0" CELLPADDING="6" CELLSPACING="0" COLOR="blue" STYLE="ROUNDED">
+                <TR>
+                    <TD ALIGN="CENTER" BGCOLOR="aliceblue" BORDER="1" COLSPAN="2" SIDES="B"><B><FONT COLOR="blue" POINT-SIZE="10">Signatura relacional formal del subsistema productivo</FONT></B></TD>
+                </TR>
+                <TR>
+                    <TD ALIGN="RIGHT"><B>dependencias</B></TD>
+                    <TD ALIGN="LEFT">
+                        <TABLE BORDER="0" CELLBORDER="0" CELLPADDING="0" CELLSPACING="5">
+                            <TR>
+                                <TD>(</TD>
+                                <TD><FONT COLOR="green"><U><B>dpe_id</B></U></FONT></TD>
+                                <TD>,</TD>
+                                <TD>dpe_nombre</TD>
+                                <TD>,</TD>
+                                <TD>dpe_descripcion</TD>
+                                <TD>)</TD>
+                            </TR>
+                        </TABLE>
+                    </TD>
+                </TR>
+                <TR>
+                    <TD ALIGN="RIGHT"><B>sistemas_produccion</B></TD>
+                    <TD ALIGN="LEFT">
+                        <TABLE BORDER="0" CELLBORDER="0" CELLPADDING="0" CELLSPACING="5">
+                            <TR>
+                                <TD>(</TD>
+                                <TD><FONT COLOR="green"><U><B>spr_id</B></U></FONT></TD>
+                                <TD>,</TD>
+                                <TD>spr_nombre</TD>
+                                <TD>,</TD>
+                                <TD>spr_abreviatura</TD>
+                                <TD>)</TD>
+                            </TR>
+                        </TABLE>
+                    </TD>
+                </TR>
+                <TR>
+                    <TD ALIGN="RIGHT"><B>dependencias_sistemas_produccion    </B></TD>
+                    <TD ALIGN="LEFT">
+                        <TABLE BORDER="0" CELLBORDER="0" CELLPADDING="0" CELLSPACING="5">
+                            <TR>
+                                <TD>(</TD>
+                                <TD><FONT COLOR="red"><U><B>dpe_id</B></U></FONT></TD>
+                                <TD>,</TD>
+                                <TD><FONT COLOR="red"><U><B>spr_id</B></U></FONT></TD>
+                                <TD>,</TD>
+                                <TD>dps_fecha_asignacion   </TD>
+                                <TD>,</TD>                                <TD>dps_fecha_asignacion</TD>
+                                <TD>    )</TD>
+                            </TR>
+                        </TABLE>
+                    </TD>
+                </TR>
+            </TABLE>
+        >];
+
+        edge [style=invis, weight=6, minlen=1];
+        t_puente -> signaturas_fgan;
+    }
+}
+
+
+```
+
+:::
+
+## Normalización relacional y formas normales avanzadas
+
+La normalización es una disciplina formal del diseño lógico que estructura las relaciones para minimizar la redundancia y neutralizar las **anomalías de actualización, inserción y borrado**. Su aplicación se articula mediante niveles progresivos de rigor metodológico:
+
+::: {.callout-note title="Anomalías de actualización, inserción y borrado"}
+Inconsistencias y fallos transaccionales originados por la redundancia estructural y dependencias funcionales inadecuadas en relaciones no normalizadas:
+
+* **Anomalía de actualización:** Modificación parcial o asimétrica de datos duplicados a lo largo de múltiples registros, generando estados mutuamente contradictorios sobre un mismo atributo o hecho del mundo real.
+
+* **Anomalía de inserción:** Imposibilidad de registrar los atributos válidos de una entidad independiente sin la concurrencia obligatoria de una entidad secundaria asociada, o la necesidad de introducir valores nulos artificiales para completar la tupla.
+
+* **Anomalía de borrado:** Pérdida involuntaria e irreversible de información descriptiva o histórica de una entidad principal como consecuencia colateral de eliminar el registro de una entidad subordinada.
+:::
+
+La progresión entre formas normales opera como un filtro secuencial de depuración estructural, ilustrado en la @fig-flujo-formas-normales-dot-coloquial (lenguale fácil de entender) y en la @fig-flujo-formas-normales-tecnico-dot (lenguaje técnico):
+
+:::{.diagrama-ancho}
+```{dot}
+//| label: fig-flujo-formas-normales-dot-coloquial
+//| fig-cap: "Flujo formas normales: lenguaje coloquial"
+//| fig-width: 6.5
+//| fig-height: 5.6
+//| out-width: "100%"
+//| fig-align: center
+//| echo: false
+
+digraph Formas_Normales {
+    graph [
+        rankdir = TB,
+        bgcolor = "transparent",
+        pad = "0.35",
+        nodesep = 2.0,
+        ranksep = 1.15
+    ];
+    node [
+        fontname = "Helvetica,Arial,sans-serif",
+        fontsize = 10,
+        shape = box,
+        style = "filled,rounded",
+        height = 0.52,
+        width = 1.95
+    ];
+    edge [
+        fontname = "Helvetica,Arial,sans-serif",
+        fontsize = 10,
+        color = "#495057",
+        arrowsize = 0.7
+    ];
+
+    // =========================================================================
+    // FILA 1: Entrada del proceso (pre-normalización)
+    // =========================================================================
+    {
+        rank = same;
+        TABLA [
+            label = <<B>Tabla no normalizada</B><BR/><FONT COLOR="#495057" POINT-SIZE="8">Datos mezclados y repetidos</FONT>>,
+            fillcolor = "#F8F9FA",
+            color = "#6C757D"
+        ];
+        DUMMY1 [style = invis, width = 1.95, height = 0.01];
+    }
+
+    // =========================================================================
+    // FILA 2: Formas clásicas básicas (L -> R)
+    // =========================================================================
+    {
+        rank = same;
+        F1 [
+            label = <<B>1FN</B><BR/><FONT COLOR="#495057" POINT-SIZE="8">Un solo dato en cada casilla</FONT>>,
+            fillcolor = "#E9ECEF",
+            color = "#6C757D"
+        ];
+        F2 [
+            label = <<B>2FN</B><BR/><FONT COLOR="#495057" POINT-SIZE="8">Todo depende de la clave completa     </FONT>>,
+            fillcolor = "#DEE2E6",
+            color = "#495057"
+        ];
+    }
+
+    // =========================================================================
+    // FILA 3: Formas intermedias de independencia (R -> L)
+    // =========================================================================
+    {
+        rank = same;
+        F4 [
+            label = <<B>4FN</B><BR/><FONT COLOR="#198754" POINT-SIZE="8">Temas independientes separados     </FONT>>,
+            fillcolor = "#D1E7DD",
+            color = "#198754"
+        ];
+        F3 [
+            label = <<B>3FN / BCNF</B><BR/><FONT COLOR="#0D6EFD" POINT-SIZE="8">Columnas directas a su clave</FONT>>,
+            fillcolor = "#CFE2FF",
+            color = "#0D6EFD"
+        ];
+    }
+
+    // =========================================================================
+    // FILA 4: Formas avanzadas y cierre óptimo (L -> R)
+    // =========================================================================
+    {
+        rank = same;
+        F5 [
+            label = <<B>5FN (PJNF)</B><BR/><FONT COLOR="#856404" POINT-SIZE="8">Tablas que cruzan sin inventar datos   </FONT>>,
+            fillcolor = "#FFF3CD",
+            color = "#FFC107"
+        ];
+        FDK [
+            label = <<B>DKNF</B><BR/><FONT COLOR="#0F5132" POINT-SIZE="8">Diseño blindado contra errores</FONT>>,
+            fillcolor = "#D1E7DD",
+            color = "#0F5132",
+            penwidth = 2.0
+        ];
+    }
+
+    // =========================================================================
+    // CONEXIONES CON CUADRO CENTRAL EXPLICATIVO (3 LÍNEAS PROTEGIDAS)
+    // =========================================================================
+
+    // 1. Descenso Fila 1 -> Fila 2 (Vertical Izquierda)
+    TABLA -> F1 [
+        weight = 10,
+        label = <<TABLE BORDER="0" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#CED4DA" STYLE="ROUNDED">
+            <TR><TD ALIGN="CENTER"><FONT COLOR="#212529" FACE="Helvetica,Arial,sans-serif"><B>1FN: Una casilla, un solo valor</B><BR/><BR/>Nada de listas separadas por comas;<BR/><BR/>prohibido amontonar datos en una celda</FONT></TD></TR>
+        </TABLE>>
+    ];
+
+    // 2. Transición Fila 2 (Horizontal L -> R)
+    F1 -> F2 [
+        weight = 1,
+        label = <<TABLE BORDER="0" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#CED4DA" STYLE="ROUNDED">
+            <TR><TD ALIGN="CENTER"><FONT COLOR="#212529" FACE="Helvetica,Arial,sans-serif"><B>2FN: La clave manda completa</B><BR/><BR/>Si la clave tiene varias columnas;<BR/><BR/>ningún dato depende de una sola parte</FONT></TD></TR>
+        </TABLE>>
+    ];
+
+    // 3. Descenso Fila 2 -> Fila 3 (Conexión vertical con caja a la IZQUIERDA de la línea)
+    F2 -> F3 [style = invis, weight = 10];
+    F2:w -> F3:w [
+        weight = 100,
+        label = <<TABLE BORDER="0" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0" COLOR="#CED4DA" STYLE="ROUNDED">
+            <TR><TD ALIGN="CENTER"><FONT COLOR="#0D6EFD" FACE="Helvetica,Arial,sans-serif"><B>3FN / BCNF: Sin intermediarios</B><BR/><BR/>Cada dato describe a su clave propia;<BR/><BR/>prohibido describir a otra columna vecina</FONT></TD></TR>
+        </TABLE>>
+    ];
+
+    // 4. Retorno Fila 3 (Horizontal R -> L)
+    F4 -> F3 [
+        dir = back,
+        weight = 1,
+        label = <<TABLE BORDER="0" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#CED4DA" STYLE="ROUNDED">
+            <TR><TD ALIGN="CENTER"><FONT COLOR="#198754" FACE="Helvetica,Arial,sans-serif"><B>4FN: Temas distintos van aparte</B><BR/><BR/>Separe listas que no tienen que ver;<BR/><BR/>evite multiplicar filas innecesariamente</FONT></TD></TR>
+        </TABLE>>
+    ];
+
+    // 5. Descenso Fila 3 -> Fila 4 (Vertical Izquierda)
+    F4 -> F5 [
+        weight = 10,
+        label = <<TABLE BORDER="0" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0" COLOR="#CED4DA" STYLE="ROUNDED">
+            <TR><TD ALIGN="CENTER"><FONT COLOR="#856404" FACE="Helvetica,Arial,sans-serif"><B>5FN (PJNF): Unión limpia sin inventos</B><BR/><BR/>Al dividir y volver a cruzar tablas;<BR/><BR/>no deben aparecer registros falsos</FONT></TD></TR>
+        </TABLE>>
+    ];
+
+    // 6. Transición Fila 4 (Horizontal L -> R)
+    F5 -> FDK [
+        weight = 1,
+        label = <<TABLE BORDER="0" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0" COLOR="#CED4DA" STYLE="ROUNDED">
+            <TR><TD ALIGN="CENTER"><FONT COLOR="#0F5132" FACE="Helvetica,Arial,sans-serif"><B>DKNF: El esquema se cuida solo</B><BR/><BR/>Las reglas se cumplen automáticamente;<BR/><BR/>usando solo las claves y tipos válidos</FONT></TD></TR>
+        </TABLE>>
+    ];
+
+    // =========================================================================
+    // GUÍAS DE ALINEACIÓN DE COLUMNAS (INVISIBLES)
+    // =========================================================================
+    TABLA -> DUMMY1 [style = invis];
+    DUMMY1 -> F2    [style = invis, weight = 10];
+    F1 -> F4        [style = invis, weight = 5];
+    F3 -> FDK       [style = invis, weight = 5];
+}
+
+```
+
+:::
+
+:::{.diagrama-ancho}
+
+```{dot}
+//| label: fig-flujo-formas-normales-tecnico-dot
+//| fig-cap: "Flujo formas normales: lenguaje técnico."
+//| fig-width: 6.5
+//| fig-height: 5.6
+//| out-width: "100%"
+//| fig-align: center
+//| echo: false
+
+digraph Formas_Normales {
+    graph [
+        rankdir = TB,
+        bgcolor = "transparent",
+        pad = "0.35",
+        nodesep = 2.0,
+        ranksep = 1.15
+    ];
+    node [
+        fontname = "Helvetica,Arial,sans-serif",
+        fontsize = 10,
+        shape = box,
+        style = "filled,rounded",
+        height = 0.52,
+        width = 1.95
+    ];
+    edge [
+        fontname = "Helvetica,Arial,sans-serif",
+        fontsize = 10,
+        color = "#495057",
+        arrowsize = 0.7
+    ];
+
+    // =========================================================================
+    // FILA 1: Entrada del proceso (pre-normalización)
+    // =========================================================================
+    {
+        rank = same;
+        TABLA [
+            label = <<B>Relación no normalizada</B><BR/><FONT COLOR="#495057" POINT-SIZE="8">Redundancias y anomalías operacionales      </FONT>>,
+            fillcolor = "#F8F9FA",
+            color = "#6C757D"
+        ];
+        DUMMY1 [style = invis, width = 1.95, height = 0.01];
+    }
+
+    // =========================================================================
+    // FILA 2: Formas clásicas básicas (L -> R)
+    // =========================================================================
+    {
+        rank = same;
+        F1 [
+            label = <<B>1FN</B><BR/><FONT COLOR="#495057" POINT-SIZE="8">Valores atómicos en dominios escalares     </FONT>>,
+            fillcolor = "#E9ECEF",
+            color = "#6C757D"
+        ];
+        F2 [
+            label = <<B>2FN</B><BR/><FONT COLOR="#495057" POINT-SIZE="8">Dependencia funcional completa</FONT>>,
+            fillcolor = "#DEE2E6",
+            color = "#495057"
+        ];
+    }
+
+    // =========================================================================
+    // FILA 3: Formas intermedias de independencia (R -> L)
+    // =========================================================================
+    {
+        rank = same;
+        F4 [
+            label = <<B>4FN</B><BR/><FONT COLOR="#198754" POINT-SIZE="8">Aislamiento de hechos multivaluados    </FONT>>,
+            fillcolor = "#D1E7DD",
+            color = "#198754"
+        ];
+        F3 [
+            label = <<B>3FN / BCNF</B><BR/><FONT COLOR="#0D6EFD" POINT-SIZE="8">Determinantes como superclaves    </FONT>>,
+            fillcolor = "#CFE2FF",
+            color = "#0D6EFD"
+        ];
+    }
+
+    // =========================================================================
+    // FILA 4: Formas avanzadas y cierre óptimo (L -> R)
+    // =========================================================================
+    {
+        rank = same;
+        F5 [
+            label = <<B>5FN (PJNF)</B><BR/><FONT COLOR="#856404" POINT-SIZE="8">Reunión sin pérdidas por proyección      </FONT>>,
+            fillcolor = "#FFF3CD",
+            color = "#FFC107"
+        ];
+        FDK [
+            label = <<B>DKNF</B><BR/><FONT COLOR="#0F5132" POINT-SIZE="8">Forma normal de dominio-clave  </FONT>>,
+            fillcolor = "#D1E7DD",
+            color = "#0F5132",
+            penwidth = 2.0
+        ];
+    }
+
+    // =========================================================================
+    // CONEXIONES CON CUADRO CENTRAL EXPLICATIVO (TÉRMINOS TÉCNICOS)
+    // =========================================================================
+
+    // 1. Descenso Fila 1 -> Fila 2 (Vertical Izquierda)
+    TABLA -> F1 [
+        weight = 10,
+        label = <<TABLE BORDER="0" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#CED4DA" STYLE="ROUNDED">
+            <TR><TD ALIGN="CENTER"><FONT COLOR="#212529" FACE="Helvetica,Arial,sans-serif"><B>1FN: Atomicidad de dominios</B><BR/><BR/>Eliminar atributos compuestos;<BR/><BR/>descomponer grupos repetitivos</FONT></TD></TR>
+        </TABLE>>
+    ];
+
+    // 2. Transición Fila 2 (Horizontal L -> R)
+    F1 -> F2 [
+        weight = 1,
+        label = <<TABLE BORDER="0" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#CED4DA" STYLE="ROUNDED">
+            <TR><TD ALIGN="CENTER"><FONT COLOR="#212529" FACE="Helvetica,Arial,sans-serif"><B>2FN: Dependencia completa</B><BR/><BR/>Eliminar dependencias parciales;<BR/><BR/>no primos dependen de toda la clave</FONT></TD></TR>
+        </TABLE>>
+    ];
+
+    // 3. Descenso Fila 2 -> Fila 3 (Conexión vertical con caja a la IZQUIERDA de la línea)
+    F2 -> F3 [style = invis, weight = 10];
+    F2:w -> F3:w [
+        weight = 100,
+        label = <<TABLE BORDER="0" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0" COLOR="#CED4DA" STYLE="ROUNDED">
+            <TR><TD ALIGN="CENTER"><FONT COLOR="#0D6EFD" FACE="Helvetica,Arial,sans-serif"><B>3FN / BCNF: Determinantes estrictos</B><BR/><BR/>Eliminar dependencias transitivas;<BR/><BR/>todo determinante es superclave</FONT></TD></TR>
+        </TABLE>>
+    ];
+
+    // 4. Retorno Fila 3 (Horizontal R -> L)
+    F4 -> F3 [
+        dir = back,
+        weight = 1,
+        label = <<TABLE BORDER="0" CELLBORDER="0" CELLPADDING="5" CELLSPACING="0" COLOR="#CED4DA" STYLE="ROUNDED">
+            <TR><TD ALIGN="CENTER"><FONT COLOR="#198754" FACE="Helvetica,Arial,sans-serif"><B>4FN: Independencia multivaluada</B><BR/><BR/>Separar hechos multivaluados independientes;<BR/><BR/>neutralizar anomalías combinatorias</FONT></TD></TR>
+        </TABLE>>
+    ];
+
+    // 5. Descenso Fila 3 -> Fila 4 (Vertical Izquierda)
+    F4 -> F5 [
+        weight = 10,
+        label = <<TABLE BORDER="0" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0" COLOR="#CED4DA" STYLE="ROUNDED">
+            <TR><TD ALIGN="CENTER"><FONT COLOR="#856404" FACE="Helvetica,Arial,sans-serif"><B>5FN (PJNF): Descomposición proyectiva</B><BR/><BR/>Garantizar reunión sin pérdida de datos;<BR/><BR/>reconstrucción libre de tuplas espurias</FONT></TD></TR>
+        </TABLE>>
+    ];
+
+    // 6. Transición Fila 4 (Horizontal L -> R)
+    F5 -> FDK [
+        weight = 1,
+        label = <<TABLE BORDER="0" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0" COLOR="#CED4DA" STYLE="ROUNDED">
+            <TR><TD ALIGN="CENTER"><FONT COLOR="#0F5132" FACE="Helvetica,Arial,sans-serif"><B>DKNF: Teorema de dominio-clave</B><BR/><BR/>Toda restricción de integridad es deducible;<BR/><BR/>exclusivamente de claves y dominios</FONT></TD></TR>
+        </TABLE>>
+    ];
+
+    // =========================================================================
+    // GUÍAS DE ALINEACIÓN DE COLUMNAS (INVISIBLES)
+    // =========================================================================
+    TABLA -> DUMMY1 [style = invis];
+    DUMMY1 -> F2    [style = invis, weight = 10];
+    F1 -> F4        [style = invis, weight = 5];
+    F3 -> FDK       [style = invis, weight = 5];
+}
+
+```
+
+:::
+
+La @tbl-resumen-formas-normales sintetiza la jerarquía completa de normalización, contrastando la exigencia técnica formal con el criterio práctico de verificación en el diseño:
+
+::: {#tbl-resumen-formas-normales}
+
+| Forma normal | Fundamento técnico | Regla práctica y verificación |
+| :- | :---- | :---- |
+| **1FN** | **Atomicidad de dominios:** Atributos con valores indivisibles; se prohíben conjuntos, listas y datos multivaluados anidados [@codd1970relational]. | **Una celda, un solo dato.** Se verifica que ninguna celda contenga listas separadas por comas. Cada celda almacena un escalar o un tipo abstracto atómico (`the_geom`). |
+| **2FN** | **Dependencia funcional completa:** Requiere 1FN y prohíbe dependencias parciales de claves primarias compuestas [@codd1972further]. | **Toda la clave o nada.** En claves primarias compuestas, ningún dato descriptivo puede depender solo de una parte de la clave. Si depende de una sola columna, debe segregarse. |
+| **3FN** | **Ausencia de dependencias transitivas:** Requiere 2FN y prohíbe dependencias entre atributos no primos ($X \rightarrow Y \rightarrow Z$) [@codd1972further]. | **Sin intermediarios.** Las columnas descriptivas dependen directamente de la clave. No se deben almacenar datos que describen a otra columna no clave (ej. omitir nombre de departamento en municipios). |
+| **BCNF** | **Determinantes estrictos:** Variante rigurosa de 3FN donde todo determinante de una dependencia funcional no trivial debe ser superclave [@codd1974recent]. | **Todo lo que determina debe ser clave.** Aplica a tablas con múltiples claves candidatas compuestas que se solapan; si una columna no clave determina parte de una clave, se divide la tabla. |
+| **4FN** | **Independencia multivaluada:** Requiere BCNF y prohíbe dependencias multivaluadas independientes ($X \twoheadrightarrow Y \mid Z$) [@fagin1977multivalued]. | **Hechos independientes en tablas independientes.** No deben coexistir dos listas de hechos independientes sobre un mismo objeto, evitando redundancia combinatoria. |
+| **5FN (PJNF)** | **Dependencia de reunión sin pérdidas:** Garantiza que la reconstrucción por proyecciones no genere tuplas espurias [@fagin1979normal]. | **Reconstrucción sin registros inventados.** Al separar relaciones cíclicas en proyecciones y reunirlas, no deben surgir combinaciones ficticias que afirmen hechos falsos. |
+| **DKNF** | **Teorema de dominio-clave:** Toda restricción de integridad debe ser consecuencia lógica directa de las claves y dominios [@fagin1981normal]. | **La estructura física impide el error.** La definición de tipos, listas admisibles y claves primarias impide ingresar datos inconsistentes sin requerir disparadores (*triggers*). |
+
+: Matriz sintética de formas normales y criterios de verificación conceptual.
+
+:::
+
+
+Para evaluar los requerimientos de descomposición relacional, es indispensable definir con precisión el instrumental teórico de claves y atributos:
+
+::: {.callout-note title="Definición de clave candidata"}
+Columna o conjunto mínimo de columnas que identifica de manera unívoca cada tupla dentro de una relación, satisfaciendo simultáneamente los principios de unicidad (no existen dos tuplas con valores idénticos) e irreductibilidad o minimalidad (ningún subconjunto propio de sus atributos conserva la capacidad de identificación única).
+
+A partir del conjunto de claves candidatas identificadas en una relación, el diseñador selecciona una como **clave primaria** (*Primary Key*), quedando las restantes categorizadas como **claves alternativas** (*Alternate Keys*).
+:::
+
+::: {.callout-note title="Atributos primos y no primos en el modelo relacional"}
+En la teoría de la normalización relacional, la condición de un atributo se determina a partir de su pertenencia a las claves candidatas de la relación:
+
+* **Atributo primo:** Atributo que forma parte de al menos una clave candidata (sea esta la clave primaria seleccionada o una clave alternativa) de la relación $R$. Si una tabla posee una clave candidata compuesta como $(\text{mun\_id}, \text{via\_codigo})$, tanto $\text{mun\_id}$ como $\text{via\_codigo}$ constituyen atributos primos de manera individual.
+
+* **Atributo no primo:** Atributo que no forma parte de ninguna clave candidata de la relación $R$. Representa propiedades descriptivas, cuantitativas o temáticas (ej. $\text{mun\_nombre}$, $\text{via\_tipo}$ o $\text{the\_geom}$) y constituye el foco de evaluación de las dependencias parciales en la Segunda Forma Normal (2FN) y de las dependencias transitivas en la Tercera Forma Normal (3FN).
+:::
+
+
+A partir de estas definiciones, las formas normales se estructuran jerárquicamente:
+
+* **Primera forma normal (1FN):** Exige que todos los atributos contengan exclusivamente valores **atómicos** indivisibles dentro de su **dominio** [@codd1970relational]. En la computación geoespacial, el atributo `the_geom` **no infringe la 1FN**: actúa como un Tipo Abstracto de Datos (ADT) encapsulado, procesado por el motor como una entidad matemática atómica unificada dentro del espacio geométrico.
+
+
+* **Segunda forma normal (2FN):** Exige el cumplimiento de la 1FN y prohíbe que cualquier atributo no primo dependa parcialmente de una clave candidata compuesta [@codd1972further]. Si la clave primaria de una tabla es simple (como `mun_id`), la 2FN se satisface de manera directa.
+
+::: {.callout-note title="Ejemplo de infracción de la segunda forma normal (2FN)"}
+Considérese una relación destinada a registrar la longitud de los tramos viales que cruzan por cada municipio:
+
+$$\text{tramos\_municipio}(\underline{\text{mun\_id}}, \, \underline{\text{via\_codigo}}, \, \text{mun\_nombre}, \, \text{via\_tipo}, \, \text{longitud\_km})$$
+
+En esta estructura:
+
+* **Clave primaria compuesta:** $(\text{mun\_id}, \text{via\_codigo})$
+
+* **Dependencia funcional completa:** $(\text{mun\_id}, \text{via\_codigo}) \rightarrow \text{longitud\_km}$ (la longitud corresponde estrictamente al segmento de esa vía dentro de ese municipio específico).
+
+* **Dependencias parciales (infracción de 2FN):**
+
+* $\text{mun\_id} \rightarrow \text{mun\_nombre}$ (`mun_nombre` depende únicamente del identificador municipal, ignorando la vía).
+
+* $\text{via\_codigo} \rightarrow \text{via\_tipo}$ (`via_tipo` depende exclusivamente del código de la vía, con independencia del municipio).
+
+
+Dado que los atributos no primos `mun_nombre` y `via_tipo` no dependen de la totalidad de la clave primaria sino de subconjuntos de esta, la relación viola la 2FN y genera redundancia cada vez que una vía atraviesa múltiples municipios. La normalización exige descomponerla en tres relaciones:
+
+1. $\text{municipios}(\underline{\text{mun\_id}}, \, \text{mun\_nombre})$
+
+2. $\text{vias}(\underline{\text{via\_codigo}}, \, \text{via\_tipo})$
+
+3. $\text{tramos\_municipio}(\underline{\text{mun\_id}}, \, \underline{\text{via\_codigo}}, \, \text{longitud\_km})$
+
+:::
+
+* **Tercera forma normal (3FN) y forma de Boyce-Codd (BCNF):** Elimina dependencias funcionales transitivas entre atributos no primos [@codd1972further; @codd1974recent]. En el ámbito territorial, almacenar el nombre del departamento dentro de la tabla municipal genera una cadena transitiva:
+
+$$\text{mun\_id} \rightarrow \text{dep\_id} \quad \wedge \quad \text{dep\_id} \rightarrow \text{dep\_nombre}$$
+
+Esto violaría la 3FN, obligando a registrar `'Antioquia'` cientos de veces en disco. La 3FN exige desarticular el modelo en `DEPARTAMENTOS` y `MUNICIPIOS`, enlazados mediante $\mathbf{\color{red}dep\_id}$.
+
+::: {.callout-note title="Dependencia funcional transitiva"}
+Relación de determinación indirecta entre atributos dentro de un esquema relacional, en la cual un atributo no primo $Z$ depende funcionalmente de una clave candidata $X$ únicamente a través de un conjunto de atributos intermedio $Y$.
+
+Formalmente, en una relación $R$, se manifiesta una dependencia funcional transitiva si se verifican simultáneamente las siguientes condiciones:
+
+$$X \rightarrow Y \quad \wedge \quad Y \rightarrow Z$$
+
+donde:
+
+* $Y \not\rightarrow X$ (el determinante intermedio $Y$ no es una superclave ni determina de forma biunívoca a $X$).
+
+* $Z \not\subseteq X \cup Y$ (la dependencia no es trivial).
+
+* $Z$ es un atributo no primo (no forma parte de ninguna clave candidata de la relación).
+
+La existencia de dependencias transitivas transgrede los principios de la Tercera Forma Normal (3FN), induciendo redundancia en el almacenamiento y anomalías operativas de actualización y borrado al asociar descriptores que deberían estar segregados en su propia relación independiente.
+:::
+
+* **Cuarta forma normal (4FN) y dependencias multivaluadas de Fagin:** Formulada por Ronald Fagin en 1977, aborda las **dependencias multivaluadas** ($X \twoheadrightarrow Y$), donde hechos independientes de cardinalidad múltiple se asocian a una misma clave [@fagin1977multivalued]. La 4FN prohíbe almacenar en una sola relación dos **hechos independientes** (por ejemplo, resguardos indígenas y planes de ordenamiento de un municipio), exigiendo su descomposición en tablas independientes para prevenir redundancia combinatoria.
+
+* **Quinta forma normal (5FN / PJNF):** Denominada formalmente *forma normal de proyección-unión* (*Projection-Join Normal Form*, PJNF), garantiza que una relación que ha sido descompuesta en múltiples tablas pueda reconstruirse mediante operaciones de combinación (*join*) sin alterar la información original ni generar **tuplas espurias** (registros ficticios que afirman hechos falsos en la base de datos), vinculando las **dependencias de reunión** exclusivamente a las claves candidatas [@fagin1979normal].
+
+::: {.callout-note title="Conceptos clave y ejemplo práctico de la quinta forma normal (5FN / PJNF)"}
+Una **dependencia de reunión** ocurre cuando una tabla ternaria no puede dividirse en dos relaciones sin corromper los datos, pero sí puede descomponerse en tres o más proyecciones sin pérdida.
+
+Considérese la asignación de levantamientos catastrales donde rige la siguiente regla: un operador ejecuta un método en un municipio si y solo si el operador atiende el municipio, el operador domina el método, y el municipio autoriza dicho método.
+
+$$\text{operaciones}(\underline{\text{operador}}, \, \underline{\text{municipio}}, \, \underline{\text{metodo}})$$
+
+::: {#tbl-operaciones tbl-colwidths="false" style="max-width: 45%; margin: auto;"}
+
+| operador | municipio | metodo |
+| --- | --- | --- |
+| Geocad | Chía | GNSS |
+| Geocad | Mogotes | GNSS |
+| Geocad | Mogotes | Dron |
+| Toposig | Mogotes | GNSS |
+
+: Relación operaciones
+:::
+
+Si esta relación se descompone únicamente en dos tablas:
+
+* $R_1(\underline{\text{operador}}, \, \underline{\text{municipio}})$
+
+* $R_2(\underline{\text{municipio}}, \, \underline{\text{metodo}})$
+
+
+Al reconstruir la información mediante $R_1 \bowtie R_2$, en Mogotes el operador `Toposig` se asociará automáticamente con `Dron`, produciendo la **tupla espuria** `(Toposig, Mogotes, Dron)`. Este dato es ficticio, pues `Toposig` no utiliza drones.
+
+Para satisfacer la **5FN**, la relación debe descomponerse en **tres proyecciones simultáneas**:
+
+1. $R_1(\underline{\text{operador}}, \, \underline{\text{municipio}})$
+
+2. $R_2(\underline{\text{municipio}}, \, \underline{\text{metodo}})$
+
+3. $R_3(\underline{\text{operador}}, \, \underline{\text{metodo}})$
+
+
+Al evaluar la reunión natural de las tres tablas ($R_1 \bowtie R_2 \bowtie R_3$), la tabla $R_3$ descarta la combinación errónea (al no existir el par `Toposig - Dron`), recuperando exactamente las cuatro tuplas originales sin redundancias ni registros espurios.
+:::
+
+* **Forma normal de dominio-clave (DKNF):** Formulada por Ronald Fagin en 1981, representa la frontera teórica de la disciplina relacional:
+
+
+::: {.callout-note title="Teorema de Fagin sobre la forma normal de dominio-clave (DKNF)"}
+Una relación relacional se encuentra en DKNF si y solo si toda restricción de integridad impuesta sobre los datos es una consecuencia lógica directa e inequívoca de la definición de los **dominios** de sus atributos y de las **claves** primarias o candidatas declaradas sobre el esquema [@fagin1981normal].
+:::
+
+Una tabla que satisface la DKNF carece por definición de anomalías de modificación, inserción y borrado.
+
+::: {.callout-note title="Evaluación práctica de la DKNF en la jerarquía territorial DIVIPOLA"}
+Considérese la relación de municipios articulada con su dependencia departamental:
+
+$$\text{municipios}(\underline{\text{mun\_id}}, \, \text{mun\_nombre}, \, \text{dep\_id})$$
+
+**1. Diagnóstico del estado de normalización actual:**
+
+Antes de contrastar la relación frente a la DKNF, se verifica su conformidad con la jerarquía clásica de formas normales:
+
+* **1FN:** Cumple estrictamente, pues todos los atributos alojan valores atómicos dentro de sus dominios escalares.
+
+* **2FN:** Satisface la condición al poseer una clave primaria simple ($\text{mun\_id}$), descartando cualquier dependencia funcional parcial.
+
+* **3FN y BCNF:** Se encuentra en 3FN y en BCNF debido a que la única dependencia funcional no trivial existente es $\text{mun\_id} \rightarrow \{\text{mun\_nombre}, \text{dep\_id}\}$, donde el determinante es la clave candidata única (superclave). No existen dependencias transitivas entre atributos no primos.
+
+* **4FN y 5FN:** Cumple trivialmente al no presentar hechos multivaluados independientes ($X \twoheadrightarrow Y$) ni dependencias de reunión cíclicas.
+
+En consecuencia, **la relación se encuentra formalmente en BCNF y 5FN**. Sin embargo, este nivel de diseño resulta insuficiente para encapsular restricciones semánticas entre atributos interdependientes mediante mecanismos exclusivamente declarativos.
+
+**2. Especificación de claves y dominios:**
+
+* **Clave primaria:** $\text{mun\_id}$ (garantiza la unicidad de cada registro municipal).
+
+* **Dominio de $\text{mun\_id}$:** Cadena de exactamente 5 dígitos numéricos ($\text{Pattern}({[0-9]}^5)$).
+
+* **Dominio de $\text{dep\_id}$:** Cadena de exactamente 2 dígitos numéricos ($\text{Pattern}({[0-9]}^2)$).
+
+* **Dominio de $\text{mun\_nombre}$:** Cadena de texto de hasta 100 caracteres.
+
+
+**3. Restricción territorial general ($C$):**
+
+La estructura oficial de codificación DIVIPOLA del DANE impone la siguiente regla de jerarquía administrativa: *«El código departamental $\text{dep\_id}$ asignado a un municipio debe coincidir de forma idéntica con los dos primeros caracteres de su identificador municipal $\text{mun\_id}$»*:
+
+$$C: \text{dep\_id} = \text{SUBSTRING}(\text{mun\_id}, \, 1, \, 2)$$
+
+**4. Prueba de consecuencia lógica (infracción de DKNF):**
+
+Supóngase el intento de inserción de la siguiente tupla:
+
+$$t_1 = (\text{'05001'}, \, \text{'MEDELLÍN'}, \, \text{'25'})$$
+
+Al contrastar la tupla frente a los mecanismos declarativos del esquema:
+
+* ¿Satisface la restricción de clave primaria? **Sí**, `'05001'` no colisiona con ningún registro preexistente.
+
+* ¿Satisface las restricciones de dominio? **Sí**, `'05001'` cumple con la longitud de 5 caracteres numéricos y `'25'` cumple con la de 2 caracteres numéricos.
+
+* ¿Satisface la regla territorial $C$? **No**, dado que $\text{SUBSTRING}('05001', 1, 2) = '05' \neq '25'$ (se registra a Medellín bajo la jurisdicción de Cundinamarca).
+
+Dado que es factible formular tuplas que satisfacen rigurosamente todos los dominios y todas las claves pero violan la restricción territorial $C$, se demuestra formalmente que **$C$ no es una consecuencia lógica de los dominios y claves declarados**. A pesar de hallarse en 5FN/BCNF, la relación $\text{municipios}$ **no se encuentra en DKNF**, lo que obliga al gestor a implementar disparadores (*triggers*) o restricciones procedimentales complejas para impedir inconsistencias territoriales.
+
+**5. Rediseño hacia la forma normal de dominio-clave (DKNF):**
+
+Conforme al teorema de Fagin [@fagin1981normal], para que la restricción sea una consecuencia lógica directa, se descompone el identificador en sus componentes atómicos:
+
+$$\text{municipios}(\underline{\text{dep\_id}}, \, \underline{\text{mun\_consecutivo}}, \, \text{mun\_nombre})$$
+
+* **Clave primaria compuesta:** $(\text{dep\_id}, \text{mun\_consecutivo})$.
+
+* **Dominio de $\text{dep\_id}$:** Cadena de 2 caracteres numéricos $[0-9]^2$ (clave foránea que referencia a `departamentos`).
+
+* **Dominio de $\text{mun\_consecutivo}$:** Cadena de 3 caracteres numéricos $[0-9]^3$ (subcódigo local municipal).
+
+Bajo esta formulación:
+
+* La tupla de Medellín se registra como $(\text{'05'}, \, \text{'001'}, \, \text{'MEDELLÍN'})$.
+
+* El código DIVIPOLA integrado de 5 dígitos se deriva unívocamente mediante concatenación ($\text{dep\_id} \mathbin{\Vert} \text{mun\_consecutivo}$).
+
+* Resulta imposible asociar a Medellín con el departamento `'25'` sin modificar explícitamente su clave primaria compuesta. La coherencia geográfica queda garantizada por la propia definición de las claves y dominios, **alcanzando plenamente la DKNF**.
+:::
+
+### Evolución paradigmática: almacenamiento relacional puro frente a objeto-relacional
+
+Comprender las ventajas del diseño lógico relacional contemporáneo exige examinar la aproximación técnica adoptada en las décadas de 1980 y 1990. Ante la inexistencia de tipos abstractos de datos espaciales nativos en los motores de bases de datos, el cumplimiento estricto del principio de atomicidad de la Primera Forma Normal (1FN) forzaba la desarticulación tabular de cualquier objeto poligonal —como la delimitación geográfica de un municipio o departamento— en una jerarquía relacional de tablas alfanuméricas elementales.
+
+::: {.callout-note title="Notación de cardinalidad y opcionalidad pata de gallo (Crow's Foot)"}
+A diferencia de la notación de Barker (donde la obligatoriedad se define mediante la alternancia de trazos continuos o discontinuos a lo largo del enlace), los diagramas entidad-relación generados en Mermaid implementan la simbología estándar formal **pata de gallo** (*Crow's Foot*), descomponiendo cada extremo de la asociación en dos glifos consecutivos:
+
+* **Dos barras perpendiculares (`||`):** Formalizan una participación **estrictamente obligatoria y singular** ($1..1$). La barra interna especifica una cardinalidad mínima de uno (mandatorio), mientras que la barra externa fija la cardinalidad máxima en exactamente uno.
+
+* **Barra perpendicular seguida de pata de gallo (`|{`):** Formaliza una participación **obligatoria de uno a muchos** ($1..*$). La barra codifica una cardinalidad mínima obligatoria de uno (no puede existir la entidad primaria sin al menos un registro dependiente), mientras que las tres líneas divergentes representan multiplicidad.
+
+* **Círculo seguido de pata de gallo (`o{`):** Formaliza una relación **opcional de cero a muchos** ($0..*$). El círculo exterior codifica una cardinalidad mínima de cero (participación contingente), mientras que las tres líneas divergentes fijan la cardinalidad máxima múltiple.
+
+* **Límites de la notación gráfica frente a reglas geométricas:** El estándar formal *Crow's Foot* únicamente admite cardinalidades mínimas de $0$ o $1$. Restricciones topológicas más estrictas —como la exigencia de un mínimo de tres vértices distintos para definir una superficie bidimensional, o cuatro coordenadas para clausurar un anillo poligonal según el estándar OGC ($N \ge 4$)— exceden la capacidad expresiva de los glifos de cardinalidad relacional. Estas condiciones geométricas no se modelan en el conector visual, sino que se delegan a restricciones de integridad de dominio (*constraints* a nivel de tabla o disparadores).
+:::
+
+::: {.diagrama-70ancho}
+
+```{mermaid}
+%%| label: fig-modelo-relacional-puro-geometria
+%%| fig-cap: "Desarticulación histórica de primitivas vectoriales bajo el modelo relacional puro sin tipos espaciales nativos."
+%%| echo: false
+%%| fig-width: 5.5
+%%| fig-height: 7
+%%| fig-align: center
+%%| out-width: "100%"
+
+erDiagram
+    municipios ||--|{ limites : delimita
+    limites ||--|{ contornos : compone
+    contornos ||--|{ puntos_secuencia : ordena
+    puntos ||--o{ puntos_secuencia : posiciona
+
+    municipios {
+        varchar mun_id PK
+        varchar mun_nombre
+        varchar dep_id FK
+    }
+    limites {
+        varchar lim_id PK
+        varchar mun_id FK
+        int lim_num_contornos
+    }
+    contornos {
+        varchar con_id PK
+        varchar lim_id FK
+        int con_num_puntos
+    }
+    puntos_secuencia {
+        varchar con_id PK, FK
+        int pse_seq_num PK
+        varchar pun_id FK
+    }
+    puntos {
+        varchar pun_id PK
+        float pun_coord_x
+        float pun_coord_y
+    }
+
+
+```
+
+:::
+
+Esta formulación tabular atomizada imponía limitaciones críticas en la gestión territorial:
+
+* Renderizar la frontera cartográfica de un único municipio requería ejecutar operaciones de cruce (`JOIN`) consecutivas sobre cuatro tablas independientes y demandar un costo de ordenamiento secuencial (`ORDER BY pse_seq_num`) sobre miles de tuplas de nodos.
+
+* Los predicados espaciales y las métricas topológicas básicas (cálculo de área, longitud perimetral o inclusión de predios) no podían resolverse en el servidor; el gestor debía transferir todas las coordenadas por la red hacia la estación de trabajo para reconstruir el polígono en la memoria del cliente SIG.
+
+* Resultaba inviable estructurar métodos de indexación espacial multidimensional (como árboles R) sobre columnas escalares aisladas de tipo flotante (`pun_coord_x`, `pun_coord_y`).
+
+La consolidación del modelo **objeto-relacional** y las especificaciones OGC/ISO transformaron el diseño de bases de datos territoriales al incorporar la geometría como un Tipo Abstracto de Datos (ADT) atómico nativo (`the_geom`). Esta arquitectura permite encapsular todas las primitivas y anillos que componen un municipio o departamento dentro de un único registro, habilitando el cómputo analítico en el servidor e integrando índices multidimensionales directos (árboles GiST) sobre la tabla relacional.
+
+## Estructuración DDL del modelo base en bde_territorio_nacional
+
+Para validar la correspondencia entre las signaturas lógicas y su definición formal en PostgreSQL, se implementa el DDL declarativo del subsistema territorial base (`departamentos`, `municipios`, `microregiones`) y del subsistema asociativo (`dependencias`, `sistemas_produccion`, `dependencias_sistemas_produccion`) en la base de datos `bde_territorio_nacional`.
+
+La inicialización del repositorio operacional requiere la conexión administrativa a la base de datos por defecto del motor local (`postgres`), la terminación de sesiones concurrentes para garantizar idempotencia, la creación de la base de datos física y la posterior habilitación de la extensión PostGIS:
+
+```{sql}
+--| label: ddl-crear-bd-territorio
+--| eval: false
+--| echo: true
+
+-- Ámbito de ejecución: Instancia en el sistema anfitrión (host local)
+-- Base de datos: postgres
+
+SELECT pg_terminate_backend(pid) 
+FROM pg_stat_activity 
+WHERE datname = 'bde_territorio_nacional' AND pid <> pg_backend_pid();
+
+DROP DATABASE IF EXISTS bde_territorio_nacional;
+
+CREATE DATABASE bde_territorio_nacional 
+    WITH ENCODING = 'UTF8' 
+    TEMPLATE = template0;
+
+\connect bde_territorio_nacional
+
+CREATE EXTENSION IF NOT EXISTS postgis;
+
+```
+
+```{bash}
+#| label: ddl-crear-bd-territorio-exec
+#| eval: true
+#| echo: false
+
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "postgres" <<'EOF'
+SELECT pg_terminate_backend(pid) 
+FROM pg_stat_activity 
+WHERE datname = 'bde_territorio_nacional' AND pid <> pg_backend_pid();
+
+DROP DATABASE IF EXISTS bde_territorio_nacional;
+
+CREATE DATABASE bde_territorio_nacional WITH ENCODING = 'UTF8' TEMPLATE = template0;
+EOF
+
+psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "bde_territorio_nacional" -v ON_ERROR_STOP=1 <<'EOF'
+CREATE EXTENSION IF NOT EXISTS postgis;
+EOF
+
+```
+
+En este nivel de diseño lógico, el DDL se concentra en la definición de esquemas, tablas, tipos atómicos, claves primarias, claves foráneas y restricciones `CHECK`, abstrayéndose de la indexación espacial física GiST y de la migración de datos que se abordarán en el Capítulo 23.
+
+```{sql}
+--| label: ddl-logico-territorio-nacional
+--| eval: false
+--| echo: true
+
+-- Ámbito de ejecución: Instancia en el sistema anfitrión (host local)
+-- Base de datos: bde_territorio_nacional
+
+-- 1. Esquemas temáticos
+CREATE SCHEMA IF NOT EXISTS divpol;
+CREATE SCHEMA IF NOT EXISTS public;
+CREATE SCHEMA IF NOT EXISTS fgan;
+
+-- 2. Entidad departamental (Clase espacial primaria)
+CREATE TABLE divpol.departamentos (
+    gid SERIAL,
+    dep_id VARCHAR(2) NOT NULL,
+    dep_nombre VARCHAR(100) NOT NULL,
+    dep_region VARCHAR(50) NULL,
+    the_geom GEOMETRY(MultiPolygon, 9377) NOT NULL,
+    CONSTRAINT pk_divpol_departamentos PRIMARY KEY (dep_id),
+    CONSTRAINT uq_departamentos_gid UNIQUE (gid)
+);
+
+-- 3. Entidad microrregiones (Entidad alfanumérica agregada)
+CREATE TABLE public.microregiones (
+    mic_id INTEGER NOT NULL,
+    mic_nombre VARCHAR(100) NOT NULL,
+    mic_descripcion TEXT NULL,
+    CONSTRAINT pk_public_microregiones PRIMARY KEY (mic_id),
+    CONSTRAINT uq_microregiones_nombre UNIQUE (mic_nombre)
+);
+
+-- 4. Entidad municipal (Clase espacial subordinada)
+CREATE TABLE divpol.municipios (
+    gid SERIAL,
+    mun_id VARCHAR(5) NOT NULL,
+    mun_nombre VARCHAR(100) NOT NULL,
+    mun_categoria VARCHAR(10) NULL,
+    dep_id VARCHAR(2) NOT NULL,
+    mic_id INTEGER NULL,
+    the_geom GEOMETRY(MultiPolygon, 9377) NOT NULL,
+    CONSTRAINT pk_divpol_municipios PRIMARY KEY (mun_id),
+    CONSTRAINT uq_municipios_gid UNIQUE (gid),
+    CONSTRAINT fk_municipios_departamentos FOREIGN KEY (dep_id)
+        REFERENCES divpol.departamentos (dep_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    CONSTRAINT fk_municipios_microregiones FOREIGN KEY (mic_id)
+        REFERENCES public.microregiones (mic_id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
+    CONSTRAINT chk_mun_categoria CHECK (
+        mun_categoria IN ('ESPECIAL', 'PRIMERA', 'SEGUNDA', 'TERCERA', 'CUARTA', 'QUINTA', 'SEXTA')
+    )
+);
+
+-- 5. Catálogos y tabla intermedia asociativa del subsistema productivo
+CREATE TABLE fgan.dependencias (
+    dpe_id INTEGER NOT NULL,
+    dpe_nombre VARCHAR(100) NOT NULL,
+    dpe_descripcion TEXT NULL,
+    CONSTRAINT pk_fgan_dependencias PRIMARY KEY (dpe_id)
+);
+
+CREATE TABLE fgan.sistemas_produccion (
+    spr_id INTEGER NOT NULL,
+    spr_nombre VARCHAR(100) NOT NULL,
+    spr_descripcion TEXT NULL,
+    spr_abreviatura VARCHAR(10) NOT NULL,
+    CONSTRAINT pk_fgan_sistemas_produccion PRIMARY KEY (spr_id)
+);
+
+CREATE TABLE fgan.dependencias_sistemas_produccion (
+    dpe_id INTEGER NOT NULL,
+    spr_id INTEGER NOT NULL,
+    dps_fecha_asignacion DATE NOT NULL DEFAULT CURRENT_DATE,
+    dps_descripcion VARCHAR(130) NULL,
+    CONSTRAINT pk_dependencias_sistemas PRIMARY KEY (dpe_id, spr_id),
+    CONSTRAINT fk_dps_dependencias FOREIGN KEY (dpe_id)
+        REFERENCES fgan.dependencias (dpe_id)
+        ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT fk_dps_sistemas FOREIGN KEY (spr_id)
+        REFERENCES fgan.sistemas_produccion (spr_id)
+        ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+```
+
+```{bash}
+#| label: ddl-logico-territorio-nacional-exec
+#| eval: true
+#| echo: false
+
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "bde_territorio_nacional" -v ON_ERROR_STOP=1 <<'EOF'
+CREATE SCHEMA IF NOT EXISTS divpol;
+CREATE SCHEMA IF NOT EXISTS public;
+CREATE SCHEMA IF NOT EXISTS fgan;
+
+CREATE TABLE divpol.departamentos (
+    gid SERIAL,
+    dep_id VARCHAR(2) NOT NULL,
+    dep_nombre VARCHAR(100) NOT NULL,
+    dep_region VARCHAR(50) NULL,
+    the_geom GEOMETRY(MultiPolygon, 9377) NOT NULL,
+    CONSTRAINT pk_divpol_departamentos PRIMARY KEY (dep_id),
+    CONSTRAINT uq_departamentos_gid UNIQUE (gid)
+);
+
+CREATE TABLE public.microregiones (
+    mic_id INTEGER NOT NULL,
+    mic_nombre VARCHAR(100) NOT NULL,
+    mic_descripcion TEXT NULL,
+    CONSTRAINT pk_public_microregiones PRIMARY KEY (mic_id),
+    CONSTRAINT uq_microregiones_nombre UNIQUE (mic_nombre)
+);
+
+CREATE TABLE divpol.municipios (
+    gid SERIAL,
+    mun_id VARCHAR(5) NOT NULL,
+    mun_nombre VARCHAR(100) NOT NULL,
+    mun_categoria VARCHAR(10) NULL,
+    dep_id VARCHAR(2) NOT NULL,
+    mic_id INTEGER NULL,
+    the_geom GEOMETRY(MultiPolygon, 9377) NOT NULL,
+    CONSTRAINT pk_divpol_municipios PRIMARY KEY (mun_id),
+    CONSTRAINT uq_municipios_gid UNIQUE (gid),
+    CONSTRAINT fk_municipios_departamentos FOREIGN KEY (dep_id)
+        REFERENCES divpol.departamentos (dep_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    CONSTRAINT fk_municipios_microregiones FOREIGN KEY (mic_id)
+        REFERENCES public.microregiones (mic_id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
+    CONSTRAINT chk_mun_categoria CHECK (
+        mun_categoria IN ('ESPECIAL', 'PRIMERA', 'SEGUNDA', 'TERCERA', 'CUARTA', 'QUINTA', 'SEXTA')
+    )
+);
+
+CREATE TABLE fgan.dependencias (
+    dpe_id INTEGER NOT NULL,
+    dpe_nombre VARCHAR(100) NOT NULL,
+    dpe_descripcion TEXT NULL,
+    CONSTRAINT pk_fgan_dependencias PRIMARY KEY (dpe_id)
+);
+
+CREATE TABLE fgan.sistemas_produccion (
+    spr_id INTEGER NOT NULL,
+    spr_nombre VARCHAR(100) NOT NULL,
+    spr_descripcion TEXT NULL,
+    spr_abreviatura VARCHAR(10) NOT NULL,
+    CONSTRAINT pk_fgan_sistemas_produccion PRIMARY KEY (spr_id)
+);
+
+CREATE TABLE fgan.dependencias_sistemas_produccion (
+    dpe_id INTEGER NOT NULL,
+    spr_id INTEGER NOT NULL,
+    dps_fecha_asignacion DATE NOT NULL DEFAULT CURRENT_DATE,
+    dps_descripcion VARCHAR(130) NULL,
+    CONSTRAINT pk_dependencias_sistemas PRIMARY KEY (dpe_id, spr_id),
+    CONSTRAINT fk_dps_dependencias FOREIGN KEY (dpe_id)
+        REFERENCES fgan.dependencias (dpe_id)
+        ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT fk_dps_sistemas FOREIGN KEY (spr_id)
+        REFERENCES fgan.sistemas_produccion (spr_id)
+        ON UPDATE CASCADE ON DELETE RESTRICT
+);
+EOF
+
+```
+
+## Esquema lógico del caso de estudio integral
+
+En @sec-conceptual-model se estructuró la gobernanza de la información para la Guía Ambiental del Sector Ganadero Bovino de Colombia a través de cinco paquetes temáticos en UML. Para garantizar una correspondencia unívoca entre la fase conceptual y la formalización relacional, a continuación se materializa el caso de estudio corporativo integral en una base de datos independiente denominada `bde_fedegan`.
+
+Se inicializa la base de datos `bde_fedegan` en la instancia local, asegurando la habilitación de PostGIS y la creación de los cinco esquemas temáticos:
+
+```{sql}
+--| label: ddl-crear-bd-fedegan
+--| eval: false
+--| echo: true
+
+-- Ámbito de ejecución: Instancia en el sistema anfitrión (host local)
+-- Base de datos: postgres
+
+SELECT pg_terminate_backend(pid) 
+FROM pg_stat_activity 
+WHERE datname = 'bde_fedegan' AND pid <> pg_backend_pid();
+
+DROP DATABASE IF EXISTS bde_fedegan;
+
+CREATE DATABASE bde_fedegan 
+    WITH ENCODING = 'UTF8' 
+    TEMPLATE = template0;
+
+\connect bde_fedegan
+
+CREATE EXTENSION IF NOT EXISTS postgis;
+
+CREATE SCHEMA IF NOT EXISTS divpol;
+CREATE SCHEMA IF NOT EXISTS public;
+CREATE SCHEMA IF NOT EXISTS fgan;
+CREATE SCHEMA IF NOT EXISTS guia;
+CREATE SCHEMA IF NOT EXISTS base750;
+
+```
+
+```{bash}
+#| label: ddl-crear-bd-fedegan-exec
+#| eval: true
+#| echo: false
+
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "postgres" <<'EOF'
+SELECT pg_terminate_backend(pid) 
+FROM pg_stat_activity 
+WHERE datname = 'bde_fedegan' AND pid <> pg_backend_pid();
+
+DROP DATABASE IF EXISTS bde_fedegan;
+
+CREATE DATABASE bde_fedegan WITH ENCODING = 'UTF8' TEMPLATE = template0;
+EOF
+
+psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "bde_fedegan" -v ON_ERROR_STOP=1 <<'EOF'
+CREATE EXTENSION IF NOT EXISTS postgis;
+CREATE SCHEMA IF NOT EXISTS divpol;
+CREATE SCHEMA IF NOT EXISTS public;
+CREATE SCHEMA IF NOT EXISTS fgan;
+CREATE SCHEMA IF NOT EXISTS guia;
+CREATE SCHEMA IF NOT EXISTS base750;
+EOF
+
+```
+
+### Paquete territorial oficial (divpol)
+
+Comprende las coberturas cartográficas oficiales de la división político-administrativa del país:
+
+* $\text{divpol.nacion} \,(\, \underline{\mathbf{\color{green}\text{nac\_id}}}, \, \text{nac\_nombre}, \, \text{the\_geom} \,)$
+* $\text{divpol.departamentos} \,(\, \underline{\mathbf{\color{green}\text{dep\_id}}}, \, \text{dep\_nombre}, \, \text{dep\_region}, \, \mathbf{\color{red}\text{nac\_id}}, \, \text{the\_geom} \,)$
+* $\text{divpol.municipios} \,(\, \underline{\mathbf{\color{green}\text{mun\_id}}}, \, \text{mun\_nombre}, \, \text{mun\_categoria}, \, \mathbf{\color{red}\text{dep\_id}}, \, \mathbf{\color{red}\text{mic\_id}}, \, \text{the\_geom} \,)$
+
+```{sql}
+--| label: ddl-fedegan-divpol
+--| eval: false
+--| echo: true
+
+-- Ámbito de ejecución: Instancia en el sistema anfitrión (host local)
+-- Base de datos: bde_fedegan
+
+CREATE TABLE divpol.nacion (
+    nac_id VARCHAR(2) NOT NULL,
+    nac_nombre VARCHAR(100) NOT NULL,
+    the_geom GEOMETRY(MultiPolygon, 9377) NOT NULL,
+    CONSTRAINT pk_divpol_nacion PRIMARY KEY (nac_id)
+);
+
+CREATE TABLE divpol.departamentos (
+    dep_id VARCHAR(2) NOT NULL,
+    dep_nombre VARCHAR(100) NOT NULL,
+    dep_region VARCHAR(50) NULL,
+    nac_id VARCHAR(2) NOT NULL,
+    the_geom GEOMETRY(MultiPolygon, 9377) NOT NULL,
+    CONSTRAINT pk_divpol_departamentos PRIMARY KEY (dep_id),
+    CONSTRAINT fk_departamentos_nacion FOREIGN KEY (nac_id)
+        REFERENCES divpol.nacion (nac_id) ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+CREATE TABLE divpol.municipios (
+    mun_id VARCHAR(5) NOT NULL,
+    mun_nombre VARCHAR(100) NOT NULL,
+    mun_categoria VARCHAR(10) NULL,
+    dep_id VARCHAR(2) NOT NULL,
+    mic_id INTEGER NULL,
+    the_geom GEOMETRY(MultiPolygon, 9377) NOT NULL,
+    CONSTRAINT pk_divpol_municipios PRIMARY KEY (mun_id),
+    CONSTRAINT fk_municipios_departamentos FOREIGN KEY (dep_id)
+        REFERENCES divpol.departamentos (dep_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT chk_mun_categoria CHECK (
+        mun_categoria IN ('ESPECIAL', 'PRIMERA', 'SEGUNDA', 'TERCERA', 'CUARTA', 'QUINTA', 'SEXTA')
+    )
+);
+
+```
+
+```{bash}
+#| label: ddl-fedegan-divpol-exec
+#| eval: true
+#| echo: false
+
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "bde_fedegan" -v ON_ERROR_STOP=1 <<'EOF'
+CREATE TABLE divpol.nacion (
+    nac_id VARCHAR(2) NOT NULL,
+    nac_nombre VARCHAR(100) NOT NULL,
+    the_geom GEOMETRY(MultiPolygon, 9377) NOT NULL,
+    CONSTRAINT pk_divpol_nacion PRIMARY KEY (nac_id)
+);
+
+CREATE TABLE divpol.departamentos (
+    dep_id VARCHAR(2) NOT NULL,
+    dep_nombre VARCHAR(100) NOT NULL,
+    dep_region VARCHAR(50) NULL,
+    nac_id VARCHAR(2) NOT NULL,
+    the_geom GEOMETRY(MultiPolygon, 9377) NOT NULL,
+    CONSTRAINT pk_divpol_departamentos PRIMARY KEY (dep_id),
+    CONSTRAINT fk_departamentos_nacion FOREIGN KEY (nac_id)
+        REFERENCES divpol.nacion (nac_id) ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+CREATE TABLE divpol.municipios (
+    mun_id VARCHAR(5) NOT NULL,
+    mun_nombre VARCHAR(100) NOT NULL,
+    mun_categoria VARCHAR(10) NULL,
+    dep_id VARCHAR(2) NOT NULL,
+    mic_id INTEGER NULL,
+    the_geom GEOMETRY(MultiPolygon, 9377) NOT NULL,
+    CONSTRAINT pk_divpol_municipios PRIMARY KEY (mun_id),
+    CONSTRAINT fk_municipios_departamentos FOREIGN KEY (dep_id)
+        REFERENCES divpol.departamentos (dep_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT chk_mun_categoria CHECK (
+        mun_categoria IN ('ESPECIAL', 'PRIMERA', 'SEGUNDA', 'TERCERA', 'CUARTA', 'QUINTA', 'SEXTA')
+    )
+);
+EOF
+
+```
+
+### Paquete de catálogos compartidos e infraestructura (public)
+
+Agrupa las dimensiones temporales, las zonificaciones de gestión agregada y las redes de transporte:
+
+* $\text{public.periodos} \,(\, \underline{\mathbf{\color{green}\text{per\_id}}}, \, \text{per\_nombre}, \, \text{per\_descripcion} \,)$
+* $\text{public.microregiones} \,(\, \underline{\mathbf{\color{green}\text{mic\_id}}}, \, \text{mic\_nombre}, \, \text{mic\_descripcion} \,)$
+* $\text{public.rutas} \,(\, \underline{\mathbf{\color{green}\text{rut\_id}}}, \, \text{rut\_distancia}, \, \text{rut\_tiempo}, \, \text{rut\_velocidad}, \, \text{rut\_estado}, \, \text{the\_geom} \,)$
+
+```{sql}
+--| label: ddl-fedegan-public
+--| eval: false
+--| echo: true
+
+-- Ámbito de ejecución: Instancia en el sistema anfitrión (host local)
+-- Base de datos: bde_fedegan
+
+CREATE TABLE public.microregiones (
+    mic_id INTEGER NOT NULL,
+    mic_nombre VARCHAR(100) NOT NULL,
+    mic_descripcion VARCHAR(250) NULL,
+    CONSTRAINT pk_public_microregiones PRIMARY KEY (mic_id)
+);
+
+CREATE TABLE public.periodos (
+    per_id INTEGER NOT NULL,
+    per_nombre VARCHAR(50) NOT NULL,
+    per_descripcion VARCHAR(80) NULL,
+    CONSTRAINT pk_public_periodos PRIMARY KEY (per_id)
+);
+
+CREATE TABLE public.rutas (
+    rut_id INTEGER NOT NULL,
+    rut_distancia NUMERIC(10, 2) NOT NULL,
+    rut_tiempo NUMERIC(10, 2) NOT NULL,
+    rut_velocidad NUMERIC(10, 2) NOT NULL,
+    rut_estado VARCHAR(20) NOT NULL,
+    the_geom GEOMETRY(LineString, 9377) NOT NULL,
+    CONSTRAINT pk_public_rutas PRIMARY KEY (rut_id),
+    CONSTRAINT chk_rut_estado CHECK (
+        rut_estado IN ('MUY BUENO', 'BUENO', 'MALO', 'MUY MALO')
+    )
+);
+
+-- Declaración de la clave foránea entre municipios y microregiones
+ALTER TABLE divpol.municipios 
+    ADD CONSTRAINT fk_municipios_microregiones FOREIGN KEY (mic_id)
+        REFERENCES public.microregiones (mic_id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+```
+
+```{bash}
+#| label: ddl-fedegan-public-exec
+#| eval: true
+#| echo: false
+
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "bde_fedegan" -v ON_ERROR_STOP=1 <<'EOF'
+CREATE TABLE public.microregiones (
+    mic_id INTEGER NOT NULL,
+    mic_nombre VARCHAR(100) NOT NULL,
+    mic_descripcion VARCHAR(250) NULL,
+    CONSTRAINT pk_public_microregiones PRIMARY KEY (mic_id)
+);
+
+CREATE TABLE public.periodos (
+    per_id INTEGER NOT NULL,
+    per_nombre VARCHAR(50) NOT NULL,
+    per_descripcion VARCHAR(80) NULL,
+    CONSTRAINT pk_public_periodos PRIMARY KEY (per_id)
+);
+
+CREATE TABLE public.rutas (
+    rut_id INTEGER NOT NULL,
+    rut_distancia NUMERIC(10, 2) NOT NULL,
+    rut_tiempo NUMERIC(10, 2) NOT NULL,
+    rut_velocidad NUMERIC(10, 2) NOT NULL,
+    rut_estado VARCHAR(20) NOT NULL,
+    the_geom GEOMETRY(LineString, 9377) NOT NULL,
+    CONSTRAINT pk_public_rutas PRIMARY KEY (rut_id),
+    CONSTRAINT chk_rut_estado CHECK (
+        rut_estado IN ('MUY BUENO', 'BUENO', 'MALO', 'MUY MALO')
+    )
+);
+
+ALTER TABLE divpol.municipios 
+    ADD CONSTRAINT fk_municipios_microregiones FOREIGN KEY (mic_id)
+        REFERENCES public.microregiones (mic_id) ON UPDATE CASCADE ON DELETE SET NULL;
+EOF
+
+```
+
+### Paquete gremial y productivo (fgan)
+
+Modela la gestión de dependencias institucionales, los tipos de producción zootécnica y la convergencia espaciotemporal del monitoreo pecuario:
+
+* $\text{fgan.dependencias} \,(\, \underline{\mathbf{\color{green}\text{dpe\_id}}}, \, \text{dpe\_nombre}, \, \text{dpe\_descripcion} \,)$
+* $\text{fgan.sistemas\_produccion} \,(\, \underline{\mathbf{\color{green}\text{spr\_id}}}, \, \text{spr\_nombre}, \, \text{spr\_descripcion}, \, \text{spr\_abreviatura} \,)$
+* $\text{fgan.dependencias\_sistemas\_produccion} \,(\, \underline{\mathbf{\color{red}\text{dpe\_id}}}, \, \underline{\mathbf{\color{red}\text{spr\_id}}}, \, \text{dps\_fecha\_asignacion}, \, \text{dps\_descripcion} \,)$
+* $\text{fgan.actividad\_ganadera} \,(\, \underline{\mathbf{\color{green}\text{aga\_id}}}, \, \mathbf{\color{red}\text{mun\_id}}, \, \mathbf{\color{red}\text{spr\_id}}, \, \mathbf{\color{red}\text{dpe\_id}}, \, \mathbf{\color{red}\text{per\_id}} \,)$
+
+```{sql}
+--| label: ddl-fedegan-fgan
+--| eval: false
+--| echo: true
+
+-- Ámbito de ejecución: Instancia en el sistema anfitrión (host local)
+-- Base de datos: bde_fedegan
+
+CREATE TABLE fgan.dependencias (
+    dpe_id INTEGER NOT NULL,
+    dpe_nombre VARCHAR(100) NOT NULL,
+    dpe_descripcion VARCHAR(120) NULL,
+    CONSTRAINT pk_fgan_dependencias PRIMARY KEY (dpe_id)
+);
+
+CREATE TABLE fgan.sistemas_produccion (
+    spr_id INTEGER NOT NULL,
+    spr_nombre VARCHAR(100) NOT NULL,
+    spr_descripcion VARCHAR(180) NULL,
+    spr_abreviatura VARCHAR(10) NOT NULL,
+    CONSTRAINT pk_fgan_sistemas_produccion PRIMARY KEY (spr_id)
+);
+
+CREATE TABLE fgan.dependencias_sistemas_produccion (
+    dpe_id INTEGER NOT NULL,
+    spr_id INTEGER NOT NULL,
+    dps_fecha_asignacion DATE NOT NULL,
+    dps_descripcion VARCHAR(130) NULL,
+    CONSTRAINT pk_dependencias_sistemas PRIMARY KEY (dpe_id, spr_id),
+    CONSTRAINT fk_dps_dependencias FOREIGN KEY (dpe_id)
+        REFERENCES fgan.dependencias (dpe_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT fk_dps_sistemas FOREIGN KEY (spr_id)
+        REFERENCES fgan.sistemas_produccion (spr_id) ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+CREATE TABLE fgan.actividad_ganadera (
+    aga_id INTEGER NOT NULL,
+    mun_id VARCHAR(5) NOT NULL,
+    spr_id INTEGER NOT NULL,
+    dpe_id INTEGER NOT NULL,
+    per_id INTEGER NOT NULL,
+    CONSTRAINT pk_fgan_actividad_ganadera PRIMARY KEY (aga_id),
+    CONSTRAINT fk_actividad_municipios FOREIGN KEY (mun_id)
+        REFERENCES divpol.municipios (mun_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT fk_actividad_sistemas FOREIGN KEY (spr_id)
+        REFERENCES fgan.sistemas_produccion (spr_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT fk_actividad_dependencias FOREIGN KEY (dpe_id)
+        REFERENCES fgan.dependencias (dpe_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT fk_actividad_periodos FOREIGN KEY (per_id)
+        REFERENCES public.periodos (per_id) ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+```
+
+```{bash}
+#| label: ddl-fedegan-fgan-exec
+#| eval: true
+#| echo: false
+
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "bde_fedegan" -v ON_ERROR_STOP=1 <<'EOF'
+CREATE TABLE fgan.dependencias (
+    dpe_id INTEGER NOT NULL,
+    dpe_nombre VARCHAR(100) NOT NULL,
+    dpe_descripcion VARCHAR(120) NULL,
+    CONSTRAINT pk_fgan_dependencias PRIMARY KEY (dpe_id)
+);
+
+CREATE TABLE fgan.sistemas_produccion (
+    spr_id INTEGER NOT NULL,
+    spr_nombre VARCHAR(100) NOT NULL,
+    spr_descripcion VARCHAR(180) NULL,
+    spr_abreviatura VARCHAR(10) NOT NULL,
+    CONSTRAINT pk_fgan_sistemas_produccion PRIMARY KEY (spr_id)
+);
+
+CREATE TABLE fgan.dependencias_sistemas_produccion (
+    dpe_id INTEGER NOT NULL,
+    spr_id INTEGER NOT NULL,
+    dps_fecha_asignacion DATE NOT NULL,
+    dps_descripcion VARCHAR(130) NULL,
+    CONSTRAINT pk_dependencias_sistemas PRIMARY KEY (dpe_id, spr_id),
+    CONSTRAINT fk_dps_dependencias FOREIGN KEY (dpe_id)
+        REFERENCES fgan.dependencias (dpe_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT fk_dps_sistemas FOREIGN KEY (spr_id)
+        REFERENCES fgan.sistemas_produccion (spr_id) ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+CREATE TABLE fgan.actividad_ganadera (
+    aga_id INTEGER NOT NULL,
+    mun_id VARCHAR(5) NOT NULL,
+    spr_id INTEGER NOT NULL,
+    dpe_id INTEGER NOT NULL,
+    per_id INTEGER NOT NULL,
+    CONSTRAINT pk_fgan_actividad_ganadera PRIMARY KEY (aga_id),
+    CONSTRAINT fk_actividad_municipios FOREIGN KEY (mun_id)
+        REFERENCES divpol.municipios (mun_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT fk_actividad_sistemas FOREIGN KEY (spr_id)
+        REFERENCES fgan.sistemas_produccion (spr_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT fk_actividad_dependencias FOREIGN KEY (dpe_id)
+        REFERENCES fgan.dependencias (dpe_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT fk_actividad_periodos FOREIGN KEY (per_id)
+        REFERENCES public.periodos (per_id) ON UPDATE CASCADE ON DELETE RESTRICT
+);
+EOF
+
+```
+
+### Paquete biofísico y ambiental (guia)
+
+Estructura las condiciones fisiográficas y climáticas que determinan la zonificación de la Guía Ambiental:
+
+* $\text{guia.megapaisajes} \,(\, \underline{\mathbf{\color{green}\text{mpa\_id}}}, \, \text{mpa\_nombre}, \, \text{mpa\_descripcion} \,)$
+* $\text{guia.pisos\_termicos} \,(\, \underline{\mathbf{\color{green}\text{pte\_id}}}, \, \text{pte\_nombre}, \, \text{pte\_descripcion}, \, \text{pte\_acronimo} \,)$
+* $\text{guia.provincias\_humedad} \,(\, \underline{\mathbf{\color{green}\text{hup\_id}}}, \, \text{hup\_nombre} \,)$
+* $\text{guia.ecorregiones} \,(\, \underline{\mathbf{\color{green}\text{eco\_id}}}, \, \text{eco\_nombre}, \, \mathbf{\color{red}\text{mpa\_id}}, \, \mathbf{\color{red}\text{pte\_id}}, \, \mathbf{\color{red}\text{hup\_id}}, \, \text{the\_geom} \,)$
+
+```{sql}
+--| label: ddl-fedegan-guia
+--| eval: false
+--| echo: true
+
+-- Ámbito de ejecución: Instancia en el sistema anfitrión (host local)
+-- Base de datos: bde_fedegan
+
+CREATE TABLE guia.megapaisajes (
+    mpa_id INTEGER NOT NULL,
+    mpa_nombre VARCHAR(100) NOT NULL,
+    mpa_descripcion VARCHAR(200) NULL,
+    CONSTRAINT pk_guia_megapaisajes PRIMARY KEY (mpa_id)
+);
+
+CREATE TABLE guia.pisos_termicos (
+    pte_id INTEGER NOT NULL,
+    pte_nombre VARCHAR(100) NOT NULL,
+    pte_descripcion VARCHAR(200) NULL,
+    pte_acronimo VARCHAR(10) NULL,
+    CONSTRAINT pk_guia_pisos_termicos PRIMARY KEY (pte_id)
+);
+
+CREATE TABLE guia.provincias_humedad (
+    hup_id INTEGER NOT NULL,
+    hup_nombre VARCHAR(100) NOT NULL,
+    CONSTRAINT pk_guia_provincias_humedad PRIMARY KEY (hup_id)
+);
+
+CREATE TABLE guia.ecorregiones (
+    eco_id INTEGER NOT NULL,
+    eco_nombre VARCHAR(100) NOT NULL,
+    mpa_id INTEGER NOT NULL,
+    pte_id INTEGER NOT NULL,
+    hup_id INTEGER NOT NULL,
+    the_geom GEOMETRY(MultiPolygon, 9377) NOT NULL,
+    CONSTRAINT pk_guia_ecorregiones PRIMARY KEY (eco_id),
+    CONSTRAINT fk_ecorregiones_megapaisajes FOREIGN KEY (mpa_id)
+        REFERENCES guia.megapaisajes (mpa_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT fk_ecorregiones_pisos_termicos FOREIGN KEY (pte_id)
+        REFERENCES guia.pisos_termicos (pte_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT fk_ecorregiones_provincias_humedad FOREIGN KEY (hup_id)
+        REFERENCES guia.provincias_humedad (hup_id) ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+```
+
+```{bash}
+#| label: ddl-fedegan-guia-exec
+#| eval: true
+#| echo: false
+
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "bde_fedegan" -v ON_ERROR_STOP=1 <<'EOF'
+CREATE TABLE guia.megapaisajes (
+    mpa_id INTEGER NOT NULL,
+    mpa_nombre VARCHAR(100) NOT NULL,
+    mpa_descripcion VARCHAR(200) NULL,
+    CONSTRAINT pk_guia_megapaisajes PRIMARY KEY (mpa_id)
+);
+
+CREATE TABLE guia.pisos_termicos (
+    pte_id INTEGER NOT NULL,
+    pte_nombre VARCHAR(100) NOT NULL,
+    pte_descripcion VARCHAR(200) NULL,
+    pte_acronimo VARCHAR(10) NULL,
+    CONSTRAINT pk_guia_pisos_termicos PRIMARY KEY (pte_id)
+);
+
+CREATE TABLE guia.provincias_humedad (
+    hup_id INTEGER NOT NULL,
+    hup_nombre VARCHAR(100) NOT NULL,
+    CONSTRAINT pk_guia_provincias_humedad PRIMARY KEY (hup_id)
+);
+
+CREATE TABLE guia.ecorregiones (
+    eco_id INTEGER NOT NULL,
+    eco_nombre VARCHAR(100) NOT NULL,
+    mpa_id INTEGER NOT NULL,
+    pte_id INTEGER NOT NULL,
+    hup_id INTEGER NOT NULL,
+    the_geom GEOMETRY(MultiPolygon, 9377) NOT NULL,
+    CONSTRAINT pk_guia_ecorregiones PRIMARY KEY (eco_id),
+    CONSTRAINT fk_ecorregiones_megapaisajes FOREIGN KEY (mpa_id)
+        REFERENCES guia.megapaisajes (mpa_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT fk_ecorregiones_pisos_termicos FOREIGN KEY (pte_id)
+        REFERENCES guia.pisos_termicos (pte_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT fk_ecorregiones_provincias_humedad FOREIGN KEY (hup_id)
+        REFERENCES guia.provincias_humedad (hup_id) ON UPDATE CASCADE ON DELETE RESTRICT
+);
+EOF
+
+```
+
+### Paquete de cartografía básica continua (base750)
+
+Gestiona coberturas lineales de infraestructura y drenajes de referencia nacional:
+
+* $\text{base750.vias\_lineas} \,(\, \underline{\mathbf{\color{green}\text{via\_id}}}, \, \text{via\_codigo}, \, \text{the\_geom} \,)$
+* $\text{base750.hidro\_lineas} \,(\, \underline{\mathbf{\color{green}\text{hid\_id}}}, \, \text{hid\_nombre}, \, \text{the\_geom} \,)$
+
+```{sql}
+--| label: ddl-fedegan-base750
+--| eval: false
+--| echo: true
+
+-- Ámbito de ejecución: Instancia en el sistema anfitrión (host local)
+-- Base de datos: bde_fedegan
+
+CREATE TABLE base750.vias_lineas (
+    via_id INTEGER NOT NULL,
+    via_codigo VARCHAR(20) NOT NULL,
+    the_geom GEOMETRY(LineString, 9377) NOT NULL,
+    CONSTRAINT pk_base750_vias PRIMARY KEY (via_id)
+);
+
+CREATE TABLE base750.hidro_lineas (
+    hid_id INTEGER NOT NULL,
+    hid_nombre VARCHAR(100) NOT NULL,
+    the_geom GEOMETRY(LineString, 9377) NOT NULL,
+    CONSTRAINT pk_base750_hidro PRIMARY KEY (hid_id)
+);
+
+```
+
+```{bash}
+#| label: ddl-fedegan-base750-exec
+#| eval: true
+#| echo: false
+
+export PGPASSWORD="${LOCAL_PGPASSWORD}"
+
+psql -h "${LOCAL_PGHOST}" -p "${LOCAL_PGPORT}" -U "${LOCAL_PGUSER}" -d "bde_fedegan" -v ON_ERROR_STOP=1 <<'EOF'
+CREATE TABLE base750.vias_lineas (
+    via_id INTEGER NOT NULL,
+    via_codigo VARCHAR(20) NOT NULL,
+    the_geom GEOMETRY(LineString, 9377) NOT NULL,
+    CONSTRAINT pk_base750_vias PRIMARY KEY (via_id)
+);
+
+CREATE TABLE base750.hidro_lineas (
+    hid_id INTEGER NOT NULL,
+    hid_nombre VARCHAR(100) NOT NULL,
+    the_geom GEOMETRY(LineString, 9377) NOT NULL,
+    CONSTRAINT pk_base750_hidro PRIMARY KEY (hid_id)
+);
+EOF
+
+```
+
+
+
+## Ejercicios de diseño lógico y normalización espacial
+
+1. Normalización y dependencias funcionales en infraestructura de riego:
+Considérese la siguiente relación no normalizada para el registro de distritos de adecuación de tierras:
+
+$$
+\begin{aligned}
+\text{distritos\_riego}( & \underline{\text{dis\_id}}, \, \text{dis\_nombre}, \, \text{cue\_id}, \, \text{cue\_nombre}, \\
+& \text{mun\_id}, \, \text{mun\_nombre}, \, \text{area\_beneficiada\_ha}, \, \text{the\_geom})
+\end{aligned}
+$$
+
+* Identifique formalmente las dependencias funcionales completas, parciales y transitivas presentes en la relación.
+
+* Demuestre detalladamente las anomalías de inserción, actualización y borrado que induce esta estructura.
+
+* Aplique la descomposición normalizada hasta alcanzar la Tercera Forma Normal (3FN), formulando la signatura relacional formal con código cromático (claves primarias en verde y foráneas en rojo) y prefijos mnemotécnicos de tres letras.
+
+* Aplique la descomposición normalizada hasta alcanzar la Tercera Forma Normal (3FN), formulando la signatura relacional formal con código cromático (claves primarias en verde y foráneas en rojo) y prefijos mnemotécnicos de tres letras.
+
+2. Resolución lógica de asociaciones M:N y signatura formal:
+Tome el modelo conceptual de predios y rondas hídricas desarrollado en el capítulo anterior:
+
+* Traduzca el esquema conceptual al paradigma relacional, resolviendo la cardinalidad M:N mediante una tabla asociativa intermedia.
+
+* Especifique la clave primaria compuesta y demuestre por qué ambos componentes deben asumir de manera concurrente el rol de clave foránea.
+
+* Formule la signatura relacional resultante aplicando el código cromático estandarizado: claves primarias simples en verde subrayadas, claves foráneas en rojo, y atributos que integran la clave primaria compuesta foránea en rojo subrayado.
+
+3. Dependencias multivaluadas y cuarta forma normal (4FN):
+Considérese una entidad municipal que registra en una única relación los planes de ordenamiento territorial adoptados y las asociaciones comunitarias registradas:
+
+$$\text{gestion\_municipal}(\underline{\text{mun\_id}}, \, \underline{\text{plan\_instrumento}}, \, \underline{\text{aso\_nombre}})$$
+
+Asumiendo que los planes y las asociaciones comunitarias son hechos independientes asociados al municipio:
+
+* Demuestre la existencia de dependencias multivaluadas ($mun\_id \twoheadrightarrow plan\_instrumento$ y $mun\_id \twoheadrightarrow aso\_nombre$).
+
+* Ejemplifique la redundancia combinatoria que se genera al insertar tuplas y aplique la descomposición formal en Cuarta Forma Normal (4FN).
+
+
+4. Análisis de la forma normal de dominio-clave (DKNF) en jerarquías administrativas:
+
+Analice la siguiente relación de veredas territoriales:
+
+$$\text{veredas}(\underline{\text{ver\_id}}, \, \text{ver\_nombre}, \, \text{mun\_id})$$
+
+donde el código de vereda (`ver_id`, longitud de 7 dígitos) se compone de los 5 dígitos del código municipal (`mun_id`) más un consecutivo local de 2 dígitos.
+
+* Formule la restricción de coherencia administrativa que vincula a `ver_id` con `mun_id`.
+
+* Demuestre por qué la relación viola la Forma Normal de Dominio-Clave (DKNF) a pesar de encontrarse en BCNF.
+
+* Rediseñe el esquema relacional para que dicha restricción sea una consecuencia lógica directa de las claves y dominios declarados.
+
+5. Auditoría de catálogos y sistemas de referencia en el SGBD:
+A partir de las vistas de catálogo `geometry_columns` y `spatial_ref_sys` en PostgreSQL/PostGIS:
+
+* Escriba una consulta SQL que permita verificar qué tablas del esquema `divpol` tienen registrado un atributo geométrico y cuál es su tipo topológico declarado.
+
+* Formule una consulta que identifique si las geometrías de una tabla residen en el marco geodésico oficial `SRID = 9377` o en un sistema en desuso.

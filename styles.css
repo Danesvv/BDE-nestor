@@ -1,6 +1,40 @@
-/* Escalar diagramas Graphviz embebidos en contenedores específicos */
-.diagrama-ancho svg {
+/* Escalar diagramas embebidos en contenedores específicos */
+/* Escala completa (100% del contenedor) */
+.diagrama-ancho svg,
+.diagrama-ancho img {
   width: 100% !important;
-  height: auto !important;
   max-width: 100% !important;
+  height: auto !important;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Escala al 50% con centrado automático */
+.diagrama-50ancho svg,
+.diagrama-50ancho img {
+  width: 50% !important;
+  max-width: 50% !important;
+  height: auto !important;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Escala al 70% con centrado automático */
+.diagrama-70ancho svg,
+.diagrama-70ancho img {
+  width: 70% !important;
+  max-width: 70% !important;
+  height: auto !important;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Escala al 80% con centrado automático */
+.diagrama-80ancho svg,
+.diagrama-80ancho img {
+  width: 80% !important;
+  max-width: 80% !important;
+  height: auto !important;
+  display: block;
+  margin: 0 auto;
 }
