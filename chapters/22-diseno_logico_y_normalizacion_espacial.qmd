@@ -331,15 +331,15 @@ Al finalizar el presente capítulo, el estudiante estará en capacidad de:
 
 ## Fundamentos y sintaxis del lenguaje de definición de datos (DDL)
 
-El **Lenguaje de Definición de Datos** (DDL, *Data Definition Language*) constituye el subconjunto del estándar SQL destinado a definir, alterar y gestionar la estructura de los objetos dentro de un Sistema de Gestión de Bases de Datos (SGBD). A diferencia del Lenguaje de Manipulación de Datos (DML), que procesa los registros individuales (`INSERT`, `UPDATE`, `DELETE`, `SELECT`), el DDL opera directamente sobre los metadatos y el catálogo del sistema.
+El **Lenguaje de Definición de Datos** (DDL, *Data Definition Language*) constituye el subconjunto del estándar SQL destinado a **definir**, **alterar** y **gestionar** la estructura de los objetos dentro de un Sistema de Gestión de Bases de Datos (SGBD). A diferencia del Lenguaje de Manipulación de Datos (DML), que *procesa* los registros individuales (`INSERT`, `UPDATE`, `DELETE`, `SELECT`), el DDL opera directamente sobre los **metadatos** y el **catálogo del sistema**.
 
 ### Componentes de DDL en el diseño lógico frente al diseño físico
 
-El DDL no pertenece de manera exclusiva al diseño lógico ni al diseño físico; abarca e implementa elementos de ambos niveles dentro de un motor de bases de datos. En la práctica del estándar SQL, el DDL sirve tanto para formalizar el esquema lógico (entidades, atributos y reglas de integridad del negocio) como para instrumentar las estructuras de almacenamiento, rendimiento y acceso del esquema interno (diseño físico).
+El DDL no pertenece de manera exclusiva al diseño lógico ni al diseño físico; abarca e implementa elementos de ambos niveles dentro de un motor de bases de datos. En la práctica del estándar SQL, el DDL sirve tanto para **formalizar el esquema lógico** (entidades, atributos y reglas de integridad del negocio) como para instrumentar las estructuras de *almacenamiento, rendimiento y acceso* del esquema interno (diseño físico).
 
 **Componentes de DDL en el diseño lógico:**
 
-El diseño lógico define la estructura relacional independiente de las características específicas de almacenamiento físico o hardware. En esta fase, las sentencias DDL se emplean para traducir el modelo relacional teórico a esquemas ejecutables:
+El diseño lógico define la estructura relacional **independiente** de las características específicas de almacenamiento físico o **hardware**. En esta fase, las sentencias DDL se emplean para traducir el modelo relacional teórico a **esquemas** ejecutables:
 
 * **Estructura relacional básica:** Sentencias `CREATE TABLE` para definir relaciones, atributos y sus tipos de datos abstractos o estándar (`VARCHAR`, `NUMERIC`, `TIMESTAMP`, tipos geométricos/geográficos en extensiones espaciales).
 
@@ -351,7 +351,7 @@ El diseño lógico define la estructura relacional independiente de las caracter
 
 **Componentes de DDL en el diseño físico:**
 
-El diseño físico tiene como objetivo adaptar el esquema lógico para maximizar el rendimiento de las consultas, optimizar el uso del disco y gestionar la distribución de los datos según las cargas de trabajo (*workloads*). En esta etapa, el DDL incluye instrucciones que no alteran la semántica ni los resultados relacionales, pero condicionan el almacenamiento y las rutas de acceso:
+El diseño físico tiene como objetivo adaptar el esquema lógico para **maximizar el rendimiento** de las consultas, **optimizar** el uso del disco y **gestionar** la distribución de los datos según las cargas de trabajo (*workloads*). En esta etapa, el DDL incluye instrucciones que **no alteran la semántica** ni los **resultados relacionales**, pero **condicionan el almacenamiento** y las rutas de acceso:
 
 * **Estructuras de acceso e índices:** Sentencias `CREATE INDEX`, donde se seleccionan algoritmos de indexación específicos para optimizar operadores concretos (por ejemplo, índices B-Tree para rangos escalares, o índices GiST/BRIN para tipos de datos espaciales y temporales).
 
@@ -412,7 +412,7 @@ Las siguientes definiciones condensan los componentes estructurales elementales 
 
 * **Tupla:** Registro o fila individual dentro de una tabla que alberga un conjunto de valores atómicos correspondientes a cada atributo, representando una instancia u ocurrencia particular del mundo real.
 
-* **Columna tipificada (atributo relacional):** Descriptor formal de la relación definido bajo un nombre unívoco y restringido a un tipo de dato o dominio específico (escalar o abstracto), garantizando la homogeneidad semántica de los valores almacenados en sus celdas.
+* **Columna tipificada (atributo relacional):** Descriptor formal de la relación definido bajo un nombre unívoco y restringido a un *tipo de dato o dominio específico* (escalar o abstracto), garantizando la homogeneidad semántica de los valores almacenados en sus celdas.
 
 * **Restricciones de integridad:** Reglas y predicados lógicos declarativos (claves primarias, unicidad, restricciones de no nulidad `NOT NULL`, integridad referencial mediante claves foráneas y cláusulas `CHECK`) aplicados por el motor para preservar la consistencia interna y evitar anomalías transaccionales.
 
@@ -421,7 +421,7 @@ Las siguientes definiciones condensan los componentes estructurales elementales 
 
 ### El modelo relacional y reglas de derivación estructural
 
-El modelo relacional, formulado originalmente por Edgar F. Codd @codd1970relational, estructura los datos en **relaciones** (término formal para las tablas), concebidas matemáticamente como subconjuntos del producto cartesiano de una lista de dominios:
+El modelo relacional, formulado originalmente por Edgar F. @codd1970relational, estructura los datos en **relaciones** (término formal para las tablas), concebidas matemáticamente como subconjuntos del producto cartesiano de una lista de dominios:
 
 $$R \subseteq D_1 \times D_2 \times \dots \times D_n$$
 
@@ -453,6 +453,28 @@ Para documentar esquemas relacionales sin ambigüedades antes de escribir códig
 * **Clave foránea (FK):** Toda columna que actúe como clave foránea referenciando a otra relación debe figurar **siempre en color** [rojo]{style="color: red; font-weight: bold;"} (`red`).
 
 * **Clave primaria compuesta con rol foráneo:** Cuando un atributo opera simultáneamente como clave primaria y clave foránea, se representa [subrayado y en color rojo]{style="color: red; text-decoration: underline; font-weight: bold;"}.
+
+::: {.callout-note title="Variante de notación estructural para escritura manual"}
+
+En evaluaciones escritas en papel, tableros o medios monocromáticos donde no se dispone de codificación cromática, se adopta de forma unívoca la convención de subrayado y superíndice asterisco ($^*$):
+
+* **Clave primaria (PK):** Se identifica mediante un subrayado continuo simple bajo el nombre del atributo:
+
+$$\underline{\text{id\_estacion}}$$
+
+* **Clave foránea (FK):** Se identifica mediante un asterisco en superíndice inmediatamente posterior al nombre del atributo:
+
+$$\text{id\_municipio}^*$$
+
+* **Clave compuesta de intersección (PK / FK):** Al asumir simultáneamente la restricción de identidad y la referencia relacional, se aplica el subrayado continuo junto con el superíndice asterisco:
+
+$$\underline{\text{id\_predio}}^*, \quad \underline{\text{id\_propietario}}^*$$
+
+La signatura estructural de la tabla puente fragmentada en dos líneas para optimizar el ancho de columna se formaliza como:
+
+$$\begin{aligned} \text{predio\_propietario}( & \underline{\text{id\_predio}}^*, \underline{\text{id\_propietario}}^*, \\ & \text{porcentaje\_participacion}, \text{fecha\_adquisicion}) \end{aligned}$$
+
+:::
 
 Aplicando esta convención cromática al subsistema territorial desarrollado en el modelo conceptual (ver @fig-er-clases-espaciales-territorio y @fig-uml-clases-territoriales), el esquema lógico relacional se formula como:
 
@@ -696,7 +718,7 @@ digraph ER_a_Logico {
 
 El modelo relacional garantiza la robustez y consistencia interna de los datos mediante dos principios fundamentales de integridad estructural:
 
-1. **Integridad de entidad:** Toda tabla debe poseer una **clave primaria única** cuyos valores no admiten en ningún caso el valor nulo (`NULL`). La omisión o indeterminación de una clave primaria impediría distinguir una tupla de las demás, corrompiendo la noción matemática de relación.
+1. **Integridad de entidad:** Toda tabla debe poseer una **clave primaria única** cuyos valores **no admiten** en ningún caso el valor nulo (`NULL`). La omisión o indeterminación de una clave primaria impediría distinguir una tupla de las demás, corrompiendo la noción matemática de relación.
 
 2. **Integridad referencial:** Toda **clave foránea** que resida en una relación subordinada debe coincidir de forma exacta con un valor válido existente en la **clave primaria** de la relación padre referenciada, o bien albergar un valor `NULL` si la asociación es conceptualmente opcional. El motor de base de datos **intercepta y prohíbe** cualquier **operación de inserción o actualización** que produzca tuplas **huérfanas** en el sistema.
 
@@ -871,11 +893,11 @@ La normalización es una disciplina formal del diseño lógico que estructura la
 ::: {.callout-note title="Anomalías de actualización, inserción y borrado"}
 Inconsistencias y fallos transaccionales originados por la redundancia estructural y dependencias funcionales inadecuadas en relaciones no normalizadas:
 
-* **Anomalía de actualización:** Modificación parcial o asimétrica de datos duplicados a lo largo de múltiples registros, generando estados mutuamente contradictorios sobre un mismo atributo o hecho del mundo real.
+* **Anomalía de actualización:** Modificación parcial o asimétrica de datos duplicados a lo largo de múltiples registros, generando *estados mutuamente contradictorios* sobre un mismo atributo o hecho del mundo real.
 
-* **Anomalía de inserción:** Imposibilidad de registrar los atributos válidos de una entidad independiente sin la concurrencia obligatoria de una entidad secundaria asociada, o la necesidad de introducir valores nulos artificiales para completar la tupla.
+* **Anomalía de inserción:** Imposibilidad de *registrar los atributos válidos* de una entidad independiente sin la concurrencia obligatoria de una entidad secundaria asociada, o la necesidad de introducir valores nulos artificiales para completar la tupla.
 
-* **Anomalía de borrado:** Pérdida involuntaria e irreversible de información descriptiva o histórica de una entidad principal como consecuencia colateral de eliminar el registro de una entidad subordinada.
+* **Anomalía de borrado:** Pérdida *involuntaria e irreversible* de información descriptiva o histórica de una entidad principal como consecuencia *colateral* de eliminar el registro de una entidad subordinada.
 :::
 
 La progresión entre formas normales opera como un filtro secuencial de depuración estructural, ilustrado en la @fig-flujo-formas-normales-dot-coloquial (lenguale fácil de entender) y en la @fig-flujo-formas-normales-tecnico-dot (lenguaje técnico):
@@ -1233,7 +1255,7 @@ La @tbl-resumen-formas-normales sintetiza la jerarquía completa de normalizaci�
 Para evaluar los requerimientos de descomposición relacional, es indispensable definir con precisión el instrumental teórico de claves y atributos:
 
 ::: {.callout-note title="Definición de clave candidata"}
-Columna o conjunto mínimo de columnas que identifica de manera unívoca cada tupla dentro de una relación, satisfaciendo simultáneamente los principios de unicidad (no existen dos tuplas con valores idénticos) e irreductibilidad o minimalidad (ningún subconjunto propio de sus atributos conserva la capacidad de identificación única).
+Columna o conjunto mínimo de columnas que identifica de manera unívoca cada tupla dentro de una relación, satisfaciendo simultáneamente los principios de *unicidad* (no existen dos tuplas con valores idénticos) e **irreductibilidad o minimalidad** (ningún subconjunto propio de sus atributos conserva la capacidad de identificación única).
 
 A partir del conjunto de claves candidatas identificadas en una relación, el diseñador selecciona una como **clave primaria** (*Primary Key*), quedando las restantes categorizadas como **claves alternativas** (*Alternate Keys*).
 :::
@@ -1255,30 +1277,26 @@ A partir de estas definiciones, las formas normales se estructuran jerárquicame
 * **Segunda forma normal (2FN):** Exige el cumplimiento de la 1FN y prohíbe que cualquier atributo no primo dependa parcialmente de una clave candidata compuesta [@codd1972further]. Si la clave primaria de una tabla es simple (como `mun_id`), la 2FN se satisface de manera directa.
 
 ::: {.callout-note title="Ejemplo de infracción de la segunda forma normal (2FN)"}
+
 Considérese una relación destinada a registrar la longitud de los tramos viales que cruzan por cada municipio:
 
-$$\text{tramos\_municipio}(\underline{\text{mun\_id}}, \, \underline{\text{via\_codigo}}, \, \text{mun\_nombre}, \, \text{via\_tipo}, \, \text{longitud\_km})$$
+$$\text{tramos\_municipio}(\mathbf{\color{green}\underline{\text{mun\_id}}}, \, \mathbf{\color{green}\underline{\text{via\_codigo}}}, \, \text{mun\_nombre}, \, \text{via\_tipo}, \, \text{longitud\_km})$$
 
 En esta estructura:
 
-* **Clave primaria compuesta:** $(\text{mun\_id}, \text{via\_codigo})$
-
+* **Clave primaria compuesta:** $(\mathbf{\color{green}\underline{\text{mun\_id}}}, \, \mathbf{\color{green}\underline{\text{via\_codigo}}})$
 * **Dependencia funcional completa:** $(\text{mun\_id}, \text{via\_codigo}) \rightarrow \text{longitud\_km}$ (la longitud corresponde estrictamente al segmento de esa vía dentro de ese municipio específico).
-
 * **Dependencias parciales (infracción de 2FN):**
-
 * $\text{mun\_id} \rightarrow \text{mun\_nombre}$ (`mun_nombre` depende únicamente del identificador municipal, ignorando la vía).
-
 * $\text{via\_codigo} \rightarrow \text{via\_tipo}$ (`via_tipo` depende exclusivamente del código de la vía, con independencia del municipio).
+
 
 
 Dado que los atributos no primos `mun_nombre` y `via_tipo` no dependen de la totalidad de la clave primaria sino de subconjuntos de esta, la relación viola la 2FN y genera redundancia cada vez que una vía atraviesa múltiples municipios. La normalización exige descomponerla en tres relaciones:
 
-1. $\text{municipios}(\underline{\text{mun\_id}}, \, \text{mun\_nombre})$
-
-2. $\text{vias}(\underline{\text{via\_codigo}}, \, \text{via\_tipo})$
-
-3. $\text{tramos\_municipio}(\underline{\text{mun\_id}}, \, \underline{\text{via\_codigo}}, \, \text{longitud\_km})$
+1. $\text{municipios}(\mathbf{\color{green}\underline{\text{mun\_id}}}, \, \text{mun\_nombre})$
+2. $\text{vias}(\mathbf{\color{green}\underline{\text{via\_codigo}}}, \, \text{via\_tipo})$
+3. $\text{tramos\_municipio}(\mathbf{\color{red}\underline{\text{mun\_id}}}, \, \mathbf{\color{red}\underline{\text{via\_codigo}}}, \, \text{longitud\_km})$
 
 :::
 
@@ -1308,14 +1326,74 @@ La existencia de dependencias transitivas transgrede los principios de la Tercer
 
 * **Cuarta forma normal (4FN) y dependencias multivaluadas de Fagin:** Formulada por Ronald Fagin en 1977, aborda las **dependencias multivaluadas** ($X \twoheadrightarrow Y$), donde hechos independientes de cardinalidad múltiple se asocian a una misma clave [@fagin1977multivalued]. La 4FN prohíbe almacenar en una sola relación dos **hechos independientes** (por ejemplo, resguardos indígenas y planes de ordenamiento de un municipio), exigiendo su descomposición en tablas independientes para prevenir redundancia combinatoria.
 
+::: {.callout-note title="Ejemplo práctico de infracción y resolución de la cuarta forma normal (4FN)"}
+
+Considérese el registro territorial de los resguardos indígenas presentes en una jurisdicción y los instrumentos de planeación ambiental o territorial vigentes. Ambos dominios constituyen hechos independientes de cardinalidad múltiple asociados a la misma entidad municipal: la presencia de un resguardo no condiciona ni determina los planes de ordenamiento formulados.
+
+$$\text{municipio\_gestion}(\mathbf{\color{red}\underline{\text{mun\_id}}}, \, \mathbf{\color{green}\underline{\text{resguardo\_nombre}}}, \, \mathbf{\color{green}\underline{\text{instrumento\_plan}}})$$
+
+**1. Estado de normalización en BCNF:**
+
+Al no existir atributos descriptivos no primos ni determinantes funcionales parciales, la clave primaria está constituida por la totalidad de los atributos $(\text{mun\_id}, \text{resguardo\_nombre}, \text{instrumento\_plan})$. La relación satisface formalmente la BCNF al no presentar dependencias funcionales donde el determinante no sea superclave.
+
+**2. Presencia de dependencias multivaluadas (MVD):**
+
+A pesar de cumplir con BCNF, la entidad municipal determina de manera independiente a dos colecciones de datos no correlacionadas:
+
+$$\text{mun\_id} \twoheadrightarrow \text{resguardo\_nombre} \quad \wedge \quad \text{mun\_id} \twoheadrightarrow \text{instrumento\_plan}$$
+
+Bajo esta formulación ($X \twoheadrightarrow Y \mid Z$), el modelo relacional exige que para cada tupla válida deban coexistir todas las combinaciones posibles de resguardos e instrumentos. Si un municipio (`mun_id = '17614'`) alberga dos resguardos (`'Cañamomo'` y `'San Lorenzo'`) y cuenta con dos instrumentos (`'PBOT'` y `'POMCA'`), la tabla impone almacenar el producto cartesiano completo ($2 \times 2 = 4$ tuplas):
+
+::: {#tbl-4fn-infraccion tbl-colwidths="false" style="max-width: 65%; margin: auto;"}
+
+| mun_id | resguardo_nombre | instrumento_plan |
+| --- | --- | --- |
+| 17614 | Cañamomo | PBOT |
+| 17614 | Cañamomo | POMCA |
+| 17614 | San Lorenzo | PBOT |
+| 17614 | San Lorenzo | POMCA |
+
+: Relación municipio_gestion con anomalía combinatoria
+:::
+
+**3. Anomalías operativas derivadas de la redundancia combinatoria:**
+
+* **Multiplicación innecesaria de filas:** Si el municipio formula un nuevo instrumento (ej. `'Plan de vida'`), no basta con agregar un registro; se deben insertar tantas tuplas como resguardos existan en el municipio. Para $m$ resguardos y $n$ instrumentos, el costo de almacenamiento escala a $m \times n$ filas.
+
+
+* **Anomalía de inserción:** Si se registra la constitución de un nuevo resguardo, el sistema exige duplicar artificialmente todos los instrumentos vigentes en tuplas individuales. Si se omite alguno, la base de datos asume erróneamente que dicho instrumento no aplica en el resguardo omitido.
+* **Anomalía de borrado:** Si se deroga un instrumento, deben eliminarse múltiples registros de manera sincronizada para evitar estados inconsistentes.
+
+**4. Descomposición canónica en 4FN:**
+
+Para neutralizar la anomalía combinatoria, Ronald Fagin demostró que la relación debe descomponerse en dos proyecciones independientes que aíslen cada hecho multivaluado:
+
+$$\begin{aligned} & \text{municipio\_resguardos}(\mathbf{\color{red}\underline{\text{mun\_id}}}, \, \mathbf{\color{green}\underline{\text{resguardo\_nombre}}}) \\ & \text{municipio\_planes}(\mathbf{\color{red}\underline{\text{mun\_id}}}, \, \mathbf{\color{green}\underline{\text{instrumento\_plan}}}) \end{aligned}$$
+
+::: {#tbl-4fn-descomposicion tbl-colwidths="false" style="max-width: 85%; margin: auto;"}
+
+| municipio_resguardos (`mun_id`, `resguardo_nombre`) | municipio_planes (`mun_id`, `instrumento_plan`) |
+| --- | --- |
+| `(17614, 'Cañamomo')` | `(17614, 'PBOT')` |
+| `(17614, 'San Lorenzo')` | `(17614, 'POMCA')` |
+
+: Descomposición en 4FN eliminando la redundancia cartesiana
+:::
+
+Mediante esta segregación, el almacenamiento pasa de una tasa multiplicativa ($m \times n$) a una tasa aditiva lineal ($m + n = 4$ registros distribuidos en tablas especializadas), permitiendo actualizar resguardos o instrumentos de planificación de manera desacoplada sin inducir tuplas redundantes.
+
+Ver implementación en @sec-cuarta-fn
+:::
+
 * **Quinta forma normal (5FN / PJNF):** Denominada formalmente *forma normal de proyección-unión* (*Projection-Join Normal Form*, PJNF), garantiza que una relación que ha sido descompuesta en múltiples tablas pueda reconstruirse mediante operaciones de combinación (*join*) sin alterar la información original ni generar **tuplas espurias** (registros ficticios que afirman hechos falsos en la base de datos), vinculando las **dependencias de reunión** exclusivamente a las claves candidatas [@fagin1979normal].
 
 ::: {.callout-note title="Conceptos clave y ejemplo práctico de la quinta forma normal (5FN / PJNF)"}
+
 Una **dependencia de reunión** ocurre cuando una tabla ternaria no puede dividirse en dos relaciones sin corromper los datos, pero sí puede descomponerse en tres o más proyecciones sin pérdida.
 
 Considérese la asignación de levantamientos catastrales donde rige la siguiente regla: un operador ejecuta un método en un municipio si y solo si el operador atiende el municipio, el operador domina el método, y el municipio autoriza dicho método.
 
-$$\text{operaciones}(\underline{\text{operador}}, \, \underline{\text{municipio}}, \, \underline{\text{metodo}})$$
+$$\text{operaciones}(\mathbf{\color{green}\underline{\text{operador}}}, \, \mathbf{\color{green}\underline{\text{municipio}}}, \, \mathbf{\color{green}\underline{\text{metodo}}})$$
 
 ::: {#tbl-operaciones tbl-colwidths="false" style="max-width: 45%; margin: auto;"}
 
@@ -1331,38 +1409,37 @@ $$\text{operaciones}(\underline{\text{operador}}, \, \underline{\text{municipio}
 
 Si esta relación se descompone únicamente en dos tablas:
 
-* $R_1(\underline{\text{operador}}, \, \underline{\text{municipio}})$
-
-* $R_2(\underline{\text{municipio}}, \, \underline{\text{metodo}})$
-
+* $R_1(\mathbf{\color{green}\underline{\text{operador}}}, \, \mathbf{\color{green}\underline{\text{municipio}}})$
+* $R_2(\mathbf{\color{green}\underline{\text{municipio}}}, \, \mathbf{\color{green}\underline{\text{metodo}}})$
 
 Al reconstruir la información mediante $R_1 \bowtie R_2$, en Mogotes el operador `Toposig` se asociará automáticamente con `Dron`, produciendo la **tupla espuria** `(Toposig, Mogotes, Dron)`. Este dato es ficticio, pues `Toposig` no utiliza drones.
 
 Para satisfacer la **5FN**, la relación debe descomponerse en **tres proyecciones simultáneas**:
 
-1. $R_1(\underline{\text{operador}}, \, \underline{\text{municipio}})$
-
-2. $R_2(\underline{\text{municipio}}, \, \underline{\text{metodo}})$
-
-3. $R_3(\underline{\text{operador}}, \, \underline{\text{metodo}})$
-
+1. $R_1(\mathbf{\color{green}\underline{\text{operador}}}, \, \mathbf{\color{green}\underline{\text{municipio}}})$
+2. $R_2(\mathbf{\color{green}\underline{\text{municipio}}}, \, \mathbf{\color{green}\underline{\text{metodo}}})$
+3. $R_3(\mathbf{\color{green}\underline{\text{operador}}}, \, \mathbf{\color{green}\underline{\text{metodo}}})$
 
 Al evaluar la reunión natural de las tres tablas ($R_1 \bowtie R_2 \bowtie R_3$), la tabla $R_3$ descarta la combinación errónea (al no existir el par `Toposig - Dron`), recuperando exactamente las cuatro tuplas originales sin redundancias ni registros espurios.
+
+Ver implementación en @sec-quinta-fn
+
 :::
 
 * **Forma normal de dominio-clave (DKNF):** Formulada por Ronald Fagin en 1981, representa la frontera teórica de la disciplina relacional:
 
 
 ::: {.callout-note title="Teorema de Fagin sobre la forma normal de dominio-clave (DKNF)"}
-Una relación relacional se encuentra en DKNF si y solo si toda restricción de integridad impuesta sobre los datos es una consecuencia lógica directa e inequívoca de la definición de los **dominios** de sus atributos y de las **claves** primarias o candidatas declaradas sobre el esquema [@fagin1981normal].
+Una relación se encuentra en DKNF si y solo si toda restricción de integridad impuesta sobre los datos es una consecuencia lógica directa e inequívoca de la definición de los **dominios** de sus atributos y de las **claves** primarias o candidatas declaradas sobre el esquema [@fagin1981normal].
 :::
 
 Una tabla que satisface la DKNF carece por definición de anomalías de modificación, inserción y borrado.
 
 ::: {.callout-note title="Evaluación práctica de la DKNF en la jerarquía territorial DIVIPOLA"}
+
 Considérese la relación de municipios articulada con su dependencia departamental:
 
-$$\text{municipios}(\underline{\text{mun\_id}}, \, \text{mun\_nombre}, \, \text{dep\_id})$$
+$$\text{municipios}(\mathbf{\color{green}\underline{\text{mun\_id}}}, \, \text{mun\_nombre}, \, \mathbf{\color{red}\text{dep\_id}})$$
 
 **1. Diagnóstico del estado de normalización actual:**
 
@@ -1370,7 +1447,7 @@ Antes de contrastar la relación frente a la DKNF, se verifica su conformidad co
 
 * **1FN:** Cumple estrictamente, pues todos los atributos alojan valores atómicos dentro de sus dominios escalares.
 
-* **2FN:** Satisface la condición al poseer una clave primaria simple ($\text{mun\_id}$), descartando cualquier dependencia funcional parcial.
+* **2FN:** Satisface la condición al poseer una clave primaria simple ($\mathbf{\color{green}\underline{\text{mun\_id}}}$), descartando cualquier dependencia funcional parcial.
 
 * **3FN y BCNF:** Se encuentra en 3FN y en BCNF debido a que la única dependencia funcional no trivial existente es $\text{mun\_id} \rightarrow \{\text{mun\_nombre}, \text{dep\_id}\}$, donde el determinante es la clave candidata única (superclave). No existen dependencias transitivas entre atributos no primos.
 
@@ -1380,14 +1457,13 @@ En consecuencia, **la relación se encuentra formalmente en BCNF y 5FN**. Sin em
 
 **2. Especificación de claves y dominios:**
 
-* **Clave primaria:** $\text{mun\_id}$ (garantiza la unicidad de cada registro municipal).
+* **Clave primaria:** $\mathbf{\color{green}\underline{\text{mun\_id}}}$ (garantiza la unicidad de cada registro municipal).
 
 * **Dominio de $\text{mun\_id}$:** Cadena de exactamente 5 dígitos numéricos ($\text{Pattern}({[0-9]}^5)$).
 
-* **Dominio de $\text{dep\_id}$:** Cadena de exactamente 2 dígitos numéricos ($\text{Pattern}({[0-9]}^2)$).
+* **Dominio de $\mathbf{\color{red}\text{dep\_id}}$:** Cadena de exactamente 2 dígitos numéricos ($\text{Pattern}({[0-9]}^2)$).
 
 * **Dominio de $\text{mun\_nombre}$:** Cadena de texto de hasta 100 caracteres.
-
 
 **3. Restricción territorial general ($C$):**
 
@@ -1415,13 +1491,13 @@ Dado que es factible formular tuplas que satisfacen rigurosamente todos los domi
 
 Conforme al teorema de Fagin [@fagin1981normal], para que la restricción sea una consecuencia lógica directa, se descompone el identificador en sus componentes atómicos:
 
-$$\text{municipios}(\underline{\text{dep\_id}}, \, \underline{\text{mun\_consecutivo}}, \, \text{mun\_nombre})$$
+$$\text{municipios}(\mathbf{\color{red}\underline{\text{dep\_id}}}, \, \mathbf{\color{green}\underline{\text{mun\_consecutivo}}}, \, \text{mun\_nombre})$$
 
-* **Clave primaria compuesta:** $(\text{dep\_id}, \text{mun\_consecutivo})$.
+* **Clave primaria compuesta:** $(\mathbf{\color{red}\underline{\text{dep\_id}}}, \, \mathbf{\color{green}\underline{\text{mun\_consecutivo}}})$.
 
-* **Dominio de $\text{dep\_id}$:** Cadena de 2 caracteres numéricos $[0-9]^2$ (clave foránea que referencia a `departamentos`).
+* **Dominio de $\mathbf{\color{red}\underline{\text{dep\_id}}}$:** Cadena de 2 caracteres numéricos $[0-9]^2$ (clave foránea que referencia a `departamentos` e integra concurrentemente la clave primaria).
 
-* **Dominio de $\text{mun\_consecutivo}$:** Cadena de 3 caracteres numéricos $[0-9]^3$ (subcódigo local municipal).
+* **Dominio de $\mathbf{\color{green}\underline{\text{mun\_consecutivo}}}$:** Cadena de 3 caracteres numéricos $[0-9]^3$ (subcódigo local municipal que completa la clave primaria).
 
 Bajo esta formulación:
 
@@ -1430,7 +1506,9 @@ Bajo esta formulación:
 * El código DIVIPOLA integrado de 5 dígitos se deriva unívocamente mediante concatenación ($\text{dep\_id} \mathbin{\Vert} \text{mun\_consecutivo}$).
 
 * Resulta imposible asociar a Medellín con el departamento `'25'` sin modificar explícitamente su clave primaria compuesta. La coherencia geográfica queda garantizada por la propia definición de las claves y dominios, **alcanzando plenamente la DKNF**.
+
 :::
+
 
 ### Evolución paradigmática: almacenamiento relacional puro frente a objeto-relacional
 
@@ -2266,62 +2344,537 @@ EOF
 
 
 
+
+## Comprobación empírica de la cuarta forma normal (4FN) {#sec-cuarta-fn}
+
+Para verificar el comportamiento de las dependencias multivaluadas y la multiplicación combinatoria de tuplas en el motor relacional, se establece el entorno de prueba experimental sobre el esquema `public` del clúster `sig_db_unal`.
+
+
+### Definición del ámbito y reproducción de la anomalía combinatoria
+
+En primera instancia se implementa la tabla no normalizada `public.municipio_gestion` en BCNF (clave primaria compuesta integral), insertando las cuatro combinaciones iniciales y evidenciando el impacto de incorporar un tercer instrumento de planificación sin descomposición:
+
+```{sql}
+--| label: ddl-4fn-esquema-no-normalizado
+--| eval: false
+--| echo: true
+
+-- Limpieza preventiva del entorno de prueba en el esquema public
+DROP TABLE IF EXISTS public.municipio_resguardos CASCADE;
+DROP TABLE IF EXISTS public.municipio_planes CASCADE;
+DROP TABLE IF EXISTS public.municipio_gestion CASCADE;
+
+-- Creación de la estructura en BCNF con dependencia multivaluada latente
+CREATE TABLE public.municipio_gestion (
+    mun_id VARCHAR(5) NOT NULL,
+    resguardo_nombre VARCHAR(100) NOT NULL,
+    instrumento_plan VARCHAR(50) NOT NULL,
+    CONSTRAINT pk_municipio_gestion 
+        PRIMARY KEY (mun_id, resguardo_nombre, instrumento_plan)
+);
+
+-- Carga del producto cartesiano base (2 resguardos x 2 instrumentos = 4 tuplas)
+INSERT INTO public.municipio_gestion (mun_id, resguardo_nombre, instrumento_plan) VALUES
+    ('17614', 'Cañamomo', 'PBOT'),
+    ('17614', 'Cañamomo', 'POMCA'),
+    ('17614', 'San Lorenzo', 'PBOT'),
+    ('17614', 'San Lorenzo', 'POMCA');
+
+```
+
+```{bash}
+#| label: ddl-4fn-esquema-no-normalizado-exec
+#| eval: true
+#| echo: false
+
+psql -h "${PGHOST}" -p "${PGPORT}" -U "${PGUSER}" -d "${PGDATABASE}" <<'EOF'
+DROP TABLE IF EXISTS public.municipio_resguardos CASCADE;
+DROP TABLE IF EXISTS public.municipio_planes CASCADE;
+DROP TABLE IF EXISTS public.municipio_gestion CASCADE;
+
+CREATE TABLE public.municipio_gestion (
+    mun_id VARCHAR(5) NOT NULL,
+    resguardo_nombre VARCHAR(100) NOT NULL,
+    instrumento_plan VARCHAR(50) NOT NULL,
+    CONSTRAINT pk_municipio_gestion 
+        PRIMARY KEY (mun_id, resguardo_nombre, instrumento_plan)
+);
+
+INSERT INTO public.municipio_gestion (mun_id, resguardo_nombre, instrumento_plan) VALUES
+    ('17614', 'Cañamomo', 'PBOT'),
+    ('17614', 'Cañamomo', 'POMCA'),
+    ('17614', 'San Lorenzo', 'PBOT'),
+    ('17614', 'San Lorenzo', 'POMCA');
+EOF
+
+```
+
+Si el municipio adopta un nuevo instrumento territorial (`'Plan de vida'`), la ausencia de 4FN fuerza a insertar tantas filas como resguardos existan en la jurisdicción para evitar inconsistencias analíticas:
+
+```{sql}
+--| label: dml-4fn-anomalia-insercion
+--| eval: false
+--| echo: true
+
+-- Inserción forzada de n tuplas adicionales para un único hecho institucional
+INSERT INTO public.municipio_gestion (mun_id, resguardo_nombre, instrumento_plan) VALUES
+    ('17614', 'Cañamomo', 'Plan de vida'),
+    ('17614', 'San Lorenzo', 'Plan de vida');
+
+-- Consulta de verificación del volumen acumulado
+SELECT 
+    mun_id,
+    resguardo_nombre,
+    instrumento_plan
+FROM public.municipio_gestion
+ORDER BY resguardo_nombre, instrumento_plan;
+
+```
+
+```{bash}
+#| label: dml-4fn-anomalia-insercion-exec
+#| eval: true
+#| echo: false
+
+psql -h "${PGHOST}" -p "${PGPORT}" -U "${PGUSER}" -d "${PGDATABASE}" <<'EOF'
+INSERT INTO public.municipio_gestion (mun_id, resguardo_nombre, instrumento_plan) VALUES
+    ('17614', 'Cañamomo', 'Plan de vida'),
+    ('17614', 'San Lorenzo', 'Plan de vida');
+
+SELECT 
+    mun_id,
+    resguardo_nombre,
+    instrumento_plan
+FROM public.municipio_gestion
+ORDER BY resguardo_nombre, instrumento_plan;
+EOF
+
+```
+
+
+### Descomposición canónica en 4FN y mitigación de redundancia
+
+Aplicando el teorema de descomposición de Fagin, los hechos independientes se aíslan en dos relaciones binarias proyectadas. En este esquema, la adición de un nuevo instrumento requiere estrictamente una sola tupla física:
+
+```{sql}
+--| label: ddl-4fn-descomposicion-proyecciones
+--| eval: false
+--| echo: true
+
+-- 1. Proyección hacia la entidad de resguardos
+CREATE TABLE public.municipio_resguardos AS
+SELECT DISTINCT mun_id, resguardo_nombre 
+FROM public.municipio_gestion;
+
+ALTER TABLE public.municipio_resguardos 
+    ADD CONSTRAINT pk_municipio_resguardos PRIMARY KEY (mun_id, resguardo_nombre);
+
+-- 2. Proyección hacia la entidad de instrumentos de planeación
+CREATE TABLE public.municipio_planes AS
+SELECT DISTINCT mun_id, instrumento_plan 
+FROM public.municipio_gestion;
+
+ALTER TABLE public.municipio_planes 
+    ADD CONSTRAINT pk_municipio_planes PRIMARY KEY (mun_id, instrumento_plan);
+
+-- Inserción desacoplada: incorporar un cuarto instrumento toma 1 sola fila
+INSERT INTO public.municipio_planes (mun_id, instrumento_plan) VALUES
+    ('17614', 'Plan de manejo de cuenca');
+
+```
+
+```{bash}
+#| label: ddl-4fn-descomposicion-proyecciones-exec
+#| eval: true
+#| echo: false
+
+psql -h "${PGHOST}" -p "${PGPORT}" -U "${PGUSER}" -d "${PGDATABASE}" <<'EOF'
+CREATE TABLE public.municipio_resguardos AS
+SELECT DISTINCT mun_id, resguardo_nombre 
+FROM public.municipio_gestion;
+
+ALTER TABLE public.municipio_resguardos 
+    ADD CONSTRAINT pk_municipio_resguardos PRIMARY KEY (mun_id, resguardo_nombre);
+
+CREATE TABLE public.municipio_planes AS
+SELECT DISTINCT mun_id, instrumento_plan 
+FROM public.municipio_gestion;
+
+ALTER TABLE public.municipio_planes 
+    ADD CONSTRAINT pk_municipio_planes PRIMARY KEY (mun_id, instrumento_plan);
+
+INSERT INTO public.municipio_planes (mun_id, instrumento_plan) VALUES
+    ('17614', 'Plan de manejo de cuenca');
+EOF
+
+```
+
+
+### Reconstrucción algebraica sin pérdida mediante reunión natural
+
+La vista lógica de compatibilidad puede ser reconstruida dinámicamente mediante el operador de combinación (`INNER JOIN`) sin requerir persistencia duplicada en las páginas de almacenamiento del disco:
+
+```{sql}
+--| label: query-4fn-reconstruccion-algebraica
+--| eval: false
+--| echo: true
+
+SELECT 
+    r.mun_id,
+    r.resguardo_nombre,
+    p.instrumento_plan
+FROM public.municipio_resguardos r
+INNER JOIN public.municipio_planes p 
+    ON r.mun_id = p.mun_id
+ORDER BY r.resguardo_nombre, p.instrumento_plan;
+
+```
+
+```{bash}
+#| label: query-4fn-reconstruccion-algebraica-exec
+#| eval: true
+#| echo: false
+
+psql -h "${PGHOST}" -p "${PGPORT}" -U "${PGUSER}" -d "${PGDATABASE}" <<'EOF'
+SELECT 
+    r.mun_id,
+    r.resguardo_nombre,
+    p.instrumento_plan
+FROM public.municipio_resguardos r
+INNER JOIN public.municipio_planes p 
+    ON r.mun_id = p.mun_id
+ORDER BY r.resguardo_nombre, p.instrumento_plan;
+EOF
+
+```
+
+
+### Limpieza de estructuras de prueba
+
+Concluida la demostración empírica, se eliminan del catálogo del sistema las tablas temporales generadas:
+
+```{sql}
+--| label: ddl-4fn-limpieza-esquema
+--| eval: false
+--| echo: true
+
+DROP TABLE IF EXISTS public.municipio_resguardos CASCADE;
+DROP TABLE IF EXISTS public.municipio_planes CASCADE;
+DROP TABLE IF EXISTS public.municipio_gestion CASCADE;
+
+```
+
+```{bash}
+#| label: ddl-4fn-limpieza-esquema-exec
+#| eval: true
+#| echo: false
+
+psql -h "${PGHOST}" -p "${PGPORT}" -U "${PGUSER}" -d "${PGDATABASE}" <<'EOF'
+DROP TABLE IF EXISTS public.municipio_resguardos CASCADE;
+DROP TABLE IF EXISTS public.municipio_planes CASCADE;
+DROP TABLE IF EXISTS public.municipio_gestion CASCADE;
+EOF
+
+```
+
+
+## Comprobación empírica de la quinta forma normal (5FN) {#sec-quinta-fn}
+
+Para verificar en el motor relacional la presencia de dependencias de reunión (*join dependencies*) y la generación de tuplas espurias al descomponer de forma binaria una relación ternaria irreducible en 4FN, se define el ámbito de pruebas dentro del esquema `public` del clúster `sig_db_unal`.
+
+### Definición del ámbito y estructuración de relaciones
+
+El experimento modela la asignación de levantamientos catastrales sujeta a la coexistencia de tres restricciones de dominio cruzadas: el operador atiende el municipio, el operador domina el método técnico y el municipio autoriza el método:
+
+$$\text{operaciones}(\underline{\text{operador}}, \, \underline{\text{municipio}}, \, \underline{\text{metodo}})$$
+
+A continuación se estructura la creación de la tabla base `public.operaciones`, el cargue de las cuatro tuplas canónicas y la proyección automática de los tres subesquemas relacionales ($R_1$, $R_2$ y $R_3$):
+
+```{sql}
+--| label: ddl-5fn-esquema-operaciones
+--| eval: false
+--| echo: true
+
+-- Limpieza preventiva del entorno de prueba en el esquema public
+DROP TABLE IF EXISTS public.r1_operador_municipio CASCADE;
+DROP TABLE IF EXISTS public.r2_municipio_metodo CASCADE;
+DROP TABLE IF EXISTS public.r3_operador_metodo CASCADE;
+DROP TABLE IF EXISTS public.operaciones CASCADE;
+
+-- 1. Tabla base ternaria original
+CREATE TABLE public.operaciones (
+    operador VARCHAR(50) NOT NULL,
+    municipio VARCHAR(50) NOT NULL,
+    metodo VARCHAR(50) NOT NULL,
+    CONSTRAINT pk_operaciones PRIMARY KEY (operador, municipio, metodo)
+);
+
+-- Carga de las 4 tuplas observadas
+INSERT INTO public.operaciones (operador, municipio, metodo) VALUES
+    ('Geocad', 'Chía', 'GNSS'),
+    ('Geocad', 'Mogotes', 'GNSS'),
+    ('Geocad', 'Mogotes', 'Dron'),
+    ('Toposig', 'Mogotes', 'GNSS');
+
+-- 2. Proyección R1: relación binaria operador - municipio
+CREATE TABLE public.r1_operador_municipio AS
+SELECT DISTINCT operador, municipio 
+FROM public.operaciones;
+
+ALTER TABLE public.r1_operador_municipio 
+    ADD CONSTRAINT pk_r1 PRIMARY KEY (operador, municipio);
+
+-- 3. Proyección R2: relación binaria municipio - método
+CREATE TABLE public.r2_municipio_metodo AS
+SELECT DISTINCT municipio, metodo 
+FROM public.operaciones;
+
+ALTER TABLE public.r2_municipio_metodo 
+    ADD CONSTRAINT pk_r2 PRIMARY KEY (municipio, metodo);
+
+-- 4. Proyección R3: relación binaria operador - método
+CREATE TABLE public.r3_operador_metodo AS
+SELECT DISTINCT operador, metodo 
+FROM public.operaciones;
+
+ALTER TABLE public.r3_operador_metodo 
+    ADD CONSTRAINT pk_r3 PRIMARY KEY (operador, metodo);
+
+```
+
+```{bash}
+#| label: ddl-5fn-esquema-operaciones-exec
+#| eval: true
+#| echo: false
+
+psql -h "${PGHOST}" -p "${PGPORT}" -U "${PGUSER}" -d "${PGDATABASE}" <<'EOF'
+DROP TABLE IF EXISTS public.r1_operador_municipio CASCADE;
+DROP TABLE IF EXISTS public.r2_municipio_metodo CASCADE;
+DROP TABLE IF EXISTS public.r3_operador_metodo CASCADE;
+DROP TABLE IF EXISTS public.operaciones CASCADE;
+
+CREATE TABLE public.operaciones (
+    operador VARCHAR(50) NOT NULL,
+    municipio VARCHAR(50) NOT NULL,
+    metodo VARCHAR(50) NOT NULL,
+    CONSTRAINT pk_operaciones PRIMARY KEY (operador, municipio, metodo)
+);
+
+INSERT INTO public.operaciones (operador, municipio, metodo) VALUES
+    ('Geocad', 'Chía', 'GNSS'),
+    ('Geocad', 'Mogotes', 'GNSS'),
+    ('Geocad', 'Mogotes', 'Dron'),
+    ('Toposig', 'Mogotes', 'GNSS');
+
+CREATE TABLE public.r1_operador_municipio AS
+SELECT DISTINCT operador, municipio 
+FROM public.operaciones;
+
+ALTER TABLE public.r1_operador_municipio 
+    ADD CONSTRAINT pk_r1 PRIMARY KEY (operador, municipio);
+
+CREATE TABLE public.r2_municipio_metodo AS
+SELECT DISTINCT municipio, metodo 
+FROM public.operaciones;
+
+ALTER TABLE public.r2_municipio_metodo 
+    ADD CONSTRAINT pk_r2 PRIMARY KEY (municipio, metodo);
+
+CREATE TABLE public.r3_operador_metodo AS
+SELECT DISTINCT operador, metodo 
+FROM public.operaciones;
+
+ALTER TABLE public.r3_operador_metodo 
+    ADD CONSTRAINT pk_r3 PRIMARY KEY (operador, metodo);
+EOF
+
+```
+
+
+### Verificación de la tupla espuria mediante reunión de dos tablas ($R_1 \bowtie R_2$)
+
+Al intentar recomponer la información uniendo exclusivamente dos proyecciones sobre el atributo compartido (`municipio`), se constata la generación de una tupla ficticia que afirma que el operador `Toposig` utiliza drones en `Mogotes`:
+
+```{sql}
+--| label: query-5fn-reunion-binaria-espuria
+--| eval: false
+--| echo: true
+
+SELECT 
+    r1.operador,
+    r1.municipio,
+    r2.metodo,
+    CASE 
+        WHEN o.operador IS NULL THEN '<< TUPLA ESPURIA >>'
+        ELSE 'Registro legítimo'
+    END AS estado_integridad
+FROM public.r1_operador_municipio r1
+INNER JOIN public.r2_municipio_metodo r2 
+    ON r1.municipio = r2.municipio
+LEFT JOIN public.operaciones o 
+    ON r1.operador = o.operador 
+   AND r1.municipio = o.municipio 
+   AND r2.metodo = o.metodo
+ORDER BY r1.municipio, r1.operador, r2.metodo;
+
+```
+
+```{bash}
+#| label: query-5fn-reunion-binaria-espuria-exec
+#| eval: true
+#| echo: false
+
+psql -h "${PGHOST}" -p "${PGPORT}" -U "${PGUSER}" -d "${PGDATABASE}" <<'EOF'
+SELECT 
+    r1.operador,
+    r1.municipio,
+    r2.metodo,
+    CASE 
+        WHEN o.operador IS NULL THEN '<< TUPLA ESPURIA >>'
+        ELSE 'Registro legítimo'
+    END AS estado_integridad
+FROM public.r1_operador_municipio r1
+INNER JOIN public.r2_municipio_metodo r2 
+    ON r1.municipio = r2.municipio
+LEFT JOIN public.operaciones o 
+    ON r1.operador = o.operador 
+   AND r1.municipio = o.municipio 
+   AND r2.metodo = o.metodo
+ORDER BY r1.municipio, r1.operador, r2.metodo;
+EOF
+
+```
+
+
+### Recomposición sin pérdida mediante la reunión ternaria completa ($R_1 \bowtie R_2 \bowtie R_3$)
+
+Al incorporar la tercera proyección $R_3(\text{operador}, \text{metodo})$ dentro de la ecuación algebraica, la condición de intersección descarta la combinación apócrifa debido a que el par `('Toposig', 'Dron')` no existe en las competencias acreditadas de la empresa:
+
+```{sql}
+--| label: query-5fn-reunion-ternaria-sin-perdida
+--| eval: false
+--| echo: true
+
+SELECT 
+    r1.operador,
+    r1.municipio,
+    r2.metodo
+FROM public.r1_operador_municipio r1
+INNER JOIN public.r2_municipio_metodo r2 
+    ON r1.municipio = r2.municipio
+INNER JOIN public.r3_operador_metodo r3 
+    ON r1.operador = r3.operador 
+   AND r2.metodo = r3.metodo
+ORDER BY r1.operador, r1.municipio, r2.metodo;
+
+```
+
+```{bash}
+#| label: query-5fn-reunion-ternaria-sin-perdida-exec
+#| eval: true
+#| echo: false
+
+psql -h "${PGHOST}" -p "${PGPORT}" -U "${PGUSER}" -d "${PGDATABASE}" <<'EOF'
+SELECT 
+    r1.operador,
+    r1.municipio,
+    r2.metodo
+FROM public.r1_operador_municipio r1
+INNER JOIN public.r2_municipio_metodo r2 
+    ON r1.municipio = r2.municipio
+INNER JOIN public.r3_operador_metodo r3 
+    ON r1.operador = r3.operador 
+   AND r2.metodo = r3.metodo
+ORDER BY r1.operador, r1.municipio, r2.metodo;
+EOF
+
+```
+
+
+### Limpieza de estructuras de prueba
+
+Una vez validada la hipótesis matemática en el gestor relacional, se eliminan las tablas auxiliares del catálogo:
+
+```{sql}
+--| label: ddl-5fn-limpieza-esquema
+--| eval: false
+--| echo: true
+
+DROP TABLE IF EXISTS public.r1_operador_municipio CASCADE;
+DROP TABLE IF EXISTS public.r2_municipio_metodo CASCADE;
+DROP TABLE IF EXISTS public.r3_operador_metodo CASCADE;
+DROP TABLE IF EXISTS public.operaciones CASCADE;
+
+```
+
+```{bash}
+#| label: ddl-5fn-limpieza-esquema-exec
+#| eval: true
+#| echo: false
+
+psql -h "${PGHOST}" -p "${PGPORT}" -U "${PGUSER}" -d "${PGDATABASE}" <<'EOF'
+DROP TABLE IF EXISTS public.r1_operador_municipio CASCADE;
+DROP TABLE IF EXISTS public.r2_municipio_metodo CASCADE;
+DROP TABLE IF EXISTS public.r3_operador_metodo CASCADE;
+DROP TABLE IF EXISTS public.operaciones CASCADE;
+EOF
+
+```
+
+
+
 ## Ejercicios de diseño lógico y normalización espacial
 
-1. Normalización y dependencias funcionales en infraestructura de riego:
-Considérese la siguiente relación no normalizada para el registro de distritos de adecuación de tierras:
+1. **Normalización y dependencias funcionales en infraestructura de riego:**
 
-$$
-\begin{aligned}
-\text{distritos\_riego}( & \underline{\text{dis\_id}}, \, \text{dis\_nombre}, \, \text{cue\_id}, \, \text{cue\_nombre}, \\
-& \text{mun\_id}, \, \text{mun\_nombre}, \, \text{area\_beneficiada\_ha}, \, \text{the\_geom})
-\end{aligned}
-$$
+Considérese la siguiente relación no normalizada para el registro de distritos de adecuación de tierras:
+$$\begin{aligned}    \text{distritos\_riego}( & \mathbf{\color{green}\underline{\text{dis\_id}}}, \, \text{dis\_nombre}, \, \text{cue\_id}, \, \text{cue\_nombre}, \\    & \text{mun\_id}, \, \text{mun\_nombre}, \, \text{area\_beneficiada\_ha}, \, \text{the\_geom})    \end{aligned}$$
 
 * Identifique formalmente las dependencias funcionales completas, parciales y transitivas presentes en la relación.
 
 * Demuestre detalladamente las anomalías de inserción, actualización y borrado que induce esta estructura.
 
-* Aplique la descomposición normalizada hasta alcanzar la Tercera Forma Normal (3FN), formulando la signatura relacional formal con código cromático (claves primarias en verde y foráneas en rojo) y prefijos mnemotécnicos de tres letras.
+* Aplique la descomposición normalizada hasta alcanzar la tercera forma normal (3FN), formulando la signatura relacional formal con código cromático (claves primarias en verde y foráneas en rojo) y prefijos mnemotécnicos de tres letras.
 
-* Aplique la descomposición normalizada hasta alcanzar la Tercera Forma Normal (3FN), formulando la signatura relacional formal con código cromático (claves primarias en verde y foráneas en rojo) y prefijos mnemotécnicos de tres letras.
 
-2. Resolución lógica de asociaciones M:N y signatura formal:
+2. **Resolución lógica de asociaciones $M:N$ y signatura formal:**
+
 Tome el modelo conceptual de predios y rondas hídricas desarrollado en el capítulo anterior:
 
-* Traduzca el esquema conceptual al paradigma relacional, resolviendo la cardinalidad M:N mediante una tabla asociativa intermedia.
+* Traduzca el esquema conceptual al paradigma relacional, resolviendo la cardinalidad $M:N$ mediante una tabla asociativa intermedia.
 
 * Especifique la clave primaria compuesta y demuestre por qué ambos componentes deben asumir de manera concurrente el rol de clave foránea.
 
-* Formule la signatura relacional resultante aplicando el código cromático estandarizado: claves primarias simples en verde subrayadas, claves foráneas en rojo, y atributos que integran la clave primaria compuesta foránea en rojo subrayado.
+* Formule la signatura relacional resultante aplicando el código cromático estandarizado: claves primarias simples en verde subrayadas ($\mathbf{\color{green}\underline{\text{pk}}}$), claves foráneas en rojo ($\mathbf{\color{red}\text{fk}}$) y atributos que integran la clave primaria compuesta foránea en rojo subrayado ($\mathbf{\color{red}\underline{\text{pk\_fk}}}$).
 
-3. Dependencias multivaluadas y cuarta forma normal (4FN):
+
+3. **Dependencias multivaluadas y cuarta forma normal (4FN):**
+
 Considérese una entidad municipal que registra en una única relación los planes de ordenamiento territorial adoptados y las asociaciones comunitarias registradas:
-
-$$\text{gestion\_municipal}(\underline{\text{mun\_id}}, \, \underline{\text{plan\_instrumento}}, \, \underline{\text{aso\_nombre}})$$
+$$\text{gestion\_municipal}(\mathbf{\color{green}\underline{\text{mun\_id}}}, \, \mathbf{\color{green}\underline{\text{plan\_instrumento}}}, \, \mathbf{\color{green}\underline{\text{aso\_nombre}}})$$
 
 Asumiendo que los planes y las asociaciones comunitarias son hechos independientes asociados al municipio:
 
-* Demuestre la existencia de dependencias multivaluadas ($mun\_id \twoheadrightarrow plan\_instrumento$ y $mun\_id \twoheadrightarrow aso\_nombre$).
+* Demuestre la existencia de dependencias multivaluadas ($\text{mun\_id} \twoheadrightarrow \text{plan\_instrumento}$ y $\text{mun\_id} \twoheadrightarrow \text{aso\_nombre}$).
 
-* Ejemplifique la redundancia combinatoria que se genera al insertar tuplas y aplique la descomposición formal en Cuarta Forma Normal (4FN).
+* Ejemplifique la redundancia combinatoria que se genera al insertar tuplas y aplique la descomposición formal en cuarta forma normal (4FN) empleando la signatura cromática digital correspondiente.
 
-
-4. Análisis de la forma normal de dominio-clave (DKNF) en jerarquías administrativas:
+4. **Análisis de la forma normal de dominio-clave (DKNF) en jerarquías administrativas:**
 
 Analice la siguiente relación de veredas territoriales:
-
-$$\text{veredas}(\underline{\text{ver\_id}}, \, \text{ver\_nombre}, \, \text{mun\_id})$$
+$$\text{veredas}(\mathbf{\color{green}\underline{\text{ver\_id}}}, \, \text{ver\_nombre}, \, \mathbf{\color{red}\text{mun\_id}})$$
 
 donde el código de vereda (`ver_id`, longitud de 7 dígitos) se compone de los 5 dígitos del código municipal (`mun_id`) más un consecutivo local de 2 dígitos.
 
 * Formule la restricción de coherencia administrativa que vincula a `ver_id` con `mun_id`.
 
-* Demuestre por qué la relación viola la Forma Normal de Dominio-Clave (DKNF) a pesar de encontrarse en BCNF.
+* Demuestre por qué la relación viola la forma normal de dominio-clave (DKNF) a pesar de encontrarse en BCNF.
 
 * Rediseñe el esquema relacional para que dicha restricción sea una consecuencia lógica directa de las claves y dominios declarados.
 
-5. Auditoría de catálogos y sistemas de referencia en el SGBD:
+
+5. **Auditoría de catálogos y sistemas de referencia en el SGBD:**
+
 A partir de las vistas de catálogo `geometry_columns` y `spatial_ref_sys` en PostgreSQL/PostGIS:
 
 * Escriba una consulta SQL que permita verificar qué tablas del esquema `divpol` tienen registrado un atributo geométrico y cuál es su tipo topológico declarado.

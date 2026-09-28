@@ -468,7 +468,21 @@ window.Quarto = {
   <li><a href="#paquete-biofísico-y-ambiental-guia" id="toc-paquete-biofísico-y-ambiental-guia" class="nav-link" data-scroll-target="#paquete-biofísico-y-ambiental-guia">Paquete biofísico y ambiental (guia)</a></li>
   <li><a href="#paquete-de-cartografía-básica-continua-base750" id="toc-paquete-de-cartografía-básica-continua-base750" class="nav-link" data-scroll-target="#paquete-de-cartografía-básica-continua-base750">Paquete de cartografía básica continua (base750)</a></li>
   </ul></li>
-  <li><a href="#ejercicios-de-diseño-lógico-y-normalización-espacial" id="toc-ejercicios-de-diseño-lógico-y-normalización-espacial" class="nav-link" data-scroll-target="#ejercicios-de-diseño-lógico-y-normalización-espacial"><span class="header-section-number">8.7</span> Ejercicios de diseño lógico y normalización espacial</a></li>
+  <li><a href="#sec-cuarta-fn" id="toc-sec-cuarta-fn" class="nav-link" data-scroll-target="#sec-cuarta-fn"><span class="header-section-number">8.7</span> Comprobación empírica de la cuarta forma normal (4FN)</a>
+  <ul class="collapse">
+  <li><a href="#definición-del-ámbito-y-reproducción-de-la-anomalía-combinatoria" id="toc-definición-del-ámbito-y-reproducción-de-la-anomalía-combinatoria" class="nav-link" data-scroll-target="#definición-del-ámbito-y-reproducción-de-la-anomalía-combinatoria">Definición del ámbito y reproducción de la anomalía combinatoria</a></li>
+  <li><a href="#descomposición-canónica-en-4fn-y-mitigación-de-redundancia" id="toc-descomposición-canónica-en-4fn-y-mitigación-de-redundancia" class="nav-link" data-scroll-target="#descomposición-canónica-en-4fn-y-mitigación-de-redundancia">Descomposición canónica en 4FN y mitigación de redundancia</a></li>
+  <li><a href="#reconstrucción-algebraica-sin-pérdida-mediante-reunión-natural" id="toc-reconstrucción-algebraica-sin-pérdida-mediante-reunión-natural" class="nav-link" data-scroll-target="#reconstrucción-algebraica-sin-pérdida-mediante-reunión-natural">Reconstrucción algebraica sin pérdida mediante reunión natural</a></li>
+  <li><a href="#limpieza-de-estructuras-de-prueba" id="toc-limpieza-de-estructuras-de-prueba" class="nav-link" data-scroll-target="#limpieza-de-estructuras-de-prueba">Limpieza de estructuras de prueba</a></li>
+  </ul></li>
+  <li><a href="#sec-quinta-fn" id="toc-sec-quinta-fn" class="nav-link" data-scroll-target="#sec-quinta-fn"><span class="header-section-number">8.8</span> Comprobación empírica de la quinta forma normal (5FN)</a>
+  <ul class="collapse">
+  <li><a href="#definición-del-ámbito-y-estructuración-de-relaciones" id="toc-definición-del-ámbito-y-estructuración-de-relaciones" class="nav-link" data-scroll-target="#definición-del-ámbito-y-estructuración-de-relaciones">Definición del ámbito y estructuración de relaciones</a></li>
+  <li><a href="#verificación-de-la-tupla-espuria-mediante-reunión-de-dos-tablas-r_1-bowtie-r_2" id="toc-verificación-de-la-tupla-espuria-mediante-reunión-de-dos-tablas-r_1-bowtie-r_2" class="nav-link" data-scroll-target="#verificación-de-la-tupla-espuria-mediante-reunión-de-dos-tablas-r_1-bowtie-r_2">Verificación de la tupla espuria mediante reunión de dos tablas (<span class="math inline">\(R_1 \bowtie R_2\)</span>)</a></li>
+  <li><a href="#recomposición-sin-pérdida-mediante-la-reunión-ternaria-completa-r_1-bowtie-r_2-bowtie-r_3" id="toc-recomposición-sin-pérdida-mediante-la-reunión-ternaria-completa-r_1-bowtie-r_2-bowtie-r_3" class="nav-link" data-scroll-target="#recomposición-sin-pérdida-mediante-la-reunión-ternaria-completa-r_1-bowtie-r_2-bowtie-r_3">Recomposición sin pérdida mediante la reunión ternaria completa (<span class="math inline">\(R_1 \bowtie R_2 \bowtie R_3\)</span>)</a></li>
+  <li><a href="#limpieza-de-estructuras-de-prueba-1" id="toc-limpieza-de-estructuras-de-prueba-1" class="nav-link" data-scroll-target="#limpieza-de-estructuras-de-prueba-1">Limpieza de estructuras de prueba</a></li>
+  </ul></li>
+  <li><a href="#ejercicios-de-diseño-lógico-y-normalización-espacial" id="toc-ejercicios-de-diseño-lógico-y-normalización-espacial" class="nav-link" data-scroll-target="#ejercicios-de-diseño-lógico-y-normalización-espacial"><span class="header-section-number">8.9</span> Ejercicios de diseño lógico y normalización espacial</a></li>
   </ul>
 </nav>
     </div>
@@ -726,12 +740,12 @@ Dentro de psql Use `\conninfo` o `SHOW data_directory;` para chequear la conexi�
 </section>
 <section id="fundamentos-y-sintaxis-del-lenguaje-de-definición-de-datos-ddl" class="level2" data-number="8.2">
 <h2 data-number="8.2" class="anchored" data-anchor-id="fundamentos-y-sintaxis-del-lenguaje-de-definición-de-datos-ddl"><span class="header-section-number">8.2</span> Fundamentos y sintaxis del lenguaje de definición de datos (DDL)</h2>
-<p>El <strong>Lenguaje de Definición de Datos</strong> (DDL, <em>Data Definition Language</em>) constituye el subconjunto del estándar SQL destinado a definir, alterar y gestionar la estructura de los objetos dentro de un Sistema de Gestión de Bases de Datos (SGBD). A diferencia del Lenguaje de Manipulación de Datos (DML), que procesa los registros individuales (<code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>, <code>SELECT</code>), el DDL opera directamente sobre los metadatos y el catálogo del sistema.</p>
+<p>El <strong>Lenguaje de Definición de Datos</strong> (DDL, <em>Data Definition Language</em>) constituye el subconjunto del estándar SQL destinado a <strong>definir</strong>, <strong>alterar</strong> y <strong>gestionar</strong> la estructura de los objetos dentro de un Sistema de Gestión de Bases de Datos (SGBD). A diferencia del Lenguaje de Manipulación de Datos (DML), que <em>procesa</em> los registros individuales (<code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>, <code>SELECT</code>), el DDL opera directamente sobre los <strong>metadatos</strong> y el <strong>catálogo del sistema</strong>.</p>
 <section id="componentes-de-ddl-en-el-diseño-lógico-frente-al-diseño-físico" class="level3">
 <h3 class="anchored" data-anchor-id="componentes-de-ddl-en-el-diseño-lógico-frente-al-diseño-físico">Componentes de DDL en el diseño lógico frente al diseño físico</h3>
-<p>El DDL no pertenece de manera exclusiva al diseño lógico ni al diseño físico; abarca e implementa elementos de ambos niveles dentro de un motor de bases de datos. En la práctica del estándar SQL, el DDL sirve tanto para formalizar el esquema lógico (entidades, atributos y reglas de integridad del negocio) como para instrumentar las estructuras de almacenamiento, rendimiento y acceso del esquema interno (diseño físico).</p>
+<p>El DDL no pertenece de manera exclusiva al diseño lógico ni al diseño físico; abarca e implementa elementos de ambos niveles dentro de un motor de bases de datos. En la práctica del estándar SQL, el DDL sirve tanto para <strong>formalizar el esquema lógico</strong> (entidades, atributos y reglas de integridad del negocio) como para instrumentar las estructuras de <em>almacenamiento, rendimiento y acceso</em> del esquema interno (diseño físico).</p>
 <p><strong>Componentes de DDL en el diseño lógico:</strong></p>
-<p>El diseño lógico define la estructura relacional independiente de las características específicas de almacenamiento físico o hardware. En esta fase, las sentencias DDL se emplean para traducir el modelo relacional teórico a esquemas ejecutables:</p>
+<p>El diseño lógico define la estructura relacional <strong>independiente</strong> de las características específicas de almacenamiento físico o <strong>hardware</strong>. En esta fase, las sentencias DDL se emplean para traducir el modelo relacional teórico a <strong>esquemas</strong> ejecutables:</p>
 <ul>
 <li><p><strong>Estructura relacional básica:</strong> Sentencias <code>CREATE TABLE</code> para definir relaciones, atributos y sus tipos de datos abstractos o estándar (<code>VARCHAR</code>, <code>NUMERIC</code>, <code>TIMESTAMP</code>, tipos geométricos/geográficos en extensiones espaciales).</p></li>
 <li><p><strong>Integridad de entidad y referencial:</strong> Definición explícita de claves primarias (<code>PRIMARY KEY</code>) y claves foráneas (<code>FOREIGN KEY ... REFERENCES</code>), las cuales preservan las dependencias funcionales y la integridad referencial identificadas durante la normalización (ej. 3FN o BCNF).</p></li>
@@ -739,7 +753,7 @@ Dentro de psql Use `\conninfo` o `SHOW data_directory;` para chequear la conexi�
 <li><p><strong>Esquemas y vistas lógicas:</strong> Agrupaciones modulares de tablas mediante <code>CREATE SCHEMA</code> y definición de abstracciones relacionales mediante <code>CREATE VIEW</code>.</p></li>
 </ul>
 <p><strong>Componentes de DDL en el diseño físico:</strong></p>
-<p>El diseño físico tiene como objetivo adaptar el esquema lógico para maximizar el rendimiento de las consultas, optimizar el uso del disco y gestionar la distribución de los datos según las cargas de trabajo (<em>workloads</em>). En esta etapa, el DDL incluye instrucciones que no alteran la semántica ni los resultados relacionales, pero condicionan el almacenamiento y las rutas de acceso:</p>
+<p>El diseño físico tiene como objetivo adaptar el esquema lógico para <strong>maximizar el rendimiento</strong> de las consultas, <strong>optimizar</strong> el uso del disco y <strong>gestionar</strong> la distribución de los datos según las cargas de trabajo (<em>workloads</em>). En esta etapa, el DDL incluye instrucciones que <strong>no alteran la semántica</strong> ni los <strong>resultados relacionales</strong>, pero <strong>condicionan el almacenamiento</strong> y las rutas de acceso:</p>
 <ul>
 <li><p><strong>Estructuras de acceso e índices:</strong> Sentencias <code>CREATE INDEX</code>, donde se seleccionan algoritmos de indexación específicos para optimizar operadores concretos (por ejemplo, índices B-Tree para rangos escalares, o índices GiST/BRIN para tipos de datos espaciales y temporales).</p></li>
 <li><p><strong>Organización del almacenamiento en disco:</strong> Creación y asignación de espacios de almacenamiento con <code>CREATE TABLESPACE</code> y la cláusula <code>TABLESPACE</code> en tablas o índices para distribuir las operaciones de entrada/salida entre diferentes dispositivos de almacenamiento.</p></li>
@@ -794,7 +808,7 @@ Definiciones fundamentales del modelo relacional
 <ul>
 <li><p><strong>Tabla (relación):</strong> Estructura bidimensional de almacenamiento compuesta por un conjunto no ordenado de registros (tuplas) homogéneos y atributos (columnas), que materializa formalmente una clase de objetos o relación matemática en el esquema relacional.</p></li>
 <li><p><strong>Tupla:</strong> Registro o fila individual dentro de una tabla que alberga un conjunto de valores atómicos correspondientes a cada atributo, representando una instancia u ocurrencia particular del mundo real.</p></li>
-<li><p><strong>Columna tipificada (atributo relacional):</strong> Descriptor formal de la relación definido bajo un nombre unívoco y restringido a un tipo de dato o dominio específico (escalar o abstracto), garantizando la homogeneidad semántica de los valores almacenados en sus celdas.</p></li>
+<li><p><strong>Columna tipificada (atributo relacional):</strong> Descriptor formal de la relación definido bajo un nombre unívoco y restringido a un <em>tipo de dato o dominio específico</em> (escalar o abstracto), garantizando la homogeneidad semántica de los valores almacenados en sus celdas.</p></li>
 <li><p><strong>Restricciones de integridad:</strong> Reglas y predicados lógicos declarativos (claves primarias, unicidad, restricciones de no nulidad <code>NOT NULL</code>, integridad referencial mediante claves foráneas y cláusulas <code>CHECK</code>) aplicados por el motor para preservar la consistencia interna y evitar anomalías transaccionales.</p></li>
 <li><p><strong>Esquema:</strong> Contenedor lógico y espacio de nombres (<em>namespace</em>) dentro de la base de datos que agrupa un conjunto cohesivo de objetos (tablas, vistas, funciones, secuencias, tipos y dominios), facilitando la prevención de colisiones léxicas y la segregación temática de los datos territoriales.</p></li>
 </ul>
@@ -802,7 +816,7 @@ Definiciones fundamentales del modelo relacional
 </div>
 <section id="el-modelo-relacional-y-reglas-de-derivación-estructural" class="level3">
 <h3 class="anchored" data-anchor-id="el-modelo-relacional-y-reglas-de-derivación-estructural">El modelo relacional y reglas de derivación estructural</h3>
-<p>El modelo relacional, formulado originalmente por Edgar F. Codd <span class="citation" data-cites="codd1970relational">Codd (<a href="99-referencias.html#ref-codd1970relational" role="doc-biblioref">1970</a>)</span>, estructura los datos en <strong>relaciones</strong> (término formal para las tablas), concebidas matemáticamente como subconjuntos del producto cartesiano de una lista de dominios:</p>
+<p>El modelo relacional, formulado originalmente por Edgar F. <span class="citation" data-cites="codd1970relational">Codd (<a href="99-referencias.html#ref-codd1970relational" role="doc-biblioref">1970</a>)</span>, estructura los datos en <strong>relaciones</strong> (término formal para las tablas), concebidas matemáticamente como subconjuntos del producto cartesiano de una lista de dominios:</p>
 <p><span class="math display">\[R \subseteq D_1 \times D_2 \times \dots \times D_n\]</span></p>
 <p>Cada fila o registro de la tabla constituye una <strong>tupla</strong> que materializa una instancia u objeto del mundo real, mientras que cada columna representa un <strong>atributo</strong> tipificado bajo un dominio escalar o abstracto específico.</p>
 <p>La transición desde el esquema conceptual hacia el esquema lógico relacional opera bajo un conjunto estricto de reglas formales de transformación:</p>
@@ -824,6 +838,33 @@ Definiciones fundamentales del modelo relacional
 <li><p><strong>Clave foránea (FK):</strong> Toda columna que actúe como clave foránea referenciando a otra relación debe figurar <strong>siempre en color</strong> <span style="color: red; font-weight: bold;">rojo</span> (<code>red</code>).</p></li>
 <li><p><strong>Clave primaria compuesta con rol foráneo:</strong> Cuando un atributo opera simultáneamente como clave primaria y clave foránea, se representa <span style="color: red; text-decoration: underline; font-weight: bold;">subrayado y en color rojo</span>.</p></li>
 </ul>
+<div class="callout callout-style-default callout-note callout-titled" title="Variante de notación estructural para escritura manual">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Variante de notación estructural para escritura manual
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>En evaluaciones escritas en papel, tableros o medios monocromáticos donde no se dispone de codificación cromática, se adopta de forma unívoca la convención de subrayado y superíndice asterisco (<span class="math inline">\(^*\)</span>):</p>
+<ul>
+<li><strong>Clave primaria (PK):</strong> Se identifica mediante un subrayado continuo simple bajo el nombre del atributo:</li>
+</ul>
+<p><span class="math display">\[\underline{\text{id\_estacion}}\]</span></p>
+<ul>
+<li><strong>Clave foránea (FK):</strong> Se identifica mediante un asterisco en superíndice inmediatamente posterior al nombre del atributo:</li>
+</ul>
+<p><span class="math display">\[\text{id\_municipio}^*\]</span></p>
+<ul>
+<li><strong>Clave compuesta de intersección (PK / FK):</strong> Al asumir simultáneamente la restricción de identidad y la referencia relacional, se aplica el subrayado continuo junto con el superíndice asterisco:</li>
+</ul>
+<p><span class="math display">\[\underline{\text{id\_predio}}^*, \quad \underline{\text{id\_propietario}}^*\]</span></p>
+<p>La signatura estructural de la tabla puente fragmentada en dos líneas para optimizar el ancho de columna se formaliza como:</p>
+<p><span class="math display">\[\begin{aligned} \text{predio\_propietario}( &amp; \underline{\text{id\_predio}}^*, \underline{\text{id\_propietario}}^*, \\ &amp; \text{porcentaje\_participacion}, \text{fecha\_adquisicion}) \end{aligned}\]</span></p>
+</div>
+</div>
 <p>Aplicando esta convención cromática al subsistema territorial desarrollado en el modelo conceptual (ver <a href="21-modelado_conceptual_espacial.html#fig-er-clases-espaciales-territorio" class="quarto-xref">Figura&nbsp;<span>7.13</span></a> y <a href="21-modelado_conceptual_espacial.html#fig-uml-clases-territoriales" class="quarto-xref">Figura&nbsp;<span>7.15</span></a>), el esquema lógico relacional se formula como:</p>
 <ul>
 <li><p><span class="math inline">\(\text{departamentos} \,(\, \underline{\mathbf{\color{green}dep\_id}}, \, \text{dep\_nombre}, \, \text{dep\_region}, \, \text{the\_geom} \,)\)</span></p></li>
@@ -842,15 +883,15 @@ Definiciones fundamentales del modelo relacional
 <svg width="624" height="624" viewbox="0.00 0.00 803.75 839.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 828.2)">
 <title>ER_a_Logico</title>
-<g id="clust1" class="cluster">
-<title>cluster_conceptual</title>
-<polygon fill="transparent" stroke="gray" stroke-dasharray="5,2" points="59.15,-638.8 59.15,-809.4 733.15,-809.4 733.15,-638.8 59.15,-638.8"></polygon>
-<text text-anchor="middle" x="396.15" y="-795.95" font-family="Helvetica,Arial,sans-serif" font-size="10.50" fill="dimgray">Nivel conceptual: diagrama entidad-relación (notación Barker)</text>
-</g>
 <g id="clust3" class="cluster">
 <title>cluster_logico</title>
 <polygon fill="transparent" stroke="lightblue" stroke-dasharray="5,2" points="49.15,-8 49.15,-615.8 774.15,-615.8 774.15,-8 49.15,-8"></polygon>
 <text text-anchor="middle" x="411.65" y="-602.35" font-family="Helvetica,Arial,sans-serif" font-size="10.50" fill="blue">Nivel lógico relacional: esquema tabular y signaturas (código cromático)</text>
+</g>
+<g id="clust1" class="cluster">
+<title>cluster_conceptual</title>
+<polygon fill="transparent" stroke="gray" stroke-dasharray="5,2" points="59.15,-638.8 59.15,-809.4 733.15,-809.4 733.15,-638.8 59.15,-638.8"></polygon>
+<text text-anchor="middle" x="396.15" y="-795.95" font-family="Helvetica,Arial,sans-serif" font-size="10.50" fill="dimgray">Nivel conceptual: diagrama entidad-relación (notación Barker)</text>
 </g>
 <!-- c_dept -->
 <g id="node1" class="node">
@@ -1073,7 +1114,7 @@ Figura&nbsp;8.1: Transición del modelo conceptual (Barker) al diseño lógico r
 <h3 class="anchored" data-anchor-id="reglas-de-integridad-y-gestión-de-identificadores">Reglas de integridad y gestión de identificadores</h3>
 <p>El modelo relacional garantiza la robustez y consistencia interna de los datos mediante dos principios fundamentales de integridad estructural:</p>
 <ol type="1">
-<li><p><strong>Integridad de entidad:</strong> Toda tabla debe poseer una <strong>clave primaria única</strong> cuyos valores no admiten en ningún caso el valor nulo (<code>NULL</code>). La omisión o indeterminación de una clave primaria impediría distinguir una tupla de las demás, corrompiendo la noción matemática de relación.</p></li>
+<li><p><strong>Integridad de entidad:</strong> Toda tabla debe poseer una <strong>clave primaria única</strong> cuyos valores <strong>no admiten</strong> en ningún caso el valor nulo (<code>NULL</code>). La omisión o indeterminación de una clave primaria impediría distinguir una tupla de las demás, corrompiendo la noción matemática de relación.</p></li>
 <li><p><strong>Integridad referencial:</strong> Toda <strong>clave foránea</strong> que resida en una relación subordinada debe coincidir de forma exacta con un valor válido existente en la <strong>clave primaria</strong> de la relación padre referenciada, o bien albergar un valor <code>NULL</code> si la asociación es conceptualmente opcional. El motor de base de datos <strong>intercepta y prohíbe</strong> cualquier <strong>operación de inserción o actualización</strong> que produzca tuplas <strong>huérfanas</strong> en el sistema.</p></li>
 </ol>
 <p>En la ingeniería de bases de datos territoriales, la formulación de claves primarias plantea una disyuntiva entre identificadores naturales y artificiales:</p>
@@ -1260,9 +1301,9 @@ Anomalías de actualización, inserción y borrado
 <div class="callout-body-container callout-body">
 <p>Inconsistencias y fallos transaccionales originados por la redundancia estructural y dependencias funcionales inadecuadas en relaciones no normalizadas:</p>
 <ul>
-<li><p><strong>Anomalía de actualización:</strong> Modificación parcial o asimétrica de datos duplicados a lo largo de múltiples registros, generando estados mutuamente contradictorios sobre un mismo atributo o hecho del mundo real.</p></li>
-<li><p><strong>Anomalía de inserción:</strong> Imposibilidad de registrar los atributos válidos de una entidad independiente sin la concurrencia obligatoria de una entidad secundaria asociada, o la necesidad de introducir valores nulos artificiales para completar la tupla.</p></li>
-<li><p><strong>Anomalía de borrado:</strong> Pérdida involuntaria e irreversible de información descriptiva o histórica de una entidad principal como consecuencia colateral de eliminar el registro de una entidad subordinada.</p></li>
+<li><p><strong>Anomalía de actualización:</strong> Modificación parcial o asimétrica de datos duplicados a lo largo de múltiples registros, generando <em>estados mutuamente contradictorios</em> sobre un mismo atributo o hecho del mundo real.</p></li>
+<li><p><strong>Anomalía de inserción:</strong> Imposibilidad de <em>registrar los atributos válidos</em> de una entidad independiente sin la concurrencia obligatoria de una entidad secundaria asociada, o la necesidad de introducir valores nulos artificiales para completar la tupla.</p></li>
+<li><p><strong>Anomalía de borrado:</strong> Pérdida <em>involuntaria e irreversible</em> de información descriptiva o histórica de una entidad principal como consecuencia <em>colateral</em> de eliminar el registro de una entidad subordinada.</p></li>
 </ul>
 </div>
 </div>
@@ -1601,7 +1642,7 @@ Definición de clave candidata
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Columna o conjunto mínimo de columnas que identifica de manera unívoca cada tupla dentro de una relación, satisfaciendo simultáneamente los principios de unicidad (no existen dos tuplas con valores idénticos) e irreductibilidad o minimalidad (ningún subconjunto propio de sus atributos conserva la capacidad de identificación única).</p>
+<p>Columna o conjunto mínimo de columnas que identifica de manera unívoca cada tupla dentro de una relación, satisfaciendo simultáneamente los principios de <em>unicidad</em> (no existen dos tuplas con valores idénticos) e <strong>irreductibilidad o minimalidad</strong> (ningún subconjunto propio de sus atributos conserva la capacidad de identificación única).</p>
 <p>A partir del conjunto de claves candidatas identificadas en una relación, el diseñador selecciona una como <strong>clave primaria</strong> (<em>Primary Key</em>), quedando las restantes categorizadas como <strong>claves alternativas</strong> (<em>Alternate Keys</em>).</p>
 </div>
 </div>
@@ -1638,20 +1679,20 @@ Ejemplo de infracción de la segunda forma normal (2FN)
 </div>
 <div class="callout-body-container callout-body">
 <p>Considérese una relación destinada a registrar la longitud de los tramos viales que cruzan por cada municipio:</p>
-<p><span class="math display">\[\text{tramos\_municipio}(\underline{\text{mun\_id}}, \, \underline{\text{via\_codigo}}, \, \text{mun\_nombre}, \, \text{via\_tipo}, \, \text{longitud\_km})\]</span></p>
+<p><span class="math display">\[\text{tramos\_municipio}(\mathbf{\color{green}\underline{\text{mun\_id}}}, \, \mathbf{\color{green}\underline{\text{via\_codigo}}}, \, \text{mun\_nombre}, \, \text{via\_tipo}, \, \text{longitud\_km})\]</span></p>
 <p>En esta estructura:</p>
 <ul>
-<li><p><strong>Clave primaria compuesta:</strong> <span class="math inline">\((\text{mun\_id}, \text{via\_codigo})\)</span></p></li>
-<li><p><strong>Dependencia funcional completa:</strong> <span class="math inline">\((\text{mun\_id}, \text{via\_codigo}) \rightarrow \text{longitud\_km}\)</span> (la longitud corresponde estrictamente al segmento de esa vía dentro de ese municipio específico).</p></li>
-<li><p><strong>Dependencias parciales (infracción de 2FN):</strong></p></li>
-<li><p><span class="math inline">\(\text{mun\_id} \rightarrow \text{mun\_nombre}\)</span> (<code>mun_nombre</code> depende únicamente del identificador municipal, ignorando la vía).</p></li>
-<li><p><span class="math inline">\(\text{via\_codigo} \rightarrow \text{via\_tipo}\)</span> (<code>via_tipo</code> depende exclusivamente del código de la vía, con independencia del municipio).</p></li>
+<li><strong>Clave primaria compuesta:</strong> <span class="math inline">\((\mathbf{\color{green}\underline{\text{mun\_id}}}, \, \mathbf{\color{green}\underline{\text{via\_codigo}}})\)</span></li>
+<li><strong>Dependencia funcional completa:</strong> <span class="math inline">\((\text{mun\_id}, \text{via\_codigo}) \rightarrow \text{longitud\_km}\)</span> (la longitud corresponde estrictamente al segmento de esa vía dentro de ese municipio específico).</li>
+<li><strong>Dependencias parciales (infracción de 2FN):</strong></li>
+<li><span class="math inline">\(\text{mun\_id} \rightarrow \text{mun\_nombre}\)</span> (<code>mun_nombre</code> depende únicamente del identificador municipal, ignorando la vía).</li>
+<li><span class="math inline">\(\text{via\_codigo} \rightarrow \text{via\_tipo}\)</span> (<code>via_tipo</code> depende exclusivamente del código de la vía, con independencia del municipio).</li>
 </ul>
 <p>Dado que los atributos no primos <code>mun_nombre</code> y <code>via_tipo</code> no dependen de la totalidad de la clave primaria sino de subconjuntos de esta, la relación viola la 2FN y genera redundancia cada vez que una vía atraviesa múltiples municipios. La normalización exige descomponerla en tres relaciones:</p>
 <ol type="1">
-<li><p><span class="math inline">\(\text{municipios}(\underline{\text{mun\_id}}, \, \text{mun\_nombre})\)</span></p></li>
-<li><p><span class="math inline">\(\text{vias}(\underline{\text{via\_codigo}}, \, \text{via\_tipo})\)</span></p></li>
-<li><p><span class="math inline">\(\text{tramos\_municipio}(\underline{\text{mun\_id}}, \, \underline{\text{via\_codigo}}, \, \text{longitud\_km})\)</span></p></li>
+<li><span class="math inline">\(\text{municipios}(\mathbf{\color{green}\underline{\text{mun\_id}}}, \, \text{mun\_nombre})\)</span></li>
+<li><span class="math inline">\(\text{vias}(\mathbf{\color{green}\underline{\text{via\_codigo}}}, \, \text{via\_tipo})\)</span></li>
+<li><span class="math inline">\(\text{tramos\_municipio}(\mathbf{\color{red}\underline{\text{mun\_id}}}, \, \mathbf{\color{red}\underline{\text{via\_codigo}}}, \, \text{longitud\_km})\)</span></li>
 </ol>
 </div>
 </div>
@@ -1683,8 +1724,108 @@ Dependencia funcional transitiva
 </div>
 </div>
 <ul>
-<li><p><strong>Cuarta forma normal (4FN) y dependencias multivaluadas de Fagin:</strong> Formulada por Ronald Fagin en 1977, aborda las <strong>dependencias multivaluadas</strong> (<span class="math inline">\(X \twoheadrightarrow Y\)</span>), donde hechos independientes de cardinalidad múltiple se asocian a una misma clave <span class="citation" data-cites="fagin1977multivalued">(<a href="99-referencias.html#ref-fagin1977multivalued" role="doc-biblioref">Fagin, 1977</a>)</span>. La 4FN prohíbe almacenar en una sola relación dos <strong>hechos independientes</strong> (por ejemplo, resguardos indígenas y planes de ordenamiento de un municipio), exigiendo su descomposición en tablas independientes para prevenir redundancia combinatoria.</p></li>
-<li><p><strong>Quinta forma normal (5FN / PJNF):</strong> Denominada formalmente <em>forma normal de proyección-unión</em> (<em>Projection-Join Normal Form</em>, PJNF), garantiza que una relación que ha sido descompuesta en múltiples tablas pueda reconstruirse mediante operaciones de combinación (<em>join</em>) sin alterar la información original ni generar <strong>tuplas espurias</strong> (registros ficticios que afirman hechos falsos en la base de datos), vinculando las <strong>dependencias de reunión</strong> exclusivamente a las claves candidatas <span class="citation" data-cites="fagin1979normal">(<a href="99-referencias.html#ref-fagin1979normal" role="doc-biblioref">Fagin, 1979</a>)</span>.</p></li>
+<li><strong>Cuarta forma normal (4FN) y dependencias multivaluadas de Fagin:</strong> Formulada por Ronald Fagin en 1977, aborda las <strong>dependencias multivaluadas</strong> (<span class="math inline">\(X \twoheadrightarrow Y\)</span>), donde hechos independientes de cardinalidad múltiple se asocian a una misma clave <span class="citation" data-cites="fagin1977multivalued">(<a href="99-referencias.html#ref-fagin1977multivalued" role="doc-biblioref">Fagin, 1977</a>)</span>. La 4FN prohíbe almacenar en una sola relación dos <strong>hechos independientes</strong> (por ejemplo, resguardos indígenas y planes de ordenamiento de un municipio), exigiendo su descomposición en tablas independientes para prevenir redundancia combinatoria.</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled" title="Ejemplo práctico de infracción y resolución de la cuarta forma normal (4FN)">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Ejemplo práctico de infracción y resolución de la cuarta forma normal (4FN)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Considérese el registro territorial de los resguardos indígenas presentes en una jurisdicción y los instrumentos de planeación ambiental o territorial vigentes. Ambos dominios constituyen hechos independientes de cardinalidad múltiple asociados a la misma entidad municipal: la presencia de un resguardo no condiciona ni determina los planes de ordenamiento formulados.</p>
+<p><span class="math display">\[\text{municipio\_gestion}(\mathbf{\color{red}\underline{\text{mun\_id}}}, \, \mathbf{\color{green}\underline{\text{resguardo\_nombre}}}, \, \mathbf{\color{green}\underline{\text{instrumento\_plan}}})\]</span></p>
+<p><strong>1. Estado de normalización en BCNF:</strong></p>
+<p>Al no existir atributos descriptivos no primos ni determinantes funcionales parciales, la clave primaria está constituida por la totalidad de los atributos <span class="math inline">\((\text{mun\_id}, \text{resguardo\_nombre}, \text{instrumento\_plan})\)</span>. La relación satisface formalmente la BCNF al no presentar dependencias funcionales donde el determinante no sea superclave.</p>
+<p><strong>2. Presencia de dependencias multivaluadas (MVD):</strong></p>
+<p>A pesar de cumplir con BCNF, la entidad municipal determina de manera independiente a dos colecciones de datos no correlacionadas:</p>
+<p><span class="math display">\[\text{mun\_id} \twoheadrightarrow \text{resguardo\_nombre} \quad \wedge \quad \text{mun\_id} \twoheadrightarrow \text{instrumento\_plan}\]</span></p>
+<p>Bajo esta formulación (<span class="math inline">\(X \twoheadrightarrow Y \mid Z\)</span>), el modelo relacional exige que para cada tupla válida deban coexistir todas las combinaciones posibles de resguardos e instrumentos. Si un municipio (<code>mun_id = '17614'</code>) alberga dos resguardos (<code>'Cañamomo'</code> y <code>'San Lorenzo'</code>) y cuenta con dos instrumentos (<code>'PBOT'</code> y <code>'POMCA'</code>), la tabla impone almacenar el producto cartesiano completo (<span class="math inline">\(2 \times 2 = 4\)</span> tuplas):</p>
+<div id="tbl-4fn-infraccion" class="quarto-float anchored" style="max-width: 65%; margin: auto;">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-4fn-infraccion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;8.2: Relación municipio_gestion con anomalía combinatoria
+</figcaption>
+<div aria-describedby="tbl-4fn-infraccion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>mun_id</th>
+<th>resguardo_nombre</th>
+<th>instrumento_plan</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>17614</td>
+<td>Cañamomo</td>
+<td>PBOT</td>
+</tr>
+<tr class="even">
+<td>17614</td>
+<td>Cañamomo</td>
+<td>POMCA</td>
+</tr>
+<tr class="odd">
+<td>17614</td>
+<td>San Lorenzo</td>
+<td>PBOT</td>
+</tr>
+<tr class="even">
+<td>17614</td>
+<td>San Lorenzo</td>
+<td>POMCA</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p><strong>3. Anomalías operativas derivadas de la redundancia combinatoria:</strong></p>
+<ul>
+<li><p><strong>Multiplicación innecesaria de filas:</strong> Si el municipio formula un nuevo instrumento (ej. <code>'Plan de vida'</code>), no basta con agregar un registro; se deben insertar tantas tuplas como resguardos existan en el municipio. Para <span class="math inline">\(m\)</span> resguardos y <span class="math inline">\(n\)</span> instrumentos, el costo de almacenamiento escala a <span class="math inline">\(m \times n\)</span> filas.</p></li>
+<li><p><strong>Anomalía de inserción:</strong> Si se registra la constitución de un nuevo resguardo, el sistema exige duplicar artificialmente todos los instrumentos vigentes en tuplas individuales. Si se omite alguno, la base de datos asume erróneamente que dicho instrumento no aplica en el resguardo omitido.</p></li>
+<li><p><strong>Anomalía de borrado:</strong> Si se deroga un instrumento, deben eliminarse múltiples registros de manera sincronizada para evitar estados inconsistentes.</p></li>
+</ul>
+<p><strong>4. Descomposición canónica en 4FN:</strong></p>
+<p>Para neutralizar la anomalía combinatoria, Ronald Fagin demostró que la relación debe descomponerse en dos proyecciones independientes que aíslen cada hecho multivaluado:</p>
+<p><span class="math display">\[\begin{aligned} &amp; \text{municipio\_resguardos}(\mathbf{\color{red}\underline{\text{mun\_id}}}, \, \mathbf{\color{green}\underline{\text{resguardo\_nombre}}}) \\ &amp; \text{municipio\_planes}(\mathbf{\color{red}\underline{\text{mun\_id}}}, \, \mathbf{\color{green}\underline{\text{instrumento\_plan}}}) \end{aligned}\]</span></p>
+<div id="tbl-4fn-descomposicion" class="quarto-float anchored" style="max-width: 85%; margin: auto;">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-4fn-descomposicion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;8.3: Descomposición en 4FN eliminando la redundancia cartesiana
+</figcaption>
+<div aria-describedby="tbl-4fn-descomposicion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th>municipio_resguardos (<code>mun_id</code>, <code>resguardo_nombre</code>)</th>
+<th>municipio_planes (<code>mun_id</code>, <code>instrumento_plan</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>(17614, 'Cañamomo')</code></td>
+<td><code>(17614, 'PBOT')</code></td>
+</tr>
+<tr class="even">
+<td><code>(17614, 'San Lorenzo')</code></td>
+<td><code>(17614, 'POMCA')</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Mediante esta segregación, el almacenamiento pasa de una tasa multiplicativa (<span class="math inline">\(m \times n\)</span>) a una tasa aditiva lineal (<span class="math inline">\(m + n = 4\)</span> registros distribuidos en tablas especializadas), permitiendo actualizar resguardos o instrumentos de planificación de manera desacoplada sin inducir tuplas redundantes.</p>
+<p>Ver implementación en <a href="#sec-cuarta-fn" class="quarto-xref"><span>Sección 8.7</span></a></p>
+</div>
+</div>
+<ul>
+<li><strong>Quinta forma normal (5FN / PJNF):</strong> Denominada formalmente <em>forma normal de proyección-unión</em> (<em>Projection-Join Normal Form</em>, PJNF), garantiza que una relación que ha sido descompuesta en múltiples tablas pueda reconstruirse mediante operaciones de combinación (<em>join</em>) sin alterar la información original ni generar <strong>tuplas espurias</strong> (registros ficticios que afirman hechos falsos en la base de datos), vinculando las <strong>dependencias de reunión</strong> exclusivamente a las claves candidatas <span class="citation" data-cites="fagin1979normal">(<a href="99-referencias.html#ref-fagin1979normal" role="doc-biblioref">Fagin, 1979</a>)</span>.</li>
 </ul>
 <div class="callout callout-style-default callout-note callout-titled" title="Conceptos clave y ejemplo práctico de la quinta forma normal (5FN / PJNF)">
 <div class="callout-header d-flex align-content-center">
@@ -1698,11 +1839,11 @@ Conceptos clave y ejemplo práctico de la quinta forma normal (5FN / PJNF)
 <div class="callout-body-container callout-body">
 <p>Una <strong>dependencia de reunión</strong> ocurre cuando una tabla ternaria no puede dividirse en dos relaciones sin corromper los datos, pero sí puede descomponerse en tres o más proyecciones sin pérdida.</p>
 <p>Considérese la asignación de levantamientos catastrales donde rige la siguiente regla: un operador ejecuta un método en un municipio si y solo si el operador atiende el municipio, el operador domina el método, y el municipio autoriza dicho método.</p>
-<p><span class="math display">\[\text{operaciones}(\underline{\text{operador}}, \, \underline{\text{municipio}}, \, \underline{\text{metodo}})\]</span></p>
+<p><span class="math display">\[\text{operaciones}(\mathbf{\color{green}\underline{\text{operador}}}, \, \mathbf{\color{green}\underline{\text{municipio}}}, \, \mathbf{\color{green}\underline{\text{metodo}}})\]</span></p>
 <div id="tbl-operaciones" class="quarto-float anchored" style="max-width: 45%; margin: auto;">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-operaciones-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Tabla&nbsp;8.2: Relación operaciones
+Tabla&nbsp;8.4: Relación operaciones
 </figcaption>
 <div aria-describedby="tbl-operaciones-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="table">
@@ -1741,17 +1882,18 @@ Tabla&nbsp;8.2: Relación operaciones
 </div>
 <p>Si esta relación se descompone únicamente en dos tablas:</p>
 <ul>
-<li><p><span class="math inline">\(R_1(\underline{\text{operador}}, \, \underline{\text{municipio}})\)</span></p></li>
-<li><p><span class="math inline">\(R_2(\underline{\text{municipio}}, \, \underline{\text{metodo}})\)</span></p></li>
+<li><span class="math inline">\(R_1(\mathbf{\color{green}\underline{\text{operador}}}, \, \mathbf{\color{green}\underline{\text{municipio}}})\)</span></li>
+<li><span class="math inline">\(R_2(\mathbf{\color{green}\underline{\text{municipio}}}, \, \mathbf{\color{green}\underline{\text{metodo}}})\)</span></li>
 </ul>
 <p>Al reconstruir la información mediante <span class="math inline">\(R_1 \bowtie R_2\)</span>, en Mogotes el operador <code>Toposig</code> se asociará automáticamente con <code>Dron</code>, produciendo la <strong>tupla espuria</strong> <code>(Toposig, Mogotes, Dron)</code>. Este dato es ficticio, pues <code>Toposig</code> no utiliza drones.</p>
 <p>Para satisfacer la <strong>5FN</strong>, la relación debe descomponerse en <strong>tres proyecciones simultáneas</strong>:</p>
 <ol type="1">
-<li><p><span class="math inline">\(R_1(\underline{\text{operador}}, \, \underline{\text{municipio}})\)</span></p></li>
-<li><p><span class="math inline">\(R_2(\underline{\text{municipio}}, \, \underline{\text{metodo}})\)</span></p></li>
-<li><p><span class="math inline">\(R_3(\underline{\text{operador}}, \, \underline{\text{metodo}})\)</span></p></li>
+<li><span class="math inline">\(R_1(\mathbf{\color{green}\underline{\text{operador}}}, \, \mathbf{\color{green}\underline{\text{municipio}}})\)</span></li>
+<li><span class="math inline">\(R_2(\mathbf{\color{green}\underline{\text{municipio}}}, \, \mathbf{\color{green}\underline{\text{metodo}}})\)</span></li>
+<li><span class="math inline">\(R_3(\mathbf{\color{green}\underline{\text{operador}}}, \, \mathbf{\color{green}\underline{\text{metodo}}})\)</span></li>
 </ol>
 <p>Al evaluar la reunión natural de las tres tablas (<span class="math inline">\(R_1 \bowtie R_2 \bowtie R_3\)</span>), la tabla <span class="math inline">\(R_3\)</span> descarta la combinación errónea (al no existir el par <code>Toposig - Dron</code>), recuperando exactamente las cuatro tuplas originales sin redundancias ni registros espurios.</p>
+<p>Ver implementación en <a href="#sec-quinta-fn" class="quarto-xref"><span>Sección 8.8</span></a></p>
 </div>
 </div>
 <ul>
@@ -1767,7 +1909,7 @@ Teorema de Fagin sobre la forma normal de dominio-clave (DKNF)
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Una relación relacional se encuentra en DKNF si y solo si toda restricción de integridad impuesta sobre los datos es una consecuencia lógica directa e inequívoca de la definición de los <strong>dominios</strong> de sus atributos y de las <strong>claves</strong> primarias o candidatas declaradas sobre el esquema <span class="citation" data-cites="fagin1981normal">(<a href="99-referencias.html#ref-fagin1981normal" role="doc-biblioref">Fagin, 1981</a>)</span>.</p>
+<p>Una relación se encuentra en DKNF si y solo si toda restricción de integridad impuesta sobre los datos es una consecuencia lógica directa e inequívoca de la definición de los <strong>dominios</strong> de sus atributos y de las <strong>claves</strong> primarias o candidatas declaradas sobre el esquema <span class="citation" data-cites="fagin1981normal">(<a href="99-referencias.html#ref-fagin1981normal" role="doc-biblioref">Fagin, 1981</a>)</span>.</p>
 </div>
 </div>
 <p>Una tabla que satisface la DKNF carece por definición de anomalías de modificación, inserción y borrado.</p>
@@ -1782,21 +1924,21 @@ Evaluación práctica de la DKNF en la jerarquía territorial DIVIPOLA
 </div>
 <div class="callout-body-container callout-body">
 <p>Considérese la relación de municipios articulada con su dependencia departamental:</p>
-<p><span class="math display">\[\text{municipios}(\underline{\text{mun\_id}}, \, \text{mun\_nombre}, \, \text{dep\_id})\]</span></p>
+<p><span class="math display">\[\text{municipios}(\mathbf{\color{green}\underline{\text{mun\_id}}}, \, \text{mun\_nombre}, \, \mathbf{\color{red}\text{dep\_id}})\]</span></p>
 <p><strong>1. Diagnóstico del estado de normalización actual:</strong></p>
 <p>Antes de contrastar la relación frente a la DKNF, se verifica su conformidad con la jerarquía clásica de formas normales:</p>
 <ul>
 <li><p><strong>1FN:</strong> Cumple estrictamente, pues todos los atributos alojan valores atómicos dentro de sus dominios escalares.</p></li>
-<li><p><strong>2FN:</strong> Satisface la condición al poseer una clave primaria simple (<span class="math inline">\(\text{mun\_id}\)</span>), descartando cualquier dependencia funcional parcial.</p></li>
+<li><p><strong>2FN:</strong> Satisface la condición al poseer una clave primaria simple (<span class="math inline">\(\mathbf{\color{green}\underline{\text{mun\_id}}}\)</span>), descartando cualquier dependencia funcional parcial.</p></li>
 <li><p><strong>3FN y BCNF:</strong> Se encuentra en 3FN y en BCNF debido a que la única dependencia funcional no trivial existente es <span class="math inline">\(\text{mun\_id} \rightarrow \{\text{mun\_nombre}, \text{dep\_id}\}\)</span>, donde el determinante es la clave candidata única (superclave). No existen dependencias transitivas entre atributos no primos.</p></li>
 <li><p><strong>4FN y 5FN:</strong> Cumple trivialmente al no presentar hechos multivaluados independientes (<span class="math inline">\(X \twoheadrightarrow Y\)</span>) ni dependencias de reunión cíclicas.</p></li>
 </ul>
 <p>En consecuencia, <strong>la relación se encuentra formalmente en BCNF y 5FN</strong>. Sin embargo, este nivel de diseño resulta insuficiente para encapsular restricciones semánticas entre atributos interdependientes mediante mecanismos exclusivamente declarativos.</p>
 <p><strong>2. Especificación de claves y dominios:</strong></p>
 <ul>
-<li><p><strong>Clave primaria:</strong> <span class="math inline">\(\text{mun\_id}\)</span> (garantiza la unicidad de cada registro municipal).</p></li>
+<li><p><strong>Clave primaria:</strong> <span class="math inline">\(\mathbf{\color{green}\underline{\text{mun\_id}}}\)</span> (garantiza la unicidad de cada registro municipal).</p></li>
 <li><p><strong>Dominio de <span class="math inline">\(\text{mun\_id}\)</span>:</strong> Cadena de exactamente 5 dígitos numéricos (<span class="math inline">\(\text{Pattern}({[0-9]}^5)\)</span>).</p></li>
-<li><p><strong>Dominio de <span class="math inline">\(\text{dep\_id}\)</span>:</strong> Cadena de exactamente 2 dígitos numéricos (<span class="math inline">\(\text{Pattern}({[0-9]}^2)\)</span>).</p></li>
+<li><p><strong>Dominio de <span class="math inline">\(\mathbf{\color{red}\text{dep\_id}}\)</span>:</strong> Cadena de exactamente 2 dígitos numéricos (<span class="math inline">\(\text{Pattern}({[0-9]}^2)\)</span>).</p></li>
 <li><p><strong>Dominio de <span class="math inline">\(\text{mun\_nombre}\)</span>:</strong> Cadena de texto de hasta 100 caracteres.</p></li>
 </ul>
 <p><strong>3. Restricción territorial general (<span class="math inline">\(C\)</span>):</strong></p>
@@ -1814,11 +1956,11 @@ Evaluación práctica de la DKNF en la jerarquía territorial DIVIPOLA
 <p>Dado que es factible formular tuplas que satisfacen rigurosamente todos los dominios y todas las claves pero violan la restricción territorial <span class="math inline">\(C\)</span>, se demuestra formalmente que <strong><span class="math inline">\(C\)</span> no es una consecuencia lógica de los dominios y claves declarados</strong>. A pesar de hallarse en 5FN/BCNF, la relación <span class="math inline">\(\text{municipios}\)</span> <strong>no se encuentra en DKNF</strong>, lo que obliga al gestor a implementar disparadores (<em>triggers</em>) o restricciones procedimentales complejas para impedir inconsistencias territoriales.</p>
 <p><strong>5. Rediseño hacia la forma normal de dominio-clave (DKNF):</strong></p>
 <p>Conforme al teorema de Fagin <span class="citation" data-cites="fagin1981normal">(<a href="99-referencias.html#ref-fagin1981normal" role="doc-biblioref">Fagin, 1981</a>)</span>, para que la restricción sea una consecuencia lógica directa, se descompone el identificador en sus componentes atómicos:</p>
-<p><span class="math display">\[\text{municipios}(\underline{\text{dep\_id}}, \, \underline{\text{mun\_consecutivo}}, \, \text{mun\_nombre})\]</span></p>
+<p><span class="math display">\[\text{municipios}(\mathbf{\color{red}\underline{\text{dep\_id}}}, \, \mathbf{\color{green}\underline{\text{mun\_consecutivo}}}, \, \text{mun\_nombre})\]</span></p>
 <ul>
-<li><p><strong>Clave primaria compuesta:</strong> <span class="math inline">\((\text{dep\_id}, \text{mun\_consecutivo})\)</span>.</p></li>
-<li><p><strong>Dominio de <span class="math inline">\(\text{dep\_id}\)</span>:</strong> Cadena de 2 caracteres numéricos <span class="math inline">\([0-9]^2\)</span> (clave foránea que referencia a <code>departamentos</code>).</p></li>
-<li><p><strong>Dominio de <span class="math inline">\(\text{mun\_consecutivo}\)</span>:</strong> Cadena de 3 caracteres numéricos <span class="math inline">\([0-9]^3\)</span> (subcódigo local municipal).</p></li>
+<li><p><strong>Clave primaria compuesta:</strong> <span class="math inline">\((\mathbf{\color{red}\underline{\text{dep\_id}}}, \, \mathbf{\color{green}\underline{\text{mun\_consecutivo}}})\)</span>.</p></li>
+<li><p><strong>Dominio de <span class="math inline">\(\mathbf{\color{red}\underline{\text{dep\_id}}}\)</span>:</strong> Cadena de 2 caracteres numéricos <span class="math inline">\([0-9]^2\)</span> (clave foránea que referencia a <code>departamentos</code> e integra concurrentemente la clave primaria).</p></li>
+<li><p><strong>Dominio de <span class="math inline">\(\mathbf{\color{green}\underline{\text{mun\_consecutivo}}}\)</span>:</strong> Cadena de 3 caracteres numéricos <span class="math inline">\([0-9]^3\)</span> (subcódigo local municipal que completa la clave primaria).</p></li>
 </ul>
 <p>Bajo esta formulación:</p>
 <ul>
@@ -2350,54 +2492,355 @@ CREATE TABLE</code></pre>
 </div>
 </section>
 </section>
-<section id="ejercicios-de-diseño-lógico-y-normalización-espacial" class="level2" data-number="8.7">
-<h2 data-number="8.7" class="anchored" data-anchor-id="ejercicios-de-diseño-lógico-y-normalización-espacial"><span class="header-section-number">8.7</span> Ejercicios de diseño lógico y normalización espacial</h2>
+<section id="sec-cuarta-fn" class="level2" data-number="8.7">
+<h2 data-number="8.7" class="anchored" data-anchor-id="sec-cuarta-fn"><span class="header-section-number">8.7</span> Comprobación empírica de la cuarta forma normal (4FN)</h2>
+<p>Para verificar el comportamiento de las dependencias multivaluadas y la multiplicación combinatoria de tuplas en el motor relacional, se establece el entorno de prueba experimental sobre el esquema <code>public</code> del clúster <code>sig_db_unal</code>.</p>
+<section id="definición-del-ámbito-y-reproducción-de-la-anomalía-combinatoria" class="level3">
+<h3 class="anchored" data-anchor-id="definición-del-ámbito-y-reproducción-de-la-anomalía-combinatoria">Definición del ámbito y reproducción de la anomalía combinatoria</h3>
+<p>En primera instancia se implementa la tabla no normalizada <code>public.municipio_gestion</code> en BCNF (clave primaria compuesta integral), insertando las cuatro combinaciones iniciales y evidenciando el impacto de incorporar un tercer instrumento de planificación sin descomposición:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Limpieza preventiva del entorno de prueba en el esquema public</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> <span class="kw">public</span>.municipio_resguardos <span class="kw">CASCADE</span>;</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> <span class="kw">public</span>.municipio_planes <span class="kw">CASCADE</span>;</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> <span class="kw">public</span>.municipio_gestion <span class="kw">CASCADE</span>;</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="co">-- Creación de la estructura en BCNF con dependencia multivaluada latente</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="kw">public</span>.municipio_gestion (</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>    mun_id <span class="dt">VARCHAR</span>(<span class="dv">5</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>    resguardo_nombre <span class="dt">VARCHAR</span>(<span class="dv">100</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>    instrumento_plan <span class="dt">VARCHAR</span>(<span class="dv">50</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CONSTRAINT</span> pk_municipio_gestion </span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>        <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (mun_id, resguardo_nombre, instrumento_plan)</span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a><span class="co">-- Carga del producto cartesiano base (2 resguardos x 2 instrumentos = 4 tuplas)</span></span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> <span class="kw">public</span>.municipio_gestion (mun_id, resguardo_nombre, instrumento_plan) <span class="kw">VALUES</span></span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'17614'</span>, <span class="st">'Cañamomo'</span>, <span class="st">'PBOT'</span>),</span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'17614'</span>, <span class="st">'Cañamomo'</span>, <span class="st">'POMCA'</span>),</span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'17614'</span>, <span class="st">'San Lorenzo'</span>, <span class="st">'PBOT'</span>),</span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'17614'</span>, <span class="st">'San Lorenzo'</span>, <span class="st">'POMCA'</span>);</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>NOTICE:  table "municipio_resguardos" does not exist, skipping
+DROP TABLE
+NOTICE:  table "municipio_planes" does not exist, skipping
+DROP TABLE
+NOTICE:  table "municipio_gestion" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+INSERT 0 4</code></pre>
+</div>
+</div>
+<p>Si el municipio adopta un nuevo instrumento territorial (<code>'Plan de vida'</code>), la ausencia de 4FN fuerza a insertar tantas filas como resguardos existan en la jurisdicción para evitar inconsistencias analíticas:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Inserción forzada de n tuplas adicionales para un único hecho institucional</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> <span class="kw">public</span>.municipio_gestion (mun_id, resguardo_nombre, instrumento_plan) <span class="kw">VALUES</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'17614'</span>, <span class="st">'Cañamomo'</span>, <span class="st">'Plan de vida'</span>),</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'17614'</span>, <span class="st">'San Lorenzo'</span>, <span class="st">'Plan de vida'</span>);</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="co">-- Consulta de verificación del volumen acumulado</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    mun_id,</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>    resguardo_nombre,</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>    instrumento_plan</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="kw">public</span>.municipio_gestion</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> resguardo_nombre, instrumento_plan;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>INSERT 0 2
+ mun_id | resguardo_nombre | instrumento_plan 
+--------+------------------+------------------
+ 17614  | Cañamomo         | PBOT
+ 17614  | Cañamomo         | Plan de vida
+ 17614  | Cañamomo         | POMCA
+ 17614  | San Lorenzo      | PBOT
+ 17614  | San Lorenzo      | Plan de vida
+ 17614  | San Lorenzo      | POMCA
+(6 rows)</code></pre>
+</div>
+</div>
+</section>
+<section id="descomposición-canónica-en-4fn-y-mitigación-de-redundancia" class="level3">
+<h3 class="anchored" data-anchor-id="descomposición-canónica-en-4fn-y-mitigación-de-redundancia">Descomposición canónica en 4FN y mitigación de redundancia</h3>
+<p>Aplicando el teorema de descomposición de Fagin, los hechos independientes se aíslan en dos relaciones binarias proyectadas. En este esquema, la adición de un nuevo instrumento requiere estrictamente una sola tupla física:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- 1. Proyección hacia la entidad de resguardos</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="kw">public</span>.municipio_resguardos <span class="kw">AS</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="kw">DISTINCT</span> mun_id, resguardo_nombre </span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="kw">public</span>.municipio_gestion;</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> <span class="kw">public</span>.municipio_resguardos </span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ADD</span> <span class="kw">CONSTRAINT</span> pk_municipio_resguardos <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (mun_id, resguardo_nombre);</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a><span class="co">-- 2. Proyección hacia la entidad de instrumentos de planeación</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="kw">public</span>.municipio_planes <span class="kw">AS</span></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="kw">DISTINCT</span> mun_id, instrumento_plan </span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="kw">public</span>.municipio_gestion;</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> <span class="kw">public</span>.municipio_planes </span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ADD</span> <span class="kw">CONSTRAINT</span> pk_municipio_planes <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (mun_id, instrumento_plan);</span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a><span class="co">-- Inserción desacoplada: incorporar un cuarto instrumento toma 1 sola fila</span></span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> <span class="kw">public</span>.municipio_planes (mun_id, instrumento_plan) <span class="kw">VALUES</span></span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'17614'</span>, <span class="st">'Plan de manejo de cuenca'</span>);</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>SELECT 2
+ALTER TABLE
+SELECT 3
+ALTER TABLE
+INSERT 0 1</code></pre>
+</div>
+</div>
+</section>
+<section id="reconstrucción-algebraica-sin-pérdida-mediante-reunión-natural" class="level3">
+<h3 class="anchored" data-anchor-id="reconstrucción-algebraica-sin-pérdida-mediante-reunión-natural">Reconstrucción algebraica sin pérdida mediante reunión natural</h3>
+<p>La vista lógica de compatibilidad puede ser reconstruida dinámicamente mediante el operador de combinación (<code>INNER JOIN</code>) sin requerir persistencia duplicada en las páginas de almacenamiento del disco:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>    r.mun_id,</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    r.resguardo_nombre,</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>    p.instrumento_plan</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="kw">public</span>.municipio_resguardos r</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> <span class="kw">public</span>.municipio_planes p </span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> r.mun_id <span class="op">=</span> p.mun_id</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> r.resguardo_nombre, p.instrumento_plan;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code> mun_id | resguardo_nombre |     instrumento_plan     
+--------+------------------+--------------------------
+ 17614  | Cañamomo         | PBOT
+ 17614  | Cañamomo         | Plan de manejo de cuenca
+ 17614  | Cañamomo         | Plan de vida
+ 17614  | Cañamomo         | POMCA
+ 17614  | San Lorenzo      | PBOT
+ 17614  | San Lorenzo      | Plan de manejo de cuenca
+ 17614  | San Lorenzo      | Plan de vida
+ 17614  | San Lorenzo      | POMCA
+(8 rows)</code></pre>
+</div>
+</div>
+</section>
+<section id="limpieza-de-estructuras-de-prueba" class="level3">
+<h3 class="anchored" data-anchor-id="limpieza-de-estructuras-de-prueba">Limpieza de estructuras de prueba</h3>
+<p>Concluida la demostración empírica, se eliminan del catálogo del sistema las tablas temporales generadas:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> <span class="kw">public</span>.municipio_resguardos <span class="kw">CASCADE</span>;</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> <span class="kw">public</span>.municipio_planes <span class="kw">CASCADE</span>;</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> <span class="kw">public</span>.municipio_gestion <span class="kw">CASCADE</span>;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>DROP TABLE
+DROP TABLE
+DROP TABLE</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-quinta-fn" class="level2" data-number="8.8">
+<h2 data-number="8.8" class="anchored" data-anchor-id="sec-quinta-fn"><span class="header-section-number">8.8</span> Comprobación empírica de la quinta forma normal (5FN)</h2>
+<p>Para verificar en el motor relacional la presencia de dependencias de reunión (<em>join dependencies</em>) y la generación de tuplas espurias al descomponer de forma binaria una relación ternaria irreducible en 4FN, se define el ámbito de pruebas dentro del esquema <code>public</code> del clúster <code>sig_db_unal</code>.</p>
+<section id="definición-del-ámbito-y-estructuración-de-relaciones" class="level3">
+<h3 class="anchored" data-anchor-id="definición-del-ámbito-y-estructuración-de-relaciones">Definición del ámbito y estructuración de relaciones</h3>
+<p>El experimento modela la asignación de levantamientos catastrales sujeta a la coexistencia de tres restricciones de dominio cruzadas: el operador atiende el municipio, el operador domina el método técnico y el municipio autoriza el método:</p>
+<p><span class="math display">\[\text{operaciones}(\underline{\text{operador}}, \, \underline{\text{municipio}}, \, \underline{\text{metodo}})\]</span></p>
+<p>A continuación se estructura la creación de la tabla base <code>public.operaciones</code>, el cargue de las cuatro tuplas canónicas y la proyección automática de los tres subesquemas relacionales (<span class="math inline">\(R_1\)</span>, <span class="math inline">\(R_2\)</span> y <span class="math inline">\(R_3\)</span>):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Limpieza preventiva del entorno de prueba en el esquema public</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> <span class="kw">public</span>.r1_operador_municipio <span class="kw">CASCADE</span>;</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> <span class="kw">public</span>.r2_municipio_metodo <span class="kw">CASCADE</span>;</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> <span class="kw">public</span>.r3_operador_metodo <span class="kw">CASCADE</span>;</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> <span class="kw">public</span>.operaciones <span class="kw">CASCADE</span>;</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a><span class="co">-- 1. Tabla base ternaria original</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="kw">public</span>.operaciones (</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>    operador <span class="dt">VARCHAR</span>(<span class="dv">50</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>    municipio <span class="dt">VARCHAR</span>(<span class="dv">50</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>    metodo <span class="dt">VARCHAR</span>(<span class="dv">50</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CONSTRAINT</span> pk_operaciones <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (operador, municipio, metodo)</span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a><span class="co">-- Carga de las 4 tuplas observadas</span></span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> <span class="kw">public</span>.operaciones (operador, municipio, metodo) <span class="kw">VALUES</span></span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'Geocad'</span>, <span class="st">'Chía'</span>, <span class="st">'GNSS'</span>),</span>
+<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'Geocad'</span>, <span class="st">'Mogotes'</span>, <span class="st">'GNSS'</span>),</span>
+<span id="cb44-19"><a href="#cb44-19" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'Geocad'</span>, <span class="st">'Mogotes'</span>, <span class="st">'Dron'</span>),</span>
+<span id="cb44-20"><a href="#cb44-20" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'Toposig'</span>, <span class="st">'Mogotes'</span>, <span class="st">'GNSS'</span>);</span>
+<span id="cb44-21"><a href="#cb44-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-22"><a href="#cb44-22" aria-hidden="true" tabindex="-1"></a><span class="co">-- 2. Proyección R1: relación binaria operador - municipio</span></span>
+<span id="cb44-23"><a href="#cb44-23" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="kw">public</span>.r1_operador_municipio <span class="kw">AS</span></span>
+<span id="cb44-24"><a href="#cb44-24" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="kw">DISTINCT</span> operador, municipio </span>
+<span id="cb44-25"><a href="#cb44-25" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="kw">public</span>.operaciones;</span>
+<span id="cb44-26"><a href="#cb44-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-27"><a href="#cb44-27" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> <span class="kw">public</span>.r1_operador_municipio </span>
+<span id="cb44-28"><a href="#cb44-28" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ADD</span> <span class="kw">CONSTRAINT</span> pk_r1 <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (operador, municipio);</span>
+<span id="cb44-29"><a href="#cb44-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-30"><a href="#cb44-30" aria-hidden="true" tabindex="-1"></a><span class="co">-- 3. Proyección R2: relación binaria municipio - método</span></span>
+<span id="cb44-31"><a href="#cb44-31" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="kw">public</span>.r2_municipio_metodo <span class="kw">AS</span></span>
+<span id="cb44-32"><a href="#cb44-32" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="kw">DISTINCT</span> municipio, metodo </span>
+<span id="cb44-33"><a href="#cb44-33" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="kw">public</span>.operaciones;</span>
+<span id="cb44-34"><a href="#cb44-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-35"><a href="#cb44-35" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> <span class="kw">public</span>.r2_municipio_metodo </span>
+<span id="cb44-36"><a href="#cb44-36" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ADD</span> <span class="kw">CONSTRAINT</span> pk_r2 <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (municipio, metodo);</span>
+<span id="cb44-37"><a href="#cb44-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-38"><a href="#cb44-38" aria-hidden="true" tabindex="-1"></a><span class="co">-- 4. Proyección R3: relación binaria operador - método</span></span>
+<span id="cb44-39"><a href="#cb44-39" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="kw">public</span>.r3_operador_metodo <span class="kw">AS</span></span>
+<span id="cb44-40"><a href="#cb44-40" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="kw">DISTINCT</span> operador, metodo </span>
+<span id="cb44-41"><a href="#cb44-41" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="kw">public</span>.operaciones;</span>
+<span id="cb44-42"><a href="#cb44-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-43"><a href="#cb44-43" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> <span class="kw">public</span>.r3_operador_metodo </span>
+<span id="cb44-44"><a href="#cb44-44" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ADD</span> <span class="kw">CONSTRAINT</span> pk_r3 <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (operador, metodo);</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>NOTICE:  table "r1_operador_municipio" does not exist, skipping
+DROP TABLE
+NOTICE:  table "r2_municipio_metodo" does not exist, skipping
+DROP TABLE
+NOTICE:  table "r3_operador_metodo" does not exist, skipping
+DROP TABLE
+NOTICE:  table "operaciones" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+INSERT 0 4
+SELECT 3
+ALTER TABLE
+SELECT 3
+ALTER TABLE
+SELECT 3
+ALTER TABLE</code></pre>
+</div>
+</div>
+</section>
+<section id="verificación-de-la-tupla-espuria-mediante-reunión-de-dos-tablas-r_1-bowtie-r_2" class="level3">
+<h3 class="anchored" data-anchor-id="verificación-de-la-tupla-espuria-mediante-reunión-de-dos-tablas-r_1-bowtie-r_2">Verificación de la tupla espuria mediante reunión de dos tablas (<span class="math inline">\(R_1 \bowtie R_2\)</span>)</h3>
+<p>Al intentar recomponer la información uniendo exclusivamente dos proyecciones sobre el atributo compartido (<code>municipio</code>), se constata la generación de una tupla ficticia que afirma que el operador <code>Toposig</code> utiliza drones en <code>Mogotes</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>    r1.operador,</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>    r1.municipio,</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>    r2.metodo,</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">CASE</span> </span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> o.operador <span class="kw">IS</span> <span class="kw">NULL</span> <span class="cf">THEN</span> <span class="st">'&lt;&lt; TUPLA ESPURIA &gt;&gt;'</span></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">ELSE</span> <span class="st">'Registro legítimo'</span></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">END</span> <span class="kw">AS</span> estado_integridad</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="kw">public</span>.r1_operador_municipio r1</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> <span class="kw">public</span>.r2_municipio_metodo r2 </span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> r1.municipio <span class="op">=</span> r2.municipio</span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a><span class="kw">LEFT</span> <span class="kw">JOIN</span> <span class="kw">public</span>.operaciones o </span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> r1.operador <span class="op">=</span> o.operador </span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>   <span class="kw">AND</span> r1.municipio <span class="op">=</span> o.municipio </span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>   <span class="kw">AND</span> r2.metodo <span class="op">=</span> o.metodo</span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> r1.municipio, r1.operador, r2.metodo;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code> operador | municipio | metodo |  estado_integridad  
+----------+-----------+--------+---------------------
+ Geocad   | Chía      | GNSS   | Registro legítimo
+ Geocad   | Mogotes   | Dron   | Registro legítimo
+ Geocad   | Mogotes   | GNSS   | Registro legítimo
+ Toposig  | Mogotes   | Dron   | &lt;&lt; TUPLA ESPURIA &gt;&gt;
+ Toposig  | Mogotes   | GNSS   | Registro legítimo
+(5 rows)</code></pre>
+</div>
+</div>
+</section>
+<section id="recomposición-sin-pérdida-mediante-la-reunión-ternaria-completa-r_1-bowtie-r_2-bowtie-r_3" class="level3">
+<h3 class="anchored" data-anchor-id="recomposición-sin-pérdida-mediante-la-reunión-ternaria-completa-r_1-bowtie-r_2-bowtie-r_3">Recomposición sin pérdida mediante la reunión ternaria completa (<span class="math inline">\(R_1 \bowtie R_2 \bowtie R_3\)</span>)</h3>
+<p>Al incorporar la tercera proyección <span class="math inline">\(R_3(\text{operador}, \text{metodo})\)</span> dentro de la ecuación algebraica, la condición de intersección descarta la combinación apócrifa debido a que el par <code>('Toposig', 'Dron')</code> no existe en las competencias acreditadas de la empresa:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>    r1.operador,</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>    r1.municipio,</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>    r2.metodo</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="kw">public</span>.r1_operador_municipio r1</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> <span class="kw">public</span>.r2_municipio_metodo r2 </span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> r1.municipio <span class="op">=</span> r2.municipio</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> <span class="kw">public</span>.r3_operador_metodo r3 </span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> r1.operador <span class="op">=</span> r3.operador </span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>   <span class="kw">AND</span> r2.metodo <span class="op">=</span> r3.metodo</span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> r1.operador, r1.municipio, r2.metodo;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code> operador | municipio | metodo 
+----------+-----------+--------
+ Geocad   | Chía      | GNSS
+ Geocad   | Mogotes   | Dron
+ Geocad   | Mogotes   | GNSS
+ Toposig  | Mogotes   | GNSS
+(4 rows)</code></pre>
+</div>
+</div>
+</section>
+<section id="limpieza-de-estructuras-de-prueba-1" class="level3">
+<h3 class="anchored" data-anchor-id="limpieza-de-estructuras-de-prueba-1">Limpieza de estructuras de prueba</h3>
+<p>Una vez validada la hipótesis matemática en el gestor relacional, se eliminan las tablas auxiliares del catálogo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> <span class="kw">public</span>.r1_operador_municipio <span class="kw">CASCADE</span>;</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> <span class="kw">public</span>.r2_municipio_metodo <span class="kw">CASCADE</span>;</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> <span class="kw">public</span>.r3_operador_metodo <span class="kw">CASCADE</span>;</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> <span class="kw">public</span>.operaciones <span class="kw">CASCADE</span>;</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>DROP TABLE
+DROP TABLE
+DROP TABLE
+DROP TABLE</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="ejercicios-de-diseño-lógico-y-normalización-espacial" class="level2" data-number="8.9">
+<h2 data-number="8.9" class="anchored" data-anchor-id="ejercicios-de-diseño-lógico-y-normalización-espacial"><span class="header-section-number">8.9</span> Ejercicios de diseño lógico y normalización espacial</h2>
 <ol type="1">
-<li>Normalización y dependencias funcionales en infraestructura de riego: Considérese la siguiente relación no normalizada para el registro de distritos de adecuación de tierras:</li>
+<li><strong>Normalización y dependencias funcionales en infraestructura de riego:</strong></li>
 </ol>
-<p><span class="math display">\[
-\begin{aligned}
-\text{distritos\_riego}( &amp; \underline{\text{dis\_id}}, \, \text{dis\_nombre}, \, \text{cue\_id}, \, \text{cue\_nombre}, \\
-&amp; \text{mun\_id}, \, \text{mun\_nombre}, \, \text{area\_beneficiada\_ha}, \, \text{the\_geom})
-\end{aligned}
-\]</span></p>
+<p>Considérese la siguiente relación no normalizada para el registro de distritos de adecuación de tierras: <span class="math display">\[\begin{aligned}    \text{distritos\_riego}( &amp; \mathbf{\color{green}\underline{\text{dis\_id}}}, \, \text{dis\_nombre}, \, \text{cue\_id}, \, \text{cue\_nombre}, \\    &amp; \text{mun\_id}, \, \text{mun\_nombre}, \, \text{area\_beneficiada\_ha}, \, \text{the\_geom})    \end{aligned}\]</span></p>
 <ul>
 <li><p>Identifique formalmente las dependencias funcionales completas, parciales y transitivas presentes en la relación.</p></li>
 <li><p>Demuestre detalladamente las anomalías de inserción, actualización y borrado que induce esta estructura.</p></li>
-<li><p>Aplique la descomposición normalizada hasta alcanzar la Tercera Forma Normal (3FN), formulando la signatura relacional formal con código cromático (claves primarias en verde y foráneas en rojo) y prefijos mnemotécnicos de tres letras.</p></li>
-<li><p>Aplique la descomposición normalizada hasta alcanzar la Tercera Forma Normal (3FN), formulando la signatura relacional formal con código cromático (claves primarias en verde y foráneas en rojo) y prefijos mnemotécnicos de tres letras.</p></li>
+<li><p>Aplique la descomposición normalizada hasta alcanzar la tercera forma normal (3FN), formulando la signatura relacional formal con código cromático (claves primarias en verde y foráneas en rojo) y prefijos mnemotécnicos de tres letras.</p></li>
 </ul>
 <ol start="2" type="1">
-<li>Resolución lógica de asociaciones M:N y signatura formal: Tome el modelo conceptual de predios y rondas hídricas desarrollado en el capítulo anterior:</li>
+<li><strong>Resolución lógica de asociaciones <span class="math inline">\(M:N\)</span> y signatura formal:</strong></li>
 </ol>
+<p>Tome el modelo conceptual de predios y rondas hídricas desarrollado en el capítulo anterior:</p>
 <ul>
-<li><p>Traduzca el esquema conceptual al paradigma relacional, resolviendo la cardinalidad M:N mediante una tabla asociativa intermedia.</p></li>
+<li><p>Traduzca el esquema conceptual al paradigma relacional, resolviendo la cardinalidad <span class="math inline">\(M:N\)</span> mediante una tabla asociativa intermedia.</p></li>
 <li><p>Especifique la clave primaria compuesta y demuestre por qué ambos componentes deben asumir de manera concurrente el rol de clave foránea.</p></li>
-<li><p>Formule la signatura relacional resultante aplicando el código cromático estandarizado: claves primarias simples en verde subrayadas, claves foráneas en rojo, y atributos que integran la clave primaria compuesta foránea en rojo subrayado.</p></li>
+<li><p>Formule la signatura relacional resultante aplicando el código cromático estandarizado: claves primarias simples en verde subrayadas (<span class="math inline">\(\mathbf{\color{green}\underline{\text{pk}}}\)</span>), claves foráneas en rojo (<span class="math inline">\(\mathbf{\color{red}\text{fk}}\)</span>) y atributos que integran la clave primaria compuesta foránea en rojo subrayado (<span class="math inline">\(\mathbf{\color{red}\underline{\text{pk\_fk}}}\)</span>).</p></li>
 </ul>
 <ol start="3" type="1">
-<li>Dependencias multivaluadas y cuarta forma normal (4FN): Considérese una entidad municipal que registra en una única relación los planes de ordenamiento territorial adoptados y las asociaciones comunitarias registradas:</li>
+<li><strong>Dependencias multivaluadas y cuarta forma normal (4FN):</strong></li>
 </ol>
-<p><span class="math display">\[\text{gestion\_municipal}(\underline{\text{mun\_id}}, \, \underline{\text{plan\_instrumento}}, \, \underline{\text{aso\_nombre}})\]</span></p>
+<p>Considérese una entidad municipal que registra en una única relación los planes de ordenamiento territorial adoptados y las asociaciones comunitarias registradas: <span class="math display">\[\text{gestion\_municipal}(\mathbf{\color{green}\underline{\text{mun\_id}}}, \, \mathbf{\color{green}\underline{\text{plan\_instrumento}}}, \, \mathbf{\color{green}\underline{\text{aso\_nombre}}})\]</span></p>
 <p>Asumiendo que los planes y las asociaciones comunitarias son hechos independientes asociados al municipio:</p>
 <ul>
-<li><p>Demuestre la existencia de dependencias multivaluadas (<span class="math inline">\(mun\_id \twoheadrightarrow plan\_instrumento\)</span> y <span class="math inline">\(mun\_id \twoheadrightarrow aso\_nombre\)</span>).</p></li>
-<li><p>Ejemplifique la redundancia combinatoria que se genera al insertar tuplas y aplique la descomposición formal en Cuarta Forma Normal (4FN).</p></li>
+<li><p>Demuestre la existencia de dependencias multivaluadas (<span class="math inline">\(\text{mun\_id} \twoheadrightarrow \text{plan\_instrumento}\)</span> y <span class="math inline">\(\text{mun\_id} \twoheadrightarrow \text{aso\_nombre}\)</span>).</p></li>
+<li><p>Ejemplifique la redundancia combinatoria que se genera al insertar tuplas y aplique la descomposición formal en cuarta forma normal (4FN) empleando la signatura cromática digital correspondiente.</p></li>
 </ul>
 <ol start="4" type="1">
-<li>Análisis de la forma normal de dominio-clave (DKNF) en jerarquías administrativas:</li>
+<li><strong>Análisis de la forma normal de dominio-clave (DKNF) en jerarquías administrativas:</strong></li>
 </ol>
-<p>Analice la siguiente relación de veredas territoriales:</p>
-<p><span class="math display">\[\text{veredas}(\underline{\text{ver\_id}}, \, \text{ver\_nombre}, \, \text{mun\_id})\]</span></p>
+<p>Analice la siguiente relación de veredas territoriales: <span class="math display">\[\text{veredas}(\mathbf{\color{green}\underline{\text{ver\_id}}}, \, \text{ver\_nombre}, \, \mathbf{\color{red}\text{mun\_id}})\]</span></p>
 <p>donde el código de vereda (<code>ver_id</code>, longitud de 7 dígitos) se compone de los 5 dígitos del código municipal (<code>mun_id</code>) más un consecutivo local de 2 dígitos.</p>
 <ul>
 <li><p>Formule la restricción de coherencia administrativa que vincula a <code>ver_id</code> con <code>mun_id</code>.</p></li>
-<li><p>Demuestre por qué la relación viola la Forma Normal de Dominio-Clave (DKNF) a pesar de encontrarse en BCNF.</p></li>
+<li><p>Demuestre por qué la relación viola la forma normal de dominio-clave (DKNF) a pesar de encontrarse en BCNF.</p></li>
 <li><p>Rediseñe el esquema relacional para que dicha restricción sea una consecuencia lógica directa de las claves y dominios declarados.</p></li>
 </ul>
 <ol start="5" type="1">
-<li>Auditoría de catálogos y sistemas de referencia en el SGBD: A partir de las vistas de catálogo <code>geometry_columns</code> y <code>spatial_ref_sys</code> en PostgreSQL/PostGIS:</li>
+<li><strong>Auditoría de catálogos y sistemas de referencia en el SGBD:</strong></li>
 </ol>
+<p>A partir de las vistas de catálogo <code>geometry_columns</code> y <code>spatial_ref_sys</code> en PostgreSQL/PostGIS:</p>
 <ul>
 <li><p>Escriba una consulta SQL que permita verificar qué tablas del esquema <code>divpol</code> tienen registrado un atributo geométrico y cuál es su tipo topológico declarado.</p></li>
 <li><p>Formule una consulta que identifique si las geometrías de una tabla residen en el marco geodésico oficial <code>SRID = 9377</code> o en un sistema en desuso.</p></li>

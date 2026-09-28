@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="326px" preserveAspectRatio="none" style="width:573px;height:326px;" version="1.1" viewBox="0 0 573 326" width="573px" zoomAndPan="magnify"><defs/><g><!--MD5=[312dc48452e0fbab1f8f2351bf71b548]
+class SpatialReferenceSystem--><rect fill="#F8F8F8" height="49.2813" id="SpatialReferenceSystem" style="stroke: #383838; stroke-width: 1.5;" width="127" x="42" y="8"/><text fill="#000000" font-family="Helvetica" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="99" x="56" y="22.2822">ReferenceSystems::</text><text fill="#000000" font-family="Helvetica" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="121" x="45" y="33.9229">SpatialReferenceSystem</text><line style="stroke: #383838; stroke-width: 1.5;" x1="43" x2="168" y1="41.2813" y2="41.2813"/><line style="stroke: #383838; stroke-width: 1.5;" x1="43" x2="168" y1="49.2813" y2="49.2813"/><!--MD5=[8da73c2932dee94d8cbe74f9add8a48a]
+class MeasureReferenceSystem--><rect fill="#F8F8F8" height="49.2813" id="MeasureReferenceSystem" style="stroke: #383838; stroke-width: 1.5;" width="136" x="385.5" y="8"/><text fill="#000000" font-family="Helvetica" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="99" x="404" y="22.2822">ReferenceSystems::</text><text fill="#000000" font-family="Helvetica" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="130" x="388.5" y="33.9229">MeasureReferenceSystem</text><line style="stroke: #383838; stroke-width: 1.5;" x1="386.5" x2="520.5" y1="41.2813" y2="41.2813"/><line style="stroke: #383838; stroke-width: 1.5;" x1="386.5" x2="520.5" y1="49.2813" y2="49.2813"/><!--MD5=[0fdac03f5b0cf4737b65737ce60d2db0]
+class Geometry--><rect fill="#F8F8F8" height="37.6406" id="Geometry" style="stroke: #383838; stroke-width: 1.5;" width="56" x="246.5" y="13.5"/><text fill="#000000" font-family="Helvetica" font-size="10" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="50" x="249.5" y="27.7822">Geometry</text><line style="stroke: #383838; stroke-width: 1.5;" x1="247.5" x2="301.5" y1="35.1406" y2="35.1406"/><line style="stroke: #383838; stroke-width: 1.5;" x1="247.5" x2="301.5" y1="43.1406" y2="43.1406"/><!--MD5=[972bde5337b4335dd91fa5354c932445]
+class Point--><rect fill="#F8F8F8" height="37.6406" id="Point" style="stroke: #383838; stroke-width: 1.5;" width="31" x="291" y="98"/><text fill="#000000" font-family="Helvetica" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="25" x="294" y="112.2822">Point</text><line style="stroke: #383838; stroke-width: 1.5;" x1="292" x2="321" y1="119.6406" y2="119.6406"/><line style="stroke: #383838; stroke-width: 1.5;" x1="292" x2="321" y1="127.6406" y2="127.6406"/><!--MD5=[33e7f8a6f0a9df4ec63f5dd79ee127e1]
+class Curve--><rect fill="#F8F8F8" height="37.6406" id="Curve" style="stroke: #383838; stroke-width: 1.5;" width="36" x="224.5" y="98"/><text fill="#000000" font-family="Helvetica" font-size="10" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="30" x="227.5" y="112.2822">Curve</text><line style="stroke: #383838; stroke-width: 1.5;" x1="225.5" x2="259.5" y1="119.6406" y2="119.6406"/><line style="stroke: #383838; stroke-width: 1.5;" x1="225.5" x2="259.5" y1="127.6406" y2="127.6406"/><!--MD5=[fed8bfaa5059b3e5a53bc8d0d523796b]
+class Surface--><rect fill="#F8F8F8" height="37.6406" id="Surface" style="stroke: #383838; stroke-width: 1.5;" width="44" x="136.5" y="98"/><text fill="#000000" font-family="Helvetica" font-size="10" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="38" x="139.5" y="112.2822">Surface</text><line style="stroke: #383838; stroke-width: 1.5;" x1="137.5" x2="179.5" y1="119.6406" y2="119.6406"/><line style="stroke: #383838; stroke-width: 1.5;" x1="137.5" x2="179.5" y1="127.6406" y2="127.6406"/><!--MD5=[940fbcbf510b16cf11a29573ef6b452f]
+class GeometryCollection--><rect fill="#F8F8F8" height="37.6406" id="GeometryCollection" style="stroke: #383838; stroke-width: 1.5;" width="103" x="361" y="98"/><text fill="#000000" font-family="Helvetica" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="97" x="364" y="112.2822">GeometryCollection</text><line style="stroke: #383838; stroke-width: 1.5;" x1="362" x2="463" y1="119.6406" y2="119.6406"/><line style="stroke: #383838; stroke-width: 1.5;" x1="362" x2="463" y1="127.6406" y2="127.6406"/><!--MD5=[9f9659ac2bb345c17c890f1457ddf439]
+class LineString--><rect fill="#F8F8F8" height="37.6406" id="LineString" style="stroke: #383838; stroke-width: 1.5;" width="55" x="236" y="188"/><text fill="#000000" font-family="Helvetica" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="49" x="239" y="202.2822">LineString</text><line style="stroke: #383838; stroke-width: 1.5;" x1="237" x2="290" y1="209.6406" y2="209.6406"/><line style="stroke: #383838; stroke-width: 1.5;" x1="237" x2="290" y1="217.6406" y2="217.6406"/><!--MD5=[129471aa5ea5c93eb409af5033b83b34]
+class Polygon--><rect fill="#F8F8F8" height="37.6406" id="Polygon" style="stroke: #383838; stroke-width: 1.5;" width="45" x="6" y="188"/><text fill="#000000" font-family="Helvetica" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="39" x="9" y="202.2822">Polygon</text><line style="stroke: #383838; stroke-width: 1.5;" x1="7" x2="50" y1="209.6406" y2="209.6406"/><line style="stroke: #383838; stroke-width: 1.5;" x1="7" x2="50" y1="217.6406" y2="217.6406"/><!--MD5=[64702de1b8b88cf537f6cbd4355ddc95]
+class PolyhedralSurface--><rect fill="#F8F8F8" height="37.6406" id="PolyhedralSurface" style="stroke: #383838; stroke-width: 1.5;" width="95" x="111" y="188"/><text fill="#000000" font-family="Helvetica" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="89" x="114" y="202.2822">PolyhedralSurface</text><line style="stroke: #383838; stroke-width: 1.5;" x1="112" x2="205" y1="209.6406" y2="209.6406"/><line style="stroke: #383838; stroke-width: 1.5;" x1="112" x2="205" y1="217.6406" y2="217.6406"/><!--MD5=[f81c6776b159e2d872714d14ddd29874]
+class MultiSurface--><rect fill="#F8F8F8" height="37.6406" id="MultiSurface" style="stroke: #383838; stroke-width: 1.5;" width="67" x="406" y="188"/><text fill="#000000" font-family="Helvetica" font-size="10" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="61" x="409" y="202.2822">MultiSurface</text><line style="stroke: #383838; stroke-width: 1.5;" x1="407" x2="472" y1="209.6406" y2="209.6406"/><line style="stroke: #383838; stroke-width: 1.5;" x1="407" x2="472" y1="217.6406" y2="217.6406"/><!--MD5=[4287572eef4c4f1987c6fc8da89fc922]
+class MultiCurve--><rect fill="#F8F8F8" height="37.6406" id="MultiCurve" style="stroke: #383838; stroke-width: 1.5;" width="59" x="503" y="188"/><text fill="#000000" font-family="Helvetica" font-size="10" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="53" x="506" y="202.2822">MultiCurve</text><line style="stroke: #383838; stroke-width: 1.5;" x1="504" x2="561" y1="209.6406" y2="209.6406"/><line style="stroke: #383838; stroke-width: 1.5;" x1="504" x2="561" y1="217.6406" y2="217.6406"/><!--MD5=[215dd50f9ec0295b81ce63885bd87218]
+class MultiPoint--><rect fill="#F8F8F8" height="37.6406" id="MultiPoint" style="stroke: #383838; stroke-width: 1.5;" width="54" x="321.5" y="188"/><text fill="#000000" font-family="Helvetica" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="48" x="324.5" y="202.2822">MultiPoint</text><line style="stroke: #383838; stroke-width: 1.5;" x1="322.5" x2="374.5" y1="209.6406" y2="209.6406"/><line style="stroke: #383838; stroke-width: 1.5;" x1="322.5" x2="374.5" y1="217.6406" y2="217.6406"/><!--MD5=[736dfa021baaf4f381c9890dd397bfe9]
+class Line--><rect fill="#F8F8F8" height="37.6406" id="Line" style="stroke: #383838; stroke-width: 1.5;" width="26" x="250.5" y="278"/><text fill="#000000" font-family="Helvetica" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="20" x="253.5" y="292.2822">Line</text><line style="stroke: #383838; stroke-width: 1.5;" x1="251.5" x2="275.5" y1="299.6406" y2="299.6406"/><line style="stroke: #383838; stroke-width: 1.5;" x1="251.5" x2="275.5" y1="307.6406" y2="307.6406"/><!--MD5=[b36a985cd58541e637e036f5229b72c8]
+class LinearRing--><rect fill="#F8F8F8" height="37.6406" id="LinearRing" style="stroke: #383838; stroke-width: 1.5;" width="57" x="33" y="278"/><text fill="#000000" font-family="Helvetica" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="51" x="36" y="292.2822">LinearRing</text><line style="stroke: #383838; stroke-width: 1.5;" x1="34" x2="89" y1="299.6406" y2="299.6406"/><line style="stroke: #383838; stroke-width: 1.5;" x1="34" x2="89" y1="307.6406" y2="307.6406"/><!--MD5=[222ecbaeb19e70308e25e9cc97347b8f]
+class MultiPolygon--><rect fill="#F8F8F8" height="37.6406" id="MultiPolygon" style="stroke: #383838; stroke-width: 1.5;" width="68" x="121.5" y="278"/><text fill="#000000" font-family="Helvetica" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="62" x="124.5" y="292.2822">MultiPolygon</text><line style="stroke: #383838; stroke-width: 1.5;" x1="122.5" x2="188.5" y1="299.6406" y2="299.6406"/><line style="stroke: #383838; stroke-width: 1.5;" x1="122.5" x2="188.5" y1="307.6406" y2="307.6406"/><!--MD5=[0b71716e243d5534cb8262929eda4eb6]
+class MultiLineString--><rect fill="#F8F8F8" height="37.6406" id="MultiLineString" style="stroke: #383838; stroke-width: 1.5;" width="78" x="341.5" y="278"/><text fill="#000000" font-family="Helvetica" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="72" x="344.5" y="292.2822">MultiLineString</text><line style="stroke: #383838; stroke-width: 1.5;" x1="342.5" x2="418.5" y1="299.6406" y2="299.6406"/><line style="stroke: #383838; stroke-width: 1.5;" x1="342.5" x2="418.5" y1="307.6406" y2="307.6406"/><!--MD5=[74ba05d2c7d1759dd2a042ab9dc2615d]
+reverse link SpatialReferenceSystem to Geometry--><path d="M174.4,32.5 C199.58,32.5 226.68,32.5 246.33,32.5 " fill="none" id="SpatialReferenceSystem&lt;-Geometry" style="stroke: #383838; stroke-width: 1.0;"/><polygon fill="#383838" points="169.39,32.5,178.39,36.5,174.39,32.5,178.39,28.5,169.39,32.5" style="stroke: #383838; stroke-width: 1.0;"/><text fill="#000000" font-family="Helvetica" font-size="9" lengthAdjust="spacingAndGlyphs" textLength="46" x="184.75" y="26.854">spatialRS</text><text fill="#000000" font-family="Helvetica" font-size="9" lengthAdjust="spacingAndGlyphs" textLength="6" x="177.1242" y="30.2872">1</text><!--MD5=[c2f7f475b1f4712b5bd7d92060b2d1aa]
+link Geometry to MeasureReferenceSystem--><path d="M302.86,32.5 C323.74,32.5 353.13,32.5 380.41,32.5 " fill="none" id="Geometry-&gt;MeasureReferenceSystem" style="stroke: #383838; stroke-width: 1.0;"/><polygon fill="#383838" points="385.48,32.5,376.48,28.5,380.48,32.5,376.48,36.5,385.48,32.5" style="stroke: #383838; stroke-width: 1.0;"/><ellipse cx="318.5" cy="24.2383" fill="none" rx="-2" ry="-2" style="stroke: #545454; stroke-width: 1.0;"/><text fill="#000000" font-family="Helvetica" font-size="9" lengthAdjust="spacingAndGlyphs" textLength="49" x="320.5" y="26.854">mesureRS</text><text fill="#000000" font-family="Helvetica" font-size="9" lengthAdjust="spacingAndGlyphs" textLength="18" x="359.5373" y="41.3797">0..1</text><!--MD5=[2ef21c5a6bc91528f08c9bb8c191818f]
+reverse link Geometry to Point--><path d="M288.9,70.63 C292.55,80.04 296.31,89.74 299.42,97.74 " fill="none" id="Geometry&lt;-Point" style="stroke: #383838; stroke-width: 1.0;"/><polygon fill="none" points="282.31,72.99,281.6,51.81,295.36,67.92,282.31,72.99" style="stroke: #383838; stroke-width: 1.0;"/><!--MD5=[406e95ff96ff6ced4f65e906d00b11f0]
+reverse link Geometry to Curve--><path d="M260.1,70.63 C256.45,80.04 252.69,89.74 249.58,97.74 " fill="none" id="Geometry&lt;-Curve" style="stroke: #383838; stroke-width: 1.0;"/><polygon fill="none" points="253.64,67.92,267.4,51.81,266.69,72.99,253.64,67.92" style="stroke: #383838; stroke-width: 1.0;"/><!--MD5=[3ccd44804f661662f5f5bc8507d6427e]
+reverse link Geometry to Surface--><path d="M232.51,63.36 C215.01,75.81 195.4,89.76 180.77,100.16 " fill="none" id="Geometry&lt;-Surface" style="stroke: #383838; stroke-width: 1.0;"/><polygon fill="none" points="228.69,57.49,249.04,51.6,236.8,68.9,228.69,57.49" style="stroke: #383838; stroke-width: 1.0;"/><!--MD5=[5b398f65d5c28d25ef7832935cbd91b8]
+reverse link Geometry to GeometryCollection--><path d="M320.08,60.75 C340.55,72.99 364.14,87.09 382.37,97.99 " fill="none" id="Geometry&lt;-GeometryCollection" style="stroke: #383838; stroke-width: 1.0;"/><polygon fill="none" points="316.33,66.66,302.76,50.39,323.52,54.65,316.33,66.66" style="stroke: #383838; stroke-width: 1.0;"/><!--MD5=[7ff0d2d8fd3de6d8ce1ae2ec7fb0ae19]
+reverse link Curve to LineString--><path d="M251.58,156.05 C254.21,167.07 256.96,178.59 259.15,187.79 " fill="none" id="Curve&lt;-LineString" style="stroke: #383838; stroke-width: 1.0;"/><polygon fill="none" points="244.68,157.31,246.85,136.23,258.3,154.06,244.68,157.31" style="stroke: #383838; stroke-width: 1.0;"/><!--MD5=[2f9b89ecad46ce3d13e135ab35c52103]
+reverse link Surface to Polygon--><path d="M119.82,144.18 C97.42,159.34 70.01,177.9 51.1,190.7 " fill="none" id="Surface&lt;-Polygon" style="stroke: #383838; stroke-width: 1.0;"/><polygon fill="none" points="115.96,138.34,136.45,132.93,123.81,149.94,115.96,138.34" style="stroke: #383838; stroke-width: 1.0;"/><!--MD5=[8f9d9d6f81b8a8c9e193dfd9c670d19b]
+reverse link Surface to PolyhedralSurface--><path d="M158.5,156.47 C158.5,167.36 158.5,178.71 158.5,187.79 " fill="none" id="Surface&lt;-PolyhedralSurface" style="stroke: #383838; stroke-width: 1.0;"/><polygon fill="none" points="151.5,156.23,158.5,136.23,165.5,156.23,151.5,156.23" style="stroke: #383838; stroke-width: 1.0;"/><!--MD5=[060d01cf065ef1a933f73482eb65c552]
+reverse link GeometryCollection to MultiSurface--><path d="M424.04,155.63 C427.46,166.77 431.05,178.47 433.91,187.79 " fill="none" id="GeometryCollection&lt;-MultiSurface" style="stroke: #383838; stroke-width: 1.0;"/><polygon fill="none" points="417.27,157.41,418.09,136.23,430.65,153.3,417.27,157.41" style="stroke: #383838; stroke-width: 1.0;"/><!--MD5=[0e22d2a3da130750ffe7d4c17116ded9]
+reverse link GeometryCollection to MultiCurve--><path d="M453.3,147.92 C471.3,161.12 491.88,176.21 507.55,187.7 " fill="none" id="GeometryCollection&lt;-MultiCurve" style="stroke: #383838; stroke-width: 1.0;"/><polygon fill="none" points="449.06,153.49,437.07,136.02,457.34,142.2,449.06,153.49" style="stroke: #383838; stroke-width: 1.0;"/><!--MD5=[fcc099accfc31fd69338c6563fea6dc3]
+reverse link GeometryCollection to MultiPoint--><path d="M387.28,152.68 C378.55,164.68 369.12,177.65 361.74,187.79 " fill="none" id="GeometryCollection&lt;-MultiPoint" style="stroke: #383838; stroke-width: 1.0;"/><polygon fill="none" points="381.81,148.29,399.24,136.23,393.14,156.53,381.81,148.29" style="stroke: #383838; stroke-width: 1.0;"/><!--MD5=[ff6c6ff996cfe79c9aecf6e3fe3b2eb0]
+reverse link LineString to Line--><path d="M263.5,246.47 C263.5,257.36 263.5,268.71 263.5,277.79 " fill="none" id="LineString&lt;-Line" style="stroke: #383838; stroke-width: 1.0;"/><polygon fill="none" points="256.5,246.23,263.5,226.23,270.5,246.23,256.5,246.23" style="stroke: #383838; stroke-width: 1.0;"/><!--MD5=[6ad137aa26b4b52709986a1307216df8]
+reverse link LineString to LinearRing--><path d="M216.16,225.97 C169.34,236.72 150.91,226.04 112.5,246 C97.76,253.66 84.47,267 75.16,277.98 " fill="none" id="LineString&lt;-LinearRing" style="stroke: #383838; stroke-width: 1.0;"/><polygon fill="none" points="214.46,219.18,235.59,220.69,218.13,232.69,214.46,219.18" style="stroke: #383838; stroke-width: 1.0;"/><!--MD5=[7551b431f364f549dca188b8cddd34d9]
+reverse link MultiSurface to MultiPolygon--><path d="M408.01,239.75 C399.4,246.81 389.63,253.52 379.5,258 C320.41,284.13 299.07,266.45 235.5,278 C220.37,280.75 203.77,284.38 189.63,287.66 " fill="none" id="MultiSurface&lt;-MultiPolygon" style="stroke: #383838; stroke-width: 1.0;"/><polygon fill="none" points="403.41,234.48,422.93,226.24,412.81,244.85,403.41,234.48" style="stroke: #383838; stroke-width: 1.0;"/><!--MD5=[a833fa58ed9e65b43f8379b66a5b282f]
+reverse link MultiCurve to MultiLineString--><path d="M485.08,236.07 C472.86,243.26 459.71,250.95 447.5,258 C436.15,264.56 423.67,271.66 412.59,277.93 " fill="none" id="MultiCurve&lt;-MultiLineString" style="stroke: #383838; stroke-width: 1.0;"/><polygon fill="none" points="481.89,229.83,502.67,225.7,489,241.89,481.89,229.83" style="stroke: #383838; stroke-width: 1.0;"/><!--MD5=[c21e3bcce4d570d2ffcbe1aa1dda0154]
+link Point to LineString--><path d="M297.36,136.14 C294.21,142.42 290.68,149.51 287.5,156 C284.31,162.51 280.92,169.52 277.72,176.16 " fill="none" id="Point-&gt;LineString" style="stroke: #383838; stroke-width: 1.0;"/><polygon fill="#FFFFFF" points="272.09,187.91,278.2922,184.2313,277.2819,177.0913,271.0797,180.77,272.09,187.91" style="stroke: #383838; stroke-width: 1.0;"/><ellipse cx="288.5" cy="162.7383" fill="none" rx="-2" ry="-2" style="stroke: #545454; stroke-width: 1.0;"/><text fill="#000000" font-family="Helvetica" font-size="9" lengthAdjust="spacingAndGlyphs" textLength="30" x="290.5" y="165.354">vertex</text><text fill="#000000" font-family="Helvetica" font-size="9" lengthAdjust="spacingAndGlyphs" textLength="17" x="274.9578" y="152.0149">2..*</text><!--MD5=[3864b5c1600cc6889036fcf42261149c]
+link Point to MultiPoint--><path d="M317.79,136.26 C321.41,142.43 325.3,149.42 328.5,156 C331.5,162.17 334.42,168.91 337.07,175.39 " fill="none" id="Point-&gt;MultiPoint" style="stroke: #383838; stroke-width: 1.0;"/><polygon fill="#FFFFFF" points="341.9,187.67,343.4273,180.6225,337.5093,176.5021,335.982,183.5496,341.9,187.67" style="stroke: #383838; stroke-width: 1.0;"/><!--MD5=[fbb8a52fd128633c39e3dc2f18f8f0c6]
+reverse link Polygon to LinearRing--><path d="M39.26,238.36 C41.61,244.85 44.11,251.66 46.5,258 C48.95,264.5 51.73,271.6 54.22,277.87 " fill="none" id="Polygon&lt;-LinearRing" style="stroke: #383838; stroke-width: 1.0;"/><polygon fill="#FFFFFF" points="34.87,226.1,33.1278,233.0975,38.9169,237.397,40.6591,230.3995,34.87,226.1" style="stroke: #383838; stroke-width: 1.0;"/><ellipse cx="47.5" cy="252.7383" fill="none" rx="-2" ry="-2" style="stroke: #545454; stroke-width: 1.0;"/><text fill="#000000" font-family="Helvetica" font-size="9" lengthAdjust="spacingAndGlyphs" textLength="19" x="49.5" y="255.354">ring</text><text fill="#000000" font-family="Helvetica" font-size="9" lengthAdjust="spacingAndGlyphs" textLength="17" x="31.5984" y="267.7766">1..*</text><!--MD5=[f4f6ecfc84d32456e02680c2783d129a]
+link Polygon to PolyhedralSurface--><path d="M51.14,207 C64.12,207 81.08,207 97.67,207 " fill="none" id="Polygon-&gt;PolyhedralSurface" style="stroke: #383838; stroke-width: 1.0;"/><polygon fill="#FFFFFF" points="110.82,207,104.82,203,98.82,207,104.82,211,110.82,207" style="stroke: #383838; stroke-width: 1.0;"/><text fill="#000000" font-family="Helvetica" font-size="9" lengthAdjust="spacingAndGlyphs" textLength="28" x="67" y="201.354">patch</text><text fill="#000000" font-family="Helvetica" font-size="9" lengthAdjust="spacingAndGlyphs" textLength="17" x="59.1196" y="216.7424">1..*</text><!--MD5=[d3941b383690457f09c1ef4575f97f06]
+link LineString to MultiLineString--><path d="M287.46,226.02 C304.23,238.63 326.89,255.68 345.65,269.79 " fill="none" id="LineString-&gt;MultiLineString" style="stroke: #383838; stroke-width: 1.0;"/><polygon fill="#FFFFFF" points="356.17,277.7,353.7805,270.8963,346.5811,270.4852,348.9706,277.2889,356.17,277.7" style="stroke: #383838; stroke-width: 1.0;"/><ellipse cx="329.5" cy="252.7383" fill="none" rx="-2" ry="-2" style="stroke: #545454; stroke-width: 1.0;"/><text fill="#000000" font-family="Helvetica" font-size="9" lengthAdjust="spacingAndGlyphs" textLength="40" x="331.5" y="255.354">element</text><text fill="#000000" font-family="Helvetica" font-size="9" lengthAdjust="spacingAndGlyphs" textLength="17" x="275.1946" y="241.8581">0..*</text><!--MD5=[3a5d9b4f4ae8b4f060c82e890f1a4062]
+link Polygon to MultiPolygon--><path d="M51.21,223.73 C69.92,236.7 96.83,255.35 118.63,270.45 " fill="none" id="Polygon-&gt;MultiPolygon" style="stroke: #383838; stroke-width: 1.0;"/><polygon fill="#FFFFFF" points="129.49,277.98,126.8346,271.2756,119.6246,271.1481,122.28,277.8525,129.49,277.98" style="stroke: #383838; stroke-width: 1.0;"/><ellipse cx="101.5" cy="252.7383" fill="none" rx="-2" ry="-2" style="stroke: #545454; stroke-width: 1.0;"/><text fill="#000000" font-family="Helvetica" font-size="9" lengthAdjust="spacingAndGlyphs" textLength="40" x="103.5" y="255.354">element</text><text fill="#000000" font-family="Helvetica" font-size="9" lengthAdjust="spacingAndGlyphs" textLength="17" x="58.8174" y="237.4826">0..*</text><!--MD5=[e62727f99b85688ad9c6cec71eb9e1f5]
+@startuml
+skinparam style strictuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 9
+skinparam classFontSize 10
+skinparam nodesep 30
+skinparam ranksep 40
+skinparam classAttributeIconSize 0
+
+
+class "ReferenceSystems::\nSpatialReferenceSystem" as SpatialReferenceSystem
+class "ReferenceSystems::\nMeasureReferenceSystem" as MeasureReferenceSystem
+abstract class Geometry
+
+
+Geometry -left-> "1" SpatialReferenceSystem : +spatialRS
+Geometry -right-> "0..1" MeasureReferenceSystem : +mesureRS
+
+class Point
+abstract class Curve
+abstract class Surface
+class GeometryCollection
+
+Geometry <|- - Point
+Geometry <|- - Curve
+Geometry <|- - Surface
+Geometry <|- - GeometryCollection
+
+class LineString
+Curve <|- - LineString
+
+class Polygon
+class PolyhedralSurface
+Surface <|- - Polygon
+Surface <|- - PolyhedralSurface
+
+abstract class MultiSurface
+abstract class MultiCurve
+class MultiPoint
+
+GeometryCollection <|- - MultiSurface
+GeometryCollection <|- - MultiCurve
+GeometryCollection <|- - MultiPoint
+
+class Line
+class LinearRing
+LineString <|- - Line
+LineString <|- - LinearRing
+
+class MultiPolygon
+MultiSurface <|- - MultiPolygon
+
+class MultiLineString
+MultiCurve <|- - MultiLineString
+
+Point "2..*" - -o LineString : +vertex
+Point - -o MultiPoint
+
+Polygon o- - "1..*" LinearRing : +ring
+PolyhedralSurface o-left- "1..*" Polygon : +patch
+
+LineString "0..*" - -o MultiLineString : +element
+Polygon "0..*" - -o MultiPolygon : +element
+@enduml
+
+PlantUML version 1.2020.02(Sun Mar 01 10:22:07 UTC 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 21.0.9+10-Ubuntu-124.04
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
